@@ -1,0 +1,22 @@
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary navbar-collapse-icon">
+  <div class="container-fluid">
+    <div class="navbar-brand d-flex align-items-center">
+      <img src="Workshop.jpg" alt="Logo" width="70" height="70" class="me-2" />
+      <h2><span>WORKSHOP</span></h2>
+    </div>
+    <div class="text-white fw-bold ms-auto text-center">
+      <h2>
+        SRINIVASA ROAD TRANSPORT<br />PRIVATE LIMITED
+      </h2>
+    </div>
+  </div>
+</nav>
+
+<ul class="nav nav-tabs bg-light">
+  <li class="nav-item" *ngFor="let item of mainTabs">
+    <a class="nav-link" [routerLink]="item.route" routerLinkActive="active">{{ item.name }}</a>
+  </li>
+</ul>
+
+
