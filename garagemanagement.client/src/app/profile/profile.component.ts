@@ -18,31 +18,25 @@ export class ProfileComponent {
 
   ngOnInit(): void {
     this.profileForm = this.fb.group({
-      workshopName: ['', Validators.required],
-      ownerName: ['', Validators.required],
-      ownerMobile: ['', [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]],
-      email: ['', [Validators.email]],
-      contactPerson: [''],
-      contactNo: [''],
-      landline: [''],
-      calendar: ['']
+      workshopName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)]],
+      ownerName: ['',[Validators.required, Validators.minLength(2), Validators.maxLength(25)]],
+      ownerMobile: ['', [Validators.required, Validators.pattern(/^\+\d{2}\s\d{10}$/)]],
+      email: ['', [Validators.required, Validators.email]],
+      contactPersonName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)]],
+      contactNo: ['', [Validators.required, Validators.pattern(/^\+\d{2}\s\d{10}$/)]],
+      landline: ['',[Validators.required, Validators.pattern(/^\d{3,5}-\d{6,8}$/)]],
+      calendar: ['', [Validators.required]]
     });
   }
-
-  // Submit handler
-  onSubmit(): void {
-    this.submitted = true;
-
-    if (this.profileForm.invalid) {
-      return;
-    }
-
-    
-  }
-
-  // To access form controls easily in HTML
   get f() {
     return this.profileForm.controls;
+  }
+
+  onSubmit(): void {
+    if (this.profileForm.invalid) {
+      this.profileForm.markAllAsTouched();
+      return;
+    }
   }
 }
 

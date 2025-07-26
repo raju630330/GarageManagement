@@ -4,44 +4,74 @@
     <div class="row mb-3">
       <div class="col-md-4 ">
         <label>Workshop Name *</label>
-        <input type="text" class="form-control" formControlName="workshopName" required />
+        <input type="text" class="form-control" formControlName="workshopName"/>
+        <div *ngIf="f['workshopName']?.invalid && f['workshopName']?.touched" class="text-danger">
+          workshopName name is required.
+          workshopName must be between 2 and 25 characters.
+        </div>
       </div>
       <div class="col-md-4">
         <label>Owner Mobile No. *</label>
-        <input type="text" class="form-control" formControlName="ownerMobile" required />
+        <input type="text" class="form-control" formControlName="ownerMobile" />
+        <div *ngIf="f['ownerMobile']?.invalid && f['ownerMobile']?.touched" class="text-danger">
+          ownerMobile number is required.
+          ownerMobile must match +91 9123456789 format
+        </div>
       </div>
     </div>
-
     <div class="row mb-3">
       <div class="col-md-4">
         <label>Owner Name *</label>
         <input type="text" class="form-control" formControlName="ownerName" required />
+        <div *ngIf="f['ownerName']?.invalid && f['ownerName']?.touched" class="text-danger">
+          Owner name is required.
+          ownerName must be between 2 and 25 characters.
+        </div>
       </div>
       <div class="col-md-4">
-        <label>Contact Person</label>
-        <input type="text" class="form-control" formControlName="contactPerson" />
+        <label>Contact Person Name *</label>
+        <input type="text" class="form-control" formControlName="contactPersonName" />
+        <div *ngIf="f['contactPersonName']?.invalid && f['contactPersonName']?.touched" class="text-danger">
+          contactPersonName name is required.
+          contactPersonName must be between 2 and 25 characters.
+        </div>
       </div>
     </div>
 
     <div class="row mb-3">
       <div class="col-md-4">
-        <label>Email ID</label>
+        <label>Email ID *</label>
         <input type="email" class="form-control" formControlName="email" />
+        <div *ngIf="f['email']?.invalid && f['email']?.touched" class="text-danger">
+          Email is required.
+          Email must match abc1&#64;gmail.com format
+        </div>
       </div>
       <div class="col-md-4">
-        <label>Contact No.</label>
+        <label>Contact No.*</label>
         <input type="text" class="form-control" formControlName="contactNo" />
+        <div *ngIf="f['contactNo']?.invalid && f['contactNo']?.touched" class="text-danger">
+          contactNo number is required.
+          contactNo must match +91 9123456789 format
+        </div>
       </div>
     </div>
 
     <div class="row mb-3">
       <div class="col-md-4">
-        <label>Landline</label>
+        <label>Landline *</label>
         <input type="text" class="form-control" formControlName="landline" />
+        <div *ngIf="f['landline']?.invalid && f['landline']?.touched" class="text-danger">
+          landline number is required.
+          Format: STD-Number (e.g. 022-12345678)<
+        </div>
       </div>
       <div class="col-md-4">
-        <label>Calendar</label>
+        <label>Calendar*</label>
         <input type="date" class="form-control" formControlName="calendar" />
+        <div *ngIf="f['calendar']?.invalid && f['calendar']?.touched" class="text-danger">
+          Date is required.
+        </div>
       </div>
     </div>
 
