@@ -2,3 +2,21 @@ small {
   color: red;
   font-size: 12px;
 }
+.search-input {
+  padding-right: 3rem; /* Space for icon inside */
+}
+.search-input::placeholder {
+    padding-right: 2.6rem;
+    font-size:12px;
+    color: #6c757d; 
+  }
+
+.search-icon-inside {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #6c757d;
+  pointer-events: none; /* Allows input focus when clicking icon */
+}

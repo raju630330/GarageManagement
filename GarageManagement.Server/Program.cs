@@ -1,5 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using GarageManagement.Server.Data;
 
-namespace GarageManagement.Server
+
+namespace BrilliantMinds.Server
 {
     public class Program
     {
@@ -10,18 +13,34 @@ namespace GarageManagement.Server
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+               options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddSwaggerGen();
+
 
             var app = builder.Build();
+
+            builder.Services.AddCors();
+        
+            app.UseCors(policy => policy
+                     .AllowAnyOrigin()
+                     .AllowAnyMethod()
+                     .AllowAnyHeader());
 
             app.UseDefaultFiles();
             app.MapStaticAssets();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            if(app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseHsts();
             }
 
             app.UseHttpsRedirection();
