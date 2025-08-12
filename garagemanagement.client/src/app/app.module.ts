@@ -7,13 +7,17 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './login/login/login.component';
+import { RegisterComponent } from './login/register/register.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    ProfileComponent
+    ProfileComponent,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
