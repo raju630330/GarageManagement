@@ -9,6 +9,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -17,7 +18,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     DashboardComponent
   ],
   imports: [
-    BrowserModule, HttpClientModule,
+    BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule
     
@@ -26,3 +28,4 @@ import { DashboardComponent } from './dashboard/dashboard.component';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
