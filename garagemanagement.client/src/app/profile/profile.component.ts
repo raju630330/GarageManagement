@@ -85,6 +85,12 @@ export class ProfileComponent {
     this.appointmentForm.get('customerType')?.setValue(type);
   }
 
+  onReset() {
+    this.profileForm.reset(); 
+  }
+
+
+
   onbookSubmit() {
     if (this.appointmentForm.invalid) {
       this.appointmentForm.markAllAsTouched();
