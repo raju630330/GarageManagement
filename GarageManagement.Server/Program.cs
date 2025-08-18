@@ -18,15 +18,19 @@ namespace BrilliantMinds.Server
 
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors();
+
+           
+
+
 
             var app = builder.Build();
 
-            builder.Services.AddCors();
-        
             app.UseCors(policy => policy
-                     .AllowAnyOrigin()
-                     .AllowAnyMethod()
-                     .AllowAnyHeader());
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+
 
             app.UseDefaultFiles();
             app.MapStaticAssets();
@@ -44,6 +48,8 @@ namespace BrilliantMinds.Server
             }
 
             app.UseHttpsRedirection();
+
+            
 
             app.UseAuthorization();
 
