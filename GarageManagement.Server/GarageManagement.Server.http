@@ -1,6 +1,9 @@
 @GarageManagement.Server_HostAddress = http://localhost:5238
 
-GET {{GarageManagement.Server_HostAddress}}/weatherforecast/
+POST {{GarageManagement.Server_HostAddress}}/WorkshopProfile/save
+
+POST {{GarageManagement.Server_HostAddress}}/bookingAppointment/saveBookAppointment
+
 Accept: application/json
 
 ###
