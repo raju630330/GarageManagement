@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/GarageManagement.Server/Migrations/20250808142520_InitialCreate.cs
+/GarageManagement.Server/Migrations/20250808142520_InitialCreate.cs
+/GarageManagement.Server/Migrations/20250808142520_InitialCreate.cs
+/GarageManagement.Server/appsettings.json
