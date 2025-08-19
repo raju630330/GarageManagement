@@ -1,0 +1,20 @@
+
+<div class="container mt-4" style="max-width:420px">
+  <h3>Login</h3>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <form [formGroup]="loginForm" (ngSubmit)="submit()">
+    <div class="mb-3">
+      <label class="form-label">Username or Email</label>
+      <input class="form-control" formControlName="usernameOrEmail" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-control" formControlName="password" />
+    </div>
+    <button class="btn btn-primary w-100" [disabled]="loginForm.invalid">Login</button>
+    <div class="text-end mt-2">
+      <a routerLink="/forgot">Forgot password?</a>
+    </div>
+    <p class="mt-2">Don't have an account? <a routerLink="/register">Sign up</a></p>
+  </form>
+</div>

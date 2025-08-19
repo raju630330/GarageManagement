@@ -4,6 +4,10 @@ POST {{GarageManagement.Server_HostAddress}}/WorkshopProfile/save
 
 POST {{GarageManagement.Server_HostAddress}}/bookingAppointment/saveBookAppointment
 
+POST {{GarageManagement.Server_HostAddress}}/Auth
+
+
+
 Accept: application/json
 
 ###

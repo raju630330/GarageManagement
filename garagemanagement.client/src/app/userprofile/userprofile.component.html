@@ -1,0 +1,47 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <!-- Logo -->
+    <div class="navbar-brand d-flex align-items-center">
+      <img src="Workshop.jpg" alt="Logo" width="70" height="70" class="me-2" />
+      <h2 class="mb-0">WORKSHOP</h2>
+    </div>
+
+    <!-- Title -->
+    <div class="text-white fw-bold text-center flex-grow-1">
+      <h2 class="mb-0">
+        SRINIVASA ROAD TRANSPORT <br /> PRIVATE LIMITED
+      </h2>
+    </div>
+
+    <!-- If Not Logged In -->
+    <div *ngIf="!isLoggedIn" class="ms-auto">
+      <button class="btn btn-success" routerLink="/login">Login</button>
+      <button class="btn btn-success ms-2" routerLink="/register">Sign up</button>
+    </div>
+
+    <!-- If Logged In -->
+    
+    <div *ngIf="isLoggedIn" class="dropdown ms-auto">
+      <a *ngIf="users" class="dropdown-toggle text-decoration-none text-white fw-bold"
+         href="#"
+         role="button"
+         data-bs-toggle="dropdown"
+         aria-expanded="false">
+        {{ users?.username || 'User' }} <i class="bi bi-person-circle fs-5"></i>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end p-3" style="width: 320px;">
+        <li>{{ users.username }}</li>
+        <li>{{ users.email }}</li>
+        <li>{{ users.role }}</li>
+        <hr />
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-secondary btn-sm" (click)="book()">Book Appointment</button>
+          <button class="btn btn-primary btn-sm" (click)="viewProfile()">My Profile </button>
+          <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
+        </div>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>

@@ -10,6 +10,8 @@ namespace GarageManagement.Server.Data
             public DbSet<WorkshopProfile> WorkshopProfiles { get; set; }
 
             public DbSet<BookAppointment> bookAppointments { get; set; }
-        }
+            public DbSet<User> Users { get; set; }
+
+    }
 
 }
