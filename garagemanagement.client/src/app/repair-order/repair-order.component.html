@@ -1,0 +1,81 @@
+<div class="container p-4">
+ 
+  <h2 class="mb-3 font-bold">Repair/Servicing Order</h2>
+  <form>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label>Registration Number</label>
+        <input type="text" class="form-control" [(ngModel)]="order.registrationNumber" name="registrationNumber">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>VIN Number</label>
+        <input type="text" class="form-control" [(ngModel)]="order.vinNumber" name="vinNumber">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>Kms</label>
+        <input type="text" class="form-control" [(ngModel)]="order.kms" name="kms">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>Date</label>
+        <input type="date" class="form-control" [(ngModel)]="order.date" name="date">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>Make</label>
+        <input type="text" class="form-control" [(ngModel)]="order.make" name="make">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>Phone Number</label>
+        <input type="text" class="form-control" [(ngModel)]="order.phoneNumber" name="phoneNumber">
+      </div>
+      <div class="col-md-12 mb-3">
+        <label>Vehicle came from site</label>
+        <input type="text" class="form-control" [(ngModel)]="order.vehicleSite" name="vehicleSite">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>Site Incharge Name</label>
+        <input type="text" class="form-control" [(ngModel)]="order.siteIncharge" name="siteIncharge">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>Under Warranty</label><br>
+        <input type="radio" [(ngModel)]="order.underWarranty" name="underWarranty" value="Yes"> Yes
+        <input type="radio" [(ngModel)]="order.underWarranty" name="underWarranty" value="No"> No
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>Expected Date & Time</label>
+        <input type="datetime-local" class="form-control" [(ngModel)]="order.expectedDate" name="expectedDate">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label>Allotted Technician</label>
+        <input type="text" class="form-control" [(ngModel)]="order.technician" name="technician">
+      </div>
+    </div>
+  </form>
+
+  <hr class="my-4">
+
+
+  <h2 class="mb-3 font-bold">Technician Mandatory Check</h2>
+  <form>
+    <div *ngFor="let item of checks" class="mb-2 row">
+      <div class="col-md-6">{{item.label}}</div>
+      <div class="col-md-6">
+        <input type="radio" [(ngModel)]="item.status" [name]="item.name" value="OK"> OK
+        <input type="radio" [(ngModel)]="item.status" [name]="item.name" value="NOT OK"> NOT OK
+      </div>
+    </div>
+
+    <div class="form-check mb-3">
+      <input type="checkbox" class="form-check-input" [(ngModel)]="agreement" name="agreement">
+      <label class="form-check-label">
+        I hereby thoroughly checked above parameters & explained the same to the driver. He agreed to take delivery with satisfaction.
+      </label>
+    </div>
+
+    <div class="mb-3">
+      <label>Technician Advice</label>
+      <textarea class="form-control" rows="3" [(ngModel)]="technicianAdvice" name="technicianAdvice"></textarea>
+    </div>
+
+    <button type="button" class="btn btn-primary" (click)="submitForm()">Submit</button>
+  </form>
+</div>

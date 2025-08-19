@@ -9,6 +9,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login/login.component';
 import { RegisterComponent } from './login/register/register.component';
+import { RepairOrderComponent } from './repair-order/repair-order.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { RegisterComponent } from './login/register/register.component';
     NavbarComponent,
     ProfileComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    RepairOrderComponent
   ],
   imports: [
     BrowserModule,
