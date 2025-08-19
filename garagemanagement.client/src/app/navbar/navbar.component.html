@@ -1,22 +1,40 @@
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary navbar-collapse-icon">
-  <div class="container-fluid">
-    <div class="navbar-brand d-flex align-items-center">
-      <img src="Workshop.jpg" alt="Logo" width="70" height="70" class="me-2" />
-      <h2><span>WORKSHOP</span></h2>
+<div class="navbar-bg-image">
+
+
+  <nav class="navbar navbar-expand-lg navbar-dark shadow">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="Workshop.jpg" alt="Logo" width="60" height="60" class="me-2 rounded-circle" />
+        <h3 class="mb-0">WORKSHOP</h3>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <div class="mx-auto text-center text-white fw-bold">
+          <h5 class="mb-0">
+            SRINIVASA ROAD TRANSPORT<br />PRIVATE LIMITED
+          </h5>
+        </div>
+      </div>
     </div>
-    <div class="text-white fw-bold ms-auto text-center">
-      <h2>
-        SRINIVASA ROAD TRANSPORT<br />PRIVATE LIMITED
-      </h2>
+  </nav>
+
+  <div class="tab-container mt-3 mt-lg-0 ms-lg-3 d-flex align-items-center">
+    <button class="scroll-btn left-btn" *ngIf="showLeftArrow" (click)="scrollTabs(-150)">&#8249;</button>
+
+    <div #tabScroll class="scrollable-tabs flex-grow-1" (scroll)="checkScroll()">
+      <ul class="nav nav-tabs flex-nowrap mb-0">
+        <li class="nav-item" *ngFor="let item of mainTabs">
+          <a class="nav-link px-3 fw-semibold" [routerLink]="item.route" routerLinkActive="active">
+            {{ item.name }}
+          </a>
+        </li>
+      </ul>
     </div>
+
+    <button class="scroll-btn right-btn" *ngIf="showRightArrow" (click)="scrollTabs(150)">&#8250;</button>
   </div>
-</nav>
 
-<ul class="nav nav-tabs bg-light">
-  <li class="nav-item" *ngFor="let item of mainTabs">
-    <a class="nav-link" [routerLink]="item.route" routerLinkActive="active">{{ item.name }}</a>
-  </li>
-</ul>
-
-
+</div>
