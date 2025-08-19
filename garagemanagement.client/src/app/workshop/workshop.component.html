@@ -1,0 +1,37 @@
+<!-- Menu Bar -->
+<ul class="nav nav-tabs bg-white px-3">
+  <li class="nav-item">
+    <a class="nav-link" [routerLink]="['profile']">Profile</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/workshop">Workshop</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/users">Users</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/mmvy">MMVY</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/settings">Settings</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/subscription">Subscription</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/terms">Terms & Conditions</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/reminders">Reminders</a>
+  </li>
+</ul>
+
+<!-- Submenu -->
+<div *ngIf="isAdmin" class="d-flex flex-wrap gap-3 p-2 bg-light border-bottom">
+  <a class="text-decoration-none" href="#">Associated Workshops</a>
+  <a class="text-decoration-none" href="#">Activate e-payment now</a>
+  <a class="text-decoration-none" href="#">Integrations</a>
+  <a class="text-decoration-none" href="#">Templates</a>
+</div>
+<router-outlet></router-outlet>
+

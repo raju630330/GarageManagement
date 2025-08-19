@@ -8,7 +8,6 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "prestart": "node aspnetcore-https"
-
   },
   "private": true,
   "dependencies": {
@@ -21,6 +20,7 @@
     "@angular/router": "^19.2.0",
     "bootstrap": "^5.3.7",
     "jest-editor-support": "*",
+    "jwt-decode": "^4.0.0",
     "run-script-os": "*",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
