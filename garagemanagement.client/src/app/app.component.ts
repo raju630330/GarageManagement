@@ -1,20 +1,10 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-
-interface WeatherForecast {
-  date: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
-}
+import { Component } from '@angular/core';
+import { RepairOrderComponent } from './repair-order/repair-order.component';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  standalone: false,
-  styleUrl: './app.component.css'
+  standalone: true,
+  imports: [RepairOrderComponent], 
+  template: `<app-repair-order></app-repair-order>`
 })
-export class AppComponent {
-  
-  title = 'garagemanagement.client';
-}
+export class AppComponent { }
