@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-
+import { Component, ViewChild,  } from '@angular/core';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-dashboard',
   standalone: false,
@@ -7,5 +7,11 @@ import { Component } from '@angular/core';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
+  constructor(private router: Router) { }
 
+  openBookingModal() {
+    this.router.navigate(['//dashaboard/bookappointment']);
+  }
+
+ 
 }

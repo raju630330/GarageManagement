@@ -1,6 +1,4 @@
-<div class="mt-4 me-4 float-end">
-  <button class="btn btn-primary" (click)="openModal()">Book Appointment</button>
-</div>
+
 <div class="container mt-4 text-start">
   <h3 class="mb-4">
     <i class="bi bi-person-circle me-2"></i>
@@ -12,7 +10,6 @@
     <div class="col-md-8">
 
       <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-        <!-- Your form fields here -->
         <div class="row mb-3">
           <div class="col-md-6 ">
             <label>Workshop Name </label>
@@ -88,8 +85,8 @@
         </div>
 
         <div class="d-flex col-md-6 justify-content-center">
-          <button type="submit" [disabled]="profileForm.invalid" class="btn btn-primary mt-2 ms-2">Submit</button>
-          <button type="submit" class="btn btn-primary mt-2 ms-2">Reset</button>
+          <button type="submit" class="btn btn-primary mt-2 ms-2">Submit</button>
+          <button type="submit" class="btn btn-primary mt-2 ms-2" (click)="onReset()">Reset</button>
         </div>
       </form>
     </div>
@@ -97,179 +94,5 @@
 </div>
 
 
-
-
-
-
-<!-- Booking Appointment Modal -->
-<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="showModal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-
-      <div class="modal-header d-flex justify-content-between">
-        <h2 class="modal-title">New Appointment</h2>
-        <button type="button" class="btn btn-danger" (click)="close()">
-          <span>&times;</span>
-        </button>
-      </div>
-
-      <div class="modal-body bg-light">
-        <form [formGroup]="appointmentForm" (ngSubmit)="onbookSubmit()" class="text-start">
-          <!-- Search Field -->
-          <label for="search">Search</label>
-          <div class="position-relative">
-            <input type="text"
-                   formControlName="search"
-                   class="form-control search-input p-4"
-                   placeholder="Search using Customer Name/Corporate Name / Mobile No. / Email / Registration No." />
-            <i class="bi bi-search search-icon-inside ms-3"></i>
-          </div>
-
-          <div *ngIf="appointmentForm.get('search')?.touched && appointmentForm.get('search')?.invalid" class="text-danger">
-            Search is required.
-          </div>
-
-          <!-- Date & Time -->
-          <label for="date">Select Date</label>
-          <div class="form-group d-flex justify-content-between mb-3">
-            <input type="date" id="date" formControlName="date" class="form-control">
-            <input type="time" id="time" formControlName="time" class="form-control ms-2">
-          </div>
-          <div *ngIf="appointmentForm.get('date')?.touched && appointmentForm.get('date')?.invalid" class="text-danger">
-            Date is required.
-          </div>
-          <div *ngIf="appointmentForm.get('time')?.touched && appointmentForm.get('time')?.invalid" class="text-danger">
-            Time is required.
-          </div>
-
-          <!-- Individual / Corporate -->
-          <label>Customer Type</label>
-          <div class="form-group d-flex mb-3">
-            <div class="form-check me-3">
-              <input class="form-check-input" type="radio" formControlName="customerType" value="Individual">
-              <label class="form-check-label">Individual</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" formControlName="customerType" value="Corporate">
-              <label class="form-check-label">Corporate</label>
-            </div>
-          </div>
-          <div *ngIf="appointmentForm.get('customerType')?.touched && appointmentForm.get('customerType')?.invalid" class="text-danger">
-            Please select Customer Type.
-          </div>
-          <div *ngIf="appointmentForm.get('customerType')?.value === 'Individual'">
-
-            <!-- Registration No. -->
-            <span class="me-2"><i class="bi bi-card-text text-gray-500"></i></span>
-            <label for="Registration No.">Registration No.</label>
-            <div class="form-group mb-3 d-flex justify-content-center">
-              <select formControlName="state" class="border rounded input-group-text me-2">
-                <option value="TS">TS</option>
-                <option value="AP">AP</option>
-              </select>
-              <input type="text" formControlName="regNo" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('state')?.touched && appointmentForm.get('state')?.invalid" class="text-danger">
-              State is required.
-            </div>
-            <div *ngIf="appointmentForm.get('regNo')?.touched && appointmentForm.get('regNo')?.invalid" class="text-danger">
-              Registration No. is required.
-            </div>
-
-            <!-- Vehicle -->
-            <span class="me-2"><i class="bi bi-car-front-fill text-gray-500"></i></span>
-            <label>Vehicle</label>
-            <div class="form-group mb-3">
-              <input type="text" formControlName="vehicle" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('vehicle')?.touched && appointmentForm.get('vehicle')?.invalid" class="text-danger">
-              Vehicle is required.
-            </div>
-
-            <!-- Customer Name -->
-            <span class="me-2"><i class="bi bi-person-fill text-gray-500"></i></span>
-            <label>Customer Name</label>
-            <div class="form-group mb-3">
-              <input type="text" formControlName="customerName" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('customerName')?.touched && appointmentForm.get('customerName')?.invalid" class="text-danger">
-              Customer Name is required.
-            </div>
-
-            <!-- Mobile Number -->
-            <span class="me-2"><i class="bi bi-telephone-fill text-gray-500"></i></span>
-            <label>Mobile Number</label>
-            <div class="form-group mb-3">
-              <input type="text" formControlName="mobileNo" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('mobileNo')?.touched && appointmentForm.get('mobileNo')?.invalid" class="text-danger">
-              Enter a valid Mobile Number.
-            </div>
-
-            <!-- Email -->
-            <span class="me-2"><i class="bi bi-envelope-fill text-gray-500"></i></span>
-            <label>EmailID</label>
-            <div class="form-group mb-3">
-              <input type="email" formControlName="emailID" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('emailID')?.touched && appointmentForm.get('emailID')?.invalid" class="text-danger">
-              Enter a valid Email.
-            </div>
-
-            <!-- Service -->
-            <span class="me-2"><i class="bi bi-wrench-adjustable-circle-fill text-gray-500"></i></span>
-            <label>Service</label>
-            <div class="form-group mb-3">
-              <input type="text" formControlName="service" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('service')?.touched && appointmentForm.get('service')?.invalid" class="text-danger">
-              Service is required.
-            </div>
-
-            <!-- Service Advisor -->
-            <span class="me-2"><i class="bi bi-person-badge-fill  text-gray-500"></i></span>
-            <label>Service Advisor</label>
-            <div class="form-group mb-3">
-              <select formControlName="serviceAdvisor" class="form-control">
-                <option value="">Select Advisor</option>
-                <option *ngFor="let advisor of serviceAdvisors" [value]="advisor">{{ advisor }}</option>
-              </select>
-            </div>
-            <div *ngIf="appointmentForm.get('serviceAdvisor')?.touched && appointmentForm.get('serviceAdvisor')?.invalid" class="text-danger">
-              Service Advisor is required.
-            </div>
-            <!-- Settings -->
-            <span class="me-2"><i class="bi bi-gear-fill absolute text-gray-500"></i></span>
-            <label>Settings</label>
-            <div class="form-group mb-3">
-              <input type="text" formControlName="settings" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('settings')?.touched && appointmentForm.get('settings')?.invalid" class="text-danger">
-              Settings is required.
-            </div>
-
-            <!-- Bay -->
-            <span class="me-2"><i class="bi bi-geo-alt-fill absolute text-gray-500"></i></span>
-            <label>Bay (Location)</label>
-            <div class="form-group mb-3">
-              <select formControlName="bay" class="form-control">
-                <option value="">Select Bay</option>
-                <option *ngFor="let b of bays" [value]="b">{{ b }}</option>
-              </select>
-            </div>
-            <div *ngIf="appointmentForm.get('bay')?.touched && appointmentForm.get('bay')?.invalid" class="text-danger">
-              Bay is required.
-            </div>
-          </div>
-          <!-- Form Buttons -->
-          <div class="form-group d-flex justify-content-end mb-3">
-            <button type="button" class="btn btn-secondary me-2" (click)="close()">Cancel</button>
-            <button type="submit" class="btn btn-primary">Save</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 
 

@@ -6,7 +6,7 @@ import { AuthService } from '../auth.service';
   selector: 'app-userprofile',
   standalone: false,
   templateUrl: './userprofile.component.html',
-  styleUrl: './userprofile.component.css'
+  styleUrls: ['./userprofile.component.css']
 })
 export class UserprofileComponent {
 
@@ -50,7 +50,7 @@ export class UserprofileComponent {
 
 
   book() {
-    this.router.navigate(['//workshop/bookappointment']);
+    this.router.navigate(['/dashaboard']);
   }
 
   viewProfile() {

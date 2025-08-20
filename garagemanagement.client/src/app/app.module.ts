@@ -14,17 +14,22 @@ import { BookingAppointmentComponent } from './booking-appointment/booking-appoi
 import { ResetpasswordComponent } from './resetpassword/resetpassword.component';
 import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.component';
 import { authInterceptor } from './auth.interceptor';
-import { RepairOrderComponent } from './repair-order/repair-order.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,  
+    UserprofileComponent,
+    WorkshopComponent,
     ProfileComponent,
-    LoginComponent,
     DashboardComponent,
-    RegisterComponent
+    LoginComponent,
+    RegisterComponent,
+    BookingAppointmentComponent,
+    ResetpasswordComponent,
+    ForgetpasswordComponent,
+    
   ],
   imports: [
     BrowserModule,

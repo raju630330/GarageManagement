@@ -6,12 +6,19 @@
     <div class="mb-3">
       <label class="form-label">Username or Email</label>
       <input class="form-control" formControlName="usernameOrEmail" />
+      <div *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched" class="text-danger">
+        Username or Email is required.
+      </div>
     </div>
     <div class="mb-3">
       <label class="form-label">Password</label>
       <input type="password" class="form-control" formControlName="password" />
+      <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger small">
+        Password is required and must contain at least: 1 uppercase letter/1 lowercase letter/1 number
+        /1 special character/Min length 8
+      </div>
     </div>
-    <button class="btn btn-primary w-100" [disabled]="loginForm.invalid">Login</button>
+    <button class="btn btn-primary w-100">Login</button>
     <div class="text-end mt-2">
       <a routerLink="/forgot">Forgot password?</a>
     </div>

@@ -1,24 +1,26 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { WorkshopProfileService } from '../workshop-profile.service';
+import { Modal } from 'bootstrap';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-booking-appointment',
   standalone: false,
   templateUrl: './booking-appointment.component.html',
-  styleUrl: './booking-appointment.component.css'
+  styleUrls: ['./booking-appointment.component.css']
 })
-export class BookingAppointmentComponent {
+export class BookingAppointmentComponent implements OnInit {
 
+  
   appointmentForm!: FormGroup;
-  showModal = false;
   selectedCategory = '';
 
-  serviceAdvisors: string[] = ['John Doe', 'Jane Smith', 'Robert Brown'];
+  serviceAdvisors: string[] = ['Ad1', 'Ad2', 'Ad3'];
   bays: string[] = ['Bay 1', 'Bay 2', 'Bay 3'];
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private WorkshopProfileService: WorkshopProfileService) { }
+  constructor(private fb: FormBuilder, private http: HttpClient, private workshopProfileService: WorkshopProfileService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.appointmentForm = this.fb.group({
@@ -30,7 +32,7 @@ export class BookingAppointmentComponent {
       regNo: ['', Validators.required],
       vehicle: ['', Validators.required],
       customerName: ['', Validators.required],
-      mobileNo: ['', [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]],
+      mobileNo: ['', [Validators.required, Validators.pattern(/^\+\d{2}\s\d{10}$/)]],
       emailID: ['', [Validators.required, Validators.email]],
       service: ['', Validators.required],
       serviceAdvisor: ['', Validators.required],
@@ -38,9 +40,12 @@ export class BookingAppointmentComponent {
       bay: ['', Validators.required]
     });
   }
+
   selectCustomerType(type: string) {
     this.appointmentForm.get('customerType')?.setValue(type);
   }
+
+
 
   onbookSubmit() {
     if (this.appointmentForm.invalid) {
@@ -51,12 +56,10 @@ export class BookingAppointmentComponent {
 
     console.log('Form submitted successfully:', this.appointmentForm.value);
 
-    const bookingData = this.appointmentForm.value;
-
-    this.WorkshopProfileService.saveBookAppointment(bookingData).subscribe({
+    this.workshopProfileService.saveBookAppointment(this.appointmentForm.value).subscribe({
       next: (res) => {
         console.log('Saved successfully', res);
-        alert('Data Save successfully');
+        alert('Data saved successfully');
       },
       error: (err) => {
         console.error('Error:', err);
@@ -67,13 +70,12 @@ export class BookingAppointmentComponent {
         }
       }
     });
-  }
-  openModal() {
-    this.showModal = true;
+    this.closeModal();
   }
 
-  close() {
-    this.showModal = false;
+  closeModal() {
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
 
+  
 }

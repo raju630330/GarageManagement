@@ -10,12 +10,18 @@ import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.compone
 import { ResetpasswordComponent } from './resetpassword/resetpassword.component';
 import { adminGuard } from './admin.guard';
 import { authGuard } from './auth.guard';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
   {
     path: '',
     component: UserprofileComponent,
     children: [
+      {
+        path: 'dashaboard', component: DashboardComponent,
+        children: [
+          { path: 'bookappointment', component: BookingAppointmentComponent },
+        ]},
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'forgot', component: ForgetpasswordComponent },
@@ -24,7 +30,6 @@ const routes: Routes = [
         path: 'workshop', component: WorkshopComponent,
         children: [
           { path: 'profile', component: ProfileComponent },
-          { path: 'bookappointment', component: BookingAppointmentComponent }
         ]
       }
     ]
