@@ -29,7 +29,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     BookingAppointmentComponent,
     ResetpasswordComponent,
     ForgetpasswordComponent,
-
+    
   ],
   imports: [
     BrowserModule,
@@ -37,9 +37,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule
-
+    
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

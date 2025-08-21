@@ -15,12 +15,12 @@
         <option>Week</option>
         <option>Month</option>
       </select>
-      <button class="btn btn-success btn-sm">ADD NEW</button>
+      <button class="btn btn-primary" [routerLink]="['bookappointment']">New Appointment</button>
 
     </div>
   </div>
 
-  
+
   <div class="calendar-toolbar d-flex justify-content-start align-items-center bg-light p-2 rounded mb-3">
     <button class="btn btn-primary btn-sm me-2">Appointment</button>
     <select class="form-select form-select-sm" style="width: 200px;">
@@ -28,7 +28,7 @@
     </select>
   </div>
 
- 
+
   <div class="bg-white rounded shadow-sm p-3">
     <table class="calendar-table table table-bordered text-center align-middle mb-0">
       <thead class="table-secondary">
@@ -107,5 +107,7 @@
       </tbody>
     </table>
   </div>
+  <router-outlet></router-outlet>
 
 </div>
+

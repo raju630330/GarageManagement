@@ -100,16 +100,13 @@ namespace GarageManagement.Server.Controllers
             var user = await _db.Users
                 .FirstOrDefaultAsync(u => u.Email == dto.EmailOrUsername || u.Username == dto.EmailOrUsername);
 
-            // Always return success message (do not reveal existence)
             if (user == null) return Ok(new { message = "If the account exists, a reset link has been sent." });
 
-            var rawToken = Guid.NewGuid().ToString("N");                 // the one you email
-            user.ResetTokenHash = Sha256(rawToken);                       // only store hash
-            user.ResetTokenExpiresUtc = DateTime.UtcNow.AddMinutes(15);   // 15 minutes expiry
+            var rawToken = Guid.NewGuid().ToString("N");                 
+            user.ResetTokenHash = Sha256(rawToken);                       
+            user.ResetTokenExpiresUtc = DateTime.UtcNow.AddMinutes(15);   
             await _db.SaveChangesAsync();
 
-            // TODO: Email link like: https://your-app/reset?token=<rawToken>&user=<user.Email>
-            // For development convenience:
             return Ok(new { message = "Reset token generated", devToken = rawToken });
         }
 

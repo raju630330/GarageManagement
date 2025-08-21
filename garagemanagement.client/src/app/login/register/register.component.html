@@ -3,13 +3,27 @@
     <h3 class="text-center mb-4">Register</h3>
 
     <div class="mb-2">
-      <input type="text" [(ngModel)]="userName" name="userName" placeholder="Username" class="form-control" />
+      <input type="text" [(ngModel)]="userName" name="userName" placeholder="Username" required minlength="3"
+         pattern="^[^\s]+$" #uname="ngModel"class="form-control" />
+      <div *ngIf="uname.invalid && uname.touched" class="text-danger small">
+        Username is required (min 3 chars).
+      </div>
     </div>
     <div class="mb-2">
-      <input type="email" [(ngModel)]="email" name="email" placeholder="Email" class="form-control" />
+      <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required email
+         pattern="^[^\s]+$" #mail="ngModel" class="form-control" />
+      <div *ngIf="mail.invalid && mail.touched" class="text-danger small">
+        Enter a valid email.
+      </div>
     </div>
     <div class="mb-2">
-      <input type="password" [(ngModel)]="password" name="password" placeholder="Password" class="form-control" />
+      <input type="password" [(ngModel)]="password" name="password" placeholder="Password"
+             required minlength="8"
+             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+             #pass="ngModel" class="form-control" />
+      <div *ngIf="pass.invalid && pass.touched" class="text-danger small">
+        Password is required (min 8 chars).
+      </div>
     </div>
     <button type="submit" class="btn btn-primary w-100">Register</button>
   </form>
