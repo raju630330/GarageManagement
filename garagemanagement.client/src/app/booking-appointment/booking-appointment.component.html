@@ -1,12 +1,124 @@
 
+<div class="calendar-container">
+
+  <div class="calendar-header">
+    <div class="left">
+      <button>📅 Calendar</button>
+      <button class="today-btn">Today</button>
+      <button>&lt;</button>
+      <button>&gt;</button>
+      <span>November 2024</span>
+    </div>
+    <div class="right">
+      <input type="text" placeholder="Search..." />
+      <select>
+        <option>Week</option>
+        <option>Month</option>
+      </select>
+      <div class="mt-4 me-4 float-end">
+        <button class="btn btn-primary" (click)="openModal()">Book Appointment</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="calendar-toolbar">
+    <button class="appointment-btn">Appointment</button>
+    <select>
+      <option>Working Staff</option>
+    </select>
+  </div>
+
+
+  <table class="calendar-table" style="width: 100%; border:10px">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Sun<br>17</th>
+        <th>Mon<br>18</th>
+        <th>Tue<br>19</th>
+        <th>Wed<br>20</th>
+        <th>Thu<br>21</th>
+        <th>Fri<br>22</th>
+        <th>Sat<br>23</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>10 AM</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="highlight"></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>11 AM</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>12 PM</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>1 PM</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>2 PM</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>3 PM</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
 <!-- Booking Appointment Modal -->
-<div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5)">
-  <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="showModal">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
 
       <div class="modal-header d-flex justify-content-between">
         <h2 class="modal-title">New Appointment</h2>
-        <button type="button" class="btn btn-danger" (click)="closeModal()">
+        <button type="button" class="btn btn-danger" (click)="close()">
           <span>&times;</span>
         </button>
       </div>
@@ -161,7 +273,7 @@
           </div>
           <!-- Form Buttons -->
           <div class="form-group d-flex justify-content-end mb-3">
-            <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">Cancel</button>
+            <button type="button" class="btn btn-secondary me-2" (click)="close()">Cancel</button>
             <button type="submit" class="btn btn-primary">Save</button>
           </div>
         </form>
