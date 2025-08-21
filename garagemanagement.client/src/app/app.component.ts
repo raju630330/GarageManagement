@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
-import { RepairOrderComponent } from './repair-order/repair-order.component';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RepairOrderComponent], 
-  template: `<app-repair-order></app-repair-order>`
+  templateUrl: './app.component.html',
+  standalone: false,
+  styleUrl: './app.component.css'
 })
-export class AppComponent { }
+export class AppComponent {
+
+  title = 'garagemanagement.client';
+}
