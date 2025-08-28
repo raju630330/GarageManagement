@@ -11,6 +11,8 @@ namespace GarageManagement.Server.Data
 
             public DbSet<BookAppointment> bookAppointments { get; set; }
             public DbSet<User> Users { get; set; }
+            
+        public DbSet<RepairOrder> RepairOrders {  get; set; }
 
     }
 
