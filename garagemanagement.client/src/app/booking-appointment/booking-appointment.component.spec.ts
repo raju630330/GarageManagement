@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { BookingAppointmentComponent } from './booking-appointment.component';
 
 describe('BookingAppointmentComponent', () => {
@@ -8,9 +10,9 @@ describe('BookingAppointmentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [BookingAppointmentComponent]
-    })
-    .compileComponents();
+      declarations: [BookingAppointmentComponent],
+      imports: [ReactiveFormsModule, HttpClientTestingModule, RouterTestingModule]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(BookingAppointmentComponent);
     component = fixture.componentInstance;

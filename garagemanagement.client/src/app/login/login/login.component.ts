@@ -20,7 +20,8 @@ export class LoginComponent {
         Validators.minLength(2), Validators.pattern("^[^\\s]+$")]],
       password: ['', [Validators.required, Validators.pattern("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")]]
     });
-}
+  }
+
 submit() {
   if (this.loginForm.invalid) { this.error = 'Enter credentials'; return; }
 

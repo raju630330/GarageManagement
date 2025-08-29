@@ -77,7 +77,7 @@
           </div>
           <div class="col-md-6">
             <label>Calendar</label>
-            <input type="date" class="form-control" formControlName="CalendarDate" />
+            <input type="date" class="form-control" formControlName="CalendarDate" [min]="minDate | date :'yyyy-MM-dd'"/>
             <div *ngIf="profileForm.get('CalendarDate')?.invalid && profileForm.get('CalendarDate')?.touched" class="text-danger">
               Date is required.
             </div>

@@ -21,18 +21,19 @@
 
     <!-- If Logged In -->
     
-    <div *ngIf="isLoggedIn" class="dropdown ms-auto">
-      <a *ngIf="users" class="dropdown-toggle text-decoration-none text-white fw-bold"
+    <div *ngIf="isLoggedIn && user" class="dropdown ms-auto">
+      <a class="dropdown-toggle text-decoration-none text-white fw-bold"
          href="#"
          role="button"
          data-bs-toggle="dropdown"
          aria-expanded="false">
-        {{ users?.username || 'User' }} <i class="bi bi-person-circle fs-5"></i>
+        {{ user?.username || 'User' }}
+        <i class="bi bi-person-circle fs-5"></i>
       </a>
       <ul class="dropdown-menu dropdown-menu-end p-3" style="width: 320px;">
-        <li>{{ users.username }}</li>
-        <li>{{ users.email }}</li>
-        <li>{{ users.role }}</li>
+        <li><strong>{{ user?.username || 'No Name' }}</strong></li>
+        <li>{{ user?.email || 'No Email' }}</li>
+        <li><span class="badge bg-info">{{ role }}</span></li>
         <hr />
         <div class="d-flex flex-wrap gap-2">
           <button class="btn btn-secondary btn-sm" (click)="book()">Book Appointment</button>

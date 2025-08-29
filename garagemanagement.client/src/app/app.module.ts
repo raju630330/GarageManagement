@@ -27,8 +27,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     LoginComponent,
     RegisterComponent,
     BookingAppointmentComponent,
-    ResetpasswordComponent,
     ForgetpasswordComponent,
+    ResetpasswordComponent,
+
     
   ],
   imports: [

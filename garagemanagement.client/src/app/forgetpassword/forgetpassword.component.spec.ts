@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ForgetpasswordComponent } from './forgetpassword.component';
 
 describe('ForgetpasswordComponent', () => {
@@ -8,9 +9,9 @@ describe('ForgetpasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ForgetpasswordComponent]
-    })
-    .compileComponents();
+      declarations: [ForgetpasswordComponent],
+      imports: [ReactiveFormsModule, HttpClientTestingModule]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ForgetpasswordComponent);
     component = fixture.componentInstance;

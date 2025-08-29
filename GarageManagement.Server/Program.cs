@@ -1,3 +1,4 @@
+using GarageManagement.Server;
 using GarageManagement.Server.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +18,13 @@ namespace BrilliantMinds.Server
             // Add services to the container.
 
             builder.Services.AddControllers();
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Email Service
+            builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
+            builder.Services.AddTransient<EmailService>(); ;
 
             builder.Services.AddSwaggerGen();
 

@@ -1,30 +1,41 @@
-<div class="d-flex justify-content-center mt-5">
-  <form (ngSubmit)="onRegister()" class="p-4 bg-white rounded shadow" style="width: 350px;">
-    <h3 class="text-center mb-4">Register</h3>
+<div class="container mt-4 " style="max-width:420px">
+  <h3>Register Here</h3>
+  <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="text-start">
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-    <div class="mb-2">
-      <input type="text" [(ngModel)]="userName" name="userName" placeholder="Username" required minlength="3"
-         pattern="^[^\s]+$" #uname="ngModel"class="form-control" />
-      <div *ngIf="uname.invalid && uname.touched" class="text-danger small">
-        Username is required (min 3 chars).
+    <div class="mb-3">
+      <label class="form-label">Username </label>
+      <input class="form-control" formControlName="username" />
+      <div *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="text-danger">
+        Username is required.
       </div>
     </div>
-    <div class="mb-2">
-      <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required email
-         pattern="^[^\s]+$" #mail="ngModel" class="form-control" />
-      <div *ngIf="mail.invalid && mail.touched" class="text-danger small">
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" formControlName="email" class="form-control" />
+      <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-danger">
         Enter a valid email.
       </div>
     </div>
-    <div class="mb-2">
-      <input type="password" [(ngModel)]="password" name="password" placeholder="Password"
-             required minlength="8"
-             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-             #pass="ngModel" class="form-control" />
-      <div *ngIf="pass.invalid && pass.touched" class="text-danger small">
-        Password is required (min 8 chars).
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-control" formControlName="password" />
+      <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-danger small">
+        Password is required and must contain at least: 1 uppercase letter/1 lowercase letter/1 number
+        /1 special character/Min length 8
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Role</label>
+        <select class="form-select form-control" formControlName="role">
+          <option value="">-- Select Role --</option>
+          <option *ngFor="let r of role" [value]="r">{{ r }}</option>
+        </select>
+        <div *ngIf="registerForm.get('role')?.touched && registerForm.get('role')?.invalid" class="text-danger">
+          Role is required
+        </div>
       </div>
     </div>
-    <button type="submit" class="btn btn-primary w-100">Register</button>
+    <button class="btn btn-primary w-100">Register</button>
+
   </form>
 </div>

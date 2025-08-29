@@ -14,6 +14,7 @@ export class ProfileComponent {
   profileForm!: FormGroup;
   submitted = false;
   responsemessage = '';
+  minDate = new Date();
 
   constructor(private fb: FormBuilder, private http: HttpClient, private WorkshopProfileService: WorkshopProfileService) { }
 

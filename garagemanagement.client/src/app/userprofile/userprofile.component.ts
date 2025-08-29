@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
@@ -8,44 +8,41 @@ import { AuthService } from '../auth.service';
   templateUrl: './userprofile.component.html',
   styleUrls: ['./userprofile.component.css']
 })
-export class UserprofileComponent {
+export class UserprofileComponent implements OnInit {
 
-  users: any = null;
+  user: any = null;
+  isLoggedIn = false;
+  role: string | null = null;
+
 
   constructor(private authService: AuthService, private router: Router) { }
 
-  get isLoggedIn() {
-    return this.authService.isLoggedIn();
-  }
-   
-  get role() {
-    return this.authService.role;
-  }
-
   ngOnInit(): void {
-    this.loadUser();
+    this.authService.loggedIn$.subscribe(status => {
+      this.isLoggedIn = status;
+
+    if(status) {
+      this.authService.getUserProfile().subscribe({
+        next: (profile) => {
+          console.log("API user response:", profile);
+
+          this.user = profile;
+          this.role = profile.role;
+          
+        },
+        error: (err) => console.error("Profile fetch failed", err)
+      });
+    } else {
+      this.user = null;
+      this.role = null;
+    }
+  });
   }
 
-  loadUser() {
-    //if (!this.authService.isLoggedIn()) {
-    //  return;
-    //}
-
-    this.authService.getUserProfile().subscribe({
-      next: res => {
-        this.users = res;
-      },
-      error: err => {
-        console.error('Error fetching user details:', err);
-      }
-    });
-    
-  }
- 
   logout() {
     this.authService.logout();
     this.router.navigate(['/']);
-    this.users = null;
+    this.user = null;
   }
 
 

@@ -2,11 +2,14 @@
 using GarageManagement.Server.dtos;
 using GarageManagement.Server.Model;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -21,34 +24,59 @@ namespace GarageManagement.Server.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly IConfiguration _config;
+        private readonly EmailService _emailService;
 
-        public AuthController(ApplicationDbContext db, IConfiguration config)
+
+        public AuthController(ApplicationDbContext db, IConfiguration config,EmailService emailService)
         {
             _db = db;
             _config = config;
+            _emailService = emailService;
         }
 
-        // Register: always creates a normal User (no admin creation from API)
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponse>> Register(RegisterDto dto)
         {
+            var validRoles = new[] { "Admin", "Driver", "Technician","Cashier", "Manager", "Supervisor" };
+
+            if (string.IsNullOrWhiteSpace(dto.Username) ||
+                string.IsNullOrWhiteSpace(dto.Email) ||
+                string.IsNullOrWhiteSpace(dto.Password))
+            {
+                return BadRequest("Username, Email and Password cannot be empty.");
+            }
+
+            dto.Role = char.ToUpper(dto.Role[0]) + dto.Role.Substring(1).ToLower();
+
+            if (!validRoles.Contains(dto.Role))
+            {
+                return BadRequest("Invalid role. Allowed: Admin, Driver, Technician.");
+            }
+
+            if (dto.Role == "Admin" && await _db.Users.AnyAsync(u => u.Role == "Admin"))
+            {
+                return BadRequest("Only one Admin is allowed.");
+            }
+
             if (await _db.Users.AnyAsync(u => u.Username == dto.Username || u.Email == dto.Email))
-                return BadRequest("Username or Email already exists");
+            {
+                return BadRequest("Username or Email already exists.");
+            }
 
             var user = new User
             {
                 Username = dto.Username.Trim(),
                 Email = dto.Email.Trim(),
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = "User"
+                Role = dto.Role
             };
 
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
 
-            // Auto-login after register
-            var token = GenerateJwt(user);
-            return Ok(new AuthResponse { Token = token });
+            //var token = GenerateJwt(user);
+            //return Ok(new AuthResponse { Token = token, message = "Registered successfully. Please login." });
+            return Ok(new AuthResponse { message = "Registered successfully. Please login." });
         }
 
         [HttpPost("login")]
@@ -78,9 +106,8 @@ namespace GarageManagement.Server.Controllers
             if (string.IsNullOrEmpty(sub))
                 return Unauthorized("Invalid token – missing subject claim.");
 
-            if(!int.TryParse(sub, out var userId))
-            return Unauthorized("Invalid token – subject is not a valid user id.");
-
+            if (!int.TryParse(sub, out var userId))
+                return Unauthorized("Invalid token – subject is not a valid user id.");
 
             return Ok(new ProfileView
             {
@@ -91,47 +118,73 @@ namespace GarageManagement.Server.Controllers
             });
         }
 
-        
 
-        // Forgot password: generate short-lived token (store only the hash)
-        [HttpPost("forgot")]
-        public async Task<ActionResult<object>> Forgot(ForgotPasswordDto dto)
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
-            var user = await _db.Users
-                .FirstOrDefaultAsync(u => u.Email == dto.EmailOrUsername || u.Username == dto.EmailOrUsername);
+            if (string.IsNullOrEmpty(dto.EmailOrUsername))
+                return BadRequest("Email is required");
 
-            if (user == null) return Ok(new { message = "If the account exists, a reset link has been sent." });
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == dto.EmailOrUsername);
 
-            var rawToken = Guid.NewGuid().ToString("N");                 
-            user.ResetTokenHash = Sha256(rawToken);                       
-            user.ResetTokenExpiresUtc = DateTime.UtcNow.AddMinutes(15);   
-            await _db.SaveChangesAsync();
+            if (user == null) return BadRequest("User not found");
 
-            return Ok(new { message = "Reset token generated", devToken = rawToken });
+  
+            // Generate JWT reset token
+            var token = GenerateJwt(user);
+            var frontendUrl = "http://localhost:4200/reset-password";
+            var callbackUrl = $"{frontendUrl}?token={token}&email={user.Email}";
+
+            var mailRequest = new EmailRequest
+            {
+                ToEmail = user.Email,
+                Subject = "Password Reset Request",
+                Body = $"<p>Click the link below to reset your password:</p><a href='{callbackUrl}'>Reset Password</a>"
+            };
+
+            await _emailService.SendEmailAsync(mailRequest);
+
+            return Ok(new { message = "Reset link has been sent to your email" });
         }
 
-        [HttpPost("reset")]
-        public async Task<ActionResult<object>> Reset(ResetPasswordDto dto)
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
         {
-            var user = await _db.Users
-                .FirstOrDefaultAsync(u => u.Email == dto.EmailOrUsername || u.Username == dto.EmailOrUsername);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
+            {
+                var principal = tokenHandler.ValidateToken(request.Token, new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = _config["Jwt:Issuer"],
+                    ValidAudience = _config["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"])),
+                    ValidateLifetime = true
+                }, out var validatedToken);
 
-            if (user == null || user.ResetTokenHash == null || user.ResetTokenExpiresUtc == null)
-                return BadRequest("Invalid or expired token");
+                var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _db.Users.FindAsync(int.Parse(userId));
 
-            if (user.ResetTokenExpiresUtc < DateTime.UtcNow)
-                return BadRequest("Invalid or expired token");
+                if (user == null)
+                    return BadRequest("Invalid token");
 
-            if (Sha256(dto.Token) != user.ResetTokenHash)
-                return BadRequest("Invalid or expired token");
+                // Update password
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+                user.ResetTokenHash = null;
+                user.ResetTokenExpiresUtc = null;
+                await _db.SaveChangesAsync();
 
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
-            user.ResetTokenHash = null;
-            user.ResetTokenExpiresUtc = null;
-            await _db.SaveChangesAsync();
-
-            return Ok(new { message = "Password reset successful" });
+                return Ok(new { message = "Password has been reset successfully." });
+            }
+            catch
+            {
+                return BadRequest("Invalid or expired token.");
+            }
         }
+
 
         // Helpers
         private string GenerateJwt(User user)
@@ -159,8 +212,34 @@ namespace GarageManagement.Server.Controllers
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
-        
+
         }
+     
+       
+       
+        [HttpGet("admin")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminData() => Ok("This is admin-only data.");
+
+        [HttpGet("driver")]
+        [Authorize(Roles = "Driver")]
+        public IActionResult DriverData() => Ok("This is driver-only data.");
+
+        [HttpGet("technician")]
+        [Authorize(Roles = "Technician")]
+        public IActionResult TechnicianData() => Ok("This is technician-only data.");
+
+        [HttpGet("Cashier")]
+        [Authorize(Roles = "Cashier")]
+        public IActionResult CashierData() => Ok("This is Cashier-only data.");
+
+        [HttpGet("Manager")]
+        [Authorize(Roles = "Manager")]
+        public IActionResult ManagerData() => Ok("This is Manager-only data.");
+
+        [HttpGet("Supervisor")]
+        [Authorize(Roles = "Supervisor")]
+        public IActionResult SupervisorData() => Ok("This is Supervisor-only data.");
 
         private static string Sha256(string value)
         {
@@ -169,6 +248,10 @@ namespace GarageManagement.Server.Controllers
             return Convert.ToHexString(bytes);
         }
 
-        
+
+       
     }
 }
+
+    
+

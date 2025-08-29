@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { WorkshopComponent } from './workshop.component';
 
 describe('WorkshopComponent', () => {
@@ -8,9 +9,9 @@ describe('WorkshopComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [WorkshopComponent]
-    })
-    .compileComponents();
+      declarations: [WorkshopComponent],
+      imports: [HttpClientTestingModule, RouterTestingModule]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(WorkshopComponent);
     component = fixture.componentInstance;

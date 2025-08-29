@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { WorkshopProfileService } from '../workshop-profile.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-booking-appointment',
@@ -12,30 +13,31 @@ import { WorkshopProfileService } from '../workshop-profile.service';
 export class BookingAppointmentComponent {
 
   appointmentForm!: FormGroup;
+  minDate = new Date();
   showModal = false;
   selectedCategory = '';
 
   serviceAdvisors: string[] = ['John Doe', 'Jane Smith', 'Robert Brown'];
   bays: string[] = ['Bay 1', 'Bay 2', 'Bay 3'];
+   
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private WorkshopProfileService: WorkshopProfileService) { }
+  constructor(private fb: FormBuilder, private http: HttpClient, private WorkshopProfileService: WorkshopProfileService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.appointmentForm = this.fb.group({
-      search: ['', Validators.required],
-      date: ['', Validators.required],
-      time: ['', Validators.required],
+      search: ['', [Validators.required]],
+      date: ['', [Validators.required]],
+      time: ['', [Validators.required]],
       customerType: ['Individual', Validators.required],
-      state: ['', Validators.required],
-      regNo: ['', Validators.required],
-      vehicle: ['', Validators.required],
-      customerName: ['', Validators.required],
-      mobileNo: ['', [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]],
+      regNo: ['', [Validators.required, Validators.pattern(/^[0-9A-za-z]+$/)]],
+      vehicle: ['', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]],
+      customerName: ['',[Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
+      mobileNo: ['', [Validators.required, Validators.pattern(/^\+\d{2}\s\d{10}$/)]],
       emailID: ['', [Validators.required, Validators.email]],
-      service: ['', Validators.required],
-      serviceAdvisor: ['', Validators.required],
-      settings: ['', Validators.required],
-      bay: ['', Validators.required]
+      service: ['', [Validators.required]],
+      serviceAdvisor: ['', [Validators.required]],
+      settings: ['', [Validators.required, Validators.pattern(/^[A-Za-z]$/)]],
+      bay: ['', [Validators.required]]
     });
   }
   selectCustomerType(type: string) {
@@ -67,13 +69,10 @@ export class BookingAppointmentComponent {
         }
       }
     });
+    this.closeModal();
   }
-  openModal() {
-    this.showModal = true;
-  }
-
-  close() {
-    this.showModal = false;
+  closeModal() {
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
 
 }

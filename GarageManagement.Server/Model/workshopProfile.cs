@@ -4,10 +4,8 @@ namespace GarageManagement.Server.Model
 {
     public class WorkshopProfile
     {
-        //[Key]
-        //[Required]
-        //public int Id { get; set; }
-        [Key]
+        [Key]  
+        public int WorkshopId { get; set; }
         [Required]
         public string WorkshopName { get; set; }
 
@@ -31,6 +29,9 @@ namespace GarageManagement.Server.Model
 
         [Required]
         public DateTime? CalendarDate { get; set; }
+
+        // Navigation: One Workshop → Many Appointments
+        public ICollection<BookAppointment> BookAppointments { get; set; }
     }
     
 }
