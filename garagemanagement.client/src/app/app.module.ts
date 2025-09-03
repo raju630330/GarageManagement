@@ -15,10 +15,12 @@ import { ResetpasswordComponent } from './resetpassword/resetpassword.component'
 import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.component';
 import { authInterceptor } from './auth.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { RepairOrderComponent } from './repair-order/repair-order.component';
 
 
 @NgModule({
   declarations: [
+
     AppComponent,
     UserprofileComponent,
     WorkshopComponent,
@@ -29,6 +31,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
+    
 
     
   ],
@@ -37,6 +40,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    RepairOrderComponent,
     FormsModule
     
   ],

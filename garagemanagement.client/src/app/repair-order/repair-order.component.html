@@ -1,0 +1,91 @@
+<div class="form-container">
+  <h2>Repair/Servicing Order</h2>
+  <form [formGroup]="repairForm" (ngSubmit)="onSubmit()">
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Registration Number</label>
+        <input formControlName="registrationNumber" type="text" />
+      </div>
+
+      <div class="form-group">
+        <label>VIN Number</label>
+        <input formControlName="vinNumber" type="text" />
+      </div>
+
+      <div class="form-group">
+        <label>KMs</label>
+        <input formControlName="kms" type="number" />
+      </div>
+
+      <div class="form-group">
+        <label>Date</label>
+        <input formControlName="date" type="date" />
+      </div>
+
+      <div class="form-group">
+        <label>Make</label>
+        <input formControlName="make" />
+      </div>
+
+      <div class="form-group">
+        <label>Driver Name</label>
+        <input formControlName="driverName" />
+      </div>
+
+      <div class="form-group full-width">
+        <label>Vehicle came from site</label>
+        <input formControlName="vehicleFromSite" />
+      </div>
+
+      <div class="form-group full-width">
+        <label>Site Incharge Name</label>
+        <input formControlName="siteInchargeName" />
+      </div>
+
+      <div class="form-group full-width">
+        <label>Driver permanent to this vehicle</label>
+        <input formControlName="driverPermanent" />
+      </div>
+
+      <div class="form-group full-width checkbox-group">
+        <label>Road test along with driver</label>
+        <div>
+          <input type="radio" formControlName="roadTest" value="Yes" /> Yes
+          <input type="radio" formControlName="roadTest" value="No" /> No
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Type of Service</label>
+        <select formControlName="serviceType">
+          <option value="">Select</option>
+          <option value="Repair">Repair</option>
+          <option value="Servicing">Servicing</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Repair Estimation Cost</label>
+        <input formControlName="repairCost" type="number" />
+      </div>
+
+      <div class="form-group full-width checkbox-group">
+        <label>Under Warranty</label>
+        <div>
+          <input type="radio" formControlName="warranty" value="Yes" /> Yes
+          <input type="radio" formControlName="warranty" value="No" /> No
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Expected Date & Time</label>
+        <input formControlName="expectedDateTime" type="datetime-local" />
+      </div>
+    </div>
+    <br />
+    <div class="form-actions">
+      <button type="submit" [disabled]="repairForm.invalid">Submit</button>
+    </div>
+  </form>
+</div>
