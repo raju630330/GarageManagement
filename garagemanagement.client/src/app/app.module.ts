@@ -15,6 +15,8 @@ import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.compone
 import { authInterceptor } from './auth.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
+import { MatExpansionModule } from '@angular/material/expansion';
+
 
 
 @NgModule({
@@ -30,6 +32,7 @@ import { RepairOrderComponent } from './repair-order/repair-order.component';
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
+    RepairOrderComponent
     
 
     
@@ -39,7 +42,7 @@ import { RepairOrderComponent } from './repair-order/repair-order.component';
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    RepairOrderComponent,
+    MatExpansionModule,
     FormsModule
     
   ],

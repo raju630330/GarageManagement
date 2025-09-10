@@ -55,6 +55,12 @@ export class UserprofileComponent implements OnInit {
 
   }
 
+  goToRepairOrder() {
+    this.router.navigate(['/repair']);
+
+  }
+
+
    
 }
 
