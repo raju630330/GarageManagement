@@ -15,6 +15,7 @@ import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.compone
 import { authInterceptor } from './auth.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
+import { SparePartIssueDetailsComponent } from './spare-part-issue-details/spare-part-issue-details.component';
 
 
 @NgModule({
@@ -30,6 +31,7 @@ import { RepairOrderComponent } from './repair-order/repair-order.component';
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
+    SparePartIssueDetailsComponent,
     
 
     
