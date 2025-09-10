@@ -15,8 +15,10 @@ import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.compone
 import { authInterceptor } from './auth.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { GarageManagementComponent } from './garage-management/garage-management.component';
 import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
+
 
 
 @NgModule({
@@ -32,6 +34,7 @@ import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-d
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
+    RepairOrderComponent
     GarageManagementComponent,
     AdditionalJobObserveDetailsComponent,
     
@@ -43,7 +46,7 @@ import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-d
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    RepairOrderComponent,
+    MatExpansionModule,
     FormsModule
     
   ],

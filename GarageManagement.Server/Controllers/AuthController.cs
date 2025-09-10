@@ -35,7 +35,7 @@ namespace GarageManagement.Server.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<AuthResponse>> Register(RegisterDto dto)
+        public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterDto dto)
         {
             var validRoles = new[] { "Admin", "Driver", "Technician","Cashier", "Manager", "Supervisor" };
 
@@ -80,7 +80,7 @@ namespace GarageManagement.Server.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AuthResponse>> Login(LoginDto dto)
+        public async Task<ActionResult<AuthResponse>> Login([FromBody]  LoginDto dto)
         {
             var user = await _db.Users
                 .FirstOrDefaultAsync(u => u.Username == dto.UsernameOrEmail || u.Email == dto.UsernameOrEmail);

@@ -1,96 +1,193 @@
-<div class="form-container">
-  <h2>Repair/Servicing Order</h2>
-  <form [formGroup]="repairForm" (ngSubmit)="onSubmit()">
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Repair/Servicing Order
+      </mat-panel-title>
+      <mat-panel-description>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div class="form-container">
+      <h2>Repair/Servicing Order</h2>
 
-    <div class="form-grid">
+      <form [formGroup]="repairForm" (ngSubmit)="onSubmit()">
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Registration Number</label>
+            <input formControlName="registrationNumber" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label>VIN Number</label>
+            <input formControlName="vinNumber" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label>KMs</label>
+            <input formControlName="kms" type="number" />
+          </div>
+
+          <div class="form-group">
+            <label>Date</label>
+            <input formControlName="date" type="date" />
+          </div>
+
+          <div class="form-group">
+            <label>Make</label>
+            <input formControlName="make" />
+          </div>
+
+          <div class="form-group">
+            <label>Driver Name</label>
+            <input formControlName="driverName" />
+          </div>
+
+          <div class="form-group full-width">
+            <label>Vehicle came from site</label>
+            <input formControlName="vehicleFromSite" />
+          </div>
+
+          <div class="form-group full-width">
+            <label>Site Incharge Name</label>
+            <input formControlName="siteInchargeName" />
+          </div>
+
       <div class="form-group">
-        <label>Registration Number</label>
-        <input formControlName="registrationNumber" type="text" />
-      </div>
-
-      <div class="form-group">
-        <label>VIN Number</label>
-        <input formControlName="vinNumber" type="text" />
-      </div>
-
-      <div class="form-group">
-        <label>KMs</label>
-        <input formControlName="kms" type="number" />
-      </div>
-
-      <div class="form-group">
-        <label>Date</label>
-        <input formControlName="date" type="date" />
-      </div>
-
-      <div class="form-group">
-        <label>Make</label>
-        <input formControlName="make" />
-      </div>
-
-      <div class="form-group">
-        <label>Driver Name</label>
-        <input formControlName="driverName" />
-      </div>
-
-      <div class="form-group full-width">
-        <label>Vehicle came from site</label>
-        <input formControlName="vehicleFromSite" />
-      </div>
-
-      <div class="form-group full-width">
-        <label>Site Incharge Name</label>
-        <input formControlName="siteInchargeName" />
-      </div>
-
-      <div class="form-group full-width">
-        <label>Driver permanent to this vehicle</label>
+        <label> Driver permanent to this vehicle</label>
         <input formControlName="driverPermanent" />
       </div>
-
-      <div class="form-group full-width checkbox-group">
+    
+      <div class="form-group checkbox-group">
+        <label>Road test along with driver</label>
         <div>
-          <label>Road test along with driver        :</label>
-
-          <input type="radio" formControlName="roadTest" value="Yes" /> Yes
-          <input type="radio" formControlName="roadTest" value="No" /> No
-
+          <input type="checkbox"
+                 [checked]="repairForm.get('roadTest')?.value === 'Yes'"
+                 (change)="repairForm.get('roadTest')?.setValue('Yes')" /> Yes
+          <input type="checkbox"
+                 [checked]="repairForm.get('roadTest')?.value === 'No'"
+                 (change)="repairForm.get('roadTest')?.setValue('No')" /> No
         </div>
           
         
       </div>
 
+
       <div class="form-group">
-        <label>Type of Service</label>
+        <label> Type of Service</label>
         <select formControlName="serviceType">
-          <option value="">Select</option>
-          <option value="Repair">Repair</option>
-          <option value="Servicing">Servicing</option>
+          <option value=""> Select</option>
+          <option value="Repair"> Repair</option>
+          <option value="Servicing"> Servicing</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>Repair Estimation Cost</label>
+        <label> Repair Estimation Cost</label>
         <input formControlName="repairCost" type="number" />
       </div>
-
-      <div class="form-group full-width checkbox-group">
-        
+      <div class="form-group checkbox-group">
+        <label>Under Warranty</label>
         <div>
-          <label>Under Warranty                : </label>
-          <input type="radio" formControlName="warranty" value="Yes" />       Yes
-          <input type="radio" formControlName="warranty" value="No" /> No
+          <input type="checkbox"
+                 [checked]="repairForm.get('warranty')?.value === 'Yes'"
+                 (change)="repairForm.get('warranty')?.setValue('Yes')" /> Yes
+          <input type="checkbox"
+                 [checked]="repairForm.get('warranty')?.value === 'No'"
+                 (change)="repairForm.get('warranty')?.setValue('No')" /> No
         </div>
       </div>
 
-      <div class="form-group full-width">
-        <label>Expected Date & Time</label>
-        <input formControlName="expectedDateTime" type="datetime-local" />
-      </div>
+          <div class="form-group full-width">
+            <label>Expected Date & Time</label>
+            <input formControlName="expectedDateTime" type="datetime-local" />
+          </div>
+        </div>
+        <br />
+        <div class="form-actions">
+          <button type="submit" [disabled]="repairForm.invalid">Submit</button>
+        </div>
+      </form>
     </div>
-    <br />
-    <div class="form-actions">
-      <button type="submit" [disabled]="repairForm.invalid">Submit</button>
+
+  </mat-expansion-panel>
+</mat-accordion>
+
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Techanician Mandatory Check
+      </mat-panel-title>
+      <mat-panel-description>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="container mt-4">
+      <h3 class="text-center text-primary mb-4">TECHNICIAN MANDATORY CHECK</h3>
+
+      <form [formGroup]="repairTForm" class="p-3 border rounded shadow-sm bg-light">
+        <div class="text-start mb-3" *ngFor="let item of checkList">
+          <label class="form-label fw-bold">{{ item.label }}</label>
+          <div class="form-check form-check-inline" *ngIf="item.options.includes('OK')">
+            <input type="checkbox" class="form-check-input" formControlName="{{item.control}}Ok" id="{{item.control}}Ok">
+            <label class="form-check-label" for="{{item.control}}Ok">OK</label>
+          </div>
+          <div class="form-check form-check-inline" *ngIf="item.options.includes('OK')">
+            <input type="checkbox" class="form-check-input" formControlName="{{item.control}}NotOk" id="{{item.control}}NotOk">
+            <label class="form-check-label" for="{{item.control}}NotOk">NOT OK</label>
+          </div>
+
+          <div class="form-check form-check-inline" *ngIf="item.options.includes('YES')">
+            <input type="checkbox" class="form-check-input" formControlName="{{item.control}}Yes" id="{{item.control}}Yes">
+            <label class="form-check-label" for="{{item.control}}Yes">YES</label>
+          </div>
+          <div class="form-check form-check-inline" *ngIf="item.options.includes('YES')">
+            <input type="checkbox" class="form-check-input" formControlName="{{item.control}}No" id="{{item.control}}No">
+            <label class="form-check-label" for="{{item.control}}No">NO</label>
+          </div>
+        </div>
+
+        <div class="text-start mb-3 p-2 bg-white border rounded">
+          <p class="mb-1 fw-bold">Technician Advise Remarks:</p>
+          <small class="text-muted">
+            I hereby state that I checked thoroughly in line with the above parameters,
+            explained the same to the driver, and he agreed to take delivery with satisfaction.
+          </small>
+        </div>
+
+        <div class="text-start mb-3">
+          <label class="form-label fw-bold">Remarks:</label>
+          <textarea class="form-control" formControlName="remarks" rows="3" placeholder="Enter remarks here..."></textarea>
+        </div>
+
+        <div class="text-start table-responsive">
+          <table class="table table-bordered align-middle text-center">
+            <thead class="table-primary">
+              <tr>
+                <th>Technician</th>
+                <th>Driver</th>
+                <th>Floor Supervisor</th>
+                <th>Authorised Person</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="text" class="form-control" formControlName="technicianSign" placeholder="Name & Sign"></td>
+                <td><input type="text" class="form-control" formControlName="driverSign" placeholder="Name & Sign"></td>
+                <td><input type="text" class="form-control" formControlName="floorSign" placeholder="Name & Sign"></td>
+                <td><input type="text" class="form-control" formControlName="authSign" placeholder="Name & Sign"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+      </form>
     </div>
-  </form>
-</div>
+
+
+  </mat-expansion-panel>
+</mat-accordion>
+
+

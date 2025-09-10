@@ -1,12 +1,10 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
   <div class="container-fluid">
-    <!-- Logo -->
     <div class="navbar-brand d-flex align-items-center">
       <img src="Workshop.jpg" alt="Logo" width="70" height="70" class="me-2" />
       <h2 class="mb-0">WORKSHOP</h2>
     </div>
 
-    <!-- Title -->
     <div class="text-white fw-bold text-center flex-grow-1">
       <h2 class="mb-0">
         SRINIVASA ROAD TRANSPORT <br /> PRIVATE LIMITED
@@ -20,7 +18,7 @@
     </div>
 
     <!-- If Logged In -->
-    
+
     <div *ngIf="isLoggedIn && user" class="dropdown ms-auto">
       <a class="dropdown-toggle text-decoration-none text-white fw-bold"
          href="#"
@@ -37,6 +35,7 @@
         <hr />
         <div class="d-flex flex-wrap gap-2">
           <button class="btn btn-secondary btn-sm" (click)="book()">Book Appointment</button>
+          <button class="btn btn-success btn-sm" (click)="goToRepairOrder()">Reapair Order</button>
           <button class="btn btn-primary btn-sm" (click)="viewProfile()">My Profile </button>
           <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
         </div>
@@ -44,5 +43,8 @@
     </div>
   </div>
 </nav>
+
+
+
 
 <router-outlet></router-outlet>
