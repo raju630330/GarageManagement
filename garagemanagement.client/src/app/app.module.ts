@@ -15,6 +15,8 @@ import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.compone
 import { authInterceptor } from './auth.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
+import { GarageManagementComponent } from './garage-management/garage-management.component';
+import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
 
 
 @NgModule({
@@ -30,6 +32,8 @@ import { RepairOrderComponent } from './repair-order/repair-order.component';
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
+    GarageManagementComponent,
+    AdditionalJobObserveDetailsComponent,
     
 
     
