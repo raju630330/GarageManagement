@@ -12,6 +12,8 @@ import { adminGuard } from './admin.guard';
 import { authGuard } from './auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
+import { GarageManagementComponent } from './garage-management/garage-management.component';
+import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
 
 const routes: Routes = [
   {
@@ -27,7 +29,7 @@ const routes: Routes = [
       { path: 'register', component: RegisterComponent },
       { path: 'forgot', component: ForgetpasswordComponent },
       { path: 'reset-password', component: ResetpasswordComponent },
-      { path: 'repair-order', component:RepairOrderComponent },
+      { path: 'repair', component:RepairOrderComponent },
       {
         path: 'workshop', component: WorkshopComponent,
         children: [
