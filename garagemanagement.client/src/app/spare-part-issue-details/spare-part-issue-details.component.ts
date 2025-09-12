@@ -9,23 +9,35 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class SparePartIssueDetailsComponent {
   partsForm: FormGroup;
-  errorMessage: string = '';
+  errorMessage = '';
+
+  // Pagination
+  pageSize = 2;
+  currentPage = 1;
 
   constructor(private fb: FormBuilder) {
     this.partsForm = this.fb.group({
       parts: this.fb.array([])
     });
 
-    // Add first row by default
-    this.addPart();
+    this.addPart(); // Start with one row
   }
 
   get parts(): FormArray {
     return this.partsForm.get('parts') as FormArray;
   }
 
+  /** Slice controls for current page */
+  get pagedParts(): FormGroup[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.parts.controls.slice(start, start + this.pageSize) as FormGroup[];
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.parts.length / this.pageSize) || 1;
+  }
+
   addPart() {
-    // Check if last row is valid before adding new row
     if (this.parts.length > 0 && this.parts.at(this.parts.length - 1).invalid) {
       this.errorMessage = '⚠️ Please fill all fields correctly before adding a new row.';
       return;
@@ -41,10 +53,14 @@ export class SparePartIssueDetailsComponent {
     });
 
     this.parts.push(partForm);
+    this.currentPage = this.totalPages; // Go to page where new row belongs
   }
 
   removePart(index: number) {
     this.parts.removeAt(index);
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
   }
 
   getAmount(index: number): number {
@@ -65,5 +81,16 @@ export class SparePartIssueDetailsComponent {
       alert('⚠️ Please fix validation errors before submitting!');
     }
   }
-}
 
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+}

@@ -33,7 +33,7 @@ import { LabourDetailsComponent } from './labour-details/labour-details.componen
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
-    RepairOrderComponent
+    RepairOrderComponent,
     GarageManagementComponent,
     AdditionalJobObserveDetailsComponent,
     SparePartIssueDetailsComponent,
