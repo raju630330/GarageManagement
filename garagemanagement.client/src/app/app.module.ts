@@ -38,9 +38,6 @@ import { LabourDetailsComponent } from './labour-details/labour-details.componen
     AdditionalJobObserveDetailsComponent,
     SparePartIssueDetailsComponent,
     
-
-    
-  
   ],
   imports: [
     BrowserModule,
@@ -48,7 +45,7 @@ import { LabourDetailsComponent } from './labour-details/labour-details.componen
     AppRoutingModule,
     ReactiveFormsModule,
     MatExpansionModule,
-    FormsModule
+    FormsModule,
     
     FormsModule,
 
