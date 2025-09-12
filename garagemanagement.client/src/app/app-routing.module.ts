@@ -12,6 +12,7 @@ import { adminGuard } from './admin.guard';
 import { authGuard } from './auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
+import { LabourDetailsComponent } from './labour-details/labour-details.component';  
 
 const routes: Routes = [
   {
@@ -22,12 +23,14 @@ const routes: Routes = [
         path: 'dashaboard', component: DashboardComponent,
         children: [
           { path: 'bookappointment', component: BookingAppointmentComponent },
-        ]},
+        ]
+      },
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'forgot', component: ForgetpasswordComponent },
       { path: 'reset-password', component: ResetpasswordComponent },
-      { path: 'repair-order', component:RepairOrderComponent },
+      { path: 'repair-order', component: RepairOrderComponent },
+      { path: 'labour-details', component: LabourDetailsComponent }, 
       {
         path: 'workshop', component: WorkshopComponent,
         children: [
@@ -35,9 +38,9 @@ const routes: Routes = [
         ]
       }
     ]
-
   },
 ];
+
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

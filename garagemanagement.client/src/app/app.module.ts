@@ -15,11 +15,10 @@ import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.compone
 import { authInterceptor } from './auth.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
-
+import { LabourDetailsComponent } from './labour-details/labour-details.component';
 
 @NgModule({
   declarations: [
-
     AppComponent,
     UserprofileComponent,
     WorkshopComponent,
@@ -30,21 +29,20 @@ import { RepairOrderComponent } from './repair-order/repair-order.component';
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
-    
-
-    
+  
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    RepairOrderComponent,
-    FormsModule
+    FormsModule,
+
     
+    RepairOrderComponent,
+    LabourDetailsComponent
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
