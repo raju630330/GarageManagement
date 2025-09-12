@@ -13,6 +13,7 @@ namespace GarageManagement.Server.Data
             public DbSet<User> Users { get; set; }
             
         public DbSet<RepairOrder> RepairOrders {  get; set; }
+        public DbSet<LabourDetail> LabourDetails { get; set; }
 
     }
 
