@@ -35,7 +35,7 @@ import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-d
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
-    RepairOrderComponent
+    RepairOrderComponent,
     GarageManagementComponent,
     AdditionalJobObserveDetailsComponent,
     SparePartIssueDetailsComponent,
