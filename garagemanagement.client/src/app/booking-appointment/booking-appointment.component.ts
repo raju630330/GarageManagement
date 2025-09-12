@@ -29,7 +29,7 @@ export class BookingAppointmentComponent {
       date: ['', [Validators.required]],
       time: ['', [Validators.required]],
       customerType: ['Individual', Validators.required],
-      regNo: ['', [Validators.required, Validators.pattern(/^[0-9A-za-z]+$/)]],
+      regNo: ['', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}\s{2}$/)]],
       vehicle: ['', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]],
       customerName: ['',[Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
       mobileNo: ['', [Validators.required, Validators.pattern(/^\+\d{2}\s\d{10}$/)]],
