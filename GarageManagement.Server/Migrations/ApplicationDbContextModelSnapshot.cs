@@ -27,13 +27,7 @@ namespace GarageManagement.Server.Migrations
                     b.Property<string>("search")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkshopId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkshopProfileWorkshopId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("bay")
@@ -59,6 +53,10 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("regPrefix")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("service")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -75,15 +73,13 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("vehicle")
+                    b.Property<string>("vehicleType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("search");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("WorkshopProfileWorkshopId");
 
                     b.ToTable("bookAppointments");
                 });
@@ -218,29 +214,12 @@ namespace GarageManagement.Server.Migrations
 
             modelBuilder.Entity("GarageManagement.Server.Model.BookAppointment", b =>
                 {
-                    b.HasOne("GarageManagement.Server.Model.User", "User")
+                    b.HasOne("GarageManagement.Server.Model.User", null)
                         .WithMany("BookAppointments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagement.Server.Model.WorkshopProfile", "WorkshopProfile")
-                        .WithMany("BookAppointments")
-                        .HasForeignKey("WorkshopProfileWorkshopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("WorkshopProfile");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.User", b =>
-                {
-                    b.Navigation("BookAppointments");
-                });
-
-            modelBuilder.Entity("GarageManagement.Server.Model.WorkshopProfile", b =>
                 {
                     b.Navigation("BookAppointments");
                 });

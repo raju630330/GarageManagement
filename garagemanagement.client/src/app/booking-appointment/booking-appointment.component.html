@@ -1,7 +1,6 @@
-
 <!-- Booking Appointment Modal -->
 <div class="modal fade show d-block" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
 
       <div class="modal-header d-flex justify-content-between">
@@ -13,28 +12,31 @@
 
       <div class="modal-body bg-light">
         <form [formGroup]="appointmentForm" (ngSubmit)="onbookSubmit()" class="text-start">
-          <label for="search">Search</label>
-          <div class="position-relative">
-            <input type="text"
-                   formControlName="search"
-                   class="form-control search-input p-4"
-                   placeholder="Search using Customer Name/Corporate Name / Mobile No. / Email / Registration No." />
-            <i class="bi bi-search search-icon-inside ms-3"></i>
-          </div>
 
-          <div *ngIf="appointmentForm.get('search')?.touched && appointmentForm.get('search')?.invalid" class="text-danger">
+          <label>Search</label>
+          <div class="input-group mb-3">
+            <input type="text"
+                   class="form-control form-control-md"
+                   formControlName="search"
+                   placeholder="Search using Name / Mobile / Email / Reg No. / VIN" />
+            <span class="input-group-text bg-white">
+              <i class="bi bi-search"></i>
+            </span>
+          </div>
+          <div *ngIf="f['search'].touched && f['search'].invalid" class="text-danger">
             Search is required.
           </div>
 
-          <label for="date">Select Date</label>
-          <div class="form-group d-flex justify-content-between mb-3">
-            <input type="date" id="date" formControlName="date" class="form-control" [min]="minDate | date:'yyyy-MM-dd'">
-            <input type="time" id="time" formControlName="time" class="form-control ms-2">
+          <label>Select Date & Time</label>
+          <div class="form-group d-flex mb-3">
+            <input type="date" formControlName="date" class="form-control form-control-md me-2"
+                                      [min]="minDate | date:'yyyy-MM-dd'">
+            <input type="time" formControlName="time" class="form-control form-control-md">
           </div>
-          <div *ngIf="appointmentForm.get('date')?.touched && appointmentForm.get('date')?.invalid" class="text-danger">
+          <div *ngIf="f['date'].touched && f['date'].invalid" class="text-danger">
             Date is required.
           </div>
-          <div *ngIf="appointmentForm.get('time')?.touched && appointmentForm.get('time')?.invalid" class="text-danger">
+          <div *ngIf="f['time'].touched && f['time'].invalid" class="text-danger">
             Time is required.
           </div>
 
@@ -49,110 +51,85 @@
               <label class="form-check-label">Corporate</label>
             </div>
           </div>
-          <div *ngIf="appointmentForm.get('customerType')?.touched && appointmentForm.get('customerType')?.invalid" class="text-danger">
+          <div *ngIf="f['customerType'].touched && f['customerType'].invalid" class="text-danger">
             Please select Customer Type.
           </div>
-          <div *ngIf="appointmentForm.get('customerType')?.value === 'Individual'">
 
-            <span class="me-2"><i class="bi bi-card-text text-gray-500"></i></span>
-            <label for="Registration No.">Registration No.</label>
-            <div class="form-group mb-3 d-flex justify-content-center">
-              <select class="border rounded input-group-text me-2">
+          <div *ngIf="f['customerType'].value === 'Individual'">
+
+            <label>Registration No.</label>
+            <div class="form-group mb-3 d-flex">
+              <select formControlName="regPrefix" class="form-select form-select-md me-2" style="max-width: 100px;">
                 <option value="TS">TS</option>
                 <option value="AP">AP</option>
               </select>
-              <input type="text" formControlName="regNo" class="form-control">
+              <input type="text" formControlName="regNo" class="form-control form-control-md" maxlength="8">
+            </div>
+            <div *ngIf="f['regNo'].touched && f['regNo'].invalid" class="text-danger">
+              Registration No. must be 2 letters + 6 digits.
             </div>
 
-            <div *ngIf="appointmentForm.get('regNo')?.touched && appointmentForm.get('regNo')?.invalid" class="text-danger">
-              Registration No. is required.
-              only numbers are allowed
+            <label>Vehicle Type</label>
+            <select formControlName="vehicleType" class="form-select form-select-md mb-3">
+              <option value="">--Select Type--</option>
+              <option *ngFor="let v of vehicleTypes" [value]="v">{{ v }}</option>
+            </select>
+            <div *ngIf="f['vehicleType'].touched && f['vehicleType'].invalid" class="text-danger">
+              Vehicle Type is required.
             </div>
 
-            <span class="me-2"><i class="bi bi-car-front-fill text-gray-500"></i></span>
-            <label>Vehicle</label>
-            <div class="form-group mb-3">
-              <input type="text" formControlName="vehicle" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('vehicle')?.touched && appointmentForm.get('vehicle')?.invalid" class="text-danger">
-              Vehicle is required.
-              Only Letters are allowed
-            </div>
-
-            <span class="me-2"><i class="bi bi-person-fill text-gray-500"></i></span>
             <label>Customer Name</label>
-            <div class="form-group mb-3">
-              <input type="text" formControlName="customerName" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('customerName')?.touched && appointmentForm.get('customerName')?.invalid" class="text-danger">
-              Customer Name is required.
-              Only Letters are allowed
+            <input type="text" formControlName="customerName" class="form-control form-control-md mb-3">
+            <div *ngIf="f['customerName'].touched && f['customerName'].errors" class="text-danger">
+              <div *ngIf="f['customerName'].errors['required']">customerName name is required.</div>
+              <div *ngIf="f['customerName'].errors['minlength']">Minimum 2 characters required.</div>
+              <div *ngIf="f['customerName'].errors['maxlength']"> Maximum 25 characters allowed.</div>
+              <div *ngIf="f['customerName'].errors['pattern']">No special characters allowed. Only alphabets and spaces allowed.</div>
             </div>
 
-            <span class="me-2"><i class="bi bi-telephone-fill text-gray-500"></i></span>
             <label>Mobile Number</label>
-            <div class="form-group mb-3">
-              <input type="text" formControlName="mobileNo" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('mobileNo')?.touched && appointmentForm.get('mobileNo')?.invalid" class="text-danger">
-              Enter a valid Mobile Number.
+            <input type="text" formControlName="mobileNo" class="form-control form-control-md mb-3">
+            <div *ngIf="f['mobileNo'].touched && f['mobileNo'].invalid" class="text-danger">
+              Enter valid +91 and 10-digit mobile number.
             </div>
 
-            <span class="me-2"><i class="bi bi-envelope-fill text-gray-500"></i></span>
-            <label>EmailID</label>
-            <div class="form-group mb-3">
-              <input type="email" formControlName="emailID" class="form-control">
+            <label>Email</label>
+            <input type="email" formControlName="emailID" class="form-control form-control-md mb-3">
+            <div *ngIf="f['emailID'].touched && f['emailID'].invalid" class="text-danger">
+              Enter a valid email.
             </div>
-            <div *ngIf="appointmentForm.get('emailID')?.touched && appointmentForm.get('emailID')?.invalid" class="text-danger">
-              Enter a valid Email.
-              Email must match abc1&#64;gmail.com format
 
-            </div>
-            
-            <span class="me-2"><i class="bi bi-wrench-adjustable-circle-fill text-gray-500"></i></span>
             <label>Service</label>
-            <div class="form-group mb-3">
-              <input type="text" formControlName="service" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('service')?.touched && appointmentForm.get('service')?.invalid" class="text-danger">
+            <input type="text" formControlName="service" class="form-control form-control-md mb-3">
+            <div *ngIf="f['service'].touched && f['service'].invalid" class="text-danger">
               Service is required.
             </div>
 
-            <span class="me-2"><i class="bi bi-person-badge-fill  text-gray-500"></i></span>
             <label>Service Advisor</label>
-            <div class="form-group mb-3">
-              <select formControlName="serviceAdvisor" class="form-control form-select">
-                <option value="">--Select Advisor--</option>
-                <option *ngFor="let advisor of serviceAdvisors" [value]="advisor">{{ advisor }}</option>
-              </select>
-            </div>
-            <div *ngIf="appointmentForm.get('serviceAdvisor')?.touched && appointmentForm.get('serviceAdvisor')?.invalid" class="text-danger">
+            <select formControlName="serviceAdvisor" class="form-select form-select-md mb-3">
+              <option value="">--Select Advisor--</option>
+              <option *ngFor="let advisor of serviceAdvisors" [value]="advisor">{{ advisor }}</option>
+            </select>
+            <div *ngIf="f['serviceAdvisor'].touched && f['serviceAdvisor'].invalid" class="text-danger">
               Service Advisor is required.
             </div>
-            <!-- Settings -->
-            <span class="me-2"><i class="bi bi-gear-fill absolute text-gray-500"></i></span>
+
             <label>Settings</label>
-            <div class="form-group mb-3">
-              <input type="text" formControlName="settings" class="form-control">
-            </div>
-            <div *ngIf="appointmentForm.get('settings')?.touched && appointmentForm.get('settings')?.invalid" class="text-danger">
+            <input type="text" formControlName="settings" class="form-control form-control-md mb-3">
+            <div *ngIf="f['settings'].touched && f['settings'].invalid" class="text-danger">
               Settings is required.
-              Only Letters are allowed
-
             </div>
 
-            <span class="me-2"><i class="bi bi-geo-alt-fill absolute text-gray-500"></i></span>
             <label>Bay (Location)</label>
-            <div class="form-group mb-3">
-              <select formControlName="bay" class="form-control form-select">
-                <option value="">--Select Bay--</option>
-                <option *ngFor="let b of bays" [value]="b">{{ b }}</option>
-              </select>
-            </div>
-            <div *ngIf="appointmentForm.get('bay')?.touched && appointmentForm.get('bay')?.invalid" class="text-danger">
+            <select formControlName="bay" class="form-select form-select-md mb-3">
+              <option value="">--Select Bay--</option>
+              <option *ngFor="let b of bays" [value]="b">{{ b }}</option>
+            </select>
+            <div *ngIf="f['bay'].touched && f['bay'].invalid" class="text-danger">
               Bay is required.
             </div>
           </div>
+
           <div class="form-group d-flex justify-content-end mb-3">
             <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">Cancel</button>
             <button type="submit" class="btn btn-primary">Save</button>
@@ -162,4 +139,3 @@
     </div>
   </div>
 </div>
-

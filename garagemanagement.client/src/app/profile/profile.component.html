@@ -1,98 +1,121 @@
-
 <div class="container mt-4 text-start">
   <h3 class="mb-4">
     <i class="bi bi-person-circle me-2"></i>
     Profile
   </h3>
 
-
   <div class="row justify-content-center">
     <div class="col-md-8">
 
       <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
         <div class="row mb-3">
-          <div class="col-md-6 ">
-            <label>Workshop Name </label>
-            <input type="text" class="form-control" formControlName="WorkshopName" />
-            <div *ngIf="profileForm.get('WorkshopName')?.invalid && profileForm.get('WorkshopName')?.touched" class="text-danger">
-              workshopName name is required.
-              workshopName must be between 2 and 25 characters.
+          <div class="col-md-6">
+            <label>Workshop Name</label>
+            <input type="text" class="form-control"
+                   formControlName="WorkshopName"
+                   [ngClass]="{'is-invalid': f['WorkshopName'].touched && f['WorkshopName'].invalid}" />
+            <div *ngIf="f['WorkshopName'].touched && f['WorkshopName'].errors" class="text-danger">
+              <div *ngIf="f['WorkshopName'].errors['required']">Workshop name is required.</div>
+              <div *ngIf="f['WorkshopName'].errors['minlength']">Minimum 2 characters required.</div>
+              <div *ngIf="f['WorkshopName'].errors['maxlength']"> Maximum 25 characters allowed.</div>
+              <div *ngIf="f['WorkshopName'].errors['pattern']">No special characters allowed. Only alphabets and spaces allowed.</div>
             </div>
           </div>
+
           <div class="col-md-6">
-            <label>Owner Mobile No. </label>
-            <input type="text" class="form-control" formControlName="OwnerMobileNo" />
-            <div *ngIf="profileForm.get('OwnerMobileNo')?.invalid && profileForm.get('OwnerMobileNo')?.touched" class="text-danger">
-              ownerMobile number is required.
-              ownerMobile must match +91 9123456789 format
-            </div>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label>Owner Name </label>
-            <input type="text" class="form-control" formControlName="OwnerName" />
-            <div *ngIf="profileForm.get('OwnerName')?.invalid && profileForm.get('OwnerName')?.touched" class="text-danger">
-              Owner name is required.
-              ownerName must be between 2 and 25 characters.
-            </div>
-          </div>
-          <div class="col-md-6">
-            <label>Contact Person Name </label>
-            <input type="text" class="form-control" formControlName="ContactPerson" />
-            <div *ngIf="profileForm.get('ContactPerson')?.invalid && profileForm.get('ContactPerson')?.touched" class="text-danger">
-              contactPersonName name is required.
-              contactPersonName must be between 2 and 25 characters.
+            <label>Owner Mobile No.</label>
+            <input type="text" class="form-control"
+                   formControlName="OwnerMobileNo"
+                   [ngClass]="{'is-invalid': f['OwnerMobileNo'].touched && f['OwnerMobileNo'].invalid}" />
+            <div *ngIf="f['OwnerMobileNo'].touched && f['OwnerMobileNo'].errors" class="text-danger">
+              <div *ngIf="f['OwnerMobileNo'].errors['required']">Owner mobile number is required.</div>
+              <div *ngIf="f['OwnerMobileNo'].errors['pattern']">Format: +91 9123456789</div>
             </div>
           </div>
         </div>
 
         <div class="row mb-3">
           <div class="col-md-6">
-            <label>Email ID </label>
-            <input type="email" class="form-control" formControlName="EmailID" />
-            <div *ngIf="profileForm.get('EmailID')?.invalid && profileForm.get('EmailID')?.touched" class="text-danger">
-              Email is required.
-              Email must match abc1&#64;gmail.com format
+            <label>Owner Name</label>
+            <input type="text" class="form-control"
+                   formControlName="OwnerName"
+                   [ngClass]="{'is-invalid': f['OwnerName'].touched && f['OwnerName'].invalid}" />
+            <div *ngIf="f['OwnerName'].touched && f['OwnerName'].errors" class="text-danger">
+              <div *ngIf="f['OwnerName'].errors['required']">Owner name is required.</div>
+              <div *ngIf="f['OwnerName'].errors['minlength']">Minimum 2 characters required.</div>
+              <div *ngIf="f['OwnerName'].errors['maxlength']">Maximum 25 characters allowed.</div>
+              <div *ngIf="f['OwnerName'].errors['pattern']">No special characters allowed. Only alphabets and spaces allowed.</div>
             </div>
           </div>
+
+          <div class="col-md-6">
+            <label>Contact Person Name</label>
+            <input type="text" class="form-control"
+                   formControlName="ContactPerson"
+                   [ngClass]="{'is-invalid': f['ContactPerson'].touched && f['ContactPerson'].invalid}" />
+            <div *ngIf="f['ContactPerson'].touched && f['ContactPerson'].errors" class="text-danger">
+              <div *ngIf="f['ContactPerson'].errors['required']">Contact person name is required.</div>
+              <div *ngIf="f['ContactPerson'].errors['minlength']">Minimum 2 characters required.</div>
+              <div *ngIf="f['ContactPerson'].errors['maxlength']"> Maximum 25 characters allowed.</div>
+              <div *ngIf="f['ContactPerson'].errors['pattern']">No special characters allowed. Only alphabets and spaces allowed.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label>Email ID</label>
+            <input type="email" class="form-control"
+                   formControlName="EmailID"
+                   [ngClass]="{'is-invalid': f['EmailID'].touched && f['EmailID'].invalid}" />
+            <div *ngIf="f['EmailID'].touched && f['EmailID'].errors" class="text-danger">
+              <div *ngIf="f['EmailID'].errors['required']">Email is required.</div>
+              <div *ngIf="f['EmailID'].errors['email']">Invalid email format (e.g., abc1&#64;gmail.com)</div>
+            </div>
+          </div>
+
           <div class="col-md-6">
             <label>Contact No.</label>
-            <input type="text" class="form-control" formControlName="ContactNo" />
-            <div *ngIf="profileForm.get('ContactNo')?.invalid && profileForm.get('ContactNo')?.touched" class="text-danger">
-              contactNo number is required.
-              contactNo must match +91 9123456789 format
+            <input type="text" class="form-control"
+                   formControlName="ContactNo"
+                   [ngClass]="{'is-invalid': f['ContactNo'].touched && f['ContactNo'].invalid}" />
+            <div *ngIf="f['ContactNo'].touched && f['ContactNo'].errors" class="text-danger">
+              <div *ngIf="f['ContactNo'].errors['required']">Contact number is required.</div>
+              <div *ngIf="f['ContactNo'].errors['pattern']">Format: +91 9123456789</div>
             </div>
           </div>
         </div>
 
         <div class="row mb-3">
           <div class="col-md-6">
-            <label>Landline </label>
-            <input type="text" class="form-control" formControlName="Landline" />
-            <div *ngIf="profileForm.get('Landline')?.invalid && profileForm.get('Landline')?.touched" class="text-danger">
-              landline number is required.
-              Format: STD-Number (e.g. 022-12345678)<
+            <label>Landline</label>
+            <input type="text" class="form-control"
+                   formControlName="Landline"
+                   [ngClass]="{'is-invalid': f['Landline'].touched && f['Landline'].invalid}" />
+            <div *ngIf="f['Landline'].touched && f['Landline'].errors" class="text-danger">
+              <div *ngIf="f['Landline'].errors['required']">Landline number is required.</div>
+              <div *ngIf="f['Landline'].errors['pattern']">Format: STD-Number (e.g., 022-12345678)</div>
             </div>
           </div>
+
           <div class="col-md-6">
             <label>Calendar</label>
-            <input type="date" class="form-control" formControlName="CalendarDate" [min]="minDate | date :'yyyy-MM-dd'"/>
-            <div *ngIf="profileForm.get('CalendarDate')?.invalid && profileForm.get('CalendarDate')?.touched" class="text-danger">
-              Date is required.
+            <input type="date" class="form-control"
+                   formControlName="CalendarDate"
+                   [min]="minDate | date:'yyyy-MM-dd'"
+                   [ngClass]="{'is-invalid': f['CalendarDate'].touched && f['CalendarDate'].invalid}" />
+            <div *ngIf="f['CalendarDate'].touched && f['CalendarDate'].errors" class="text-danger">
+              <div *ngIf="f['CalendarDate'].errors['required']"> Date is required.</div>
             </div>
           </div>
         </div>
 
+        <!-- Buttons -->
         <div class="d-flex col-md-6 justify-content-center">
           <button type="submit" class="btn btn-primary mt-2 ms-2">Submit</button>
-          <button type="submit" class="btn btn-primary mt-2 ms-2" (click)="onReset()">Reset</button>
+          <button type="button" class="btn btn-secondary mt-2 ms-2" (click)="onReset()">Reset</button>
         </div>
       </form>
     </div>
   </div>
 </div>
-
-
-
-

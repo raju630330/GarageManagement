@@ -11,13 +11,11 @@
       </h2>
     </div>
 
-    <!-- If Not Logged In -->
     <div *ngIf="!isLoggedIn" class="ms-auto">
       <button class="btn btn-success" routerLink="/login">Login</button>
       <button class="btn btn-success ms-2" routerLink="/register">Sign up</button>
     </div>
 
-    <!-- If Logged In -->
 
     <div *ngIf="isLoggedIn && user" class="dropdown ms-auto">
       <a class="dropdown-toggle text-decoration-none text-white fw-bold"
@@ -43,8 +41,4 @@
     </div>
   </div>
 </nav>
-
-
-
-
 <router-outlet></router-outlet>

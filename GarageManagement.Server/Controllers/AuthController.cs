@@ -37,7 +37,7 @@ namespace GarageManagement.Server.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterDto dto)
         {
-            var validRoles = new[] { "Admin", "Driver", "Technician","Cashier", "Manager", "Supervisor" };
+            var validRoles = new[] { "Admin", "Driver", "Technician", "Cashier", "Manager", "Supervisor" };
 
             if (string.IsNullOrWhiteSpace(dto.Username) ||
                 string.IsNullOrWhiteSpace(dto.Email) ||
