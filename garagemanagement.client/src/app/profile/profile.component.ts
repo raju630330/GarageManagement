@@ -22,10 +22,10 @@ export class ProfileComponent {
     this.profileForm = this.fb.group({
       WorkshopName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25), Validators.pattern(/^[A-Za-z ]+$/)]],
       OwnerName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25), Validators.pattern(/^[A-Za-z ]+$/)]],
-      OwnerMobileNo: ['', [Validators.required, Validators.pattern(/^\+\d{2}\s\d{10}$/)]],
+      OwnerMobileNo: ['', [Validators.required, Validators.pattern(/^\+91\d{10}$/)]],
       EmailID: ['', [Validators.required, Validators.email]],
       ContactPerson: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25), Validators.pattern(/^[A-Za-z ]+$/)]],
-      ContactNo: ['', [Validators.required, Validators.pattern(/^\+\d{2}\s\d{10}$/)]],
+      ContactNo: ['', [Validators.required, Validators.pattern(/^\+91\d{10}$/)]],
       Landline: ['', [Validators.required, Validators.pattern(/^\d{3,5}-\d{6,8}$/)]],
       CalendarDate: ['', [Validators.required]]
     });

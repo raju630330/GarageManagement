@@ -11,7 +11,7 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <label>Workshop Name</label>
-            <input type="text" class="form-control"
+            <input type="text" class="form-control text-start"
                    formControlName="WorkshopName"
                    [ngClass]="{'is-invalid': f['WorkshopName'].touched && f['WorkshopName'].invalid}" />
             <div *ngIf="f['WorkshopName'].touched && f['WorkshopName'].errors" class="text-danger">
@@ -24,12 +24,12 @@
 
           <div class="col-md-6">
             <label>Owner Mobile No.</label>
-            <input type="text" class="form-control"
+            <input type="text" class="form-control text-start"
                    formControlName="OwnerMobileNo"
                    [ngClass]="{'is-invalid': f['OwnerMobileNo'].touched && f['OwnerMobileNo'].invalid}" />
             <div *ngIf="f['OwnerMobileNo'].touched && f['OwnerMobileNo'].errors" class="text-danger">
               <div *ngIf="f['OwnerMobileNo'].errors['required']">Owner mobile number is required.</div>
-              <div *ngIf="f['OwnerMobileNo'].errors['pattern']">Format: +91 9123456789</div>
+              <div *ngIf="f['OwnerMobileNo'].errors['pattern']">Format: +919123456789</div>
             </div>
           </div>
         </div>
@@ -37,7 +37,7 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <label>Owner Name</label>
-            <input type="text" class="form-control"
+            <input type="text" class="form-control text-start"
                    formControlName="OwnerName"
                    [ngClass]="{'is-invalid': f['OwnerName'].touched && f['OwnerName'].invalid}" />
             <div *ngIf="f['OwnerName'].touched && f['OwnerName'].errors" class="text-danger">
@@ -50,7 +50,7 @@
 
           <div class="col-md-6">
             <label>Contact Person Name</label>
-            <input type="text" class="form-control"
+            <input type="text" class="form-control text-start"
                    formControlName="ContactPerson"
                    [ngClass]="{'is-invalid': f['ContactPerson'].touched && f['ContactPerson'].invalid}" />
             <div *ngIf="f['ContactPerson'].touched && f['ContactPerson'].errors" class="text-danger">
@@ -65,7 +65,7 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <label>Email ID</label>
-            <input type="email" class="form-control"
+            <input type="email" class="form-control text-start"
                    formControlName="EmailID"
                    [ngClass]="{'is-invalid': f['EmailID'].touched && f['EmailID'].invalid}" />
             <div *ngIf="f['EmailID'].touched && f['EmailID'].errors" class="text-danger">
@@ -76,12 +76,12 @@
 
           <div class="col-md-6">
             <label>Contact No.</label>
-            <input type="text" class="form-control"
+            <input type="text" class="form-control text-start"
                    formControlName="ContactNo"
                    [ngClass]="{'is-invalid': f['ContactNo'].touched && f['ContactNo'].invalid}" />
             <div *ngIf="f['ContactNo'].touched && f['ContactNo'].errors" class="text-danger">
               <div *ngIf="f['ContactNo'].errors['required']">Contact number is required.</div>
-              <div *ngIf="f['ContactNo'].errors['pattern']">Format: +91 9123456789</div>
+              <div *ngIf="f['ContactNo'].errors['pattern']">Format: +919123456789</div>
             </div>
           </div>
         </div>
@@ -89,7 +89,7 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <label>Landline</label>
-            <input type="text" class="form-control"
+            <input type="text" class="form-control text-start"
                    formControlName="Landline"
                    [ngClass]="{'is-invalid': f['Landline'].touched && f['Landline'].invalid}" />
             <div *ngIf="f['Landline'].touched && f['Landline'].errors" class="text-danger">
@@ -110,7 +110,6 @@
           </div>
         </div>
 
-        <!-- Buttons -->
         <div class="d-flex col-md-6 justify-content-center">
           <button type="submit" class="btn btn-primary mt-2 ms-2">Submit</button>
           <button type="button" class="btn btn-secondary mt-2 ms-2" (click)="onReset()">Reset</button>

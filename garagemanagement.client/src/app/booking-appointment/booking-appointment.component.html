@@ -32,6 +32,7 @@
             <input type="date" formControlName="date" class="form-control form-control-md me-2"
                                       [min]="minDate | date:'yyyy-MM-dd'">
             <input type="time" formControlName="time" class="form-control form-control-md">
+
           </div>
           <div *ngIf="f['date'].touched && f['date'].invalid" class="text-danger">
             Date is required.

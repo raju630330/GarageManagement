@@ -37,6 +37,7 @@ import { LabourDetailsComponent } from './labour-details/labour-details.componen
     GarageManagementComponent,
     AdditionalJobObserveDetailsComponent,
     SparePartIssueDetailsComponent,
+    LabourDetailsComponent
     
   ],
   imports: [
@@ -49,9 +50,6 @@ import { LabourDetailsComponent } from './labour-details/labour-details.componen
     
     FormsModule,
 
-    
-    RepairOrderComponent,
-    LabourDetailsComponent
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }],
   bootstrap: [AppComponent]

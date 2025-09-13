@@ -28,7 +28,7 @@ export class BookingAppointmentComponent {
     this.appointmentForm = this.fb.group({
       search: ['', Validators.required],
       date: ['', Validators.required],
-      time: ['', Validators.required],
+      time: ['', [Validators.required]],
       customerType: ['', Validators.required],
       regPrefix: ['TS'],
       regNo: ['', [

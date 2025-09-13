@@ -16,7 +16,7 @@ namespace GarageManagement.Server.Model
         public string OwnerName { get; set; }
 
         [Required(ErrorMessage = "OwnerMobileNo is required")]
-        [RegularExpression(@"\+91\d{10}", ErrorMessage = "Phone number must start with +91 and be followed by 10 digits.")]
+        [RegularExpression(@"^\+91\d{10}$", ErrorMessage = "Phone number must start with +91 and be followed by 10 digits.")]
         public string OwnerMobileNo { get; set; }
 
         [Required]
@@ -27,7 +27,7 @@ namespace GarageManagement.Server.Model
         public string ContactPerson { get; set; }
 
         [Required(ErrorMessage = "ContactNo is required")]
-        [RegularExpression(@"\+91\d{10}", ErrorMessage = "Phone number must start with +91 and be followed by 10 digits.")]
+        [RegularExpression(@"^\+91\d{10}$", ErrorMessage = "Phone number must start with +91 and be followed by 10 digits.")]
         public string ContactNo { get; set; }
 
         [Required]

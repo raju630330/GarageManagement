@@ -12,6 +12,23 @@ namespace GarageManagement.Server.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "LabourDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SerialNo = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LabourCharges = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    OutsideLabour = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LabourDetails", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RepairOrders",
                 columns: table => new
                 {
@@ -112,6 +129,9 @@ namespace GarageManagement.Server.Migrations
         {
             migrationBuilder.DropTable(
                 name: "bookAppointments");
+
+            migrationBuilder.DropTable(
+                name: "LabourDetails");
 
             migrationBuilder.DropTable(
                 name: "RepairOrders");

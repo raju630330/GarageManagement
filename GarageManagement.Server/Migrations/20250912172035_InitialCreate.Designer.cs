@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250912141802_InitialCreate")]
+    [Migration("20250912172035_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -85,6 +85,34 @@ namespace GarageManagement.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("bookAppointments");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.LabourDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("LabourCharges")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("OutsideLabour")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SerialNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LabourDetails");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.RepairOrder", b =>
