@@ -18,7 +18,7 @@ import { RepairOrderComponent } from './repair-order/repair-order.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { GarageManagementComponent } from './garage-management/garage-management.component';
 import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
-
+import { MatIconModule } from '@angular/material/icon';
 
 
 @NgModule({
@@ -34,7 +34,7 @@ import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-d
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
-    RepairOrderComponent
+    RepairOrderComponent,
     GarageManagementComponent,
     AdditionalJobObserveDetailsComponent,
     
@@ -47,7 +47,8 @@ import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-d
     AppRoutingModule,
     ReactiveFormsModule,
     MatExpansionModule,
-    FormsModule
+    FormsModule,
+    MatIconModule
     
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }],

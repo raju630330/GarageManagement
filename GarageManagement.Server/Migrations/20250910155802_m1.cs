@@ -6,11 +6,34 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GarageManagement.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreate : Migration
+    public partial class m1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "RepairOrders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RegistrationNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VinNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Mkls = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Make = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VehicleSite = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SiteInchargeName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UnderWarranty = table.Column<bool>(type: "bit", nullable: false),
+                    ExpectedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AllottedTechnician = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RepairOrders", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -18,9 +41,9 @@ namespace GarageManagement.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ResetTokenHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ResetTokenExpiresUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -66,7 +89,8 @@ namespace GarageManagement.Server.Migrations
                     settings = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     bay = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    WorkshopId = table.Column<int>(type: "int", nullable: false)
+                    WorkshopId = table.Column<int>(type: "int", nullable: false),
+                    WorkshopProfileWorkshopId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -78,8 +102,8 @@ namespace GarageManagement.Server.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_bookAppointments_WorkshopProfiles_WorkshopId",
-                        column: x => x.WorkshopId,
+                        name: "FK_bookAppointments_WorkshopProfiles_WorkshopProfileWorkshopId",
+                        column: x => x.WorkshopProfileWorkshopId,
                         principalTable: "WorkshopProfiles",
                         principalColumn: "WorkshopId",
                         onDelete: ReferentialAction.Cascade);
@@ -91,22 +115,9 @@ namespace GarageManagement.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_bookAppointments_WorkshopId",
+                name: "IX_bookAppointments_WorkshopProfileWorkshopId",
                 table: "bookAppointments",
-                column: "WorkshopId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                table: "Users",
-                column: "Email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Role",
-                table: "Users",
-                column: "Role",
-                unique: true,
-                filter: "[Role] = 'Admin'");
+                column: "WorkshopProfileWorkshopId");
         }
 
         /// <inheritdoc />
@@ -114,6 +125,9 @@ namespace GarageManagement.Server.Migrations
         {
             migrationBuilder.DropTable(
                 name: "bookAppointments");
+
+            migrationBuilder.DropTable(
+                name: "RepairOrders");
 
             migrationBuilder.DropTable(
                 name: "Users");

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250821043747_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250910155802_m1")]
+    partial class m1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,6 +29,15 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.Property<string>("search")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkshopId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkshopProfileWorkshopId")
+                        .HasColumnType("int");
 
                     b.Property<string>("bay")
                         .IsRequired()
@@ -65,10 +74,6 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("state")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("time")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -79,7 +84,60 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("search");
 
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WorkshopProfileWorkshopId");
+
                     b.ToTable("bookAppointments");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.RepairOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AllottedTechnician")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpectedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Make")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Mkls")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegistrationNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SiteInchargeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("UnderWarranty")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("VehicleSite")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VinNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RepairOrders");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.User", b =>
@@ -119,8 +177,11 @@ namespace GarageManagement.Server.Migrations
 
             modelBuilder.Entity("GarageManagement.Server.Model.WorkshopProfile", b =>
                 {
-                    b.Property<string>("WorkshopName")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("WorkshopId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkshopId"));
 
                     b.Property<DateTime>("CalendarDate")
                         .HasColumnType("datetime2");
@@ -149,9 +210,42 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("WorkshopName");
+                    b.Property<string>("WorkshopName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("WorkshopId");
 
                     b.ToTable("WorkshopProfiles");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.BookAppointment", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.User", "User")
+                        .WithMany("BookAppointments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GarageManagement.Server.Model.WorkshopProfile", "WorkshopProfile")
+                        .WithMany("BookAppointments")
+                        .HasForeignKey("WorkshopProfileWorkshopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("WorkshopProfile");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.User", b =>
+                {
+                    b.Navigation("BookAppointments");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.WorkshopProfile", b =>
+                {
+                    b.Navigation("BookAppointments");
                 });
 #pragma warning restore 612, 618
         }

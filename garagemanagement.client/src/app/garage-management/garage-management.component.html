@@ -1,65 +1,74 @@
-<div class="p-4 max-w-6xl mx-auto">
+<mat-accordion multi="false">
+  <mat-expansion-panel #garagePanel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Garage Management
+      </mat-panel-title>
+      <mat-panel-description>
+        <mat-icon>{{ garagePanel.expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
 
-  <div class="bg-white shadow-md rounded-xl p-6">
+    <div class="p-4 max-w-6xl mx-auto">
+      <div class="bg-white shadow-md rounded-xl p-6">
 
-   
-    <h2 class="text-xl font-bold mb-2 text-left">Garage Management</h2>
-    <h3 class="text-lg font-semibold mb-4 text-left">
-      To be filled by Supervisor in front of Driver
-    </h3>
+        <h3 class="text-lg font-semibold mb-4 text-left">
+          To be filled by Supervisor in front of Driver
+        </h3>
 
-    
-    <form [formGroup]="garageForm">
-      <table class="table-auto border-collapse border border-gray-400 w-full text-left rounded-lg">
-        <thead>
-          <tr class="bg-gray-200">
-            <th class="border p-2">Sl.No</th>
-            <th class="border p-2">Voice of the Driver</th>
-            <th class="border p-2">Sup. Instructions</th>
-            <th class="border p-2">Action Taken</th>
-            <th class="border p-2">Start Time</th>
-            <th class="border p-2">End Time</th>
-          </tr>
-        </thead>
-        <tbody formArrayName="rows">
-          <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i">
-            <td class="border p-2">
-              <input type="number" formControlName="slNo"
-                     class="w-full border rounded p-1 text-center" />
-            </td>
-            <td class="border p-2">
-              <input type="text" formControlName="driverVoice"
-                     class="w-full border rounded p-1"
-                     maxlength="50"
-                     pattern="[a-zA-Z ]*" />
-            </td>
-            <td class="border p-2">
-              <input type="text" formControlName="supInstructions"
-                     class="w-full border rounded p-1"
-                     maxlength="50"
-                     pattern="[a-zA-Z ]*" />
-            </td>
-            <td class="border p-2">
-              <input type="text" formControlName="actionTaken"
-                     class="w-full border rounded p-1"
-                     maxlength="50"
-                     pattern="[a-zA-Z ]*" />
-            </td>
-            <td class="border p-2">
-              <input type="text" formControlName="startTime"
-                     class="w-full border rounded p-1"
-                     placeholder="HH:MM AM/PM"
-                     pattern="^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$" />
-            </td>
-            <td class="border p-2">
-              <input type="text" formControlName="endTime"
-                     class="w-full border rounded p-1"
-                     placeholder="HH:MM AM/PM"
-                     pattern="^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
-  </div>
-</div>
+        <form [formGroup]="garageForm">
+          <table class="table-auto border-collapse border border-gray-400 w-full text-left rounded-lg">
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="border p-2">Sl.No</th>
+                <th class="border p-2">Voice of the Driver</th>
+                <th class="border p-2">Sup. Instructions</th>
+                <th class="border p-2">Action Taken</th>
+                <th class="border p-2">Start Time</th>
+                <th class="border p-2">End Time</th>
+              </tr>
+            </thead>
+            <tbody formArrayName="rows">
+              <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i">
+                <td class="border p-2">
+                  <input type="number" formControlName="slNo"
+                         class="w-full border rounded p-1 text-center" />
+                </td>
+                <td class="border p-2">
+                  <input type="text" formControlName="driverVoice"
+                         class="w-full border rounded p-1"
+                         maxlength="50"
+                         pattern="[a-zA-Z ]*" />
+                </td>
+                <td class="border p-2">
+                  <input type="text" formControlName="supInstructions"
+                         class="w-full border rounded p-1"
+                         maxlength="50"
+                         pattern="[a-zA-Z ]*" />
+                </td>
+                <td class="border p-2">
+                  <input type="text" formControlName="actionTaken"
+                         class="w-full border rounded p-1"
+                         maxlength="50"
+                         pattern="[a-zA-Z ]*" />
+                </td>
+                <td class="border p-2">
+                  <input type="text" formControlName="startTime"
+                         class="w-full border rounded p-1"
+                         placeholder="HH:MM AM/PM"
+                         pattern="^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$" />
+                </td>
+                <td class="border p-2">
+                  <input type="text" formControlName="endTime"
+                         class="w-full border rounded p-1"
+                         placeholder="HH:MM AM/PM"
+                         pattern="^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
