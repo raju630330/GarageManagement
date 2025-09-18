@@ -72,7 +72,10 @@ export class RepairOrderComponent implements OnInit {
   onSubmit() {
     if (this.repairForm.valid) {
       console.log(this.repairForm.value);
-      alert('Form Submitted Successfully!');
+      alert('✅ Form submitted successfully!');
+    } else {
+      alert('⚠️ Please fix validation errors before submitting!');
     }
   }
+  
 }

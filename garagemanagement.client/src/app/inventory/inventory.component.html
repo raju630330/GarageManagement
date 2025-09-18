@@ -1,0 +1,40 @@
+<div class="container mt-5">
+  <h4 class="text-center mb-4">INVENTORY OF ACCESSORIES <br /> IN THE VEHICLE</h4>
+
+  <table class="table table-bordered text-center align-middle">
+    <thead class="table-primary">
+      <tr>
+        <th colspan="2">Accessories</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let i of accessoriesLeft; let idx = index">
+        <td class="text-start">
+          <div class="form-check d-flex gap-5" *ngIf="accessoriesLeft[idx]">
+            <input type="checkbox"
+                   [(ngModel)]="accessoriesLeft[idx].checked"
+                   name="{{ accessoriesLeft[idx].label | lowercase }}"
+                   class="form-check-input btn btn-outline-secondary"
+                   id="{{ accessoriesLeft[idx].label | lowercase }}" />
+            <label class="form-check-label fw-bold" for="{{ accessoriesLeft[idx].label | lowercase }}">
+              {{ accessoriesLeft[idx].label }}
+            </label>
+          </div>
+        </td>
+
+        <td class="text-start">
+          <div class="form-check d-flex gap-5" *ngIf="accessoriesRight[idx]">
+            <input type="checkbox"
+                   [(ngModel)]="accessoriesRight[idx].checked"
+                   name="{{ accessoriesRight[idx].label | lowercase }}"
+                   class="form-check-input btn btn-outline-secondary"
+                   id="{{ accessoriesRight[idx].label | lowercase }}" />
+            <label class="form-check-label fw-bold" for="{{ accessoriesRight[idx].label | lowercase }}">
+              {{ accessoriesRight[idx].label }}
+            </label>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

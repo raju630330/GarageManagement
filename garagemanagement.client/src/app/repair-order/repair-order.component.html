@@ -53,50 +53,46 @@
             <input formControlName="siteInchargeName" />
           </div>
 
-      <div class="form-group">
-        <label> Driver permanent to this vehicle</label>
-        <input formControlName="driverPermanent" />
-      </div>
-    
-      <div class="form-group checkbox-group">
-        <label>Road test along with driver</label>
-        <div>
-          <input type="checkbox"
-                 [checked]="repairForm.get('roadTest')?.value === 'Yes'"
-                 (change)="repairForm.get('roadTest')?.setValue('Yes')" /> Yes
-          <input type="checkbox"
-                 [checked]="repairForm.get('roadTest')?.value === 'No'"
-                 (change)="repairForm.get('roadTest')?.setValue('No')" /> No
-        </div>
-          
-        
-      </div>
+          <div class="form-group">
+            <label> Driver permanent to this vehicle</label>
+            <input formControlName="driverPermanent" />
+          </div>
 
+          <div class="form-group checkbox-group">
+            <label>Road test along with driver</label>
+            <div>
+              <input type="checkbox"
+                     [checked]="repairForm.get('roadTest')?.value === 'Yes'"
+                     (change)="repairForm.get('roadTest')?.setValue('Yes')" /> Yes
+              <input type="checkbox"
+                     [checked]="repairForm.get('roadTest')?.value === 'No'"
+                     (change)="repairForm.get('roadTest')?.setValue('No')" /> No
+            </div>
+          </div>
+          <div class="form-group">
+            <label> Type of Service</label>
+            <select formControlName="serviceType">
+              <option value=""> Select</option>
+              <option value="Repair"> Repair</option>
+              <option value="Servicing"> Servicing</option>
+            </select>
+          </div>
 
-      <div class="form-group">
-        <label> Type of Service</label>
-        <select formControlName="serviceType">
-          <option value=""> Select</option>
-          <option value="Repair"> Repair</option>
-          <option value="Servicing"> Servicing</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label> Repair Estimation Cost</label>
-        <input formControlName="repairCost" type="number" />
-      </div>
-      <div class="form-group checkbox-group">
-        <label>Under Warranty</label>
-        <div>
-          <input type="checkbox"
-                 [checked]="repairForm.get('warranty')?.value === 'Yes'"
-                 (change)="repairForm.get('warranty')?.setValue('Yes')" /> Yes
-          <input type="checkbox"
-                 [checked]="repairForm.get('warranty')?.value === 'No'"
-                 (change)="repairForm.get('warranty')?.setValue('No')" /> No
-        </div>
-      </div>
+          <div class="form-group">
+            <label> Repair Estimation Cost</label>
+            <input formControlName="repairCost" type="number" />
+          </div>
+          <div class="form-group checkbox-group">
+            <label>Under Warranty</label>
+            <div>
+              <input type="checkbox"
+                     [checked]="repairForm.get('warranty')?.value === 'Yes'"
+                     (change)="repairForm.get('warranty')?.setValue('Yes')" /> Yes
+              <input type="checkbox"
+                     [checked]="repairForm.get('warranty')?.value === 'No'"
+                     (change)="repairForm.get('warranty')?.setValue('No')" /> No
+            </div>
+          </div>
 
           <div class="form-group full-width">
             <label>Expected Date & Time</label>
@@ -109,6 +105,49 @@
         </div>
       </form>
     </div>
+
+  </mat-expansion-panel>
+</mat-accordion>
+
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        INVENTORY OF ACCESSORIES IN THE VEHICLE
+      </mat-panel-title>
+      <mat-panel-description>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-inventory></app-inventory>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        To be filled by Supervisor in front of Driver
+      </mat-panel-title>
+      <mat-panel-description>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-garage-management></app-garage-management>
+
+  </mat-expansion-panel>
+</mat-accordion>
+
+
+
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        additional-job-observe-details
+      </mat-panel-title>
+      <mat-panel-description>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-additional-job-observe-details></app-additional-job-observe-details>-->
 
   </mat-expansion-panel>
 </mat-accordion>
@@ -197,5 +236,31 @@
 
   </mat-expansion-panel>
 </mat-accordion>
+
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Spare Parts Issue Details
+      </mat-panel-title>
+      <mat-panel-description>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-spare-part-issue-details></app-spare-part-issue-details>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Labour Details
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <app-labour-details></app-labour-details>
+    </mat-expansion-panel>
+  </mat-accordion>
 
 

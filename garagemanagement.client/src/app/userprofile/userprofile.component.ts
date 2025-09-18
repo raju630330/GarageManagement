@@ -75,8 +75,10 @@ export class UserprofileComponent implements OnInit {
     this.router.navigate(['/labour-details']);
 
   }
+  goToInventory() {
+    this.router.navigate(['/inventory']);
 
-
+  }
    
 }
 

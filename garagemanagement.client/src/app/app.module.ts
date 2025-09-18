@@ -20,7 +20,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { GarageManagementComponent } from './garage-management/garage-management.component';
 import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
 import { LabourDetailsComponent } from './labour-details/labour-details.component';
-import { MatIconModule } from '@angular/material/icon';
+import { InventoryComponent } from './inventory/inventory.component';
+import { SettingsComponent } from './settings/settings.component';
 
 
 
@@ -40,7 +41,10 @@ import { MatIconModule } from '@angular/material/icon';
     GarageManagementComponent,
     AdditionalJobObserveDetailsComponent,
     SparePartIssueDetailsComponent,
-    LabourDetailsComponent            
+    LabourDetailsComponent,
+    InventoryComponent,
+    SettingsComponent
+    
   ],
   imports: [
     BrowserModule,
