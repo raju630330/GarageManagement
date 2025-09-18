@@ -22,6 +22,8 @@ import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-d
 import { LabourDetailsComponent } from './labour-details/labour-details.component';
 import { MatIconModule } from '@angular/material/icon';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,12 +48,13 @@ import { MatIconModule } from '@angular/material/icon';
     AppRoutingModule,
     ReactiveFormsModule,
     MatExpansionModule,
+    MatIconModule,
+
     FormsModule                       
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }
-    FormsModule,
-    MatIconModule
+    
     
   ],
   bootstrap: [AppComponent]
