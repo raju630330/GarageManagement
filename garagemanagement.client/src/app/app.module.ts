@@ -33,11 +33,11 @@ import { LabourDetailsComponent } from './labour-details/labour-details.componen
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
-    RepairOrderComponent,
+    RepairOrderComponent,             
     GarageManagementComponent,
     AdditionalJobObserveDetailsComponent,
     SparePartIssueDetailsComponent,
-    
+    LabourDetailsComponent            
   ],
   imports: [
     BrowserModule,
@@ -45,15 +45,11 @@ import { LabourDetailsComponent } from './labour-details/labour-details.componen
     AppRoutingModule,
     ReactiveFormsModule,
     MatExpansionModule,
-    FormsModule,
-    
-    FormsModule,
-
-    
-    RepairOrderComponent,
-    LabourDetailsComponent
+    FormsModule                       
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,12 +1,7 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-labour-details',
-  standalone: true,
-  imports: [CommonModule, FormsModule, CurrencyPipe],
   templateUrl: './labour-details.component.html',
   styleUrls: ['./labour-details.component.css']
 })
