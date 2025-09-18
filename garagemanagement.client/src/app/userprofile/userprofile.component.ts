@@ -56,7 +56,23 @@ export class UserprofileComponent implements OnInit {
   }
 
   goToRepairOrder() {
-    this.router.navigate(['/repair']);
+    this.router.navigate(['/repair-order']);
+
+  }
+  goToSparePartDetails() {
+    this.router.navigate(['/spare-part']);
+
+  }
+  goToJobObserveDetails() {
+    this.router.navigate(['/jobobservedetails']);
+
+  }
+  goToSupervisorDetails() {
+    this.router.navigate(['/garagemanagement']);
+
+  }
+  goToLabourDetails() {
+    this.router.navigate(['/labour-details']);
 
   }
 

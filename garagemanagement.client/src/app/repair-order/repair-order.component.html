@@ -127,24 +127,32 @@
       <h3 class="text-center text-primary mb-4">TECHNICIAN MANDATORY CHECK</h3>
 
       <form [formGroup]="repairTForm" class="p-3 border rounded shadow-sm bg-light">
-        <div class="text-start mb-3" *ngFor="let item of checkList">
-          <label class="form-label fw-bold">{{ item.label }}</label>
-          <div class="form-check form-check-inline" *ngIf="item.options.includes('OK')">
-            <input type="checkbox" class="form-check-input" formControlName="{{item.control}}Ok" id="{{item.control}}Ok">
-            <label class="form-check-label" for="{{item.control}}Ok">OK</label>
-          </div>
-          <div class="form-check form-check-inline" *ngIf="item.options.includes('OK')">
-            <input type="checkbox" class="form-check-input" formControlName="{{item.control}}NotOk" id="{{item.control}}NotOk">
-            <label class="form-check-label" for="{{item.control}}NotOk">NOT OK</label>
-          </div>
+        <div class="mb-2 d-flex align-items-center justify-content-between" *ngFor="let item of checkList">
+          <label class="fw-bold mb-0">{{ item.label }}</label>
+          <div>
 
-          <div class="form-check form-check-inline" *ngIf="item.options.includes('YES')">
-            <input type="checkbox" class="form-check-input" formControlName="{{item.control}}Yes" id="{{item.control}}Yes">
-            <label class="form-check-label" for="{{item.control}}Yes">YES</label>
-          </div>
-          <div class="form-check form-check-inline" *ngIf="item.options.includes('YES')">
-            <input type="checkbox" class="form-check-input" formControlName="{{item.control}}No" id="{{item.control}}No">
-            <label class="form-check-label" for="{{item.control}}No">NO</label>
+            <ng-container *ngIf="item.options.includes('OK')">
+              <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" formControlName="{{item.control}}Ok" id="{{item.control}}Ok">
+                <label class="form-check-label" for="{{item.control}}Ok">OK</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" formControlName="{{item.control}}NotOk" id="{{item.control}}NotOk">
+                <label class="form-check-label" for="{{item.control}}NotOk">NOT OK</label>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="item.options.includes('YES')">
+              <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" formControlName="{{item.control}}Yes" id="{{item.control}}Yes">
+                <label class="form-check-label" for="{{item.control}}Yes">YES</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input type="checkbox" class="form-check-input" formControlName="{{item.control}}No" id="{{item.control}}No">
+                <label class="form-check-label" for="{{item.control}}No">NO</label>
+              </div>
+            </ng-container>
+
           </div>
         </div>
 

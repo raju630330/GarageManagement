@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 
+
 @Component({
   selector: 'app-labour-details',
+  standalone: false,
   templateUrl: './labour-details.component.html',
   styleUrls: ['./labour-details.component.css']
 })

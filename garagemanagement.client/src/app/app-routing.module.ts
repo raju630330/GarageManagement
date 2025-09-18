@@ -13,6 +13,9 @@ import { authGuard } from './auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
 import { LabourDetailsComponent } from './labour-details/labour-details.component';  
+import { SparePartIssueDetailsComponent } from './spare-part-issue-details/spare-part-issue-details.component';
+import { GarageManagementComponent } from './garage-management/garage-management.component';
+import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
 
 const routes: Routes = [
   {
@@ -30,6 +33,9 @@ const routes: Routes = [
       { path: 'forgot', component: ForgetpasswordComponent },
       { path: 'reset-password', component: ResetpasswordComponent },
       { path: 'repair-order', component: RepairOrderComponent },
+      { path: 'spare-part', component: SparePartIssueDetailsComponent },
+      { path: 'garagemanagement', component: GarageManagementComponent },
+      { path: 'jobobservedetails', component: AdditionalJobObserveDetailsComponent },
       { path: 'labour-details', component: LabourDetailsComponent }, 
       {
         path: 'workshop', component: WorkshopComponent,
