@@ -19,29 +19,49 @@ export class BookingAppointmentComponent {
 
   serviceAdvisors: string[] = ['John Doe', 'Jane Smith', 'Robert Brown'];
   bays: string[] = ['Bay 1', 'Bay 2', 'Bay 3'];
-   
+  vehicleTypes = ['Passenger', 'Commercial'];
+
 
   constructor(private fb: FormBuilder, private http: HttpClient, private WorkshopProfileService: WorkshopProfileService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.appointmentForm = this.fb.group({
-      search: ['', [Validators.required]],
-      date: ['', [Validators.required]],
+      search: ['', Validators.required],
+      date: ['', Validators.required],
       time: ['', [Validators.required]],
-      customerType: ['Individual', Validators.required],
-      regNo: ['', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}\s{2}$/)]],
-      vehicle: ['', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]],
-      customerName: ['',[Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
-      mobileNo: ['', [Validators.required, Validators.pattern(/^\+\d{2}\s\d{10}$/)]],
-      emailID: ['', [Validators.required, Validators.email]],
-      service: ['', [Validators.required]],
-      serviceAdvisor: ['', [Validators.required]],
-      settings: ['', [Validators.required, Validators.pattern(/^[A-Za-z]$/)]],
-      bay: ['', [Validators.required]]
+      customerType: ['', Validators.required],
+      regPrefix: ['TS'],
+      regNo: ['', [
+        Validators.required,
+        Validators.pattern(/^[A-Z ]{2}[0-9]{6}$/) 
+      ]],
+      vehicleType: ['', Validators.required],
+      customerName: ['', [
+        Validators.required,
+        Validators.pattern(/^[A-Za-z ]+$/),
+        Validators.minLength(2),
+        Validators.maxLength(25)
+      ]],
+      mobileNo: ['', [
+        Validators.required,
+        Validators.pattern(/^\+\d{2}\s\d{10}$/)
+      ]],
+      emailID: ['', [
+        Validators.required,
+        Validators.email
+      ]],
+      service: ['',[ Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
+      serviceAdvisor: ['', Validators.required],
+      settings: ['',[Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
+      bay: ['', Validators.required]
     });
   }
+
   selectCustomerType(type: string) {
     this.appointmentForm.get('customerType')?.setValue(type);
+  }
+  get f() {
+    return this.appointmentForm.controls;
   }
 
   onbookSubmit() {

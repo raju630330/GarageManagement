@@ -11,13 +11,11 @@
       </h2>
     </div>
 
-    <!-- If Not Logged In -->
     <div *ngIf="!isLoggedIn" class="ms-auto">
       <button class="btn btn-success" routerLink="/login">Login</button>
       <button class="btn btn-success ms-2" routerLink="/register">Sign up</button>
     </div>
 
-    <!-- If Logged In -->
 
     <div *ngIf="isLoggedIn && user" class="dropdown ms-auto">
       <a class="dropdown-toggle text-decoration-none text-white fw-bold"
@@ -36,6 +34,10 @@
         <div class="d-flex flex-wrap gap-2">
           <button class="btn btn-secondary btn-sm" (click)="book()">Book Appointment</button>
           <button class="btn btn-success btn-sm" (click)="goToRepairOrder()">Reapair Order</button>
+          <button class="btn btn-success btn-sm" (click)="goToSparePartDetails()">Spare Part Issue Details</button>
+          <button class="btn btn-success btn-sm" (click)="goToJobObserveDetails()">Job Observe Details</button>
+          <button class="btn btn-success btn-sm" (click)="goToSupervisorDetails()">Supervisor Details</button>
+          <button class="btn btn-primary btn-sm" (click)="goToLabourDetails()">Labour Details</button>
           <button class="btn btn-primary btn-sm" (click)="viewProfile()">My Profile </button>
           <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
         </div>

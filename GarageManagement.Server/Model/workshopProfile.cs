@@ -6,22 +6,28 @@ namespace GarageManagement.Server.Model
     {
         [Key]  
         public int WorkshopId { get; set; }
-        [Required]
+
+        [Required(ErrorMessage="Workshop Name is required")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = "No special characters allowed. Only alphabets and spaces.")]
         public string WorkshopName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "OwnerName Name is required")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = "No special characters allowed. Only alphabets and spaces.")]
         public string OwnerName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "OwnerMobileNo is required")]
+        [RegularExpression(@"^\+91\d{10}$", ErrorMessage = "Phone number must start with +91 and be followed by 10 digits.")]
         public string OwnerMobileNo { get; set; }
 
         [Required]
         public string EmailID { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "ContactPerson Name is required")]
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = "No special characters allowed. Only alphabets and spaces.")]
         public string ContactPerson { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "ContactNo is required")]
+        [RegularExpression(@"^\+91\d{10}$", ErrorMessage = "Phone number must start with +91 and be followed by 10 digits.")]
         public string ContactNo { get; set; }
 
         [Required]
@@ -30,8 +36,8 @@ namespace GarageManagement.Server.Model
         [Required]
         public DateTime? CalendarDate { get; set; }
 
-        // Navigation: One Workshop → Many Appointments
-        public ICollection<BookAppointment> BookAppointments { get; set; }
+        //// Navigation: One Workshop → Many Appointments
+        //public ICollection<BookAppointment> BookAppointments { get; set; }
     }
     
 }

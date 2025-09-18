@@ -15,15 +15,15 @@ import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.compone
 import { authInterceptor } from './auth.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
+import { SparePartIssueDetailsComponent } from './spare-part-issue-details/spare-part-issue-details.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { GarageManagementComponent } from './garage-management/garage-management.component';
 import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
+import { LabourDetailsComponent } from './labour-details/labour-details.component';
 import { MatIconModule } from '@angular/material/icon';
-
 
 @NgModule({
   declarations: [
-
     AppComponent,
     UserprofileComponent,
     WorkshopComponent,
@@ -34,12 +34,11 @@ import { MatIconModule } from '@angular/material/icon';
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
-    RepairOrderComponent,
+    RepairOrderComponent,             
     GarageManagementComponent,
     AdditionalJobObserveDetailsComponent,
-    
-
-    
+    SparePartIssueDetailsComponent,
+    LabourDetailsComponent            
   ],
   imports: [
     BrowserModule,
@@ -47,12 +46,14 @@ import { MatIconModule } from '@angular/material/icon';
     AppRoutingModule,
     ReactiveFormsModule,
     MatExpansionModule,
+    FormsModule                       
+  ],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }
     FormsModule,
     MatIconModule
     
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-

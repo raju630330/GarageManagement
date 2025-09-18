@@ -3,6 +3,13 @@ small {
   color: red;
   font-size: 12px;
 }
+.is-invalid {
+  border: 2px solid red !important;
+  background-color: #ffe6e6;
+}
+
+
+
 
 /* 🌄 Background Image with Overlay */
 /*.container {
