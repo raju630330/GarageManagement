@@ -23,7 +23,6 @@ import { LabourDetailsComponent } from './labour-details/labour-details.componen
 import { MatIconModule } from '@angular/material/icon';
 
 
-
 @NgModule({
   declarations: [
     AppComponent,
