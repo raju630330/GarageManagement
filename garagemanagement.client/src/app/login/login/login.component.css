@@ -1,0 +1,80 @@
+/* Section itself just centers things */
+.login-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa; /* light gray around card */
+}
+
+/* Card with background image */
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: url('logo (2).png') no-repeat center center/cover;
+  color: #fff;
+}
+
+/* Left Column */
+.left-section {
+  padding: 3rem;
+  background: rgba(0, 0, 0, 0.6); /* black overlay */
+}
+
+.welcome-text {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.company-heading {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #dc3545; /* red heading */
+}
+
+  .company-heading small {
+    color: #ddd;
+  }
+
+/* Features List */
+.left-section ul {
+  padding-left: 1rem;
+  margin-top: 1rem;
+}
+
+  .left-section ul li {
+    list-style: none;
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+
+    .left-section ul li::before {
+      content: "✔ ";
+      color: #28a745; /* green check */
+      font-weight: bold;
+    }
+
+/* Right Column (Login Form) */
+.card-body {
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.9); /* semi-white */
+  color: #000; /* black text */
+}
+
+/* Social Buttons */
+.btn-floating {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .left-section {
+    display: none;
+  }
+}

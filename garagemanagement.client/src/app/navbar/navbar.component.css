@@ -1,43 +1,19 @@
 
-/*.navbar-bg-image {
-  background-image: url('');*/ /* 🔁 Change path as needed */
-  /*background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  padding-bottom: 20px;
-}*/
-
-
-.navbar {
-  background: linear-gradient(90deg, #0d6efd, #007bff);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-}
-
-.navbar-brand img {
-  border: 2px solid white;
-}
-
-.navbar-brand h3 {
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
 .tab-container {
-  position: relative;
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 6px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  margin-right: 0px;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
 }
 
 .scrollable-tabs {
   overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  scroll-behavior: smooth;
 }
-
   .scrollable-tabs::-webkit-scrollbar {
     display: none;
   }
@@ -47,37 +23,47 @@
 }
 
   .nav-tabs .nav-link {
-    color: #555;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    color: #333;
+    border: none;
+    border-radius: 0;
+    transition: color 0.3s, background 0.3s;
+    font-weight: normal !important;
   }
+
+    .nav-tabs .nav-link:hover {
+      background: #eaeaea;
+    }
 
     .nav-tabs .nav-link.active {
       background: #0d6efd;
       color: #fff;
-      border-radius: 8px;
     }
 
-    .nav-tabs .nav-link:hover {
-      background: rgba(13, 110, 253, 0.1);
-      border-radius: 8px;
-    }
 
 .scroll-btn {
-  background: white;
-  border: 1px solid #ccc;
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  font-size: 1.5rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  font-size: 20px;
-  font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  transition: 0.3s;
+  transition: background 0.3s;
 }
 
   .scroll-btn:hover {
-    background: #0d6efd;
-    color: white;
-    border-color: #0d6efd;
+    background: #0b5ed7;
   }
+
+.left-btn {
+  margin-right: 0.5rem;
+}
+
+.right-btn {
+  margin-left: 0.5rem;
+}
+@media (max-width: 767.98px) {
+  .tab-container {
+    padding: 0.25rem;
+  }
+}

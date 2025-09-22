@@ -5,6 +5,7 @@
       <h2 class="mb-0">WORKSHOP</h2>
     </div>
 
+  
     <div class="text-white fw-bold text-center flex-grow-1">
       <h2 class="mb-0">
         SRINIVASA ROAD TRANSPORT <br /> PRIVATE LIMITED
@@ -15,8 +16,6 @@
       <button class="btn btn-success" routerLink="/login">Login</button>
       <button class="btn btn-success ms-2" routerLink="/register">Sign up</button>
     </div>
-
-
     <div *ngIf="isLoggedIn && user" class="dropdown ms-auto">
       <a class="dropdown-toggle text-decoration-none text-white fw-bold"
          href="#"
@@ -33,16 +32,39 @@
         <hr />
         <div class="d-flex flex-wrap gap-2">
           <button class="btn btn-secondary btn-sm" (click)="book()">Book Appointment</button>
-          <button class="btn btn-success btn-sm" (click)="goToRepairOrder()">Reapair Order</button>
-          <button class="btn btn-success btn-sm" (click)="goToSparePartDetails()">Spare Part Issue Details</button>
-          <button class="btn btn-success btn-sm" (click)="goToJobObserveDetails()">Job Observe Details</button>
-          <button class="btn btn-success btn-sm" (click)="goToSupervisorDetails()">Supervisor Details</button>
-          <button class="btn btn-primary btn-sm" (click)="goToLabourDetails()">Labour Details</button>
-          <button class="btn btn-primary btn-sm" (click)="viewProfile()">My Profile </button>
+          <button class="btn btn-success btn-sm" (click)="goToRepairOrder()">Repair Order</button>
+          <button class="btn btn-success btn-sm" (click)="goToSparePartDetails()">Spare Part Issue</button>
+          <button class="btn btn-success btn-sm" (click)="goToJobObserveDetails()">Job Observe</button>
+          <button class="btn btn-success btn-sm" (click)="goToSupervisorDetails()">Supervisor</button>
+          <button class="btn btn-primary btn-sm" (click)="goToLabourDetails()">Labour</button>
+          <button class="btn btn-primary btn-sm" (click)="viewProfile()">My Profile</button>
           <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
         </div>
       </ul>
     </div>
   </div>
 </nav>
+
+<div *ngIf="isLoggedIn" class="tab-container">
+  <button *ngIf="showLeftArrow"
+          class="scroll-btn left-btn"
+          (click)="scrollTabs(-200)">
+    <i class="bi bi-chevron-left"></i>
+  </button>
+  <div class="scrollable-tabs flex-grow-1" #tabScroll>
+    <a *ngFor="let tab of mainTabs"
+       class="nav-link d-inline-block px-3"
+       [routerLink]="tab.route"
+       routerLinkActive="active">
+      {{ tab.name }}
+    </a>
+  </div>
+
+  <button *ngIf="showRightArrow"
+          class="scroll-btn right-btn"
+          (click)="scrollTabs(200)">
+    <i class="bi bi-chevron-right"></i>
+  </button>
+</div>
+
 <router-outlet></router-outlet>

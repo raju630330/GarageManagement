@@ -20,6 +20,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { GarageManagementComponent } from './garage-management/garage-management.component';
 import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
 import { LabourDetailsComponent } from './labour-details/labour-details.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { LabourDetailsComponent } from './labour-details/labour-details.componen
     GarageManagementComponent,
     AdditionalJobObserveDetailsComponent,
     SparePartIssueDetailsComponent,
+    NavbarComponent,
     LabourDetailsComponent
     
   ],
