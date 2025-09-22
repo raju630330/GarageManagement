@@ -16,6 +16,8 @@ import { LabourDetailsComponent } from './labour-details/labour-details.componen
 import { SparePartIssueDetailsComponent } from './spare-part-issue-details/spare-part-issue-details.component';
 import { GarageManagementComponent } from './garage-management/garage-management.component';
 import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
+import { InventoryComponent } from './inventory/inventory.component';
+import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
   {
@@ -36,11 +38,14 @@ const routes: Routes = [
       { path: 'spare-part', component: SparePartIssueDetailsComponent },
       { path: 'garagemanagement', component: GarageManagementComponent },
       { path: 'jobobservedetails', component: AdditionalJobObserveDetailsComponent },
-      { path: 'labour-details', component: LabourDetailsComponent }, 
+      { path: 'labour-details', component: LabourDetailsComponent },
+      { path: 'inventory', component: InventoryComponent },
       {
         path: 'workshop', component: WorkshopComponent,
         children: [
           { path: 'profile', component: ProfileComponent },
+          { path: 'setting', component: SettingsComponent },
+
         ]
       }
     ]
