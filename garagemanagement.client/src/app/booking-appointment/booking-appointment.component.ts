@@ -17,8 +17,8 @@ export class BookingAppointmentComponent {
   showModal = false;
   selectedCategory = '';
 
-  serviceAdvisors: string[] = ['John Doe', 'Jane Smith', 'Robert Brown'];
-  bays: string[] = ['Bay 1', 'Bay 2', 'Bay 3'];
+  serviceAdvisors: string[] = ['Ram', 'Krishna', 'Madhav','Govind'];
+  bays: string[] = ['Pune', 'Nashik', 'Mumbai','Hyderabad','Banglore'];
   vehicleTypes = ['Passenger', 'Commercial'];
 
 

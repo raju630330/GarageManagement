@@ -17,10 +17,15 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
 import { SparePartIssueDetailsComponent } from './spare-part-issue-details/spare-part-issue-details.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
 import { GarageManagementComponent } from './garage-management/garage-management.component';
 import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
 import { LabourDetailsComponent } from './labour-details/labour-details.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { InventoryComponent } from './inventory/inventory.component';
+import { SettingsComponent } from './settings/settings.component';
+import { from } from 'rxjs';
+
 
 @NgModule({
   declarations: [
@@ -34,12 +39,15 @@ import { NavbarComponent } from './navbar/navbar.component';
     BookingAppointmentComponent,
     ForgetpasswordComponent,
     ResetpasswordComponent,
-    RepairOrderComponent,
+    RepairOrderComponent,             
     GarageManagementComponent,
     AdditionalJobObserveDetailsComponent,
     SparePartIssueDetailsComponent,
     NavbarComponent,
     LabourDetailsComponent
+    LabourDetailsComponent,
+    InventoryComponent,
+    SettingsComponent
     
   ],
   imports: [
@@ -48,12 +56,15 @@ import { NavbarComponent } from './navbar/navbar.component';
     AppRoutingModule,
     ReactiveFormsModule,
     MatExpansionModule,
-    FormsModule,
-    
-    FormsModule,
+    MatIconModule,
 
+    FormsModule                       
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }
+    
+    
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
