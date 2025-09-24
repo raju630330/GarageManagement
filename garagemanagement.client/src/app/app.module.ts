@@ -25,6 +25,9 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { SettingsComponent } from './settings/settings.component';
 import { from } from 'rxjs';
+import { ComponentNameComponent } from './component-name/component-name.component';
+import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.component';
+
 
 
 @NgModule({
@@ -44,10 +47,11 @@ import { from } from 'rxjs';
     AdditionalJobObserveDetailsComponent,
     SparePartIssueDetailsComponent,
     NavbarComponent,
-    LabourDetailsComponent
     LabourDetailsComponent,
     InventoryComponent,
-    SettingsComponent
+    SettingsComponent,
+    ComponentNameComponent,
+    TotalRepairCostComponent,
     
   ],
   imports: [
