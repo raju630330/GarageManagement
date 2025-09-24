@@ -12,6 +12,8 @@ export class SettingsComponent {
   constructor(private router: Router) { }
   bookappointment() {
     this.router.navigate(['/dashaboard']);
-
+  }
+  repairOrder() {
+    this.router.navigate(['/repair-order']);
   }
 }
