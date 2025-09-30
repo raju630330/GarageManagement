@@ -13,7 +13,6 @@
     <section class="supervisor-section">
       <header class="app-header">
         <div class="title">Garage Management</div>
-
         <div class="actions">
           <button class="icon-btn"><i class="material-icons">search</i></button>
           <button class="icon-btn"><i class="material-icons">notifications_none</i></button>
@@ -23,7 +22,7 @@
 
       <h2 class="subtitle">To be filled by Supervisor in front of Driver</h2>
 
-      <form #garageForm="ngForm">
+      <form #garageForm="ngForm" novalidate>
         <table class="custom-table">
           <thead>
             <tr>
@@ -38,50 +37,87 @@
 
           <tbody>
             <tr *ngFor="let row of rows; let i = index">
-              <td>{{ i + 1 }}</td>
+              <!-- Sl. No. – numeric only -->
+              <td>
+                {{i+1}}
+              </td>
+
+              <!-- Driver Voice – alphabets only -->
               <td>
                 <input type="text"
                        name="driver{{i}}"
                        ngModel
+                       #driver="ngModel"
                        pattern="^[A-Za-z ]{0,50}$"
                        maxlength="50"
+                       required
                        placeholder="Driver voice" />
+                <div class="error" *ngIf="driver.invalid && driver.touched">
+                  Alphabets only (max 50).
+                </div>
               </td>
+
+              <!-- Supervisor Instructions – alphabets only -->
               <td>
                 <input type="text"
                        name="sup{{i}}"
                        ngModel
+                       #sup="ngModel"
                        pattern="^[A-Za-z ]{0,50}$"
                        maxlength="50"
+                       required
                        placeholder="Supervisor instructions" />
+                <div class="error" *ngIf="sup.invalid && sup.touched">
+                  Alphabets only (max 50).
+                </div>
               </td>
+
+              <!-- Action Taken – alphabets only -->
               <td>
                 <input type="text"
                        name="action{{i}}"
                        ngModel
+                       #action="ngModel"
                        pattern="^[A-Za-z ]{0,50}$"
                        maxlength="50"
+                       required
                        placeholder="Action taken" />
+                <div class="error" *ngIf="action.invalid && action.touched">
+                  Alphabets only (max 50).
+                </div>
               </td>
+
+              <!-- Start Time – HH:MM AM/PM -->
               <td>
                 <input type="text"
                        name="start{{i}}"
                        ngModel
-                       pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\\s?(AM|PM)$"
+                       #start="ngModel"
+                       pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$"
+                       required
                        placeholder="HH:MM AM/PM" />
+                <div class="error" *ngIf="start.invalid && start.touched">
+                  Enter valid time (e.g., 09:30 AM).
+                </div>
               </td>
+
+              <!-- End Time – HH:MM AM/PM -->
               <td>
                 <input type="text"
                        name="end{{i}}"
                        ngModel
-                       pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\\s?(AM|PM)$"
+                       #end="ngModel"
+                       pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$"
+                       required
                        placeholder="HH:MM AM/PM" />
+                <div class="error" *ngIf="end.invalid && end.touched">
+                  Enter valid time (e.g., 05:45 PM).
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
       </form>
     </section>
-
   </mat-expansion-panel>
 </mat-accordion>
