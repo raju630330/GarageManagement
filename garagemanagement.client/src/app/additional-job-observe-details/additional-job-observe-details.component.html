@@ -1,4 +1,4 @@
-<mat-accordion multi="false">
+<!--<mat-accordion multi="false">
   <mat-expansion-panel #jobPanel>
     <mat-expansion-panel-header>
       <mat-panel-title>
@@ -7,46 +7,48 @@
       <mat-panel-description>
         <mat-icon>{{ jobPanel.expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
       </mat-panel-description>
-    </mat-expansion-panel-header>
-    <section class="supervisor-section">
-      <div class="container p-4">
-        <form [formGroup]="jobForm" (ngSubmit)="submit()">
-          <table class="job-table">
-            <thead>
-              <tr>
-                <th>Sl. No.</th>
-                <th>Technician Voice</th>
-                <th>Supervisor Instructions</th>
-                <th>Action Taken</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody formArrayName="rows">
-              <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i">
-                <td><input type="number" formControlName="slNo" /></td>
-                <td><input type="text" formControlName="technicianVoice" /></td>
-                <td><input type="text" formControlName="supervisorInstructions" /></td>
-                <td><input type="text" formControlName="actionTaken" /></td>
-                <td><input type="text" placeholder="HH:MM AM/PM" formControlName="startTime" /></td>
-                <td><input type="text" placeholder="HH:MM AM/PM" formControlName="endTime" /></td>
-                <td>
-                  <button type="button" class="btn btn-danger" (click)="removeRow(i)" *ngIf="rows.length > 1">
-                    Remove
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+    </mat-expansion-panel-header>-->
+<section class="supervisor-section">
+  <h2 class="subtitle text-center text-primary">Additional Job Observe Details</h2>
 
-          <div class="button-group mt-3">
-            <button type="button" class="btn btn-add" (click)="addRow()">➕ Add Row</button>
-            <button type="submit" class="btn btn-submit">✅ Submit</button>
-          </div>
-        </form>
+  <div class="container p-4">
+    <form [formGroup]="jobForm" (ngSubmit)="submit()">
+      <table class="job-table">
+        <thead>
+          <tr>
+            <th>Sl. No.</th>
+            <th>Technician Voice</th>
+            <th>Supervisor Instructions</th>
+            <th>Action Taken</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody formArrayName="rows">
+          <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i">
+            <td><input type="number" formControlName="slNo" /></td>
+            <td><input type="text" formControlName="technicianVoice" /></td>
+            <td><input type="text" formControlName="supervisorInstructions" /></td>
+            <td><input type="text" formControlName="actionTaken" /></td>
+            <td><input type="text" placeholder="HH:MM AM/PM" formControlName="startTime" /></td>
+            <td><input type="text" placeholder="HH:MM AM/PM" formControlName="endTime" /></td>
+            <td>
+              <button type="button" class="btn btn-danger" (click)="removeRow(i)" *ngIf="rows.length > 1">
+                Remove
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="button-group mt-3">
+        <button type="button" class="btn btn-add" (click)="addRow()">➕ Add Row</button>
+        <button type="submit" class="btn btn-submit">✅ Submit</button>
       </div>
-    </section>
+    </form>
+  </div>
+</section>
       
-  </mat-expansion-panel>
-</mat-accordion>
+  <!--</mat-expansion-panel>
+</mat-accordion>-->
