@@ -1,4 +1,4 @@
-<mat-accordion multi="false">
+<!--<mat-accordion multi="false">
   <mat-expansion-panel #jobPanel>
     <mat-expansion-panel-header>
       <mat-panel-title>
@@ -7,20 +7,20 @@
       <mat-panel-description>
         <mat-icon>{{ jobPanel.expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
       </mat-panel-description>
-    </mat-expansion-panel-header>
+    </mat-expansion-panel-header>-->
 
     <!-- ======= SUPERVISOR TABLE CONTENT ======= -->
     <section class="supervisor-section">
-      <header class="app-header">
+      <!--<header class="app-header">
         <div class="title">Garage Management</div>
         <div class="actions">
           <button class="icon-btn"><i class="material-icons">search</i></button>
           <button class="icon-btn"><i class="material-icons">notifications_none</i></button>
           <button class="icon-btn"><i class="material-icons">account_circle</i></button>
         </div>
-      </header>
+      </header>-->
 
-      <h2 class="subtitle">To be filled by Supervisor in front of Driver</h2>
+      <h2 class="subtitle text-center text-primary">To be filled by Supervisor in front of Driver</h2>
 
       <form #garageForm="ngForm" novalidate>
         <table class="custom-table">
@@ -37,12 +37,12 @@
 
           <tbody>
             <tr *ngFor="let row of rows; let i = index">
-              <!-- Sl. No. – numeric only -->
+              <!-- Sl. No. � numeric only -->
               <td>
                 {{i+1}}
               </td>
 
-              <!-- Driver Voice – alphabets only -->
+              <!-- Driver Voice � alphabets only -->
               <td>
                 <input type="text"
                        name="driver{{i}}"
@@ -57,7 +57,7 @@
                 </div>
               </td>
 
-              <!-- Supervisor Instructions – alphabets only -->
+              <!-- Supervisor Instructions � alphabets only -->
               <td>
                 <input type="text"
                        name="sup{{i}}"
@@ -72,7 +72,7 @@
                 </div>
               </td>
 
-              <!-- Action Taken – alphabets only -->
+              <!-- Action Taken � alphabets only -->
               <td>
                 <input type="text"
                        name="action{{i}}"
@@ -87,7 +87,7 @@
                 </div>
               </td>
 
-              <!-- Start Time – HH:MM AM/PM -->
+              <!-- Start Time � HH:MM AM/PM -->
               <td>
                 <input type="text"
                        name="start{{i}}"
@@ -101,7 +101,7 @@
                 </div>
               </td>
 
-              <!-- End Time – HH:MM AM/PM -->
+              <!-- End Time � HH:MM AM/PM -->
               <td>
                 <input type="text"
                        name="end{{i}}"
@@ -119,5 +119,6 @@
         </table>
       </form>
     </section>
-  </mat-expansion-panel>
-</mat-accordion>
+
+  <!--</mat-expansion-panel>
+</mat-accordion>-->

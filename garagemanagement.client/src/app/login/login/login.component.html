@@ -1,27 +1,115 @@
+<!-- Section: Login Block -->
+<section class="vh-100 login-section">
+  <div class="container h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-lg-10">
+        <div class="card shadow-lg border-0">
+          <div class="row g-0">
 
-<div class="container mt-4" style="max-width:420px">
-  <h3>Login</h3>
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-  <form [formGroup]="loginForm" (ngSubmit)="submit()">
-    <div class="mb-3">
-      <label class="form-label">Username or Email</label>
-      <input class="form-control" formControlName="usernameOrEmail" />
-      <div *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched" class="text-danger">
-        Username or Email is required.
+            <!-- Left Column -->
+            <div class="col-lg-6 left-section text-light">
+              <div class="overlay-content">
+                <!-- Logo -->
+                
+
+                <!-- Welcome text -->
+                <h2 class="welcome-text">Welcome</h2>
+
+                <!-- Heading -->
+                <h1 class="company-heading">
+                  SRINIVASA ROAD TRANSPORT <br />
+                  <small>Private Limited</small>
+                </h1>
+
+                <!-- Description -->
+                <p>
+                  We are committed to providing safe, reliable, and efficient
+                  transport and logistics services across India.
+                </p>
+
+                <!-- Features -->
+                <ul>
+                  <li>Digital Garage & Repair Order Management</li>
+                  <li>Spare Parts & Labour Tracking</li>
+                  <li>Real-time Job Observation & Supervisor Dashboard</li>
+                  <li>Secure & User-friendly Online Access</li>
+                </ul>
+
+                <!-- Tagline -->
+                <p class="fw-semibold tagline">
+                  <em>“Driven by trust, powered by technology.”</em>
+                </p>
+              </div>
+            </div>
+
+            <!-- Right Column (Login Form) -->
+            <div class="col-lg-6">
+              <div class="card-body p-5 text-dark">
+
+                <h3 class="mb-4 text-center">Login</h3>
+
+                <!-- Error Message -->
+                <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+                <!-- Angular Reactive Form -->
+                <form [formGroup]="loginForm" (ngSubmit)="submit()">
+
+                  <!-- Username / Email -->
+                  <div class="mb-3">
+                    <label class="form-label">Username or Email</label>
+                    <input class="form-control" formControlName="usernameOrEmail" />
+                    <div *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched"
+                         class="text-danger small">
+                      Username or Email is required.
+                    </div>
+                  </div>
+
+                  <!-- Password -->
+                  <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" formControlName="password" />
+                    <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                         class="text-danger small">
+                      Password is required and must contain at least:
+                      1 uppercase, 1 lowercase, 1 number, 1 special character, Min length 8
+                    </div>
+                  </div>
+
+                  <!-- Submit -->
+                  <button class="btn btn-primary w-100 mb-3">Login</button>
+
+                  <!-- Forgot / Signup -->
+                  <div class="d-flex justify-content-between">
+                    <a routerLink="/forgot">Forgot password?</a>
+                    <div>Don't have an account?<a routerLink="/register"> Sign up</a></div>
+                  </div>
+                </form>
+
+                <!-- Divider -->
+                <div class="my-4 text-center text-muted">or login with</div>
+
+                <!-- Social Login -->
+                <div class="d-flex justify-content-center gap-3">
+                  <button type="button" class="btn btn-outline-primary btn-floating">
+                    <i class="fab fa-facebook-f"></i>
+                  </button>
+                  <button type="button" class="btn btn-outline-danger btn-floating">
+                    <i class="fab fa-google"></i>
+                  </button>
+                  <button type="button" class="btn btn-outline-info btn-floating">
+                    <i class="fab fa-twitter"></i>
+                  </button>
+                  <button type="button" class="btn btn-outline-dark btn-floating">
+                    <i class="fab fa-github"></i>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+          </div> <!-- row end -->
+        </div> <!-- card end -->
       </div>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Password</label>
-      <input type="password" class="form-control" formControlName="password" />
-      <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger small">
-        Password is required and must contain at least: 1 uppercase letter/1 lowercase letter/1 number
-        /1 special character/Min length 8
-      </div>
-    </div>
-    <button class="btn btn-primary w-100">Login</button>
-    <div class="text-end mt-2">
-      <a routerLink="/forgot">Forgot password?</a>
-    </div>
-    <p class="mt-2">Don't have an account? <a routerLink="/register">Sign up</a></p>
-  </form>
-</div>
+  </div>
+</section>

@@ -1,0 +1,52 @@
+.container {
+  font-family: Arial, sans-serif;
+  background-color: #f8fafc;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+.table-container {
+  max-width: 800px;
+  margin: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  font-weight: bold;
+  background-color: #f1f5f9;
+}
+
+input[type="text"], input[type="number"] {
+  width: 95%;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+tfoot td {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.total-cell {
+  text-align: right;
+}

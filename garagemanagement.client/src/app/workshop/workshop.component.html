@@ -1,36 +1,17 @@
-<!-- Menu Bar -->
-<ul class="nav nav-tabs bg-white px-3">
-  <li class="nav-item">
-    <a class="nav-link" [routerLink]="['profile']">Profile</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" routerLink="/workshop">Workshop</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" routerLink="/users">Users</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" routerLink="/mmvy">MMVY</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" routerLink="setting">Settings</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" routerLink="/subscription">Subscription</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" routerLink="/terms">Terms & Conditions</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" routerLink="/reminders">Reminders</a>
-  </li>
-</ul>
-
-<div *ngIf="isAdmin" class="d-flex flex-wrap gap-3 p-2 bg-light border-bottom">
+<div>
+  <ul class="nav nav-tabs flex-nowrap mb-0">
+    <li class="nav-item" *ngFor="let item of mainTabs">
+      <a class="nav-link px-3 fw-semibold" [routerLink]="item.route" routerLinkActive="active">
+        {{ item.name }}
+      </a>
+    </li>
+  </ul>
+</div>
+<!--<div *ngIf="isAdmin" class="d-flex flex-wrap gap-3 p-2 bg-light border-bottom">
   <a class="text-decoration-none" href="#">Associated Workshops</a>
   <a class="text-decoration-none" href="#">Activate e-payment now</a>
   <a class="text-decoration-none" href="#">Integrations</a>
   <a class="text-decoration-none" href="#">Templates</a>
-</div>
+</div>-->
 <router-outlet></router-outlet>
 

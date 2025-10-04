@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
@@ -59,8 +59,62 @@ export class UserprofileComponent implements OnInit {
     this.router.navigate(['/repair-order']);
 
   }
- 
-   
+  goToSparePartDetails() {
+    this.router.navigate(['/spare-part']);
+
+  }
+  goToJobObserveDetails() {
+    this.router.navigate(['/jobobservedetails']);
+
+  }
+  goToSupervisorDetails() {
+    this.router.navigate(['/garagemanagement']);
+
+  }
+  goToLabourDetails() {
+    this.router.navigate(['/labour-details']);
+
+  }
+  mainTabs = [
+    { name: 'Profile', route: '/profile' },
+    { name: 'Workshop', route: '/workshop' },
+    { name: 'Users', route: '/users' },
+    { name: 'MMVY', route: '/mmvy' },
+    { name: 'Settings', route: '/settings' },
+    { name: 'Subscription', route: '/subscription' },
+    { name: 'Terms & Conditions', route: '/terms' },
+    { name: 'Reminders', route: '/reminders' },
+    { name: 'Associated Workshops', route: '/ Associated Workshops' },
+    { name: 'Activate e-payment now', route: '/Activate e-payment now' },
+    { name: 'Integrations', route: '/Integrations' },
+    { name: 'Templates', route: '/Templates' },
+  ];
+
+  showLeftArrow = true;
+  showRightArrow = false;
+
+  @ViewChild('tabScroll') tabScroll!: ElementRef;
+
+  ngAfterViewInit() {
+    this.checkScroll();
+  }
+
+  scrollTabs(amount: number) {
+    if (this.tabScroll) {
+      this.tabScroll.nativeElement.scrollBy({ left: amount, behavior: 'smooth' });
+      setTimeout(() => this.checkScroll(), 300);
+    }
+  }
+
+  checkScroll() {
+    if (!this.tabScroll) return;
+    const scrollElem = this.tabScroll.nativeElement;
+    this.showLeftArrow = scrollElem.scrollLeft > 0;
+    this.showRightArrow = scrollElem.scrollWidth > scrollElem.clientWidth + scrollElem.scrollLeft;
+  }
+
+
+
 }
 
 

@@ -21,9 +21,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { GarageManagementComponent } from './garage-management/garage-management.component';
 import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
 import { LabourDetailsComponent } from './labour-details/labour-details.component';
+import { NavbarComponent } from './navbar/navbar.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { SettingsComponent } from './settings/settings.component';
 import { from } from 'rxjs';
+import { ComponentNameComponent } from './component-name/component-name.component';
+import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.component';
+
 
 
 @NgModule({
@@ -42,9 +46,12 @@ import { from } from 'rxjs';
     GarageManagementComponent,
     AdditionalJobObserveDetailsComponent,
     SparePartIssueDetailsComponent,
+    NavbarComponent,
     LabourDetailsComponent,
     InventoryComponent,
-    SettingsComponent
+    SettingsComponent,
+    ComponentNameComponent,
+    TotalRepairCostComponent,
     
   ],
   imports: [

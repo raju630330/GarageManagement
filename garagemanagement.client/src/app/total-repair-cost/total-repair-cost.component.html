@@ -1,0 +1,49 @@
+<div class="container">
+  <h1>Total Repair Cost of the Vehicle</h1>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>S.No.</th>
+          <th>Description</th>
+          <th>Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of repairItems; let i = index">
+          <td>{{ item.sno }}</td>
+
+          <td>
+            <ng-container *ngIf="i < 3; else editableDesc">
+              {{ item.description }}
+            </ng-container>
+            <ng-template #editableDesc>
+              <input type="text" [(ngModel)]="item.description">
+            </ng-template>
+          </td>
+
+          <td>
+            <input type="number" [(ngModel)]="item.amount" (input)="calculateTotal()">
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" class="total-cell">Grand Total</td>
+          <td>{{ grandTotal | currency:'USD' }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
