@@ -1,16 +1,4 @@
-<!--<mat-accordion multi="false">
-  <mat-expansion-panel #jobPanel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Additional Job Observe Details
-      </mat-panel-title>
-      <mat-panel-description>
-        <mat-icon>{{ jobPanel.expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-      </mat-panel-description>
-    </mat-expansion-panel-header>-->
 <section class="supervisor-section">
-  <h2 class="subtitle text-center text-primary">Additional Job Observe Details</h2>
-
   <div class="container p-4">
     <form [formGroup]="jobForm" (ngSubmit)="submit()">
       <table class="job-table">
@@ -25,16 +13,71 @@
             <th>Action</th>
           </tr>
         </thead>
+
         <tbody formArrayName="rows">
           <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i">
-            <td><input type="number" formControlName="slNo" /></td>
-            <td><input type="text" formControlName="technicianVoice" /></td>
-            <td><input type="text" formControlName="supervisorInstructions" /></td>
-            <td><input type="text" formControlName="actionTaken" /></td>
-            <td><input type="text" placeholder="HH:MM AM/PM" formControlName="startTime" /></td>
-            <td><input type="text" placeholder="HH:MM AM/PM" formControlName="endTime" /></td>
+            <!-- Sl. No (Auto Increment) -->
+            <td>{{ i + 1 }}</td>
+
+            <!-- Technician Voice -->
             <td>
-              <button type="button" class="btn btn-danger" (click)="removeRow(i)" *ngIf="rows.length > 1">
+              <input type="text"
+                     formControlName="technicianVoice"
+                     placeholder="Technician Voice"
+                     maxlength="50" />
+              <div class="error" *ngIf="row.get('technicianVoice')?.invalid && row.get('technicianVoice')?.touched">
+                Alphabets only (max 50).
+              </div>
+            </td>
+
+            <!-- Supervisor Instructions -->
+            <td>
+              <input type="text"
+                     formControlName="supervisorInstructions"
+                     placeholder="Supervisor Instructions"
+                     maxlength="50" />
+              <div class="error" *ngIf="row.get('supervisorInstructions')?.invalid && row.get('supervisorInstructions')?.touched">
+                Alphabets only (max 50).
+              </div>
+            </td>
+
+            <!-- Action Taken -->
+            <td>
+              <input type="text"
+                     formControlName="actionTaken"
+                     placeholder="Action Taken"
+                     maxlength="50" />
+              <div class="error" *ngIf="row.get('actionTaken')?.invalid && row.get('actionTaken')?.touched">
+                Alphabets only (max 50).
+              </div>
+            </td>
+
+            <!-- Start Time -->
+            <td>
+              <input type="text"
+                     formControlName="startTime"
+                     placeholder="HH:MM AM/PM" />
+              <div class="error" *ngIf="row.get('startTime')?.invalid && row.get('startTime')?.touched">
+                Enter valid time (e.g., 09:30 AM).
+              </div>
+            </td>
+
+            <!-- End Time -->
+            <td>
+              <input type="text"
+                     formControlName="endTime"
+                     placeholder="HH:MM AM/PM" />
+              <div class="error" *ngIf="row.get('endTime')?.invalid && row.get('endTime')?.touched">
+                Enter valid time (e.g., 05:45 PM).
+              </div>
+            </td>
+
+            <!-- Remove Button -->
+            <td>
+              <button type="button"
+                      class="btn btn-danger"
+                      (click)="removeRow(i)"
+                      *ngIf="rows.length > 1">
                 Remove
               </button>
             </td>
@@ -49,6 +92,3 @@
     </form>
   </div>
 </section>
-      
-  <!--</mat-expansion-panel>
-</mat-accordion>-->
