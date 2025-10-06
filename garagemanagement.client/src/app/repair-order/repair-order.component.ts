@@ -41,10 +41,10 @@ export class RepairOrderComponent implements OnInit {
       vehicleFromSite: [''],
       siteInchargeName: [''],
       driverPermanent: [''],
-      roadTest: ['No'],
+      roadTest: [''],
       serviceType: [''],
       repairCost: [''],
-      warranty: ['No'],
+      warranty: [''],
       expectedDateTime: ['']
     });
 
