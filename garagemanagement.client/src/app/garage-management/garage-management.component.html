@@ -64,18 +64,33 @@
                        placeholder="Action taken" />
               </td>
               <td>
-                <input type="text"
-                       name="start{{i}}"
-                       ngModel
-                       pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\\s?(AM|PM)$"
-                       placeholder="HH:MM AM/PM" />
+                <div>
+                  <select [(ngModel)]="startHour">
+                    <option *ngFor="let h of hours" [value]="h">{{ h }}</option>
+                  </select>
+
+                  <input type="number" min="0" max="59" [(ngModel)]="startMinute" style="width: 50px;" />
+
+                  <select [(ngModel)]="startAMPM">
+                    <option>AM</option>
+                    <option>PM</option>
+                  </select>
+                </div>
+
+                <p>Selected Time: {{ formatTime(startHour, startMinute, startAMPM) }}</p>
               </td>
               <td>
-                <input type="text"
+              <div>
+                <input type="time"
                        name="end{{i}}"
                        ngModel
                        pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\\s?(AM|PM)$"
                        placeholder="HH:MM AM/PM" />
+                <select [(ngModel)]="startAMPM">
+                  <option>AM</option>
+                  <option>PM</option>
+                </select>
+               </div>
               </td>
             </tr>
           </tbody>
