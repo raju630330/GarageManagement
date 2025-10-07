@@ -1,102 +1,102 @@
-<!--<mat-accordion multi="false">
-  <mat-expansion-panel #jobPanel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Garage Management
-      </mat-panel-title>
-      <mat-panel-description>
-        <mat-icon>{{ jobPanel.expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-      </mat-panel-description>
-    </mat-expansion-panel-header>-->
+<section class="supervisor-section">
 
-    <!-- ======= SUPERVISOR TABLE CONTENT ======= -->
-    <section class="supervisor-section">
-      <!--<header class="app-header">
-        <div class="title">Garage Management</div>
 
-        <div class="actions">
-          <button class="icon-btn"><i class="material-icons">search</i></button>
-          <button class="icon-btn"><i class="material-icons">notifications_none</i></button>
-          <button class="icon-btn"><i class="material-icons">account_circle</i></button>
-        </div>
-      </header>-->
+  <!--<h2 class="subtitle text-center text-primary">To be filled by Supervisor in front of Driver</h2>-->
 
-      <h2 class="subtitle text-center text-primary">To be filled by Supervisor in front of Driver</h2>
+  <form #garageForm="ngForm" novalidate>
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Sl.No.</th>
+          <th>Voice of the Driver</th>
+          <th>Sup. Instructions</th>
+          <th>Action Taken</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+        </tr>
+      </thead>
 
-      <form #garageForm="ngForm">
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>Sl.No.</th>
-              <th>Voice of the Driver</th>
-              <th>Sup. Instructions</th>
-              <th>Action Taken</th>
-              <th>Start Time</th>
-              <th>End Time</th>
-            </tr>
-          </thead>
+      <tbody>
+        <tr *ngFor="let row of rows; let i = index">
+          <!-- Sl. No. � numeric only -->
+          <td>
+            {{i+1}}
+          </td>
 
-          <tbody>
-            <tr *ngFor="let row of rows; let i = index">
-              <td>{{ i + 1 }}</td>
-              <td>
-                <input type="text"
-                       name="driver{{i}}"
-                       ngModel
-                       pattern="^[A-Za-z ]{0,50}$"
-                       maxlength="50"
-                       placeholder="Driver voice" />
-              </td>
-              <td>
-                <input type="text"
-                       name="sup{{i}}"
-                       ngModel
-                       pattern="^[A-Za-z ]{0,50}$"
-                       maxlength="50"
-                       placeholder="Supervisor instructions" />
-              </td>
-              <td>
-                <input type="text"
-                       name="action{{i}}"
-                       ngModel
-                       pattern="^[A-Za-z ]{0,50}$"
-                       maxlength="50"
-                       placeholder="Action taken" />
-              </td>
-              <td>
-                <div>
-                  <select [(ngModel)]="startHour">
-                    <option *ngFor="let h of hours" [value]="h">{{ h }}</option>
-                  </select>
+          <!-- Driver Voice � alphabets only -->
+          <td>
+            <input type="text"
+                   name="driver{{i}}"
+                   ngModel
+                   #driver="ngModel"
+                   pattern="^[A-Za-z ]{0,50}$"
+                   maxlength="50"
+                   required
+                   placeholder="Driver voice" />
+            <div class="error" *ngIf="driver.invalid && driver.touched">
+              Alphabets only (max 50).
+            </div>
+          </td>
 
-                  <input type="number" min="0" max="59" [(ngModel)]="startMinute" style="width: 50px;" />
+          <!-- Supervisor Instructions � alphabets only -->
+          <td>
+            <input type="text"
+                   name="sup{{i}}"
+                   ngModel
+                   #sup="ngModel"
+                   pattern="^[A-Za-z ]{0,50}$"
+                   maxlength="50"
+                   required
+                   placeholder="Supervisor instructions" />
+            <div class="error" *ngIf="sup.invalid && sup.touched">
+              Alphabets only (max 50).
+            </div>
+          </td>
 
-                  <select [(ngModel)]="startAMPM">
-                    <option>AM</option>
-                    <option>PM</option>
-                  </select>
-                </div>
+          <!-- Action Taken � alphabets only -->
+          <td>
+            <input type="text"
+                   name="action{{i}}"
+                   ngModel
+                   #action="ngModel"
+                   pattern="^[A-Za-z ]{0,50}$"
+                   maxlength="50"
+                   required
+                   placeholder="Action taken" />
+            <div class="error" *ngIf="action.invalid && action.touched">
+              Alphabets only (max 50).
+            </div>
+          </td>
 
-                <p>Selected Time: {{ formatTime(startHour, startMinute, startAMPM) }}</p>
-              </td>
-              <td>
-              <div>
-                <input type="time"
-                       name="end{{i}}"
-                       ngModel
-                       pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\\s?(AM|PM)$"
-                       placeholder="HH:MM AM/PM" />
-                <select [(ngModel)]="startAMPM">
-                  <option>AM</option>
-                  <option>PM</option>
-                </select>
-               </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </form>
-    </section>
+          <!-- Start Time � HH:MM AM/PM -->
+          <td>
+            <input type="text"
+                   name="start{{i}}"
+                   ngModel
+                   #start="ngModel"
+                   pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$"
+                   required
+                   placeholder="HH:MM AM/PM" />
+            <div class="error" *ngIf="start.invalid && start.touched">
+              Enter valid time (e.g., 09:30 AM).
+            </div>
+          </td>
 
-  <!--</mat-expansion-panel>
-</mat-accordion>-->
+          <!-- End Time � HH:MM AM/PM -->
+          <td>
+            <input type="text"
+                   name="end{{i}}"
+                   ngModel
+                   #end="ngModel"
+                   pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$"
+                   required
+                   placeholder="HH:MM AM/PM" />
+            <div class="error" *ngIf="end.invalid && end.touched">
+              Enter valid time (e.g., 05:45 PM).
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</section>
