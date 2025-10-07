@@ -53,9 +53,16 @@
             <input formControlName="siteInchargeName" />
           </div>
 
-          <div class="form-group">
+          <div class="form-group checkbox-group">
             <label> Driver permanent to this vehicle</label>
-            <input formControlName="driverPermanent" />
+            <div>
+              <input type="checkbox"
+                     [checked]="repairForm.get('driverPermanent')?.value === 'Yes'"
+                     (change)="repairForm.get('driverPermanent')?.setValue('Yes')" /> Yes
+              <input type="checkbox"
+                     [checked]="repairForm.get('driverPermanent')?.value === 'No'"
+                     (change)="repairForm.get('driverPermanent')?.setValue('No')" /> No
+            </div>
           </div>
 
           <div class="form-group checkbox-group">

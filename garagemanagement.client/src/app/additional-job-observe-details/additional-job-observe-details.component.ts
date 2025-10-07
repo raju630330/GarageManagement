@@ -39,13 +39,13 @@ export class AdditionalJobObserveDetailsComponent {
     this.rows.push(this.createRow(nextSlNo));
   }
 
-  removeRow(index: number): void {
-    this.rows.removeAt(index);
 
-    // Recalculate serial numbers after removing a row
-    this.rows.controls.forEach((control, i) => {
-      control.get('slNo')?.setValue(i + 1);
-    });
+
+  removeRow(index: number): void {
+    const confirmDelete = confirm('Are you sure you want to remove this row?');
+    if (confirmDelete) {
+      this.rows.removeAt(index);
+    }
   }
 
   submit(): void {

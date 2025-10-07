@@ -1,9 +1,5 @@
 <section class="supervisor-section">
-
-
-  <!--<h2 class="subtitle text-center text-primary">To be filled by Supervisor in front of Driver</h2>-->
-
-  <form #garageForm="ngForm" novalidate>
+  <form #garageForm="ngForm" (ngSubmit)="onSubmit(garageForm)" novalidate>
     <table class="custom-table">
       <thead>
         <tr>
@@ -13,24 +9,21 @@
           <th>Action Taken</th>
           <th>Start Time</th>
           <th>End Time</th>
+          <th>Action</th>
         </tr>
       </thead>
 
       <tbody>
         <tr *ngFor="let row of rows; let i = index">
-          <!-- Sl. No. � numeric only -->
-          <td>
-            {{i+1}}
-          </td>
+          <td>{{ i + 1 }}</td>
 
-          <!-- Driver Voice � alphabets only -->
+          <!-- Driver Voice -->
           <td>
             <input type="text"
                    name="driver{{i}}"
-                   ngModel
+                   [(ngModel)]="row.driverVoice"
                    #driver="ngModel"
-                   pattern="^[A-Za-z ]{0,50}$"
-                   maxlength="50"
+                   pattern="^[A-Za-z ]{1,50}$"
                    required
                    placeholder="Driver voice" />
             <div class="error" *ngIf="driver.invalid && driver.touched">
@@ -38,14 +31,13 @@
             </div>
           </td>
 
-          <!-- Supervisor Instructions � alphabets only -->
+          <!-- Supervisor Instructions -->
           <td>
             <input type="text"
                    name="sup{{i}}"
-                   ngModel
+                   [(ngModel)]="row.supervisorInstructions"
                    #sup="ngModel"
-                   pattern="^[A-Za-z ]{0,50}$"
-                   maxlength="50"
+                   pattern="^[A-Za-z ]{1,50}$"
                    required
                    placeholder="Supervisor instructions" />
             <div class="error" *ngIf="sup.invalid && sup.touched">
@@ -53,14 +45,13 @@
             </div>
           </td>
 
-          <!-- Action Taken � alphabets only -->
+          <!-- Action Taken -->
           <td>
             <input type="text"
                    name="action{{i}}"
-                   ngModel
+                   [(ngModel)]="row.actionTaken"
                    #action="ngModel"
-                   pattern="^[A-Za-z ]{0,50}$"
-                   maxlength="50"
+                   pattern="^[A-Za-z ]{1,50}$"
                    required
                    placeholder="Action taken" />
             <div class="error" *ngIf="action.invalid && action.touched">
@@ -68,13 +59,13 @@
             </div>
           </td>
 
-          <!-- Start Time � HH:MM AM/PM -->
+          <!-- Start Time -->
           <td>
             <input type="text"
                    name="start{{i}}"
-                   ngModel
+                   [(ngModel)]="row.startTime"
                    #start="ngModel"
-                   pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$"
+                   pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\\s?(AM|PM)$"
                    required
                    placeholder="HH:MM AM/PM" />
             <div class="error" *ngIf="start.invalid && start.touched">
@@ -82,21 +73,36 @@
             </div>
           </td>
 
-          <!-- End Time � HH:MM AM/PM -->
+          <!-- End Time -->
           <td>
             <input type="text"
                    name="end{{i}}"
-                   ngModel
+                   [(ngModel)]="row.endTime"
                    #end="ngModel"
-                   pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$"
+                   pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\\s?(AM|PM)$"
                    required
                    placeholder="HH:MM AM/PM" />
             <div class="error" *ngIf="end.invalid && end.touched">
               Enter valid time (e.g., 05:45 PM).
             </div>
           </td>
+
+          <!-- Remove Button -->
+          <td>
+            <button type="button"
+                    class="btn btn-danger"
+                    (click)="removeRow(i)"
+                    *ngIf="rows.length > 1">
+              Remove
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
+
+    <div class="button-group mt-3">
+      <button type="button" class="btn btn-add" (click)="addRow()">➕ Add Row</button>
+      <button type="submit" class="btn btn-submit">✅ Submit</button>
+    </div>
   </form>
 </section>
