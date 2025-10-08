@@ -11,11 +11,16 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class AdditionalJobObserveDetailsComponent {
   jobForm!: FormGroup;
 
+  // Custom alert state
+  showAlert = false;
+  alertMessage = '';
+  confirmAction: (() => void) | null = null; // callback for Yes button
+
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.jobForm = this.fb.group({
-      rows: this.fb.array([this.createRow(1)]) // first row gets slNo = 1
+      rows: this.fb.array([this.createRow(1)])
     });
   }
 
@@ -39,22 +44,38 @@ export class AdditionalJobObserveDetailsComponent {
     this.rows.push(this.createRow(nextSlNo));
   }
 
-
-
+  // Use custom alert instead of browser confirm
   removeRow(index: number): void {
-    const confirmDelete = confirm('Are you sure you want to remove this row?');
-    if (confirmDelete) {
+    this.alertMessage = 'Are you sure you want to remove this row?';
+    this.showAlert = true;
+    this.confirmAction = () => {
       this.rows.removeAt(index);
-    }
+      this.closeAlert();
+    };
+  }
+
+  // Triggered when user clicks Yes in alert
+  confirmYes(): void {
+    if (this.confirmAction) this.confirmAction();
+  }
+
+  // Close alert (No button)
+  closeAlert(): void {
+    this.showAlert = false;
+    this.confirmAction = null;
   }
 
   submit(): void {
     if (this.jobForm.valid) {
+      this.alertMessage = 'Form submitted successfully!';
+      this.showAlert = true;
+      this.confirmAction = null; // no action needed for submit alert
       console.log('✅ Submitted data:', this.jobForm.value);
-      alert('Form submitted successfully!');
     } else {
       this.jobForm.markAllAsTouched();
-      alert('❌ Please fix all validation errors before submitting.');
+      this.alertMessage = 'Please fix all validation errors before submitting.';
+      this.showAlert = true;
+      this.confirmAction = null;
     }
   }
 }

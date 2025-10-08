@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 
-
 @Component({
   selector: 'app-garage-management',
   standalone: false,
@@ -12,15 +11,34 @@ export class GarageManagementComponent {
     { driverVoice: '', supervisorInstructions: '', actionTaken: '', startTime: '', endTime: '' }
   ];
 
+  // for custom alert
+  showAlert = false;
+  rowIndexToRemove: number | null = null;
+  alertMessage = '';
+
   addRow() {
     this.rows.push({ driverVoice: '', supervisorInstructions: '', actionTaken: '', startTime: '', endTime: '' });
   }
 
+  // show confirm box
   removeRow(index: number) {
-    const confirmDelete = confirm('Are you sure you want to remove this row?');
-    if (confirmDelete) {
-      this.rows.splice(index, 1);
+    this.rowIndexToRemove = index;
+    this.alertMessage = 'Are you sure you want to remove this row?';
+    this.showAlert = true;
+  }
+
+  // confirm deletion
+  confirmRemove() {
+    if (this.rowIndexToRemove !== null) {
+      this.rows.splice(this.rowIndexToRemove, 1);
     }
+    this.closeAlert();
+  }
+
+  // cancel deletion
+  closeAlert() {
+    this.showAlert = false;
+    this.rowIndexToRemove = null;
   }
 
   onSubmit(form: any) {
