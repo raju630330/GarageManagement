@@ -1,117 +1,76 @@
 <section class="supervisor-section">
-  <form #garageForm="ngForm" (ngSubmit)="onSubmit(garageForm)" novalidate>
-    <table class="custom-table">
-      <thead>
-        <tr>
-          <th>Sl.No.</th>
-          <th>Voice of the Driver</th>
-          <th>Sup. Instructions</th>
-          <th>Action Taken</th>
-          <th>Start Time</th>
-          <th>End Time</th>
-          <th>Action</th>
-        </tr>
-      </thead>
+  <div class="container p-4">
+    <form [formGroup]="jobForm" (ngSubmit)="submit()">
+      <table class="job-table">
+        <thead>
+          <tr>
+            <th>Sl. No.</th>
+            <th>Voice of the Driver</th>
+            <th>Supervisor Instructions</th>
+            <th>Action Taken</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
 
-      <tbody>
-        <tr *ngFor="let row of rows; let i = index">
-          <td>{{ i + 1 }}</td>
+        <tbody formArrayName="rows">
+          <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i">
+            <td>{{ i + 1 }}</td>
+            <td>
+              <input type="text" formControlName="driverVoice" placeholder="Driver Voice" maxlength="50" />
+              <div class="error" *ngIf="row.get('driverVoice')?.invalid && row.get('driverVoice')?.touched">
+                Alphabets only (max 50).
+              </div>
+            </td>
+            <td>
+              <input type="text" formControlName="supervisorInstructions" placeholder="Supervisor Instructions" maxlength="50" />
+              <div class="error" *ngIf="row.get('supervisorInstructions')?.invalid && row.get('supervisorInstructions')?.touched">
+                Alphabets only (max 50).
+              </div>
+            </td>
+            <td>
+              <input type="text" formControlName="actionTaken" placeholder="Action Taken" maxlength="50" />
+              <div class="error" *ngIf="row.get('actionTaken')?.invalid && row.get('actionTaken')?.touched">
+                Alphabets only (max 50).
+              </div>
+            </td>
+            <td>
+              <input type="text" formControlName="startTime" placeholder="HH:MM AM/PM" />
+              <div class="error" *ngIf="row.get('startTime')?.invalid && row.get('startTime')?.touched">
+                Enter valid time (e.g., 09:30 AM).
+              </div>
+            </td>
+            <td>
+              <input type="text" formControlName="endTime" placeholder="HH:MM AM/PM" />
+              <div class="error" *ngIf="row.get('endTime')?.invalid && row.get('endTime')?.touched">
+                Enter valid time (e.g., 05:45 PM).
+              </div>
+            </td>
+            <td>
+              <button type="button" class="btn btn-danger" (click)="removeRow(i)" >Remove</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-          <!-- Driver Voice -->
-          <td>
-            <input type="text"
-                   name="driver{{i}}"
-                   [(ngModel)]="row.driverVoice"
-                   #driver="ngModel"
-                   pattern="^[A-Za-z ]{1,50}$"
-                   required
-                   placeholder="Driver voice" />
-            <div class="error" *ngIf="driver.invalid && driver.touched">
-              Alphabets only (max 50).
-            </div>
-          </td>
+      <div class="button-group mt-3">
+        <button type="button" class="btn btn-add" (click)="addRow()">Add Row</button>
+        <button type="submit" class="btn btn-submit">Submit</button>
+      </div>
+    </form>
 
-          <!-- Supervisor Instructions -->
-          <td>
-            <input type="text"
-                   name="sup{{i}}"
-                   [(ngModel)]="row.supervisorInstructions"
-                   #sup="ngModel"
-                   pattern="^[A-Za-z ]{1,50}$"
-                   required
-                   placeholder="Supervisor instructions" />
-            <div class="error" *ngIf="sup.invalid && sup.touched">
-              Alphabets only (max 50).
-            </div>
-          </td>
-
-          <!-- Action Taken -->
-          <td>
-            <input type="text"
-                   name="action{{i}}"
-                   [(ngModel)]="row.actionTaken"
-                   #action="ngModel"
-                   pattern="^[A-Za-z ]{1,50}$"
-                   required
-                   placeholder="Action taken" />
-            <div class="error" *ngIf="action.invalid && action.touched">
-              Alphabets only (max 50).
-            </div>
-          </td>
-
-          <!-- Start Time -->
-          <td>
-            <input type="text"
-                   name="start{{i}}"
-                   [(ngModel)]="row.startTime"
-                   #start="ngModel"
-                   pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\\s?(AM|PM)$"
-                   required
-                   placeholder="HH:MM AM/PM" />
-            <div class="error" *ngIf="start.invalid && start.touched">
-              Enter valid time (e.g., 09:30 AM).
-            </div>
-          </td>
-
-          <!-- End Time -->
-          <td>
-            <input type="text"
-                   name="end{{i}}"
-                   [(ngModel)]="row.endTime"
-                   #end="ngModel"
-                   pattern="^(0[1-9]|1[0-2]):[0-5][0-9]\\s?(AM|PM)$"
-                   required
-                   placeholder="HH:MM AM/PM" />
-            <div class="error" *ngIf="end.invalid && end.touched">
-              Enter valid time (e.g., 05:45 PM).
-            </div>
-          </td>
-
-          <!-- Remove Button -->
-          <td>
-            <button type="button"
-                    class="btn btn-danger"
-                    (click)="removeRow(i)"
-                    *ngIf="rows.length > 1">
-              Remove
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="button-group mt-3">
-      <button type="button" class="btn btn-add" (click)="addRow()">➕ Add Row</button>
-      <button type="submit" class="btn btn-submit">✅ Submit</button>
-    </div>
-  </form>
-  <!-- Custom Confirm Alert (Centered) -->
-  <div class="custom-alert" *ngIf="showAlert">
-    <div class="alert-content">
-      <p>{{ alertMessage }}</p>
-      <div class="alert-buttons">
-        <button class="btn btn-danger" (click)="confirmRemove()">Yes</button>
-        <button class="btn btn-secondary" (click)="closeAlert()">No</button>
+    <!-- Custom Alert -->
+    <div class="custom-alert" *ngIf="showAlert">
+      <div class="alert-content">
+        <p>{{ alertMessage }}</p>
+        <div class="alert-buttons" *ngIf="confirmAction">
+          <button class="btn btn-danger" (click)="confirmYes()">Yes</button>
+          <button class="btn btn-secondary" (click)="closeAlert()">No</button>
+        </div>
+        <div class="alert-buttons" *ngIf="!confirmAction">
+          <button class="btn btn-primary" (click)="closeAlert()">OK</button>
+        </div>
       </div>
     </div>
   </div>

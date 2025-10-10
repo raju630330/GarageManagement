@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-garage-management',
@@ -6,47 +7,70 @@ import { Component } from '@angular/core';
   templateUrl: './garage-management.component.html',
   styleUrl: './garage-management.component.css'
 })
-export class GarageManagementComponent {
-  rows = [
-    { driverVoice: '', supervisorInstructions: '', actionTaken: '', startTime: '', endTime: '' }
-  ];
+export class GarageManagementComponent implements OnInit {
 
-  // for custom alert
+  jobForm!: FormGroup;
+
+  // Custom alert
   showAlert = false;
-  rowIndexToRemove: number | null = null;
   alertMessage = '';
+  confirmAction: (() => void) | null = null;
 
-  addRow() {
-    this.rows.push({ driverVoice: '', supervisorInstructions: '', actionTaken: '', startTime: '', endTime: '' });
+  constructor(private fb: FormBuilder) { }
+
+  ngOnInit(): void {
+    this.jobForm = this.fb.group({
+      rows: this.fb.array([this.createRow()])
+    });
   }
 
-  // show confirm box
-  removeRow(index: number) {
-    this.rowIndexToRemove = index;
+  get rows(): FormArray {
+    return this.jobForm.get('rows') as FormArray;
+  }
+
+  createRow(): FormGroup {
+    return this.fb.group({
+      driverVoice: ['', [Validators.required, Validators.pattern(/^[A-Za-z ]{1,50}$/)]],
+      supervisorInstructions: ['', [Validators.required, Validators.pattern(/^[A-Za-z ]{1,50}$/)]],
+      actionTaken: ['', [Validators.required, Validators.pattern(/^[A-Za-z ]{1,50}$/)]],
+      startTime: ['', [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i)]],
+      endTime: ['', [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i)]]
+    });
+  }
+
+  addRow(): void {
+    this.rows.push(this.createRow());
+  }
+
+  removeRow(index: number): void {
     this.alertMessage = 'Are you sure you want to remove this row?';
     this.showAlert = true;
+    this.confirmAction = () => {
+      this.rows.removeAt(index);
+      this.closeAlert();
+    };
   }
 
-  // confirm deletion
-  confirmRemove() {
-    if (this.rowIndexToRemove !== null) {
-      this.rows.splice(this.rowIndexToRemove, 1);
-    }
-    this.closeAlert();
+  confirmYes(): void {
+    if (this.confirmAction) this.confirmAction();
   }
 
-  // cancel deletion
-  closeAlert() {
+  closeAlert(): void {
     this.showAlert = false;
-    this.rowIndexToRemove = null;
+    this.confirmAction = null;
   }
 
-  onSubmit(form: any) {
-    if (form.valid) {
-      alert('Form submitted successfully!');
-      console.log(this.rows);
+  submit(): void {
+    if (this.jobForm.valid) {
+      this.alertMessage = 'Form submitted successfully!';
+      this.showAlert = true;
+      this.confirmAction = null;
+      console.log('✅ Submitted:', this.jobForm.value);
     } else {
-      alert('Please correct the errors before submitting.');
+      this.jobForm.markAllAsTouched();
+      this.alertMessage = 'Please correct the errors before submitting.';
+      this.showAlert = true;
+      this.confirmAction = null;
     }
   }
 }

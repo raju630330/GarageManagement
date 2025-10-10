@@ -30,13 +30,13 @@
 }
 
 .btn-add {
-  background-color: #007bff;
+  background-color: #28a745;
   color: white;
 }
 
 .btn-submit {
-  background-color: #28a745;
-  color: white;
+  background-color: #007bff;
+  color:white;
 }
 
 .btn-danger {
@@ -121,4 +121,7 @@
 .btn-primary {
   background-color: #3498db;
   color: white;
+}
+.button-group .btn-add {
+  margin-right: 10px; /* or 1rem for responsive spacing */
 }

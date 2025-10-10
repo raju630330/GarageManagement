@@ -1,46 +1,49 @@
-.custom-table {
+.job-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-  .custom-table th,
-  .custom-table td {
-    border: 1px solid #ccc;
+  .job-table th,
+  .job-table td {
+    border: 1px solid #ddd;
     padding: 8px;
-    text-align: center;
+  }
+
+  .job-table input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    text-align: left;
   }
 
 .error {
   color: red;
-  font-size: 0.8rem;
+  font-size: 12px;
+  margin-top: 2px;
 }
 
 .btn {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
   cursor: pointer;
 }
 
 .btn-add {
-  background-color: #4caf50;
+  background-color: #28a745;
   color: white;
 }
 
 .btn-submit {
-  background-color: #2196f3;
+  background-color: #007bff;
   color: white;
 }
 
 .btn-danger {
-  background-color: #f44336;
+  background-color: #dc3545;
   color: white;
 }
-.error {
-  color: red;
-  font-size: 0.8rem;
-  margin-top: 4px;
-}
+
 .custom-alert {
   position: fixed;
   top: 0;
@@ -78,6 +81,7 @@
   background-color: #7f8c8d;
   color: white;
 }
+
 .custom-alert {
   position: fixed;
   top: 0;
@@ -99,40 +103,27 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-  .alert-content p {
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
-
 .alert-buttons {
   display: flex;
   justify-content: center;
   gap: 15px;
+  margin-top: 15px;
 }
 
 .btn-danger {
   background-color: #e74c3c;
   color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
 .btn-secondary {
   background-color: #7f8c8d;
   color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
 .btn-primary {
   background-color: #3498db;
   color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
+}
+.button-group .btn-add {
+  margin-right: 10px; /* or 1rem for responsive spacing */
 }

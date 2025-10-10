@@ -73,7 +73,7 @@ export class AdditionalJobObserveDetailsComponent {
       console.log('✅ Submitted data:', this.jobForm.value);
     } else {
       this.jobForm.markAllAsTouched();
-      this.alertMessage = 'Please fix all validation errors before submitting.';
+      this.alertMessage = 'Please correct the errors before submitting.';
       this.showAlert = true;
       this.confirmAction = null;
     }
