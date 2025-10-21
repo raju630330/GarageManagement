@@ -1,8 +1,8 @@
 <mat-accordion>
   <mat-expansion-panel>
-    <mat-expansion-panel-header class="bg-secondary mt-4">
+    <mat-expansion-panel-header class="custom-blue-header mt-4" style="background-color: #3f51b5; color: white;">
       <mat-panel-title class="text-white">
-        Repair Servicing Order
+        Initial Fields
       </mat-panel-title>
       <mat-panel-description>
       </mat-panel-description>
@@ -15,13 +15,43 @@
         <div class="form-grid">
           <div class="form-group">
             <label>Registration Number</label>
-            <input formControlName="registrationNumber" type="text" />
+            <input type="text"
+                   maxlength="10"
+                   formControlName="registrationNumber"
+                   (input)="onRegistrationInput($event)"
+                   placeholder="e.g., ABCD123456"
+                   class="form-control" />
+
+            <div class="text-danger" *ngIf="registrationNumber.invalid && (registrationNumber.dirty || registrationNumber.touched)">
+              <small *ngIf="registrationNumber.errors?.['pattern']">
+                Registration Number must be 4 letters (A–Z) followed by 6 digits.
+              </small>
+              <small *ngIf="registrationNumber.errors?.['required']">
+                Registration Number is required.
+              </small>
+            </div>
           </div>
+
 
           <div class="form-group">
             <label>VIN Number</label>
-            <input formControlName="vinNumber" type="text" />
+            <input type="text"
+                   maxlength="17"
+                   formControlName="vinNumber"
+                   (input)="onVinInput($event)"
+                   placeholder="Enter VIN Number"
+                   class="form-control" />
+
+            <div class="text-danger" *ngIf="vinNumber.invalid && (vinNumber.dirty || vinNumber.touched)">
+              <small *ngIf="vinNumber.errors?.['pattern']">
+                VIN Number must contain digits only.
+              </small>
+              <small *ngIf="vinNumber.errors?.['required']">
+                VIN Number is required.
+              </small>
+            </div>
           </div>
+
 
           <div class="form-group">
             <label>KMs</label>
@@ -29,29 +59,146 @@
           </div>
 
           <div class="form-group">
-            <label>Date</label>
-            <input formControlName="date" type="date" />
+            <label>Expected Date & Time</label>
+            <input formControlName="expectedDateTime"
+                   type="datetime-local"
+                   [min]="minDateTime"
+                   class="form-control" />
+
+            <div class="text-danger" *ngIf="repairForm.get('expectedDateTime')?.invalid && (repairForm.get('expectedDateTime')?.touched || repairForm.get('expectedDateTime')?.dirty)">
+              <small *ngIf="repairForm.get('expectedDateTime')?.errors?.['required']">Date & Time is required.</small>
+            </div>
           </div>
+
 
           <div class="form-group">
             <label>Make</label>
-            <input formControlName="make" />
+            <select formControlName="make"
+                    class="form-control"
+                    size="1">
+              <option value="" disabled selected>Select Make</option>
+              <option *ngFor="let item of makeList" [value]="item">
+                {{ item }}
+              </option>
+            </select>
+
+            <div class="text-danger" *ngIf="make.invalid && (make.dirty || make.touched)">
+              <small *ngIf="make.errors?.['required']">Please select a Make.</small>
+            </div>
           </div>
+          <div class="form-group">
+            <label>Model</label>
+            <input formControlName="model"
+                   type="text"
+                   class="form-control"
+                   placeholder="Enter Model Name" />
+
+            <div class="text-danger" *ngIf="model.invalid && (model.dirty || model.touched)">
+              <small *ngIf="model.errors?.['required']">Model name is required.</small>
+              <small *ngIf="model.errors?.['pattern']">
+                Only alphabets and numbers are allowed (no special characters).
+              </small>
+              <small *ngIf="model.errors?.['minlength']">Minimum 2 characters required.</small>
+              <small *ngIf="model.errors?.['maxlength']">Maximum 40 characters allowed.</small>
+            </div>
+          </div>
+
+
 
           <div class="form-group">
             <label>Driver Name</label>
-            <input formControlName="driverName" />
+            <input type="text"
+                   formControlName="driverName"
+                   (input)="onDriverNameInput($event)"
+                   maxlength="40"
+                   placeholder="Enter Driver Name"
+                   class="form-control" />
+
+            <div class="text-danger" *ngIf="driverName.invalid && (driverName.dirty || driverName.touched)">
+              <small *ngIf="driverName.errors?.['required']">
+                Driver Name is required.
+              </small>
+              <small *ngIf="driverName.errors?.['pattern']">
+                Only alphabets and spaces are allowed.
+              </small>
+              <small *ngIf="driverName.errors?.['minlength']">
+                Minimum 2 characters required.
+              </small>
+              <small *ngIf="driverName.errors?.['maxlength']">
+                Maximum 40 characters allowed.
+              </small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="text"
+                   formControlName="mobileNumber"
+                   (input)="onMobileInput($event)"
+                   placeholder="+91XXXXXXXXXX"
+                   class="form-control"
+                   maxlength="13" />
+
+            <div class="text-danger" *ngIf="mobileNumber.invalid && (mobileNumber.dirty || mobileNumber.touched)">
+              <small *ngIf="mobileNumber.errors?.['required']">Mobile Number is required.</small>
+              <small *ngIf="mobileNumber.errors?.['pattern']">
+                Mobile number must start with +91 followed by 10 digits.
+              </small>
+            </div>
           </div>
 
-          <div class="form-group full-width">
-            <label>Vehicle came from site</label>
-            <input formControlName="vehicleFromSite" />
+
+
+          <div class="form-group">
+            <label>Vehicle Came From Site</label>
+            <input type="text"
+                   formControlName="vehicleFromSite"
+                   (input)="onVehicleFromSiteInput($event)"
+                   maxlength="25"
+                   placeholder="Enter Site Name"
+                   class="form-control" />
+
+            <div class="text-danger" *ngIf="vehicleFromSite.invalid && (vehicleFromSite.dirty || vehicleFromSite.touched)">
+              <small *ngIf="vehicleFromSite.errors?.['required']">Site Name is required.</small>
+              <small *ngIf="vehicleFromSite.errors?.['pattern']">Only alphabets and spaces are allowed.</small>
+              <small *ngIf="vehicleFromSite.errors?.['maxlength']">Maximum 25 characters allowed.</small>
+            </div>
           </div>
 
-          <div class="form-group full-width">
+
+          <div class="form-group">
             <label>Site Incharge Name</label>
-            <input formControlName="siteInchargeName" />
+            <input type="text"
+                   formControlName="siteInchargeName"
+                   (input)="onSiteInchargeNameInput($event)"
+                   maxlength="25"
+                   placeholder="Enter Site Incharge Name"
+                   class="form-control" />
+
+            <div class="text-danger" *ngIf="siteInchargeName.invalid && (siteInchargeName.dirty || siteInchargeName.touched)">
+              <small *ngIf="siteInchargeName.errors?.['required']">Site Incharge Name is required.</small>
+              <small *ngIf="siteInchargeName.errors?.['pattern']">Only alphabets and spaces are allowed.</small>
+              <small *ngIf="siteInchargeName.errors?.['maxlength']">Maximum 25 characters allowed.</small>
+            </div>
           </div>
+          <div class="form-group">
+            <label>Repair Estimation Cost</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                ₹
+                <input type="text"
+                       formControlName="repairCost"
+                       (input)="onRepairCostInput($event)"
+                       placeholder="Enter Estimated Amount"
+                       class="form-control" />
+              </span>
+            </div>
+
+            <div class="text-danger" *ngIf="repairCost.invalid && (repairCost.dirty || repairCost.touched)">
+              <small *ngIf="repairCost.errors?.['required']">Repair cost is required.</small>
+              <small *ngIf="repairCost.errors?.['pattern']">Enter a valid amount (up to 2 decimals).</small>
+            </div>
+          </div>
+
 
           <div class="form-group checkbox-group">
             <label> Driver permanent to this vehicle</label>
@@ -76,19 +223,22 @@
                      (change)="repairForm.get('roadTest')?.setValue('No')" /> No
             </div>
           </div>
-          <div class="form-group">
-            <label> Type of Service</label>
-            <select formControlName="serviceType">
-              <option value=""> Select</option>
-              <option value="Repair"> Repair</option>
-              <option value="Servicing"> Servicing</option>
-            </select>
-          </div>
 
           <div class="form-group">
-            <label>Repair Estimation Cost</label>
-            <input formControlName="repairCost" type="number" class="no-spinner" />
+            <label>Type of Service</label>
+            <select formControlName="serviceType"
+                    class="form-control service-dropdown">
+              <option value="" disabled selected>Select Service Type</option>
+              <option *ngFor="let service of serviceList" [value]="service">
+                {{ service }}
+              </option>
+            </select>
+
+            <div class="text-danger" *ngIf="serviceType.invalid && (serviceType.dirty || serviceType.touched)">
+              <small *ngIf="serviceType.errors?.['required']">Please select a Type of Service.</small>
+            </div>
           </div>
+
 
           <div class="form-group checkbox-group">
             <label>Under Warranty</label>
@@ -102,16 +252,45 @@
             </div>
           </div>
 
-          <div class="form-group full-width">
-            <label>Expected Date & Time</label>
-            <input formControlName="expectedDateTime" type="datetime-local" />
+          <div class="form-group">
+            <label>Expected Delivery Date & Time</label>
+            <input type="datetime-local"
+                   formControlName="expectedDateTime"
+                   [min]="minDateTime"
+                   class="form-control" />
+
+            <div class="text-danger"
+                 *ngIf="repairForm.get('expectedDateTime')?.invalid &&
+              (repairForm.get('expectedDateTime')?.dirty || repairForm.get('expectedDateTime')?.touched)">
+              <small *ngIf="repairForm.get('expectedDateTime')?.errors?.['required']">
+                Expected Delivery Date & Time is required.
+              </small>
+            </div>
+
+
+          </div>
+          <div class="form-group">
+            <label>Allotted Technician</label>
+            <select formControlName="allottedTechnician" class="form-control technician-dropdown">
+              <option value="" disabled selected>Select Technician</option>
+              <option *ngFor="let tech of allTechnicians" [value]="tech">
+                {{ tech }}
+              </option>
+            </select>
+
+            <div class="text-danger" *ngIf="repairForm.get('allottedTechnician')?.invalid &&
+                     (repairForm.get('allottedTechnician')?.dirty || repairForm.get('allottedTechnician')?.touched)">
+              <small *ngIf="repairForm.get('allottedTechnician')?.errors?.['required']">
+                Please select a technician.
+              </small>
+            </div>
           </div>
         </div>
-        <br />
-        <div class="form-actions">
-          <button type="submit" [disabled]="repairForm.invalid">Submit</button>
-        </div>
-      </form>
+          <br />
+          <div class="form-actions">
+            <button type="submit" [disabled]="repairForm.invalid">Submit</button>
+          </div>
+</form>
     </div>
 
   </mat-expansion-panel>

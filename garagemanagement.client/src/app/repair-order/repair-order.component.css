@@ -11,6 +11,24 @@
   background-repeat: no-repeat;
   color: #fff;
 }
+.technician-dropdown option:hover {
+  background-color: #3f51b5; /* your desired hover color */
+  color: white;
+}
+
+.technician-dropdown {
+  max-height: 150px; /* scrollable dropdown if many items */
+  overflow-y: auto;
+}
+
+select.form-control {
+  max-height: 150px;
+  overflow-y: auto;
+}
+.service-dropdown option:hover {
+  background-color: #cce5ff; /* light blue */
+  color: #000;
+}
 
 .form-group label {
 /*  color: #f1f1f1; */
