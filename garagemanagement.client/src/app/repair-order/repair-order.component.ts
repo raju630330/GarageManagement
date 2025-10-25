@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./repair-order.component.css'],
 })
 export class RepairOrderComponent implements OnInit {
+  openPanel: string | null = null;
   repairForm!: FormGroup;
   readonly panelOpenState = signal(false);
   repairTForm!: FormGroup;
@@ -30,9 +31,12 @@ export class RepairOrderComponent implements OnInit {
     'Brake Service',
     'Tire Replacement',
     'Battery Check',
-    'Full Service'
+    'Full Service',
+    'PMS service',
+    'Eletric check'
   ];
   allTechnicians: string[] = [
+    'Abhilash',
     'Technician A',
     'Technician B',
     'Technician C',
@@ -75,8 +79,8 @@ export class RepairOrderComponent implements OnInit {
         ]
       ],
       vinNumber: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
-      kms: [''],
-      date: ['', Validators.required],
+      kms: ['', [Validators.required]],
+      vehicleInDateTime: ['', Validators.required],
       make: ['', Validators.required],
       model: [
         '',
@@ -110,35 +114,19 @@ export class RepairOrderComponent implements OnInit {
         Validators.pattern(/^[A-Za-z ]+$/),
         Validators.maxLength(25)
       ]],
-      driverPermanent: [''],
-      roadTest: [''],
+      driverPermanent: ['', [Validators.required]],
+      roadTest: ['', [Validators.required]],
       serviceType: ['', Validators.required],
       repairCost: [
         '',
         [
           Validators.required,
-          Validators.pattern(/^\d+(\.\d{1,2})?$/) // digits with up to 2 decimals
+          Validators.pattern(/^\d{1,6}(\.\d{0,2})?$/)  // max 6 digits before dot, max 2 after
         ]
       ],
-      warranty: [''],
-      expectedDateTime: [this.minDateTime, Validators.required]
-    });
-
-    this.repairTForm = this.fb.group({
-      engineOilOk: [false], engineOilNotOk: [false],
-      gOilOk: [false], gOilNotOk: [false],
-      housingOilOk: [false], housingOilNotOk: [false],
-      steeringOilOk: [false], steeringOilNotOk: [false],
-      clutchOilOk: [false], clutchOilNotOk: [false],
-      otherLeakYes: [false], otherLeakNo: [false],
-      batteryOk: [false], batteryNotOk: [false],
-      tyresOk: [false], tyresNotOk: [false],
-      generalCheckYes: [false], generalCheckNo: [false],
-      remarks: [''],
-      technicianSign: [''],
-      driverSign: [''],
-      floorSign: [''],
-      authSign: ['']
+      warranty: ['', [Validators.required]],
+      expectedDateTime: ['', Validators.required],
+      allottedTechnician: ['', Validators.required]
     });
 
   }
@@ -165,18 +153,26 @@ export class RepairOrderComponent implements OnInit {
   onRepairCostInput(event: any) {
     let input = event.target.value;
 
-    // allow only digits and max one decimal
+    // Allow only numbers and one dot
     input = input.replace(/[^0-9.]/g, '');
 
-    // allow only two decimal places
-    if (input.includes('.')) {
-      const parts = input.split('.');
-      parts[1] = parts[1].substring(0, 2);
-      input = parts.join('.');
+    // Split integer and decimal parts
+    const parts = input.split('.');
+
+    // Limit integer part to 6 digits
+    if (parts[0].length > 6) {
+      parts[0] = parts[0].substring(0, 6);
     }
 
+    // Limit decimal part to 2 digits
+    if (parts[1]) {
+      parts[1] = parts[1].substring(0, 2);
+    }
+
+    input = parts.join('.');
     this.repairForm.get('repairCost')?.setValue(input, { emitEvent: false });
   }
+
   get repairCost() {
     return this.repairForm.get('repairCost')!;
   }

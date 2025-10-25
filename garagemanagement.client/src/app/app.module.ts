@@ -30,6 +30,7 @@ import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.
 
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -61,7 +62,7 @@ import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.
     ReactiveFormsModule,
     MatExpansionModule,
     MatIconModule,
-
+    MatExpansionModule,
     FormsModule                       
   ],
   providers: [
