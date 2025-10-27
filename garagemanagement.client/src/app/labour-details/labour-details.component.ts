@@ -35,4 +35,14 @@ export class LabourDetailsComponent {
     this.labourDetails.splice(index, 1);
     this.labourDetails.forEach((row, i) => row.serialNo = i + 1);
   }
+  allowOnlyPositiveNumbers(detail: any, field: string, event: any) {
+  const input = event.target.value;
+  // Remove anything that isn't a digit
+  const numericValue = input.replace(/[^0-9]/g, '');
+  event.target.value = numericValue;
+  detail[field] = numericValue ? parseInt(numericValue, 10) : 0;
+
+  this.updateAmount(detail); // Keep your existing logic
+}
+
 }

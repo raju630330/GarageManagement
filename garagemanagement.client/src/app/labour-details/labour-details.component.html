@@ -21,11 +21,24 @@
           <input type="text" [(ngModel)]="detail.description" class="form-control" />
         </td>
         <td>
-          <input type="number" [(ngModel)]="detail.labourCharges" (input)="updateAmount(detail)" class="form-control" />
+          <input type="text"
+                 inputmode="numeric"
+                 maxlength="7"
+                 [(ngModel)]="detail.labourCharges"
+                 (input)="allowOnlyPositiveNumbers(detail, 'labourCharges', $event)"
+                 class="form-control" />
         </td>
+
         <td>
-          <input type="number" [(ngModel)]="detail.outsideLabour" (input)="updateAmount(detail)" class="form-control" />
+          <input type="text"
+                 inputmode="numeric"
+                 maxlength="7"
+                 [(ngModel)]="detail.outsideLabour"
+                 (input)="allowOnlyPositiveNumbers(detail, 'outsideLabour', $event)"
+                 class="form-control" />
         </td>
+
+
         <td>{{ detail.amount | currency:'INR':'symbol':'1.2-2' }}</td>
         <td>
           <button class="btn btn-danger btn-sm" (click)="deleteRow(i)">Delete</button>
