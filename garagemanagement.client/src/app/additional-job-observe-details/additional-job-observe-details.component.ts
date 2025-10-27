@@ -1,20 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-
 @Component({
   selector: 'app-additional-job-observe-details',
   standalone: false,
   templateUrl: './additional-job-observe-details.component.html',
-  styleUrl: './additional-job-observe-details.component.css'
+  styleUrls: ['./additional-job-observe-details.component.css'] 
 })
-export class AdditionalJobObserveDetailsComponent {
+export class AdditionalJobObserveDetailsComponent implements OnInit {
   jobForm!: FormGroup;
 
-  // Custom alert state
   showAlert = false;
   alertMessage = '';
-  confirmAction: (() => void) | null = null; // callback for Yes button
+  confirmAction: (() => void) | null = null;
 
   constructor(private fb: FormBuilder) { }
 
@@ -44,38 +42,37 @@ export class AdditionalJobObserveDetailsComponent {
     this.rows.push(this.createRow(nextSlNo));
   }
 
-  // Use custom alert instead of browser confirm
   removeRow(index: number): void {
     this.alertMessage = 'Are you sure you want to remove this row?';
     this.showAlert = true;
+
     this.confirmAction = () => {
       this.rows.removeAt(index);
+      this.recalculateSerialNumbers();
       this.closeAlert();
     };
   }
 
-  // Triggered when user clicks Yes in alert
   confirmYes(): void {
     if (this.confirmAction) this.confirmAction();
   }
 
-  // Close alert (No button)
   closeAlert(): void {
     this.showAlert = false;
     this.confirmAction = null;
-    this.rows.removeAt(index);
-    // Recalculate serial numbers after removing a row
+  }
+
+  recalculateSerialNumbers(): void {
     this.rows.controls.forEach((control, i) => {
       control.get('slNo')?.setValue(i + 1);
     });
-
   }
 
   submit(): void {
     if (this.jobForm.valid) {
       this.alertMessage = 'Form submitted successfully!';
       this.showAlert = true;
-      this.confirmAction = null; // no action needed for submit alert
+      this.confirmAction = null;
       console.log('✅ Submitted data:', this.jobForm.value);
     } else {
       this.jobForm.markAllAsTouched();
@@ -84,5 +81,4 @@ export class AdditionalJobObserveDetailsComponent {
       this.confirmAction = null;
     }
   }
-  
 }

@@ -351,87 +351,6 @@
       </mat-panel-description>
     </mat-expansion-panel-header>
   </mat-expansion-panel>
-    <div class="container mt-4">
-      <table class="table table-bordered text-center align-middle">
-        <tbody>
-          <tr *ngFor="let leftItem of TMCLeft; let idx = index">
-            <!-- Left Column -->
-            <td class="text-start" *ngIf="leftItem">
-              <div class="d-flex align-items-center justify-content-between gap-3">
-                <span class="fw-bold">{{ leftItem.label }}</span>
-                <div class="d-flex align-items-center gap-2">
-                  <input type="checkbox"
-                         [checked]="leftItem.status === 'ok'"
-                         (change)="setStatus(leftItem, 'ok')"
-                         [id]="leftItem.control + '-ok'">
-                  <label [for]="leftItem.control + '-ok'">OK</label>
-
-                  <input type="checkbox"
-                         [checked]="leftItem.status === 'notOk'"
-                         (change)="setStatus(leftItem, 'notOk')"
-                         [id]="leftItem.control + '-notOk'">
-                  <label [for]="leftItem.control + '-notOk'">NOT OK</label>
-                </div>
-              </div>
-            </td>
-
-            <!-- Right Column -->
-            <td class="text-start" *ngIf="TMCRight[idx]">
-              <div class="d-flex align-items-center justify-content-between gap-3">
-                <span class="fw-bold">{{ TMCRight[idx].label }}</span>
-                <div class="d-flex align-items-center gap-2">
-                  <input type="checkbox"
-                         [checked]="TMCRight[idx].status === 'ok'"
-                         (change)="setStatus(TMCRight[idx], 'ok')"
-                         [id]="TMCRight[idx].control + '-ok'">
-                  <label [for]="TMCRight[idx].control + '-ok'">OK</label>
-
-                  <input type="checkbox"
-                         [checked]="TMCRight[idx].status === 'notOk'"
-                         (change)="setStatus(TMCRight[idx], 'notOk')"
-                         [id]="TMCRight[idx].control + '-notOk'">
-                  <label [for]="TMCRight[idx].control + '-notOk'">NOT OK</label>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="text-start mb-3 p-2 bg-white border rounded">
-        <input type="checkbox" class="me-2"/>
-          I hereby state that I checked thoroughly in line with the above parameters,
-          explained the same to the driver, and he agreed to take delivery with satisfaction.
-      </div>
-
-      <div class="text-start mb-3">
-        <label class="form-label fw-bold">Remarks:</label>
-        <textarea class="form-control" formControlName="remarks" rows="3" placeholder="Enter remarks here..."></textarea>
-      </div>
-
-      <div class="text-start table-responsive">
-        <table class="table table-bordered align-middle text-center">
-          <thead class="table-primary">
-            <tr>
-              <th>Technician</th>
-              <th>Driver</th>
-              <th>Floor Supervisor</th>
-              <th>Authorised Person</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><input type="text" class="form-control" formControlName="technicianSign" placeholder="Name & Sign"></td>
-              <td><input type="text" class="form-control" formControlName="driverSign" placeholder="Name & Sign"></td>
-              <td><input type="text" class="form-control" formControlName="floorSign" placeholder="Name & Sign"></td>
-              <td><input type="text" class="form-control" formControlName="authSign" placeholder="Name & Sign"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </mat-expansion-panel>
 </mat-accordion>
 
   <mat-expansion-panel>
@@ -467,5 +386,4 @@
     </mat-expansion-panel-header>
     <app-total-repair-cost></app-total-repair-cost>
   </mat-expansion-panel>
-</mat-accordion>
 
