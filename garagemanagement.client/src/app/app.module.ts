@@ -13,7 +13,7 @@ import { BookingAppointmentComponent } from './booking-appointment/booking-appoi
 import { ResetpasswordComponent } from './resetpassword/resetpassword.component';
 import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.component';
 import { authInterceptor } from './auth.interceptor';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { CalendarComponent } from './calendar/calendar.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
 import { SparePartIssueDetailsComponent } from './spare-part-issue-details/spare-part-issue-details.component';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -37,7 +37,7 @@ import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.
     UserprofileComponent,
     WorkshopComponent,
     ProfileComponent,
-    DashboardComponent,
+    CalendarComponent,
     LoginComponent,
     RegisterComponent,
     BookingAppointmentComponent,
@@ -53,6 +53,7 @@ import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.
     SettingsComponent,
     ComponentNameComponent,
     TotalRepairCostComponent,
+  
     
   ],
   imports: [

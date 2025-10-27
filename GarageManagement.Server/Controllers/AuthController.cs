@@ -129,88 +129,63 @@ namespace GarageManagement.Server.Controllers
 
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == dto.EmailOrUsername.Trim().ToLower());
 
-            //if (user == null) return BadRequest("User not found");
+            if (user == null) return BadRequest("User not found");
 
 
-            //// Generate JWT reset token
-            //var token = GenerateJwt(user);
-            //var frontendUrl = "http://localhost:4200/reset-password";
-            //var callbackUrl = $"{frontendUrl}?token={token}&email={user.Email}";
+            // Generate JWT reset token
+            var token = GenerateJwt(user);
+            var frontendUrl = "http://localhost:4200/reset-password";
+            var callbackUrl = $"{frontendUrl}?token={token}&email={user.Email}";
 
-            //var mailRequest = new EmailRequest
-            //{
-            //    ToEmail = user.Email,
-            //    Subject = "Password Reset Request",
-            //    Body = $"<p>Click the link below to reset your password:</p><a href='{callbackUrl}'>Reset Password</a>"
-            //};
+            var mailRequest = new EmailRequest
+            {
+                ToEmail = user.Email,
+                Subject = "Password Reset Request",
+                Body = $"<p>Click the link below to reset your password:</p><a href='{callbackUrl}'>Reset Password</a>"
+            };
 
-            //await _emailService.SendEmailAsync(mailRequest);
+            await _emailService.SendEmailAsync(mailRequest);
 
-            //return Ok(new { message = "Reset link has been sent to your email" });
-            if (user == null)
-                return Ok(new { exists = false });
-            return Ok(new { exists = true, email = user.Email });
+            return Ok(new { message = "Reset link has been sent to your email" });
+
         }
 
 
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            //var tokenHandler = new JwtSecurityTokenHandler();
-            //try
-            //{
-            //    var principal = tokenHandler.ValidateToken(request.Token, new TokenValidationParameters
-            //    {
-            //        ValidateIssuer = true,
-            //        ValidateAudience = true,
-            //        ValidIssuer = _config["Jwt:Issuer"],
-            //        ValidAudience = _config["Jwt:Audience"],
-            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"])),
-            //        ValidateLifetime = true
-            //    }, out var validatedToken);
-
-            //    var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            //    var user = await _db.Users.FindAsync(int.Parse(userId));
-
-            //    if (user == null)
-            //        return BadRequest("Invalid token");
-
-            //    // Update password
-            //    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-            //    user.ResetTokenHash = null;
-            //    user.ResetTokenExpiresUtc = null;
-            //    await _db.SaveChangesAsync();
-
-            //    return Ok(new { message = "Password has been reset successfully." });
-            //}
-            //catch
-            //{
-            //    return BadRequest("Invalid or expired token.");
-            //}
-            if (string.IsNullOrWhiteSpace(request.EmailOrUsername)
-            || string.IsNullOrWhiteSpace(request.NewPassword)
-            || string.IsNullOrWhiteSpace(request.ConfirmPassword))
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
             {
-                return BadRequest(new { message = "All fields required" });
+                var principal = tokenHandler.ValidateToken(request.Token, new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = _config["Jwt:Issuer"],
+                    ValidAudience = _config["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"])),
+                    ValidateLifetime = true
+                }, out var validatedToken);
+
+                var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var user = await _db.Users.FindAsync(int.Parse(userId));
+
+                if (user == null)
+                    return BadRequest("Invalid token");
+
+                // Update password
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+                user.ResetTokenHash = null;
+                user.ResetTokenExpiresUtc = null;
+                await _db.SaveChangesAsync();
+
+                return Ok(new { message = "Password has been reset successfully." });
+            }
+            catch
+            {
+                return BadRequest("Invalid or expired token.");
             }
 
-            if (request.NewPassword != request.ConfirmPassword)
-                return BadRequest(new { message = "Passwords do not match" });
-
-            // Basic password strength check (customize as needed)
-            if (request.NewPassword.Length < 8)
-                return BadRequest(new { message = "Password must be at least 8 characters" });
-
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.EmailOrUsername.Trim().ToLower());
-            if (user == null)
-                return NotFound(new { message = "User not found" });
-
-            // Hash the password (BCrypt)
-            string hashed = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-            user.PasswordHash = hashed;
-            await _db.SaveChangesAsync();
-
-            return Ok(new { message = "Password updated" });
         }
         
 

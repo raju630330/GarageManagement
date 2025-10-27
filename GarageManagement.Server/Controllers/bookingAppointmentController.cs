@@ -28,5 +28,25 @@ namespace GarageManagement.Server.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = " Booking Appointment Data saved successfully" });
         }
+
+        [HttpGet("getAllAppointments")]
+        public async Task<IActionResult> GetAllBookingAppointments()
+        {
+            var bookingAppointments = await _context.bookAppointments.ToListAsync();
+            return Ok(bookingAppointments);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteBookingAppointment(int id)
+        {
+            var bookingAppointment = await _context.bookAppointments.FindAsync(id);
+            if (bookingAppointment == null)
+            {
+                return NotFound(new { message = "Booking Appointment not found" });
+            }
+            _context.bookAppointments.Remove(bookingAppointment);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Booking Appointment deleted successfully" });
+        }
     }
 }

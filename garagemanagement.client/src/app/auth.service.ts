@@ -47,11 +47,11 @@ export class AuthService {
           
   }
 
-  forgotPassword(emailOrUsername: string): Observable<{exists:boolean}> {
-    return this.http.post<{ exists: boolean, emailOrUsername ?:string}>(`${this.base}/Auth/forgot-password`, { emailOrUsername });
+  forgotPassword(emailOrUsername: string): Observable<any> {
+    return this.http.post(`${this.base}/Auth/forgot-password`, { emailOrUsername });
   }
 
-  resetPassword(data: { emailOrUsername: string; newPassword: string; confirmPassword: string }): Observable<any> {
+  resetPassword(data: any): Observable<any> {
     return this.http.post(`${this.base}/Auth/reset-password`, data);
   }
 
