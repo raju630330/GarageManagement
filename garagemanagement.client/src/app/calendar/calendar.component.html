@@ -1,0 +1,81 @@
+<div class="container-fluid my-3">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <h3 class="mb-0">📅 Calendar</h3>
+      <button class="btn btn-outline-primary btn-sm" (click)="today()">Today</button>
+      <button class="btn btn-outline-primary btn-sm" (click)="previousWeek()">&lt;</button>
+      <button class="btn btn-outline-primary btn-sm" (click)="nextWeek()">&gt;</button>
+      <h2 class="mb-0 ms-2">{{ currentWeekDates[0] | date: 'MMMM y' }}</h2>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 mt-2 mt-md-0 flex-wrap">
+      <input type="text"
+             class="form-control form-control-sm"
+             placeholder="Search..."
+             [(ngModel)]="searchTerm"
+             (input)="filterAppointments()"
+             style="width: 200px;" />
+
+      <select class="form-select form-select-sm w-auto" (change)="changeView($event)">
+        <option value="week">Week</option>
+        <option value="month">Month</option>
+        <option value="day">Day</option>
+      </select>
+
+      <button class="btn btn-primary btn-sm" [routerLink]="['bookappointment']">
+        + New Appointment
+      </button>
+    </div>
+  </div>
+
+  <!-- WEEK & DAY VIEW -->
+  <div class="table-responsive" *ngIf="viewMode === 'week' || viewMode === 'day'">
+    <table class="table table-bordered align-middle text-center">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 80px;">Time</th>
+          <th *ngFor="let day of currentWeekDates">
+            <div>{{ day | date: 'EEE' }}</div>
+            <div [ngClass]="{'bg-primary text-white rounded-circle px-2': isToday(day)}">
+              {{ day.getDate() }}
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let hour of hours">
+          <td class="text-end small text-muted">{{ hour }}</td>
+          <td *ngFor="let day of currentWeekDates">
+            <div *ngFor="let appt of getAppointmentsForSlot(day, hour)">
+              <div class="badge bg-primary w-100 mb-1">
+                {{ appt.service }}
+                <br>
+                <small>{{ appt.customerType }}</small>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MONTH VIEW -->
+  <div class="table-responsive" *ngIf="viewMode === 'month'">
+    <table class="table table-bordered text-center">
+      <thead class="table-light">
+        <tr>
+          <th *ngFor="let d of ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']">{{ d }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let week of [].constructor((currentWeekDates.length / 7)); let row = index">
+          <td *ngFor="let day of currentWeekDates.slice(row*7, row*7+7)"
+              [ngClass]="{'bg-primary text-white rounded-circle': isToday(day)}">
+            <div>{{ day.getDate() }}</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<router-outlet></router-outlet>

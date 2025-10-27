@@ -44,21 +44,25 @@ export class RepairOrderComponent implements OnInit {
     'Technician E'
   ];
 
-
+  
 
 
 
   checkList = [
-    { label: 'Engine Oil Level', control: 'engineOil', options: ['OK'] },
-    { label: 'G Oil Level', control: 'gOil', options: ['OK'] },
-    { label: 'Housing Oil Level', control: 'housingOil', options: ['OK'] },
-    { label: 'Steering Oil Level', control: 'steeringOil', options: ['OK'] },
-    { label: 'Clutch Oil Level', control: 'clutchOil', options: ['OK'] },
-    { label: 'Other Oil Leakages', control: 'otherLeak', options: ['YES'] },
-    { label: 'Battery & Lights Check', control: 'battery', options: ['OK'] },
-    { label: 'Tyres & Stephany Condition', control: 'tyres', options: ['OK'] },
-    { label: 'General Checks Done', control: 'generalCheck', options: ['YES'] },
+    { label: 'Engine Oil Level', control: 'engineOil', status: null }, // 'ok' | 'notOk' | null
+    { label: 'G Oil Level', control: 'gOil', status: null },
+    { label: 'Housing Oil Level', control: 'housingOil', status: null },
+    { label: 'Steering Oil Level', control: 'steeringOil', status: null },
+    { label: 'Clutch Oil Level', control: 'clutchOil', status: null },
+    { label: 'Other Oil Leakages', control: 'otherLeak', status: null },
+    { label: 'Battery & Lights Check', control: 'battery', status: null },
+    { label: 'Tyres & Stephany Condition', control: 'tyres', status: null },
+    { label: 'General Checks Done', control: 'generalCheck', status: null },
   ];
+
+  TMCLeft = this.checkList.slice(0, 4);
+  TMCRight = this.checkList.slice(4);
+
 
   constructor(private fb: FormBuilder) { }
 
@@ -132,6 +136,17 @@ export class RepairOrderComponent implements OnInit {
   }
  
 
+    this.repairTForm = this.fb.group({
+      engineOilOk: [false],
+      gOilOk: [false], 
+      housingOilOk: [false], 
+      steeringOilOk: [false],
+      clutchOilOk: [false], 
+      otherLeakYes: [false], 
+      batteryOk: [false],
+      tyresOk: [false],
+      generalCheckYes: [false], 
+
 
   onRegistrationInput(event: any) {
     let input = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -139,6 +154,16 @@ export class RepairOrderComponent implements OnInit {
       input = input.substring(0, 10);
     }
     this.repairForm.get('registrationNumber')?.setValue(input, { emitEvent: false });
+      technicianSign: ['', [Validators.pattern('$[A-Za-z]')]],
+      driverSign: ['', [Validators.pattern('$[A-Za-z]')]],
+      floorSign: ['', [Validators.pattern('$[A-Za-z]')]],
+      authSign: ['', [Validators.pattern('$[A-Za-z]')]]
+    });
+  }
+  setStatus(item: any, newStatus: 'ok' | 'notOk') {
+    if (item.status !== newStatus) {
+      item.status = newStatus;
+    }
   }
 
   onSubmit() {

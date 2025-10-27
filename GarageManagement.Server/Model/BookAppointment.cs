@@ -45,9 +45,9 @@ namespace GarageManagement.Server.Model
         [Required]
         public string bay { get; set; }
 
-        //    // Foreign Keys + Navigation
-        //    public int UserId { get; set; }
-        //    public User User { get; set; }   // Many-to-One (User → BookAppointments)
+        //// Foreign Keys + Navigation
+        //public int UserId { get; set; }
+        //public User User { get; set; }   // Many-to-One (User → BookAppointments)
 
         //    public int WorkshopId { get; set; }
         //    public WorkshopProfile WorkshopProfile { get; set; } // Many-to-One (Workshop → BookAppointments)

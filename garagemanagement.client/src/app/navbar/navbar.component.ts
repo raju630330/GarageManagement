@@ -10,7 +10,7 @@ export class NavbarComponent implements AfterViewInit {
 
   mainTabs = [
     { name: 'Profile', route: '/profile' },
-    { name: 'Workshop', route: '/workshop' },
+    { name: 'Workshop', route: '' },
     { name: 'Users', route: '/users' },
     { name: 'MMVY', route: '/mmvy' },
     { name: 'Settings', route: '/settings' },

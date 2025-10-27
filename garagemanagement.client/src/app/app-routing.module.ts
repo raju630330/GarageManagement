@@ -10,7 +10,7 @@ import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.compone
 import { ResetpasswordComponent } from './resetpassword/resetpassword.component';
 import { adminGuard } from './admin.guard';
 import { authGuard } from './auth.guard';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { CalendarComponent } from './calendar/calendar.component';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
 import { LabourDetailsComponent } from './labour-details/labour-details.component';  
 import { SparePartIssueDetailsComponent } from './spare-part-issue-details/spare-part-issue-details.component';
@@ -25,7 +25,7 @@ const routes: Routes = [
     component: UserprofileComponent,
     children: [
       {
-        path: 'dashaboard', component: DashboardComponent,
+        path: 'Calendar', component: CalendarComponent,
         children: [
           { path: 'bookappointment', component: BookingAppointmentComponent },
         ]

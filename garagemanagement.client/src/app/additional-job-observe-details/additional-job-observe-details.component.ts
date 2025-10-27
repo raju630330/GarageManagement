@@ -63,6 +63,12 @@ export class AdditionalJobObserveDetailsComponent {
   closeAlert(): void {
     this.showAlert = false;
     this.confirmAction = null;
+    this.rows.removeAt(index);
+    // Recalculate serial numbers after removing a row
+    this.rows.controls.forEach((control, i) => {
+      control.get('slNo')?.setValue(i + 1);
+    });
+
   }
 
   submit(): void {
@@ -78,4 +84,5 @@ export class AdditionalJobObserveDetailsComponent {
       this.confirmAction = null;
     }
   }
+  
 }
