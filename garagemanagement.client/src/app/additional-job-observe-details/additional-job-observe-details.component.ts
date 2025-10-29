@@ -6,7 +6,6 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
   standalone: false,
   templateUrl: './additional-job-observe-details.component.html',
   styleUrls: ['./additional-job-observe-details.component.css']
-  styleUrls: ['./additional-job-observe-details.component.css'] 
 })
 export class AdditionalJobObserveDetailsComponent implements OnInit {
   jobForm!: FormGroup;
