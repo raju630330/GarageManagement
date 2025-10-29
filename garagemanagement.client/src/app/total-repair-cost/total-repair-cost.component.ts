@@ -27,4 +27,23 @@ export class TotalRepairCostComponent {
   calculateTotal(): void {
     this.grandTotal = this.repairItems.reduce((sum, item) => sum + (item.amount || 0), 0);
   }
+  allowOnlyPositiveNumbers(item: any, field: string, event: any) {
+    let input = event.target.value;
+
+    // 1️⃣ Remove all non-digit characters
+    input = input.replace(/[^0-9]/g, '');
+
+    // 2️⃣ Enforce max 7 digits
+    if (input.length > 7) {
+      input = input.slice(0, 7);
+    }
+
+    // 3️⃣ Update the value and model
+    event.target.value = input;
+    item[field] = input ? parseInt(input, 10) : 0;
+
+    // 4️⃣ Recalculate total
+    this.calculateTotal();
+  }
+
 }

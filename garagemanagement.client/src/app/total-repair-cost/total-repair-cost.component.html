@@ -10,6 +10,7 @@
           <th>Amount (₹)</th>
         </tr>
       </thead>
+
       <tbody>
         <tr *ngFor="let item of repairItems; let i = index">
           <td>{{ item.sno }}</td>
@@ -19,31 +20,27 @@
               {{ item.description }}
             </ng-container>
             <ng-template #editableDesc>
-              <input type="text" [(ngModel)]="item.description">
+              <input type="text" [(ngModel)]="item.description" />
             </ng-template>
           </td>
 
           <td>
-            <input type="number" [(ngModel)]="item.amount" (input)="calculateTotal()">
+            <input type="text"
+                   inputmode="numeric"
+                   maxlength="7"
+                   [(ngModel)]="item.amount"
+                   (input)="allowOnlyPositiveNumbers(item, 'amount', $event)"
+                   class="form-control" />
           </td>
         </tr>
       </tbody>
+
       <tfoot>
         <tr>
           <td colspan="2" class="total-cell">Grand Total</td>
-          <td>{{ grandTotal | currency:'USD' }}</td>
+          <td>{{ grandTotal | currency:'INR':'symbol' }}</td>
         </tr>
       </tfoot>
     </table>
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-

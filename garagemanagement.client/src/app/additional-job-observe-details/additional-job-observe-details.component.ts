@@ -6,14 +6,14 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
   standalone: false,
   templateUrl: './additional-job-observe-details.component.html',
   styleUrls: ['./additional-job-observe-details.component.css']
+  styleUrls: ['./additional-job-observe-details.component.css'] 
 })
 export class AdditionalJobObserveDetailsComponent implements OnInit {
   jobForm!: FormGroup;
 
-  // Custom alert state
   showAlert = false;
   alertMessage = '';
-  confirmAction: (() => void) | null = null; // callback for Yes button
+  confirmAction: (() => void) | null = null;
 
   constructor(private fb: FormBuilder) { }
 
@@ -46,9 +46,11 @@ export class AdditionalJobObserveDetailsComponent implements OnInit {
   removeRow(index: number): void {
     this.alertMessage = 'Are you sure you want to remove this row?';
     this.showAlert = true;
+
     this.confirmAction = () => {
       this.rows.removeAt(index);
       this.recalculateSlNo();
+      this.recalculateSerialNumbers();
       this.closeAlert();
     };
   }
@@ -63,6 +65,9 @@ export class AdditionalJobObserveDetailsComponent implements OnInit {
   }
 
   private recalculateSlNo(): void {
+  }
+
+  recalculateSerialNumbers(): void {
     this.rows.controls.forEach((control, i) => {
       control.get('slNo')?.setValue(i + 1);
     });
