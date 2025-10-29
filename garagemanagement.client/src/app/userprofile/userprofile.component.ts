@@ -77,7 +77,7 @@ export class UserprofileComponent implements OnInit {
   }
   mainTabs = [
     { name: 'Profile', route: '/profile' },
-    { name: 'Workshop', route: '' },
+    { name: 'Workshop', route: '/workshop' },
     { name: 'Users', route: '/users' },
     { name: 'MMVY', route: '/mmvy' },
     { name: 'Settings', route: '/settings' },

@@ -40,7 +40,7 @@ const routes: Routes = [
       { path: 'jobobservedetails', component: AdditionalJobObserveDetailsComponent },
       { path: 'labour-details', component: LabourDetailsComponent },
       { path: 'inventory', component: InventoryComponent },
-      { path: 'workshop', component: WorkshopComponent},
+      //{ path: 'workshop', component: WorkshopComponent},
       { path: 'profile', component: ProfileComponent },
       { path: 'settings', component: SettingsComponent }, 
     ]

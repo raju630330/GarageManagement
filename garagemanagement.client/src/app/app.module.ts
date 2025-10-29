@@ -27,6 +27,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { from } from 'rxjs';
 import { ComponentNameComponent } from './component-name/component-name.component';
 import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.component';
+import { TechnicianMCComponent } from './TechnicianMC/TechnicianMC.component';
 
 
 
@@ -53,6 +54,7 @@ import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.
     SettingsComponent,
     ComponentNameComponent,
     TotalRepairCostComponent,
+    TechnicianMCComponent
   
     
   ],

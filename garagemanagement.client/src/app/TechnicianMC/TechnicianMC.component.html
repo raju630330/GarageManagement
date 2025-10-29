@@ -1,0 +1,146 @@
+<form [formGroup]="repairTForm" (ngSubmit)="onSubmit()">
+  <div class="container mt-4">
+
+    <!-- SUCCESS MESSAGE -->
+ <div *ngIf="showSuccess" class="success-overlay">
+  <div class="success-box">
+    ✅ Data saved successfully!
+  </div>
+</div>
+
+    <table class="table table-bordered text-center align-middle mt-3">
+      <tbody>
+        <tr *ngFor="let leftItem of TMCLeft; let idx = index">
+          <td class="text-start" *ngIf="leftItem">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <span>{{ leftItem.label }}</span>
+              <div *ngIf="isSubmitted && !checklistValid()" class="text-danger">
+                <small>
+                  ⚠ Please select OK / NOT OK for all checklist items.
+                </small>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <input type="checkbox"
+                       [checked]="leftItem.status === 'ok'"
+                       (change)="setStatus(leftItem, 'ok')"
+                       [id]="leftItem.control + '-ok'" />
+                <label [for]="leftItem.control + '-ok'">OK</label>
+
+                <input type="checkbox"
+                       [checked]="leftItem.status === 'notOk'"
+                       (change)="setStatus(leftItem, 'notOk')"
+                       [id]="leftItem.control + '-notOk'" />
+                <label [for]="leftItem.control + '-notOk'">NOT OK</label>
+              </div>
+            </div>
+          </td>
+
+          <td class="text-start" *ngIf="TMCRight[idx]">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+              <span>{{ TMCRight[idx].label }}</span>
+              <div *ngIf="isSubmitted && !checklistValid()" class="text-danger">
+                <small>
+                  ⚠ Please select OK / NOT OK for all checklist items.
+                </small>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <input type="checkbox"
+                       [checked]="TMCRight[idx].status === 'ok'"
+                       (change)="setStatus(TMCRight[idx], 'ok')"
+                       [id]="TMCRight[idx].control + '-ok'" />
+                <label [for]="TMCRight[idx].control + '-ok'">OK</label>
+
+                <input type="checkbox"
+                       [checked]="TMCRight[idx].status === 'notOk'"
+                       (change)="setStatus(TMCRight[idx], 'notOk')"
+                       [id]="TMCRight[idx].control + '-notOk'" />
+                <label [for]="TMCRight[idx].control + '-notOk'">NOT OK</label>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- DECLARATION -->
+    <div class="text-start mb-3 p-2 bg-white border rounded">
+      <input type="checkbox" formControlName="confirmation" class="me-2" />
+      I hereby state that I checked thoroughly in line with the above parameters,
+      explained the same to the driver, and he agreed to take delivery with satisfaction.
+      <div *ngIf="confirmation?.invalid && isSubmitted" class="text-danger mt-1">
+        Confirmation is required.
+      </div>
+    </div>
+
+    <!-- REMARKS -->
+    <div class="text-start mb-3">
+      <label class="form-label fw-bold">Remarks:</label>
+      <textarea class="form-control"
+                formControlName="remarks"
+                rows="3"
+                placeholder="Enter remarks here..."></textarea>
+      <div class="text-danger" *ngIf="remarks?.invalid && (remarks?.dirty || isSubmitted)">
+        <small *ngIf="remarks?.errors?.['required']">Remarks are required.</small>
+      </div>
+    </div>
+
+    <!-- SIGNATURE TABLE -->
+    <div class="text-start table-responsive">
+      <table class="table table-bordered align-middle text-center">
+        <thead class="table-primary">
+          <tr>
+            <th>Technician</th>
+            <th>Driver</th>
+            <th>Floor Supervisor</th>
+            <th>Authorised Person</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <input type="text" class="form-control" formControlName="technicianSign" placeholder="Name & Sign" />
+              <div class="text-danger" *ngIf="technicianSign?.invalid && (technicianSign?.dirty || isSubmitted)">
+                <small *ngIf="technicianSign?.errors?.['minlength']">Minmum 2 characters required</small>
+                <small *ngIf="technicianSign?.errors?.['maxlength']">Maximum 20 characters allowed.</small>
+                <small *ngIf="technicianSign?.errors?.['required']">Technician name is required.</small>
+                <small *ngIf="technicianSign?.errors?.['pattern']">Only alphabets and spaces allowed.</small>
+              </div>
+            </td>
+            <td>
+              <input type="text" class="form-control" formControlName="driverSign" placeholder="Name & Sign" />
+              <div class="text-danger" *ngIf="driverSign?.invalid && (driverSign?.dirty || isSubmitted)">
+                <small *ngIf="driverSign?.errors?.['required']">Driver name is required.</small>
+                <small *ngIf="driverSign?.errors?.['pattern']">Only alphabets and spaces allowed.</small>
+                <small *ngIf="driverSign?.errors?.['minlength']">Minmum 2 characters required</small>
+                <small *ngIf="driverSign?.errors?.['maxlength']">Maximum 20 characters allowed.</small>
+
+              </div>
+            </td>
+            <td>
+              <input type="text" class="form-control" formControlName="floorSign" placeholder="Name & Sign" />
+              <div class="text-danger" *ngIf="floorSign?.invalid && (floorSign?.dirty || isSubmitted)">
+                <small *ngIf="floorSign?.errors?.['required']">Floor Supervisor name is required.</small>
+                <small *ngIf="floorSign?.errors?.['pattern']">Only alphabets and spaces allowed.</small>
+                <small *ngIf="floorSign?.errors?.['minlength']">Minmum 2 characters required</small>
+                <small *ngIf="floorSign?.errors?.['maxlength']">Maximum 20 characters allowed.</small>
+              </div>
+            </td>
+            <td>
+              <input type="text" class="form-control" formControlName="authSign" placeholder="Name & Sign" />
+              <div class="text-danger" *ngIf="authSign?.invalid && (authSign?.dirty || isSubmitted)">
+                <small *ngIf="authSign?.errors?.['required']">Authorised Person name is required.</small>
+                <small *ngIf="authSign?.errors?.['pattern']">Only alphabets and spaces allowed.</small>
+                <small *ngIf="authSign?.errors?.['minlength']">Minmum 2 characters required</small>
+                <small *ngIf="authSign?.errors?.['maxlength']">Maximum 20 characters allowed.</small>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-3">
+      <button class="btn btn-primary" type="submit">Save</button>
+    </div>
+  </div>
+</form>

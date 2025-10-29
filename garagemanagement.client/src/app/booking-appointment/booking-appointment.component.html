@@ -64,7 +64,7 @@
                 <option value="TS">TS</option>
                 <option value="AP">AP</option>
               </select>
-              <input type="text" formControlName="regNo" class="form-control form-control-md" maxlength="8">
+              <input type="text" formControlName="regNo" class="form-control form-control-md" maxlength="8" placeholder="reg. Nu. format should be eg.ST123456">
             </div>
             <div *ngIf="f['regNo'].touched && f['regNo'].invalid" class="text-danger">
               Registration No. must be 2 letters + 6 digits.

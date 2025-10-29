@@ -1,12 +1,19 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-inventory',
   standalone: false,
   templateUrl: './inventory.component.html',
-  styleUrl: './inventory.component.css'
+  styleUrls: ['./inventory.component.css']
 })
 export class InventoryComponent {
+
+  constructor(private http: HttpClient) { }
+
+  formSubmitted = false;
+  showSuccess = false;
+
   accessories = [
     { label: 'Service booklet', checked: false },
     { label: 'Jack and Handle', checked: false },
@@ -26,9 +33,33 @@ export class InventoryComponent {
     { label: 'Battery No.', checked: false }
   ];
 
-  // Divide into two halves for left & right columns
   accessoriesLeft = this.accessories.slice(0, 8);
   accessoriesRight = this.accessories.slice(8, 16);
 
+  saveInventory() {
+    this.formSubmitted = true;
 
+    const allSelected = this.accessories.every(x => x.checked);
+
+    if (!allSelected) {
+      return; 
+    }
+
+
+    const payload = { accessories: this.accessories };
+
+    this.http.post("https://localhost:7086/api/Inventory/save", payload)
+      .subscribe({
+        next: () => {
+          this.showSuccess = true;
+          setTimeout(() => {
+            this.showSuccess = false;
+          }, 2000);
+
+        },
+        error: () => {
+          alert("Error saving inventory");
+        }
+      });
+  }
 }

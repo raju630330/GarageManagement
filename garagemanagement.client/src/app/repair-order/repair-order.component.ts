@@ -9,10 +9,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class RepairOrderComponent implements OnInit {
   openPanel: string | null = null;
-  repairForm!: FormGroup;
   readonly panelOpenState = signal(false);
-  repairTForm!: FormGroup;
+  repairForm!: FormGroup;
   minDateTime!: string;
+
   makeList: string[] = [
     'Tata Motors',
     'Ashok Leyland',
@@ -23,8 +23,9 @@ export class RepairOrderComponent implements OnInit {
     'Force Motors',
     'Isuzu',
     'Scania',
-    'Swaraj Mazda'
+    'Swaraj Mazda',
   ];
+
   serviceList: string[] = [
     'Oil Change',
     'Engine Repair',
@@ -33,40 +34,25 @@ export class RepairOrderComponent implements OnInit {
     'Battery Check',
     'Full Service',
     'PMS service',
-    'Eletric check'
+    'Electric check',
   ];
+
   allTechnicians: string[] = [
     'Abhilash',
     'Technician A',
     'Technician B',
     'Technician C',
     'Technician D',
-    'Technician E'
+    'Technician E',
   ];
 
-  
 
-
-
-  checkList = [
-    { label: 'Engine Oil Level', control: 'engineOil', status: null }, // 'ok' | 'notOk' | null
-    { label: 'G Oil Level', control: 'gOil', status: null },
-    { label: 'Housing Oil Level', control: 'housingOil', status: null },
-    { label: 'Steering Oil Level', control: 'steeringOil', status: null },
-    { label: 'Clutch Oil Level', control: 'clutchOil', status: null },
-    { label: 'Other Oil Leakages', control: 'otherLeak', status: null },
-    { label: 'Battery & Lights Check', control: 'battery', status: null },
-    { label: 'Tyres & Stephany Condition', control: 'tyres', status: null },
-    { label: 'General Checks Done', control: 'generalCheck', status: null },
-  ];
-
-  TMCLeft = this.checkList.slice(0, 4);
-  TMCRight = this.checkList.slice(4);
 
 
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    // --- Set current min date-time ---
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -74,13 +60,12 @@ export class RepairOrderComponent implements OnInit {
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     this.minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+    // --- Main Repair Form ---
     this.repairForm = this.fb.group({
       registrationNumber: [
         '',
-        [
-          Validators.required,
-          Validators.pattern(/^[A-Z]{4}[0-9]{6}$/)
-        ]
+        [Validators.required, Validators.pattern(/^[A-Z]{4}[0-9]{6}$/)],
       ],
       vinNumber: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
       kms: ['', [Validators.required]],
@@ -92,80 +77,65 @@ export class RepairOrderComponent implements OnInit {
           Validators.required,
           Validators.pattern(/^[A-Za-z0-9 ]+$/),
           Validators.minLength(2),
-          Validators.maxLength(40)
-        ]
+          Validators.maxLength(40),
+        ],
       ],
-      driverName: ['', [
-        Validators.required,
-        Validators.pattern(/^[A-Za-z ]+$/),
-        Validators.minLength(2),
-        Validators.maxLength(40)
-      ]],
-      mobileNumber: [
+      driverName: [
         '',
         [
           Validators.required,
-          Validators.pattern(/^\+91[0-9]{10}$/)
-        ]
+          Validators.pattern(/^[A-Za-z ]+$/),
+          Validators.minLength(2),
+          Validators.maxLength(40),
+        ],
       ],
-      vehicleFromSite: ['', [
-        Validators.required,
-        Validators.pattern(/^[A-Za-z ]+$/),
-        Validators.maxLength(25)
-      ]],
-      siteInchargeName: ['', [
-        Validators.required,
-        Validators.pattern(/^[A-Za-z ]+$/),
-        Validators.maxLength(25)
-      ]],
+      mobileNumber: [
+        '',
+        [Validators.required, Validators.pattern(/^\+91[0-9]{10}$/)],
+      ],
+      vehicleFromSite: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^[A-Za-z ]+$/),
+          Validators.maxLength(25),
+        ],
+      ],
+      siteInchargeName: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^[A-Za-z ]+$/),
+          Validators.maxLength(25),
+        ],
+      ],
       driverPermanent: ['', [Validators.required]],
       roadTest: ['', [Validators.required]],
       serviceType: ['', Validators.required],
       repairCost: [
         '',
-        [
-          Validators.required,
-          Validators.pattern(/^\d{1,6}(\.\d{0,2})?$/)  // max 6 digits before dot, max 2 after
-        ]
+        [Validators.required, Validators.pattern(/^\d{1,6}(\.\d{0,2})?$/)],
       ],
       warranty: ['', [Validators.required]],
       expectedDateTime: ['', Validators.required],
-      allottedTechnician: ['', Validators.required]
+      allottedTechnician: ['', Validators.required],
+      
     });
 
+
   }
- 
 
-    this.repairTForm = this.fb.group({
-      engineOilOk: [false],
-      gOilOk: [false], 
-      housingOilOk: [false], 
-      steeringOilOk: [false],
-      clutchOilOk: [false], 
-      otherLeakYes: [false], 
-      batteryOk: [false],
-      tyresOk: [false],
-      generalCheckYes: [false], 
-
-
+  // --- Registration Input Formatting ---
   onRegistrationInput(event: any) {
     let input = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (input.length > 10) {
       input = input.substring(0, 10);
     }
     this.repairForm.get('registrationNumber')?.setValue(input, { emitEvent: false });
-      technicianSign: ['', [Validators.pattern('$[A-Za-z]')]],
-      driverSign: ['', [Validators.pattern('$[A-Za-z]')]],
-      floorSign: ['', [Validators.pattern('$[A-Za-z]')]],
-      authSign: ['', [Validators.pattern('$[A-Za-z]')]]
-    });
-  }
-  setStatus(item: any, newStatus: 'ok' | 'notOk') {
-    if (item.status !== newStatus) {
-      item.status = newStatus;
-    }
   }
 
+
+  // --- Form Submit ---
   onSubmit() {
     if (this.repairForm.valid) {
       console.log(this.repairForm.value);
@@ -175,109 +145,87 @@ export class RepairOrderComponent implements OnInit {
     }
   }
 
+  // --- Repair Cost Input Restriction ---
   onRepairCostInput(event: any) {
     let input = event.target.value;
-
-    // Allow only numbers and one dot
     input = input.replace(/[^0-9.]/g, '');
-
-    // Split integer and decimal parts
     const parts = input.split('.');
 
-    // Limit integer part to 6 digits
-    if (parts[0].length > 6) {
-      parts[0] = parts[0].substring(0, 6);
-    }
-
-    // Limit decimal part to 2 digits
-    if (parts[1]) {
-      parts[1] = parts[1].substring(0, 2);
-    }
+    if (parts[0].length > 6) parts[0] = parts[0].substring(0, 6);
+    if (parts[1]) parts[1] = parts[1].substring(0, 2);
 
     input = parts.join('.');
     this.repairForm.get('repairCost')?.setValue(input, { emitEvent: false });
   }
 
-  get repairCost() {
-    return this.repairForm.get('repairCost')!;
-  }
-
-
-  get registrationNumber() {
-    return this.repairForm.get('registrationNumber')!;
-  }
-  
-
-  get serviceType() {
-    return this.repairForm.get('serviceType')!;
-  }
-
-  // Handle VIN input – allow only digits
+  // --- VIN Only Digits ---
   onVinInput(event: any) {
-    let input = event.target.value.replace(/[^0-9]/g, ''); // remove non-numeric
+    let input = event.target.value.replace(/[^0-9]/g, '');
     this.repairForm.get('vinNumber')?.setValue(input, { emitEvent: false });
   }
 
-  // Getter for easy access in template
-  get vinNumber() {
-    return this.repairForm.get('vinNumber')!;
-  }
+  // --- Driver Name Input ---
   onDriverNameInput(event: any) {
-    let input = event.target.value.replace(/[^a-zA-Z ]/g, ''); // allow letters & spaces only
+    let input = event.target.value.replace(/[^a-zA-Z ]/g, '');
     this.repairForm.get('driverName')?.setValue(input, { emitEvent: false });
   }
+
+  // --- Site Incharge Name Input ---
   onSiteInchargeNameInput(event: any) {
-    let input = event.target.value.replace(/[^A-Za-z ]/g, ''); // allow letters & spaces only
-    if (input.length > 25) {
-      input = input.substring(0, 25);
-    }
+    let input = event.target.value.replace(/[^A-Za-z ]/g, '');
+    if (input.length > 25) input = input.substring(0, 25);
     this.repairForm.get('siteInchargeName')?.setValue(input, { emitEvent: false });
   }
 
-  get driverName() {
-    return this.repairForm.get('driverName')!;
-  }
+  // --- Mobile Number Input ---
   onMobileInput(event: any) {
     let input = event.target.value;
-
-    // Automatically add +91 if not typed
     if (!input.startsWith('+91')) {
-      input = '+91' + input.replace(/\D/g, ''); // remove non-digits
+      input = '+91' + input.replace(/\D/g, '');
     } else {
       input = '+91' + input.slice(3).replace(/\D/g, '');
     }
-
-    if (input.length > 13) {
-      input = input.substring(0, 13); // +91 + 10 digits
-    }
-
+    if (input.length > 13) input = input.substring(0, 13);
     this.repairForm.get('mobileNumber')?.setValue(input, { emitEvent: false });
+  }
+
+  // --- Vehicle From Site Input ---
+  onVehicleFromSiteInput(event: any) {
+    let input = event.target.value.replace(/[^A-Za-z ]/g, '');
+    if (input.length > 25) input = input.substring(0, 25);
+    this.repairForm.get('vehicleFromSite')?.setValue(input, { emitEvent: false });
+  }
+
+  // --- Getters ---
+  get repairCost() {
+    return this.repairForm.get('repairCost')!;
+  }
+  get registrationNumber() {
+    return this.repairForm.get('registrationNumber')!;
+  }
+  get serviceType() {
+    return this.repairForm.get('serviceType')!;
+  }
+  get vinNumber() {
+    return this.repairForm.get('vinNumber')!;
+  }
+  get driverName() {
+    return this.repairForm.get('driverName')!;
   }
   get mobileNumber() {
     return this.repairForm.get('mobileNumber')!;
   }
-  onVehicleFromSiteInput(event: any) {
-    let input = event.target.value.replace(/[^A-Za-z ]/g, ''); // allow letters and spaces only
-    if (input.length > 25) {
-      input = input.substring(0, 25);
-    }
-    this.repairForm.get('vehicleFromSite')?.setValue(input, { emitEvent: false });
+  get vehicleFromSite() {
+    return this.repairForm.get('vehicleFromSite')!;
   }
   get siteInchargeName() {
     return this.repairForm.get('siteInchargeName')!;
   }
-  
-
-  get vehicleFromSite() {
-    return this.repairForm.get('vehicleFromSite')!;
-  }
-
   get make() {
     return this.repairForm.get('make')!;
   }
   get model() {
     return this.repairForm.get('model')!;
   }
-
-
 }
+

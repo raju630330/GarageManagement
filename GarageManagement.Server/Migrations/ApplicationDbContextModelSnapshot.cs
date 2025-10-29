@@ -84,6 +84,74 @@ namespace GarageManagement.Server.Migrations
                     b.ToTable("bookAppointments");
                 });
 
+            modelBuilder.Entity("GarageManagement.Server.Model.CheckItemEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Control")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Label")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("TechnicianMCId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TechnicianMCId");
+
+                    b.ToTable("CheckItems");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.InventoryAccessories", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Checked")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("InventoryFormId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InventoryFormId");
+
+                    b.ToTable("InventoryAccessories");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.InventoryForm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InventoryForms");
+                });
+
             modelBuilder.Entity("GarageManagement.Server.Model.LabourDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -159,6 +227,39 @@ namespace GarageManagement.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RepairOrders");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.TechnicianMC", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AuthSign")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DriverSign")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FloorSign")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("TechnicianSign")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TechnicianMCForms", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.User", b =>
@@ -245,6 +346,38 @@ namespace GarageManagement.Server.Migrations
                     b.HasOne("GarageManagement.Server.Model.User", null)
                         .WithMany("BookAppointments")
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.CheckItemEntity", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.TechnicianMC", "TechnicianMC")
+                        .WithMany("CheckList")
+                        .HasForeignKey("TechnicianMCId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TechnicianMC");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.InventoryAccessories", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.InventoryForm", "InventoryForm")
+                        .WithMany("Accessories")
+                        .HasForeignKey("InventoryFormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InventoryForm");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.InventoryForm", b =>
+                {
+                    b.Navigation("Accessories");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.TechnicianMC", b =>
+                {
+                    b.Navigation("CheckList");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.User", b =>

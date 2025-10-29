@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GarageManagement.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class initialcreate : Migration
+    public partial class allTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +52,23 @@ namespace GarageManagement.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TechnicianMCForms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Remarks = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    TechnicianSign = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    DriverSign = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    FloorSign = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    AuthSign = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TechnicianMCForms", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -90,6 +107,28 @@ namespace GarageManagement.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CheckItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TechnicianMCId = table.Column<int>(type: "int", nullable: false),
+                    Label = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    Control = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CheckItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CheckItems_TechnicianMCForms_TechnicianMCId",
+                        column: x => x.TechnicianMCId,
+                        principalTable: "TechnicianMCForms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "bookAppointments",
                 columns: table => new
                 {
@@ -122,6 +161,11 @@ namespace GarageManagement.Server.Migrations
                 name: "IX_bookAppointments_UserId",
                 table: "bookAppointments",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CheckItems_TechnicianMCId",
+                table: "CheckItems",
+                column: "TechnicianMCId");
         }
 
         /// <inheritdoc />
@@ -129,6 +173,9 @@ namespace GarageManagement.Server.Migrations
         {
             migrationBuilder.DropTable(
                 name: "bookAppointments");
+
+            migrationBuilder.DropTable(
+                name: "CheckItems");
 
             migrationBuilder.DropTable(
                 name: "LabourDetails");
@@ -141,6 +188,9 @@ namespace GarageManagement.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "TechnicianMCForms");
         }
     }
 }

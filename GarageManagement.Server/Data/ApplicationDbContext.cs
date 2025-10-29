@@ -14,7 +14,23 @@ namespace GarageManagement.Server.Data
             
            public DbSet<RepairOrder> RepairOrders {  get; set; }
            public DbSet<LabourDetail> LabourDetails { get; set; }
+           public DbSet<TechnicianMC> TechnicianMCForms { get; set; }
+           public DbSet<CheckItemEntity> CheckItems { get; set; }
 
-        }
+           protected override void OnModelCreating(ModelBuilder modelBuilder)
+           {
+             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<TechnicianMC>().ToTable("TechnicianMCForms")
+                .HasMany(t => t.CheckList)
+                .WithOne(c => c.TechnicianMC)
+                .HasForeignKey(c => c.TechnicianMCId)
+                .OnDelete(DeleteBehavior.Cascade);
+            }
+            public DbSet<InventoryForm> InventoryForms { get; set; }
+            public DbSet<InventoryAccessories> InventoryAccessories { get; set; }
+
+
+    }
 
 }

@@ -1,4 +1,10 @@
-<div class="container mt-5">
+<div class="container mt-5 position-relative">
+
+  <div *ngIf="showSuccess" class="success-overlay d-flex justify-content-center align-items-center">
+    <div class="alert alert-success text-center p-4 fs-5 shadow rounded">
+      ✅ Inventory Saved Successfully!
+    </div>
+  </div>
 
   <table class="table table-bordered text-center align-middle">
     <thead class="table-primary">
@@ -12,12 +18,13 @@
           <div class="form-check d-flex gap-5" *ngIf="accessoriesLeft[idx]">
             <input type="checkbox"
                    [(ngModel)]="accessoriesLeft[idx].checked"
-                   name="{{ accessoriesLeft[idx].label | lowercase }}"
-                   class="form-check-input btn btn-outline-secondary"
-                   id="{{ accessoriesLeft[idx].label | lowercase }}" />
-            <label class="form-check-label fw-bold" for="{{ accessoriesLeft[idx].label | lowercase }}">
+                   class="form-check-input" />
+            <label class="form-check-label">
               {{ accessoriesLeft[idx].label }}
             </label>
+          </div>
+          <div *ngIf="formSubmitted && !accessoriesLeft[idx].checked" class="text-danger small ms-4">
+            * This item is required
           </div>
         </td>
 
@@ -25,15 +32,24 @@
           <div class="form-check d-flex gap-5" *ngIf="accessoriesRight[idx]">
             <input type="checkbox"
                    [(ngModel)]="accessoriesRight[idx].checked"
-                   name="{{ accessoriesRight[idx].label | lowercase }}"
-                   class="form-check-input btn btn-outline-secondary"
-                   id="{{ accessoriesRight[idx].label | lowercase }}" />
-            <label class="form-check-label fw-bold" for="{{ accessoriesRight[idx].label | lowercase }}">
+                   class="form-check-input" />
+            <label class="form-check-label">
               {{ accessoriesRight[idx].label }}
             </label>
+          </div>
+          <div *ngIf="formSubmitted && !accessoriesRight[idx].checked" class="text-danger small ms-4">
+            * This item is required
           </div>
         </td>
       </tr>
     </tbody>
   </table>
+
+
+
+  <div class="text-center mt-3">
+    <button class="btn btn-primary px-4" (click)="saveInventory()">Save</button>
+  </div>
 </div>
+
+
