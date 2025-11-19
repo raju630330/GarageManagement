@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface LabourDetail {
   id?: number;
@@ -16,7 +16,11 @@ export interface LabourDetail {
 })
 export class LabourDetailsService {
   private apiUrl = 'https://localhost:5001/api/LabourDetails';
+  private labourChargesTotalSubject = new BehaviorSubject<number>(0);
+  private outsideLabourTotalSubject = new BehaviorSubject<number>(0);
 
+  labourChargesTotal$ = this.labourChargesTotalSubject.asObservable();
+  outsideLabourTotal$ = this.outsideLabourTotalSubject.asObservable();
   constructor(private http: HttpClient) { }
 
   getLabourDetails(): Observable<LabourDetail[]> {
@@ -25,5 +29,13 @@ export class LabourDetailsService {
 
   addLabourDetail(detail: LabourDetail): Observable<LabourDetail> {
     return this.http.post<LabourDetail>(this.apiUrl, detail);
+  }
+
+  setLabourChargesTotal(value: number) {
+    this.labourChargesTotalSubject.next(value);
+  }
+
+  setOutsideLabourTotal(value: number) {
+    this.outsideLabourTotalSubject.next(value);
   }
 }

@@ -27,10 +27,9 @@ namespace GarageManagement.Server.Data
                 .HasForeignKey(c => c.TechnicianMCId)
                 .OnDelete(DeleteBehavior.Cascade);
             }
-            public DbSet<InventoryForm> InventoryForms { get; set; }
-            public DbSet<InventoryAccessories> InventoryAccessories { get; set; }
-
-
+           public DbSet<InventoryForm> InventoryForms { get; set; }
+           public DbSet<InventoryAccessories> InventoryAccessories { get; set; }
+           public DbSet<SparePartsIssueDetail> SparePartsIssueDetails { get; set; }  
     }
 
 }

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { LabourDetailsService } from '../labour-details.service';
+import { SparePartsIssueDetailsService } from '../spare-parts-issue-details.service';
 interface RepairItem {
   sno: string;
   description: string;
@@ -12,16 +14,40 @@ interface RepairItem {
   styleUrl: './total-repair-cost.component.css'
 })
 export class TotalRepairCostComponent {
+
+  constructor(
+    private labourDetailsService: LabourDetailsService, private sparePartsIssueDetailsService: SparePartsIssueDetailsService
+
+  ) { }
+
   repairItems: RepairItem[] = [
-    { sno: '1', description: 'Parts Charges', amount: 300 },
-    { sno: '2', description: 'Labour Charges', amount: 200 },
-    { sno: '3', description: 'Outside Labour', amount: 100 }
+    { sno: '1', description: 'Parts Charges', amount: 0 },
+    { sno: '2', description: 'Labour Charges', amount: 0 },
+    { sno: '3', description: 'Outside Labour', amount: 0 }
   ];
 
   grandTotal: number = 0;
 
   ngOnInit(): void {
-    this.calculateTotal();
+
+    // Subscribe to Parts total from SparePartsIssueDetailsService
+
+    this.sparePartsIssueDetailsService.partsTotal$.subscribe(total => {
+      this.repairItems[0].amount = total;
+      this.calculateTotal();
+    });
+
+    // Subscribe to live totals from LabourDetailsService
+
+    this.labourDetailsService.labourChargesTotal$.subscribe(total => {
+      this.repairItems[1].amount = total;
+      this.calculateTotal();
+    });
+
+    this.labourDetailsService.outsideLabourTotal$.subscribe(total => {
+      this.repairItems[2].amount = total;
+      this.calculateTotal();
+    });
   }
 
   calculateTotal(): void {

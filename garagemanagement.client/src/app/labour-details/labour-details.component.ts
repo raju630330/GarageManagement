@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LabourDetailsService } from '../labour-details.service';
 
 
 @Component({
@@ -8,17 +9,28 @@ import { Component } from '@angular/core';
   styleUrls: ['./labour-details.component.css']
 })
 export class LabourDetailsComponent {
+
+  constructor(private labourDetailsService: LabourDetailsService) { }
+
   labourDetails = [
     { serialNo: 1, description: '', labourCharges: 0, outsideLabour: 0, amount: 0 }
   ];
 
   updateAmount(detail: any) {
     detail.amount = (detail.labourCharges || 0) + (detail.outsideLabour || 0);
+    this.calculateTotal();
   }
 
   calculateTotal(): number {
-    return this.labourDetails.reduce((sum, d) => sum + (d.amount || 0), 0);
+    const total = this.labourDetails.reduce((sum, d) => sum + (d.amount || 0), 0);
+
+    // Send totals to service
+    this.labourDetailsService.setLabourChargesTotal(this.getLabourChargesTotal());
+    this.labourDetailsService.setOutsideLabourTotal(this.getOutsideLabourTotal());
+
+    return total;
   }
+
 
   addRow() {
     const nextSerialNo = this.labourDetails.length + 1;
@@ -34,6 +46,7 @@ export class LabourDetailsComponent {
   deleteRow(index: number) {
     this.labourDetails.splice(index, 1);
     this.labourDetails.forEach((row, i) => row.serialNo = i + 1);
+    this.calculateTotal();
   }
   allowOnlyPositiveNumbers(detail: any, field: string, event: any) {
   const input = event.target.value;
@@ -43,6 +56,12 @@ export class LabourDetailsComponent {
   detail[field] = numericValue ? parseInt(numericValue, 10) : 0;
 
   this.updateAmount(detail); // Keep your existing logic
-}
+  }
+  getLabourChargesTotal() {
+    return this.labourDetails.reduce((sum, d) => sum + (d.labourCharges || 0), 0);
+  }
 
+  getOutsideLabourTotal() {
+    return this.labourDetails.reduce((sum, d) => sum + (d.outsideLabour || 0), 0);
+  }
 }

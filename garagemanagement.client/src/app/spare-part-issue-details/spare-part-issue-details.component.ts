@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SparePartsIssueDetailsService } from '../spare-parts-issue-details.service';
 
 @Component({
   selector: 'app-spare-part-issue-details',
@@ -15,7 +16,7 @@ export class SparePartIssueDetailsComponent {
   pageSize = 2;
   currentPage = 1;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private sparePartsIssueDetailsService: SparePartsIssueDetailsService) {
     this.partsForm = this.fb.group({
       parts: this.fb.array([])
     });
@@ -54,6 +55,7 @@ export class SparePartIssueDetailsComponent {
 
     this.parts.push(partForm);
     this.currentPage = this.totalPages; // Go to page where new row belongs
+    this.updateTotals();
   }
 
   removePart(index: number) {
@@ -61,6 +63,7 @@ export class SparePartIssueDetailsComponent {
     if (this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages;
     }
+    this.updateTotals();
   }
 
   getAmount(index: number): number {
@@ -73,14 +76,39 @@ export class SparePartIssueDetailsComponent {
     return this.parts.controls.reduce((sum, _, i) => sum + this.getAmount(i), 0);
   }
 
+  // Push total into service
+  updateTotals() {
+    const total = this.getTotalAmount();
+    this.sparePartsIssueDetailsService.setPartsTotal(total);
+  }
+
   onSubmit() {
     if (this.partsForm.valid) {
-      console.log(this.partsForm.value);
-      alert('✅ Form submitted successfully!');
+      const partsArray = this.partsForm.value.parts.map((part: any) => ({
+        description: part.description,
+        partNumber: part.partNumber,
+        make: part.make,
+        unitCost: parseFloat(part.unitCost),
+        quantity: parseInt(part.qty, 10)
+      }));
+
+      this.sparePartsIssueDetailsService.createSpareParts(partsArray).subscribe({
+        next: (res: any) => {
+          alert(res.message || 'All parts submitted successfully!');
+          this.parts.clear();
+          this.addPart();
+          this.errorMessage = '';
+        },
+        error: (err: any) => {
+          alert(err?.error?.message || 'Error saving parts!');
+        }
+      });
     } else {
       alert('⚠️ Please fix validation errors before submitting!');
     }
   }
+
+
 
   nextPage() {
     if (this.currentPage < this.totalPages) {
