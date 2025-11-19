@@ -30,7 +30,7 @@
                    maxlength="7"
                    [(ngModel)]="item.amount"
                    (input)="allowOnlyPositiveNumbers(item, 'amount', $event)"
-                   class="form-control" />
+                   class="form-control" readonly/>
           </td>
         </tr>
       </tbody>
