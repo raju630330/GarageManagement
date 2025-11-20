@@ -29,7 +29,6 @@
                    inputmode="numeric"
                    maxlength="7"
                    [(ngModel)]="item.amount"
-                   (input)="allowOnlyPositiveNumbers(item, 'amount', $event)"
                    class="form-control" readonly/>
           </td>
         </tr>
@@ -38,7 +37,7 @@
       <tfoot>
         <tr>
           <td colspan="2" class="total-cell">Grand Total</td>
-          <td>{{ grandTotal | number:'1.2-2' | currency:'INR':'symbol' }}</td>
+          <td>{{ grandTotal  | currency:'INR':'symbol'}}</td>
         </tr>
       </tfoot>
     </table>

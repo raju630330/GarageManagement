@@ -38,7 +38,7 @@
             <td>
               {{
                 (+row.get('labourCharges')?.value || 0) +
-                (+row.get('outsideLabour')?.value || 0)   | number:'1.2-2' | currency:'INR':'symbol'
+                (+row.get('outsideLabour')?.value || 0) 
               }}
             </td>
             <td>
@@ -55,7 +55,7 @@
         <tfoot>
           <tr class="table-secondary">
             <td colspan="4" class="text-end"><strong>Total</strong></td>
-            <td><strong>{{ calculateTotal()  | number:'1.2-2' | currency:'INR':'symbol' }}</strong></td>
+            <td><strong>{{ calculateTotal()  | currency:'INR':'symbol' }}</strong></td>
             <td></td>
           </tr>
         </tfoot>
