@@ -1,21 +1,3 @@
-.job-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-  .job-table th,
-  .job-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-
-  .job-table input {
-    width: 100%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    text-align: left;
-  }
 
 .error {
   color: red;

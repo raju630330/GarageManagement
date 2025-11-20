@@ -10,7 +10,11 @@ import { SparePartsIssueDetailsService } from '../spare-parts-issue-details.serv
 })
 export class SparePartIssueDetailsComponent {
   partsForm: FormGroup;
-  errorMessage = '';
+
+  // For Delete Confirmation & Alerts
+  alertMessage = '';
+  showAlert = false;
+  confirmAction: (() => void) | null = null;
 
   // Pagination
   pageSize = 2;
@@ -40,10 +44,13 @@ export class SparePartIssueDetailsComponent {
 
   addPart() {
     if (this.parts.length > 0 && this.parts.at(this.parts.length - 1).invalid) {
-      this.errorMessage = '⚠️ Please fill all fields correctly before adding a new row.';
+      this.partsForm.markAllAsTouched();
+      this.alertMessage = 'Please fill all fields correctly before adding a new row.';
+      this.showAlert = true;
+      this.confirmAction = null;
       return;
     }
-    this.errorMessage = '';
+    this.alertMessage = '';
 
     const partForm = this.fb.group({
       description: ['', [Validators.required, Validators.pattern(/^[a-zA-Z\s]+$/)]],
@@ -59,11 +66,26 @@ export class SparePartIssueDetailsComponent {
   }
 
   removePart(index: number) {
-    this.parts.removeAt(index);
-    if (this.currentPage > this.totalPages) {
-      this.currentPage = this.totalPages;
-    }
-    this.updateTotals();
+    this.alertMessage = 'Are you sure you want to remove this row?';
+    this.showAlert = true;
+
+    this.confirmAction = () => {
+      this.parts.removeAt(index);
+      if (this.currentPage > this.totalPages) {
+        this.currentPage = this.totalPages;
+      }
+      this.updateTotals();
+      this.closeAlert();
+    };
+  }
+
+  confirmYes(): void {
+    if (this.confirmAction) this.confirmAction();
+  }
+
+  closeAlert(): void {
+    this.showAlert = false;
+    this.confirmAction = null;
   }
 
   getAmount(index: number): number {
@@ -77,6 +99,7 @@ export class SparePartIssueDetailsComponent {
   }
 
   // Push total into service
+
   updateTotals() {
     const total = this.getTotalAmount();
     this.sparePartsIssueDetailsService.setPartsTotal(total);
@@ -97,18 +120,20 @@ export class SparePartIssueDetailsComponent {
           alert(res.message || 'All parts submitted successfully!');
           this.parts.clear();
           this.addPart();
-          this.errorMessage = '';
+          this.alertMessage = '';
         },
         error: (err: any) => {
           alert(err?.error?.message || 'Error saving parts!');
         }
       });
     } else {
-      alert('⚠️ Please fix validation errors before submitting!');
+      this.partsForm.markAllAsTouched();
+      this.alertMessage = 'Please fix validation errors before submitting!';
+      this.showAlert = true;
+      this.confirmAction = null;
+      return;
     }
   }
-
-
 
   nextPage() {
     if (this.currentPage < this.totalPages) {
@@ -120,5 +145,38 @@ export class SparePartIssueDetailsComponent {
     if (this.currentPage > 1) {
       this.currentPage--;
     }
+  }
+
+  forceNumberswithtwodecimalsOnly(index: number, field: string) {
+    const control = this.parts.at(index).get(field);
+    let value = control?.value ?? "";
+
+    // Remove invalid characters – allow only digits and one dot
+    value = value.replace(/[^0-9.]/g, "");
+
+    // Ensure only one decimal point
+    const parts = value.split('.');
+    if (parts.length > 2) {
+      parts.splice(2);
+    }
+
+    // Limit decimals to 2 digits
+    if (parts[1]) {
+      parts[1] = parts[1].substring(0, 2);
+    }
+
+    value = parts.join('.');
+
+    control?.setValue(value, { emitEvent: false });
+  }
+
+  forceNumbersOnly(index: number, field: string) {
+    const control = this.parts.at(index).get(field);
+    let value = control?.value ?? "";
+
+    // Remove everything except digits
+    value = value.replace(/[^0-9]/g, "");
+
+    control?.setValue(value, { emitEvent: false });
   }
 }

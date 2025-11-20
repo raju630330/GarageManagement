@@ -1,40 +1,4 @@
-.container {
-  max-width: 1200px;
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
 
-h2 {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #0d47a1;
-  border-left: 5px solid #1976d2;
-  padding-left: 12px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-}
-
-.table thead {
-  background: #bbdefb;
-  color: #0d47a1;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-}
-
-.table tbody tr:hover {
-  background: #f5f9ff;
-}
-
-.form-control {
-  border-radius: 6px;
-  padding: 6px 8px;
-  font-size: 0.9rem;
-  text-align: center;
-}
 
 /* --- Cell highlight behaviour --- */
 .cell-wrapper {
@@ -80,4 +44,112 @@ button[disabled] {
   .form-control {
     font-size: 0.8rem;
   }
+}
+
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-add {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-submit {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.custom-alert {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.alert-content {
+  background: white;
+  padding: 25px 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.alert-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.btn-secondary {
+  background-color: #7f8c8d;
+  color: white;
+}
+
+.custom-alert {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.alert-content {
+  background: white;
+  padding: 25px 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.alert-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #7f8c8d;
+  color: white;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+}
+
+.button-group .btn-add {
+  margin-right: 10px; /* or 1rem for responsive spacing */
 }

@@ -39,6 +39,14 @@ export class GarageManagementComponent implements OnInit {
   }
 
   addRow(): void {
+    if (this.rows.length > 0 && this.rows.at(this.rows.length - 1).invalid) {
+      this.jobForm.markAllAsTouched();
+      this.alertMessage = 'Please fill all fields correctly before adding a new row.';
+      this.showAlert = true;
+      this.confirmAction = null;
+      return;
+    }
+    this.alertMessage = '';
     this.rows.push(this.createRow());
   }
 

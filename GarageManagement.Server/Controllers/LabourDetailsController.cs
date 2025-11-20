@@ -20,11 +20,23 @@ public class LabourDetailsController : ControllerBase
         return await _context.LabourDetails.ToListAsync();
     }
 
-    [HttpPost]
+    /*[HttpPost]
     public async Task<ActionResult<LabourDetail>> PostLabourDetail(LabourDetail detail)
     {
         _context.LabourDetails.Add(detail);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetLabourDetails), new { id = detail.Id }, detail);
+    }*/
+
+    [HttpPost("CreateLabourDetails")]
+    public async Task<IActionResult> CreateLabourDetails([FromBody] List<LabourDetail> details)
+    {
+        if (details == null || !details.Any())
+            return BadRequest("No labour details provided.");
+
+        await _context.LabourDetails.AddRangeAsync(details);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Labour details saved successfully!" });
     }
 }

@@ -1,57 +1,88 @@
-<div class="container mt-4">
-  <h2 class="text-center">Labour Details</h2>
+<section class="labour-section">
+  <div class="container p-4">
+    <form [formGroup]="labourForm" (ngSubmit)="submit()">
 
-  <table class="table table-bordered mt-3">
-    <thead class="table-dark">
-      <tr>
-        <th>S.No.</th>
-        <th>Description</th>
-        <th>Labour Charges</th>
-        <th>Outside Labour</th>
-        <th>Amount</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let detail of labourDetails; let i = index">
-        <td>
-          <input type="number" [(ngModel)]="detail.serialNo" class="form-control" readonly />
-        </td>
-        <td>
-          <input type="text" [(ngModel)]="detail.description" class="form-control" />
-        </td>
-        <td>
-          <input type="text"
-                 inputmode="numeric"
-                 maxlength="7"
-                 [(ngModel)]="detail.labourCharges"
-                 (input)="allowOnlyPositiveNumbers(detail, 'labourCharges', $event)"
-                 class="form-control" />
-        </td>
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th>Sl. No.</th>
+            <th>Description</th>
+            <th>Labour Charges</th>
+            <th>Outside Labour</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+        </thead>
 
-        <td>
-          <input type="text"
-                 inputmode="numeric"
-                 maxlength="7"
-                 [(ngModel)]="detail.outsideLabour"
-                 (input)="allowOnlyPositiveNumbers(detail, 'outsideLabour', $event)"
-                 class="form-control" />
-        </td>
+        <tbody formArrayName="labourDetails">
+          <tr *ngFor="let row of labourDetails.controls; let i = index" [formGroupName]="i">
+            <td>{{ i + 1 }}</td>
+            <td>
+              <input type="text" class="form-control" formControlName="description" placeholder="Description" maxlength="50" />
+              <div class="error" *ngIf="row.get('description')?.invalid && row.get('description')?.touched">
+                Description is required (max 50 chars).
+              </div>
+            </td>
+            <td>
+              <input type="text" class="form-control" formControlName="labourCharges" placeholder="0" (input)="forceNumberswithtwodecimalsOnly(i, 'labourCharges')"/>
+              <div class="error" *ngIf="row.get('labourCharges')?.invalid && row.get('labourCharges')?.touched">
+                Enter valid numeric value.
+              </div>
+            </td>
+            <td>
+              <input type="text" class="form-control" formControlName="outsideLabour" placeholder="0" (input)="forceNumberswithtwodecimalsOnly(i, 'outsideLabour')" />
+              <div class="error" *ngIf="row.get('outsideLabour')?.invalid && row.get('outsideLabour')?.touched">
+                Enter valid numeric value.
+              </div>
+            </td>
+            <td>
+              {{
+                (+row.get('labourCharges')?.value || 0) +
+                (+row.get('outsideLabour')?.value || 0)   | number:'1.2-2' | currency:'INR':'symbol'
+              }}
+            </td>
+            <td>
+              <button type="button"
+                      class="btn btn-outline-danger btn-sm"
+                      (click)="removeRow(i)"
+                      title="Delete">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
 
+        <tfoot>
+          <tr class="table-secondary">
+            <td colspan="4" class="text-end"><strong>Total</strong></td>
+            <td><strong>{{ calculateTotal()  | number:'1.2-2' | currency:'INR':'symbol' }}</strong></td>
+            <td></td>
+          </tr>
+        </tfoot>
 
-        <td>{{ detail.amount | currency:'INR':'symbol':'1.2-2' }}</td>
-        <td>
-          <button class="btn btn-danger btn-sm" (click)="deleteRow(i)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr class="table-secondary">
-        <td colspan="4" class="text-end"><strong>Total</strong></td>
-        <td colspan="2"><strong>{{ calculateTotal() | currency:'INR':'symbol':'1.2-2' }}</strong></td>
-      </tr>
-    </tfoot>
-  </table>
+      </table>
 
-  <button class="btn btn-primary" (click)="addRow()">Add Row</button>
-</div>
+      <div class="button-group mt-3">
+        <button type="button" class="btn btn-add" (click)="addRow()">Add Row</button>
+        <button type="submit" class="btn btn-submit">Submit</button>
+      </div>
+
+    </form>
+
+    <!-- Custom Alert -->
+    <div class="custom-alert" *ngIf="showAlert">
+      <div class="alert-content">
+        <p>{{ alertMessage }}</p>
+        <div class="alert-buttons" *ngIf="confirmAction">
+          <button class="btn btn-danger" (click)="confirmYes()">Yes</button>
+          <button class="btn btn-secondary" (click)="closeAlert()">No</button>
+        </div>
+
+        <div class="alert-buttons" *ngIf="!confirmAction">
+          <button class="btn btn-primary" (click)="closeAlert()">OK</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
