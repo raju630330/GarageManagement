@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { WorkshopProfileService } from '../workshop-profile.service';
+import { WorkshopProfileService } from '../services/workshop-profile.service';
 import { BookingAppointmentComponent } from '../booking-appointment/booking-appointment.component';
 
 

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { WorkshopProfileService } from '../workshop-profile.service';
+import { WorkshopProfileService } from '../services/workshop-profile.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({

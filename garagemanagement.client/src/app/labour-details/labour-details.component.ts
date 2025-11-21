@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LabourDetailsService } from '../labour-details.service';
+import { LabourDetailsService } from '../services/labour-details.service';
 
 @Component({
   selector: 'app-labour-details',

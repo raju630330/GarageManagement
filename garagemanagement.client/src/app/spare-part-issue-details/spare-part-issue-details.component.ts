@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SparePartsIssueDetailsService } from '../spare-parts-issue-details.service';
+import { SparePartsIssueDetailsService } from '../services/spare-parts-issue-details.service';
 
 @Component({
   selector: 'app-spare-part-issue-details',

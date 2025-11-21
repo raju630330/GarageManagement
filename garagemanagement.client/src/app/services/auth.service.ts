@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, BehaviorSubject } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
-import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 interface AuthResponse { token: string; }
 interface Decoded { role?: string; exp?: number; name?: string; email?: string; sub?: string; }

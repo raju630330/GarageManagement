@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { LabourDetailsService } from '../labour-details.service';
-import { SparePartsIssueDetailsService } from '../spare-parts-issue-details.service';
+import { LabourDetailsService } from '../services/labour-details.service';
+import { SparePartsIssueDetailsService } from '../services/spare-parts-issue-details.service';
 interface RepairItem {
   sno: string;
   description: string;
