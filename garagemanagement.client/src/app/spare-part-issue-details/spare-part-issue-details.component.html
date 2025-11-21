@@ -3,7 +3,7 @@
   <div class="container p-4">
     <form [formGroup]="partsForm" (ngSubmit)="onSubmit()">
       <table class="table table-bordered text-center align-middle">
-        <thead class="table-primary">
+        <thead>
           <tr>
             <th>Sl.No.</th>
             <th>Part Description</th>
@@ -69,7 +69,7 @@
             <td>
               <div class="cell-wrapper"
                    [ngClass]="{ 'cell-valid': part.get('qty')?.valid && part.get('qty')?.value }">
-                <input type="text" class="form-control" formControlName="qty" (input)="updateTotals()" placeholder="Qty" />
+                <input type="text" class="form-control" formControlName="qty" (input)="forceNumbersOnly(i, 'qty'); updateTotals()" placeholder="Qty" />
               </div>
               <small class="text-danger" *ngIf="part.get('qty')?.invalid && part.get('qty')?.touched">
                 Numbers only
@@ -90,7 +90,7 @@
           </tr>
         </tbody>
         <tfoot>
-          <tr class="table-secondary">
+          <tr>
             <td colspan="6" class="text-end fw-bold">Total:</td>
             <td class="fw-bold">
               {{ getTotalAmount() | currency:'INR':'symbol' }}

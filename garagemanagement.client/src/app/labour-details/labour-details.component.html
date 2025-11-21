@@ -3,7 +3,7 @@
     <form [formGroup]="labourForm" (ngSubmit)="submit()">
 
       <table class="table table-bordered text-center align-middle">
-        <thead class="table-primary">
+        <thead>
           <tr>
             <th>Sl. No.</th>
             <th>Description</th>
@@ -53,7 +53,7 @@
         </tbody>
 
         <tfoot>
-          <tr class="table-secondary">
+          <tr>
             <td colspan="4" class="text-end"><strong>Total</strong></td>
             <td><strong>{{ calculateTotal()  | currency:'INR':'symbol' }}</strong></td>
             <td></td>
