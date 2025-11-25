@@ -1,20 +1,22 @@
 
 <div class="navbar-bg">
 
-  <div class="tab-container mt-3 mt-lg-0 ms-lg-3 d-flex align-items-center">
+ <!-- <div class="tab-container mt-3 mt-lg-0 ms-lg-3 d-flex align-items-center">
     <button class="scroll-btn left-btn" *ngIf="showLeftArrow" (click)="scrollTabs(-150)">&#8249;</button>
 
     <div #tabScroll class="scrollable-tabs flex-grow-1" (scroll)="checkScroll()">
       <ul class="nav nav-tabs flex-nowrap mb-0">
-        <li class="nav-item" *ngFor="let item of mainTabs">
-          <a class="nav-link px-3 fw-semibold" [routerLink]="item.route" routerLinkActive="active">
-            {{ item.name }}
+        <li class="nav-item" *ngFor="let item of filteredTabs">
+          <a class="nav-link px-3 fw-semibold"
+             [routerLink]="item.route"
+             routerLinkActive="active">
+            
           </a>
         </li>
       </ul>
     </div>
 
     <button class="scroll-btn right-btn" *ngIf="showRightArrow" (click)="scrollTabs(150)">&#8250;</button>
-  </div>
+  </div>-->
 
 </div>

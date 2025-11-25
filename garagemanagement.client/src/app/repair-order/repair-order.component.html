@@ -240,7 +240,7 @@
   </mat-expansion-panel>
 
   <!-- ========== Panel 3: Supervisor Section ========== -->
-  <mat-expansion-panel>
+  <mat-expansion-panel *appHasRole="[ROLES.ADMIN, ROLES.SUPERVISOR]">
     <mat-expansion-panel-header class="bg-warning mt-4">
       <mat-panel-title class="text-white">To Be Filled By Supervisor In Front Of Driver</mat-panel-title>
     </mat-expansion-panel-header>

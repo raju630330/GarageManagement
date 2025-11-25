@@ -1,12 +1,11 @@
-﻿using GarageManagement.Server.Model;
-using Microsoft.AspNetCore.Mvc;
+﻿using GarageManagement.Server.Controllers;
 using GarageManagement.Server.Data;
+using GarageManagement.Server.Model;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GarageManagement.Api.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class RepairOrdersController : ControllerBase
+    public class RepairOrdersController : BaseAuthorizationController
     {
         private readonly ApplicationDbContext _context;
 

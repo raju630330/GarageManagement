@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ROLES } from '../constants/roles.constants';
 
 @Component({
   selector: 'app-repair-order',
@@ -8,6 +9,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./repair-order.component.css'],
 })
 export class RepairOrderComponent implements OnInit {
+  ROLES = ROLES;
   openPanel: string | null = null;
   readonly panelOpenState = signal(false);
   repairForm!: FormGroup;

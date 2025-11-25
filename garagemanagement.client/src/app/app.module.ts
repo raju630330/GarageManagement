@@ -28,6 +28,8 @@ import { from } from 'rxjs';
 import { ComponentNameComponent } from './component-name/component-name.component';
 import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.component';
 import { TechnicianMCComponent } from './TechnicianMC/TechnicianMC.component';
+import { HasRoleDirective } from './directives/has-role.directive';
+import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 
 
 
@@ -54,9 +56,9 @@ import { TechnicianMCComponent } from './TechnicianMC/TechnicianMC.component';
     SettingsComponent,
     ComponentNameComponent,
     TotalRepairCostComponent,
-    TechnicianMCComponent
-  
-    
+    TechnicianMCComponent,
+    HasRoleDirective,
+    UnauthorizedComponent  
   ],
   imports: [
     BrowserModule,

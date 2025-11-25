@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ROLES } from '../constants/roles.constants';
 
 @Component({
   selector: 'app-garage-management',
@@ -8,7 +9,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrl: './garage-management.component.css'
 })
 export class GarageManagementComponent implements OnInit {
-
+  ROLES = ROLES;
   jobForm!: FormGroup;
 
   // Custom alert

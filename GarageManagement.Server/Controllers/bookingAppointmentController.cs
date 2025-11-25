@@ -5,9 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GarageManagement.Server.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class bookingAppointmentController : Controller
+    public class bookingAppointmentController : BaseAuthorizationController
     {
         private readonly ApplicationDbContext _context;
 

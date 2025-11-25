@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LabourDetailsService } from '../services/labour-details.service';
+import { ROLES } from '../constants/roles.constants';
 
 @Component({
   selector: 'app-labour-details',
@@ -10,6 +11,7 @@ import { LabourDetailsService } from '../services/labour-details.service';
 })
 export class LabourDetailsComponent implements OnInit {
 
+  ROLES = ROLES;
   labourForm!: FormGroup;
 
   // Custom alert
@@ -82,7 +84,7 @@ export class LabourDetailsComponent implements OnInit {
       this.labourDetailsService.addLabourDetails(labourArray).subscribe({
         next: (res: any) => {
           alert(res.message || 'Labour details submitted successfully!');
-          this.labourDetails.clear();
+          //this.labourDetails.disable();
           this.addRow();
           this.alertMessage = '';
         },

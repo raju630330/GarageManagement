@@ -8,7 +8,7 @@
 
     </a>
   </div>
-  <div class="card shadow p-4">
+  <div class="card shadow p-4" *appHasRole="[ROLES.ADMIN, ROLES.SUPERVISOR, ROLES.MANAGER]">
     <a class="text-decoration-none" (click)="repairOrder()">
       <div class="card-body" style="width:200px">
         <i class="fas fa-clipboard fa-5x" style="color: #f39c12;"></i>

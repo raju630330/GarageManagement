@@ -7,9 +7,7 @@ using System.Linq;
 
 namespace GarageManagement.Server.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class InventoryController : ControllerBase
+    public class InventoryController : BaseAuthorizationController
     {
         private readonly ApplicationDbContext _context;
 

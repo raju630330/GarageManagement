@@ -3,10 +3,8 @@ using GarageManagement.Server.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GarageManagement.Server.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TechnicianMCController : ControllerBase
+{   
+    public class TechnicianMCController : BaseAuthorizationController
     {
         private readonly ApplicationDbContext _context;
 

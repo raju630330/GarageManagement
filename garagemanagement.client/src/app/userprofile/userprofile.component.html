@@ -5,7 +5,6 @@
       <h2 class="mb-0">WORKSHOP</h2>
     </div>
 
-  
     <div class="text-white fw-bold text-center flex-grow-1">
       <h2 class="mb-0">
         SRINIVASA ROAD TRANSPORT <br /> PRIVATE LIMITED
@@ -16,22 +15,22 @@
       <button class="btn btn-success" routerLink="/login">Login</button>
       <button class="btn btn-success ms-2" routerLink="/register">Sign up</button>
     </div>
+
     <div *ngIf="isLoggedIn && user" class="dropdown ms-auto">
       <a class="dropdown-toggle text-decoration-none text-white fw-bold"
          href="#"
          role="button"
-         data-bs-toggle="dropdown"
-         aria-expanded="false">
-        {{ user?.username || 'User' }}
+         data-bs-toggle="dropdown">
+        {{ user?.username }}
         <i class="bi bi-person-circle fs-5"></i>
       </a>
+
       <ul class="dropdown-menu dropdown-menu-end p-3" style="width: 320px;">
-        <li><strong>{{ user?.username || 'No Name' }}</strong></li>
-        <li>{{ user?.email || 'No Email' }}</li>
+        <li><strong>{{ user?.username }}</strong></li>
+        <li>{{ user?.email }}</li>
         <li><span class="badge bg-info">{{ role }}</span></li>
         <hr />
         <div class="d-flex flex-wrap gap-2">
-          <!--<button class="btn btn-success btn-sm" (click)="goToRepairOrder()">Reapair Order</button>-->
           <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
         </div>
       </ul>
@@ -39,28 +38,32 @@
   </div>
 </nav>
 
+<!-- SCROLLABLE MENU BAR -->
 <div *ngIf="isLoggedIn" class="tab-container">
-  <button *ngIf="showLeftArrow"
-          class="scroll-btn left-btn"
-          (click)="scrollTabs(-200)">
+
+  <!-- LEFT BUTTON -->
+  <button *ngIf="showLeftArrow" class="scroll-btn left-btn" (click)="scrollTabs(-200)">
     <i class="bi bi-chevron-left"></i>
   </button>
-  <div class="scrollable-tabs flex-grow-1" #tabScroll>
-    <a *ngFor="let tab of mainTabs"
-       class="nav-link d-inline-block px-3"
+
+  <!-- SCROLL WRAPPER -->
+  <div class="scrollable-tabs" #tabScroll (scroll)="checkScroll()">
+
+    <a *ngFor="let tab of filteredTabs"
+       class="nav-link fw-semibold"
        [routerLink]="tab.route"
-       routerLinkActive="active">
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }">
       {{ tab.name }}
     </a>
+
   </div>
 
-  <button *ngIf="showRightArrow"
-          class="scroll-btn right-btn"
-          (click)="scrollTabs(200)">
+  <!-- RIGHT BUTTON -->
+  <button *ngIf="showRightArrow" class="scroll-btn right-btn" (click)="scrollTabs(200)">
     <i class="bi bi-chevron-right"></i>
   </button>
+
 </div>
 
 <router-outlet></router-outlet>
-
-

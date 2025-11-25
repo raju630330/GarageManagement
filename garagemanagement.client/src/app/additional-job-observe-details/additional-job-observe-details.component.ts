@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ROLES } from '../constants/roles.constants';
 
 @Component({
   selector: 'app-additional-job-observe-details',
@@ -8,6 +9,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./additional-job-observe-details.component.css']
 })
 export class AdditionalJobObserveDetailsComponent implements OnInit {
+  ROLES = ROLES;
   jobForm!: FormGroup;
 
   showAlert = false;

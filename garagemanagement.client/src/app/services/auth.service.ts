@@ -35,9 +35,10 @@ export class AuthService {
       .pipe(
         tap(response => {
           this.setToken(response.token);
+          this.restore();
           const decoded: Decoded = jwtDecode(response.token);
           this.currentUserSubject.next(decoded);
-          this.loggedInSubject.next(true);
+          this.loggedInSubject.next(true);         
         })
       );
   }
@@ -84,6 +85,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
     this._token = null;
     this._role = null;
     this.currentUserSubject.next(null);
@@ -91,7 +93,7 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  private setToken(t: string) {
+  private setToken(t: string) { 
     this._token = t;
     localStorage.setItem('token', t);
     try {

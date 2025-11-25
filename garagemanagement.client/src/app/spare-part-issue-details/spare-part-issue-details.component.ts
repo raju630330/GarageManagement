@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SparePartsIssueDetailsService } from '../services/spare-parts-issue-details.service';
+import { ROLES } from '../constants/roles.constants';
 
 @Component({
   selector: 'app-spare-part-issue-details',
@@ -9,6 +10,7 @@ import { SparePartsIssueDetailsService } from '../services/spare-parts-issue-det
   styleUrls: ['./spare-part-issue-details.component.css']
 })
 export class SparePartIssueDetailsComponent {
+  ROLES = ROLES;
   partsForm: FormGroup;
 
   // For Delete Confirmation & Alerts
@@ -118,7 +120,7 @@ export class SparePartIssueDetailsComponent {
       this.sparePartsIssueDetailsService.createSpareParts(partsArray).subscribe({
         next: (res: any) => {
           alert(res.message || 'All parts submitted successfully!');
-          this.parts.clear();
+          //this.parts.disable();
           this.addPart();
           this.alertMessage = '';
         },

@@ -10,7 +10,7 @@
             <th>Action Taken</th>
             <th>Start Time</th>
             <th>End Time</th>
-            <th>Action</th>
+            <th *appHasRole="[ROLES.ADMIN]">Action</th>
           </tr>
         </thead>
 
@@ -53,7 +53,7 @@
               </div>
             </td>
 
-            <td>
+            <td *appHasRole="[ROLES.ADMIN]">
               <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeRow(i)" title="Delete"><i class="bi bi-trash"></i></button>
             </td>
           </tr>

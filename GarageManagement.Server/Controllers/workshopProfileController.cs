@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GarageManagement.Server.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class WorkshopProfileController : ControllerBase
+    public class WorkshopProfileController : BaseAuthorizationController
     {
         private readonly ApplicationDbContext _context;
 

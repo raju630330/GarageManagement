@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GarageManagement.Server.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SparePartsIssueDetailsController : ControllerBase
+    public class SparePartsIssueDetailsController : BaseAuthorizationController
     {
         private readonly ApplicationDbContext _context;
 

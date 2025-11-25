@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ROLES } from '../constants/roles.constants';
 
 @Component({
   selector: 'app-settings',
@@ -8,7 +9,7 @@ import { Router } from '@angular/router';
   styleUrl: './settings.component.css'
 })
 export class SettingsComponent {
-
+  ROLES = ROLES;
   constructor(private router: Router) { }
   bookappointment() {
     this.router.navigate(['/Calendar']);

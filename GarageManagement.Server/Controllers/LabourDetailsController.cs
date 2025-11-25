@@ -1,11 +1,10 @@
-﻿using GarageManagement.Server.Data;
+﻿using GarageManagement.Server.Controllers;
+using GarageManagement.Server.Data;
 using GarageManagement.Server.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-[Route("api/[controller]")]
-[ApiController]
-public class LabourDetailsController : ControllerBase
+public class LabourDetailsController : BaseAuthorizationController
 {
     private readonly ApplicationDbContext _context;
 

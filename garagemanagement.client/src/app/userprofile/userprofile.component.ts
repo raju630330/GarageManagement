@@ -8,35 +8,43 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './userprofile.component.html',
   styleUrls: ['./userprofile.component.css']
 })
-export class UserprofileComponent implements OnInit {
+export class UserprofileComponent implements OnInit, AfterViewInit {
 
   user: any = null;
   isLoggedIn = false;
   role: string | null = null;
-
+  filteredTabs: any = [];
 
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
+    // Subscribe to login state
     this.authService.loggedIn$.subscribe(status => {
       this.isLoggedIn = status;
 
-    if(status) {
-      this.authService.getUserProfile().subscribe({
-        next: (profile) => {
-          console.log("API user response:", profile);
+      if (status) {
+        this.authService.getUserProfile().subscribe({
+          next: (profile) => {
+            this.user = profile;
+            this.role = profile.role;
 
-          this.user = profile;
-          this.role = profile.role;
-          
-        },
-        error: (err) => console.error("Profile fetch failed", err)
-      });
-    } else {
-      this.user = null;
-      this.role = null;
-    }
-  });
+            // Filter menu tabs by role
+            this.filteredTabs = this.mainTabs.filter(tab =>
+              tab.roles.includes(this.role ?? '')
+            );
+
+            setTimeout(() => this.checkScroll(), 50);
+          }
+        });
+      } else {
+        this.user = null;
+        this.role = null;
+      }
+    });
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.checkScroll(), 200);
   }
 
   logout() {
@@ -45,76 +53,47 @@ export class UserprofileComponent implements OnInit {
     this.user = null;
   }
 
-
-  book() {
-    this.router.navigate(['/Calendar']);
-  }
-
-  viewProfile() {
-    this.router.navigate(['//workshop']);
-
-  }
-
-  goToRepairOrder() {
-    this.router.navigate(['/repair-order']);
-
-  }
-  goToSparePartDetails() {
-    this.router.navigate(['/spare-part']);
-
-  }
-  goToJobObserveDetails() {
-    this.router.navigate(['/jobobservedetails']);
-
-  }
-  goToSupervisorDetails() {
-    this.router.navigate(['/garagemanagement']);
-
-  }
-  goToLabourDetails() {
-    this.router.navigate(['/labour-details']);
-
-  }
   mainTabs = [
-    { name: 'Profile', route: '/profile' },
-    { name: 'Workshop', route: '/workshop' },
-    { name: 'Users', route: '/users' },
-    { name: 'MMVY', route: '/mmvy' },
-    { name: 'Settings', route: '/settings' },
-    { name: 'Subscription', route: '/subscription' },
-    { name: 'Terms & Conditions', route: '/terms' },
-    { name: 'Reminders', route: '/reminders' },
-    { name: 'Associated Workshops', route: '/ Associated Workshops' },
-    { name: 'Activate e-payment now', route: '/Activate e-payment now' },
-    { name: 'Integrations', route: '/Integrations' },
-    { name: 'Templates', route: '/Templates' },
+    { name: 'Profile', route: '/profile', roles: ['Admin', 'Manager'] },
+    { name: 'Workshop', route: '/workshop', roles: ['Admin', 'Manager', 'Supervisor'] },
+    { name: 'Users', route: '/users', roles: ['Admin'] },
+    { name: 'MMVY', route: '/mmvy', roles: ['Admin', 'Manager', 'Supervisor'] },
+    { name: 'Settings', route: '/settings', roles: ['Admin', 'Manager', 'Supervisor', 'Driver'] },
+    { name: 'Subscription', route: '/subscription', roles: ['Admin', 'Manager'] },
+    { name: 'Terms & Conditions', route: '/terms', roles: ['Admin', 'Driver'] },
+    { name: 'Reminders', route: '/reminders', roles: ['Admin', 'Manager'] },
+    { name: 'Associated Workshops', route: '/associated-workshops', roles: ['Admin'] },
+    { name: 'Activate e-payment now', route: '/activate-epayment', roles: ['Admin', 'Manager'] },
+    { name: 'Integrations', route: '/integrations', roles: ['Admin'] },
+    { name: 'Templates', route: '/templates', roles: ['Admin', 'Manager'] }
   ];
 
-  showLeftArrow = true;
+  showLeftArrow = false;
   showRightArrow = false;
 
   @ViewChild('tabScroll') tabScroll!: ElementRef;
 
-  ngAfterViewInit() {
-    this.checkScroll();
-  }
-
   scrollTabs(amount: number) {
-    if (this.tabScroll) {
-      this.tabScroll.nativeElement.scrollBy({ left: amount, behavior: 'smooth' });
-      setTimeout(() => this.checkScroll(), 300);
-    }
+    const el = this.tabScroll?.nativeElement;
+    if (!el) return;
+
+    el.scrollBy({ left: amount, behavior: 'smooth' });
+
+    setTimeout(() => this.checkScroll(), 300);
   }
 
   checkScroll() {
-    if (!this.tabScroll) return;
-    const scrollElem = this.tabScroll.nativeElement;
-    this.showLeftArrow = scrollElem.scrollLeft > 0;
-    this.showRightArrow = scrollElem.scrollWidth > scrollElem.clientWidth + scrollElem.scrollLeft;
+    const el = this.tabScroll?.nativeElement;
+    if (!el) return;
+
+    // Universal 2–3px tolerance (Chrome needs this)
+    const tolerance = 3;
+
+    this.showLeftArrow = el.scrollLeft > tolerance;
+
+    // Hide right arrow only when REALLY at end
+    const atRightEnd = el.scrollLeft + el.clientWidth >= (el.scrollWidth - tolerance);
+
+    this.showRightArrow = !atRightEnd;
   }
-
-
-
 }
-
-

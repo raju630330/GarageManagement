@@ -1,4 +1,5 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnInit } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -6,21 +7,32 @@ import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent implements AfterViewInit {
+export class NavbarComponent implements OnInit,AfterViewInit {
+
+  constructor(private authService: AuthService) { }
+  
+
+  filteredTabs: any = [];
+
+  ngOnInit() {
+    const role: any = this.authService.getRole();
+    this.filteredTabs = this.mainTabs.filter(tab => tab.roles.includes(role));
+  }
+
 
   mainTabs = [
-    { name: 'Profile', route: '/profile' },
-    { name: 'Workshop', route: '' },
-    { name: 'Users', route: '/users' },
-    { name: 'MMVY', route: '/mmvy' },
-    { name: 'Settings', route: '/settings' },
-    { name: 'Subscription', route: '/subscription' },
-    { name: 'Terms & Conditions', route: '/terms' },
-    { name: 'Reminders', route: '/reminders' },
-    { name: 'Associated Workshops', route: '/ Associated Workshops' },
-    { name: 'Activate e-payment now', route: '/Activate e-payment now' },
-    { name: 'Integrations', route: '/Integrations' },
-    { name: 'Templates', route: '/Templates' },
+    { name: 'Profile', route: '/profile', roles: ['Admin', 'Manager', 'Driver', 'Technician'] },
+    { name: 'Workshop', route: '/workshop', roles: ['Admin', 'Manager'] },
+    { name: 'Users', route: '/users', roles: ['Admin'] },
+    { name: 'MMVY', route: '/mmvy', roles: ['Admin', 'Manager'] },
+    { name: 'Settings', route: '/settings', roles: ['Admin'] },
+    { name: 'Subscription', route: '/subscription', roles: ['Admin', 'Manager'] },
+    { name: 'Terms & Conditions', route: '/terms', roles: ['Admin', 'Driver'] },
+    { name: 'Reminders', route: '/reminders', roles: ['Admin', 'Manager'] },
+    { name: 'Associated Workshops', route: '/associated-workshops', roles: ['Admin'] },
+    { name: 'Activate e-payment now', route: '/activate-epayment', roles: ['Admin', 'Manager'] },
+    { name: 'Integrations', route: '/integrations', roles: ['Admin'] },
+    { name: 'Templates', route: '/templates', roles: ['Admin', 'Manager'] }
   ];
 
   showLeftArrow = false;
