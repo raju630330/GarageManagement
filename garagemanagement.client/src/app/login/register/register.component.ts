@@ -31,9 +31,9 @@ export class RegisterComponent {
   }
 
   onRegister() {
-    if (this.registerForm.invalid) {    
-      this.alert.showError('Please enter all required fields');
+    if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
+      this.alert.showError('Please enter all required fields');    
       return;
     }
 

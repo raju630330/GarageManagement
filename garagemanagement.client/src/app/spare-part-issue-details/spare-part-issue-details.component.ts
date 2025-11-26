@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SparePartsIssueDetailsService } from '../services/spare-parts-issue-details.service';
 import { ROLES } from '../constants/roles.constants';
+import { AlertService } from '../services/alert.service';
 
 @Component({
   selector: 'app-spare-part-issue-details',
@@ -13,16 +14,11 @@ export class SparePartIssueDetailsComponent {
   ROLES = ROLES;
   partsForm: FormGroup;
 
-  // For Delete Confirmation & Alerts
-  alertMessage = '';
-  showAlert = false;
-  confirmAction: (() => void) | null = null;
-
   // Pagination
   pageSize = 2;
   currentPage = 1;
 
-  constructor(private fb: FormBuilder, private sparePartsIssueDetailsService: SparePartsIssueDetailsService) {
+  constructor(private fb: FormBuilder, private sparePartsIssueDetailsService: SparePartsIssueDetailsService, private alert: AlertService) {
     this.partsForm = this.fb.group({
       parts: this.fb.array([])
     });
@@ -47,12 +43,9 @@ export class SparePartIssueDetailsComponent {
   addPart() {
     if (this.parts.length > 0 && this.parts.at(this.parts.length - 1).invalid) {
       this.partsForm.markAllAsTouched();
-      this.alertMessage = 'Please fill all fields correctly before adding a new row.';
-      this.showAlert = true;
-      this.confirmAction = null;
+      this.alert.showError('Please fill all fields correctly before adding a new row.');
       return;
     }
-    this.alertMessage = '';
 
     const partForm = this.fb.group({
       description: ['', [Validators.required, Validators.pattern(/^[a-zA-Z\s]+$/)]],
@@ -68,26 +61,13 @@ export class SparePartIssueDetailsComponent {
   }
 
   removePart(index: number) {
-    this.alertMessage = 'Are you sure you want to remove this row?';
-    this.showAlert = true;
-
-    this.confirmAction = () => {
+    this.alert.confirm('Are you sure you want to remove this row?', () => {
       this.parts.removeAt(index);
       if (this.currentPage > this.totalPages) {
         this.currentPage = this.totalPages;
       }
       this.updateTotals();
-      this.closeAlert();
-    };
-  }
-
-  confirmYes(): void {
-    if (this.confirmAction) this.confirmAction();
-  }
-
-  closeAlert(): void {
-    this.showAlert = false;
-    this.confirmAction = null;
+    });
   }
 
   getAmount(index: number): number {
@@ -119,20 +99,18 @@ export class SparePartIssueDetailsComponent {
 
       this.sparePartsIssueDetailsService.createSpareParts(partsArray).subscribe({
         next: (res: any) => {
-          alert(res.message || 'All parts submitted successfully!');
-          //this.parts.disable();
-          this.addPart();
-          this.alertMessage = '';
+          this.alert.showInfo(res.message || 'All parts submitted successfully!', () => {
+            this.parts.clear();
+            this.addPart();
+          });
         },
         error: (err: any) => {
-          alert(err?.error?.message || 'Error saving parts!');
+          this.alert.showError(err?.error || 'Error saving parts!');
         }
       });
     } else {
       this.partsForm.markAllAsTouched();
-      this.alertMessage = 'Please fix validation errors before submitting!';
-      this.showAlert = true;
-      this.confirmAction = null;
+      this.alert.showError('Please fix validation errors before submitting!');
       return;
     }
   }

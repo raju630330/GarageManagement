@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ROLES } from '../constants/roles.constants';
+import { AlertService } from '../services/alert.service';
 
 @Component({
   selector: 'app-garage-management',
@@ -11,13 +12,7 @@ import { ROLES } from '../constants/roles.constants';
 export class GarageManagementComponent implements OnInit {
   ROLES = ROLES;
   jobForm!: FormGroup;
-
-  // Custom alert
-  showAlert = false;
-  alertMessage = '';
-  confirmAction: (() => void) | null = null;
-
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private alert: AlertService) { }
 
   ngOnInit(): void {
     this.jobForm = this.fb.group({
@@ -42,44 +37,25 @@ export class GarageManagementComponent implements OnInit {
   addRow(): void {
     if (this.rows.length > 0 && this.rows.at(this.rows.length - 1).invalid) {
       this.jobForm.markAllAsTouched();
-      this.alertMessage = 'Please fill all fields correctly before adding a new row.';
-      this.showAlert = true;
-      this.confirmAction = null;
+      this.alert.showError('Please fill all fields correctly before adding a new row.');
       return;
     }
-    this.alertMessage = '';
     this.rows.push(this.createRow());
   }
 
   removeRow(index: number): void {
-    this.alertMessage = 'Are you sure you want to remove this row?';
-    this.showAlert = true;
-    this.confirmAction = () => {
+    this.alert.confirm('Are you sure you want to remove this row?', () => {
       this.rows.removeAt(index);
-      this.closeAlert();
-    };
-  }
-
-  confirmYes(): void {
-    if (this.confirmAction) this.confirmAction();
-  }
-
-  closeAlert(): void {
-    this.showAlert = false;
-    this.confirmAction = null;
+    });
   }
 
   submit(): void {
     if (this.jobForm.valid) {
-      this.alertMessage = 'Form submitted successfully!';
-      this.showAlert = true;
-      this.confirmAction = null;
+      this.alert.showSuccess('Form submitted successfully!');
       console.log('✅ Submitted:', this.jobForm.value);
     } else {
       this.jobForm.markAllAsTouched();
-      this.alertMessage = 'Please correct the errors before submitting.';
-      this.showAlert = true;
-      this.confirmAction = null;
+      this.alert.showError('Please correct the errors before submitting.');
     }
   }
 }

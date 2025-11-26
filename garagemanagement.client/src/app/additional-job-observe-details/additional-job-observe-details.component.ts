@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ROLES } from '../constants/roles.constants';
+import { AlertService } from '../services/alert.service';
 
 @Component({
   selector: 'app-additional-job-observe-details',
@@ -12,11 +13,7 @@ export class AdditionalJobObserveDetailsComponent implements OnInit {
   ROLES = ROLES;
   jobForm!: FormGroup;
 
-  showAlert = false;
-  alertMessage = '';
-  confirmAction: (() => void) | null = null;
-
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private alert: AlertService) { }
 
   ngOnInit(): void {
     this.jobForm = this.fb.group({
@@ -42,37 +39,20 @@ export class AdditionalJobObserveDetailsComponent implements OnInit {
   addRow(): void {
     if (this.rows.length > 0 && this.rows.at(this.rows.length - 1).invalid) {
       this.jobForm.markAllAsTouched();
-      this.alertMessage = 'Please fill all fields correctly before adding a new row.';
-      this.showAlert = true;
-      this.confirmAction = null;
+      this.alert.showError('Please fill all fields correctly before adding a new row.');
       return;
     }
-    this.alertMessage = '';
     const nextSlNo = this.rows.length + 1;
     this.rows.push(this.createRow(nextSlNo));
   }
 
   removeRow(index: number): void {
-    this.alertMessage = 'Are you sure you want to remove this row?';
-    this.showAlert = true;
-
-    this.confirmAction = () => {
+    this.alert.confirm('Are you sure you want to remove this row?', () => {
       this.rows.removeAt(index);
       this.recalculateSlNo();
       this.recalculateSerialNumbers();
-      this.closeAlert();
-    };
+    });
   }
-
-  confirmYes(): void {
-    if (this.confirmAction) this.confirmAction();
-  }
-
-  closeAlert(): void {
-    this.showAlert = false;
-    this.confirmAction = null;
-  }
-
   private recalculateSlNo(): void {
   }
 
@@ -84,15 +64,11 @@ export class AdditionalJobObserveDetailsComponent implements OnInit {
 
   submit(): void {
     if (this.jobForm.valid) {
-      this.alertMessage = 'Form submitted successfully!';
-      this.showAlert = true;
-      this.confirmAction = null;
+      this.alert.showSuccess('Form submitted successfully!');
       console.log('✅ Submitted data:', this.jobForm.value);
     } else {
       this.jobForm.markAllAsTouched();
-      this.alertMessage = 'Please correct the errors before submitting.';
-      this.showAlert = true;
-      this.confirmAction = null;
+      this.alert.showError('Please correct the errors before submitting.');
     }
   }
 }

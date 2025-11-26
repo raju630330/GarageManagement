@@ -19,19 +19,19 @@
             <td>{{ i + 1 }}</td>
             <td>
               <input type="text" class="form-control" formControlName="description" placeholder="Description" maxlength="50" />
-              <div class="error" *ngIf="row.get('description')?.invalid && row.get('description')?.touched">
+              <div class="text-danger" *ngIf="row.get('description')?.invalid && row.get('description')?.touched">
                 Description is required (max 50 chars).
               </div>
             </td>
             <td>
               <input type="text" class="form-control" formControlName="labourCharges" placeholder="0" (input)="forceNumberswithtwodecimalsOnly(i, 'labourCharges')"/>
-              <div class="error" *ngIf="row.get('labourCharges')?.invalid && row.get('labourCharges')?.touched">
+              <div class="text-danger" *ngIf="row.get('labourCharges')?.invalid && row.get('labourCharges')?.touched">
                 Enter valid numeric value.
               </div>
             </td>
             <td>
               <input type="text" class="form-control" formControlName="outsideLabour" placeholder="0" (input)="forceNumberswithtwodecimalsOnly(i, 'outsideLabour')" />
-              <div class="error" *ngIf="row.get('outsideLabour')?.invalid && row.get('outsideLabour')?.touched">
+              <div class="text-danger" *ngIf="row.get('outsideLabour')?.invalid && row.get('outsideLabour')?.touched">
                 Enter valid numeric value.
               </div>
             </td>
@@ -68,21 +68,5 @@
       </div>
 
     </form>
-
-    <!-- Custom Alert -->
-    <div class="custom-alert" *ngIf="showAlert">
-      <div class="alert-content">
-        <p>{{ alertMessage }}</p>
-        <div class="alert-buttons" *ngIf="confirmAction">
-          <button class="btn btn-danger" (click)="confirmYes()">Yes</button>
-          <button class="btn btn-secondary" (click)="closeAlert()">No</button>
-        </div>
-
-        <div class="alert-buttons" *ngIf="!confirmAction">
-          <button class="btn btn-primary" (click)="closeAlert()">OK</button>
-        </div>
-      </div>
-    </div>
-
   </div>
 </section>

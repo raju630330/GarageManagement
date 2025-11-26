@@ -123,21 +123,5 @@
       </div>
 
     </form>
-
-    <!-- Custom Alert Box -->
-    <div class="custom-alert" *ngIf="showAlert">
-      <div class="alert-content">
-        <p>{{ alertMessage }}</p>
-
-        <div class="alert-buttons" *ngIf="confirmAction">
-          <button class="btn btn-danger" (click)="confirmYes()">Yes</button>
-          <button class="btn btn-secondary" (click)="closeAlert()">No</button>
-        </div>
-
-        <div class="alert-buttons" *ngIf="!confirmAction">
-          <button class="btn btn-primary" (click)="closeAlert()">OK</button>
-        </div>
-      </div>
-    </div>
   </div>
 </section>

@@ -19,31 +19,31 @@
             <td>{{ i + 1 }}</td>
             <td>
               <input type="text" class="form-control" formControlName="driverVoice" placeholder="Driver Voice" maxlength="50" />
-              <div class="error" *ngIf="row.get('driverVoice')?.invalid && row.get('driverVoice')?.touched">
+              <div class="text-danger" *ngIf="row.get('driverVoice')?.invalid && row.get('driverVoice')?.touched">
                 Alphabets only (max 50).
               </div>
             </td>
             <td>
               <input type="text" class="form-control" formControlName="supervisorInstructions" placeholder="Supervisor Instructions" maxlength="50" />
-              <div class="error" *ngIf="row.get('supervisorInstructions')?.invalid && row.get('supervisorInstructions')?.touched">
+              <div class="text-danger" *ngIf="row.get('supervisorInstructions')?.invalid && row.get('supervisorInstructions')?.touched">
                 Alphabets only (max 50).
               </div>
             </td>
             <td>
               <input type="text" class="form-control" formControlName="actionTaken" placeholder="Action Taken" maxlength="50" />
-              <div class="error" *ngIf="row.get('actionTaken')?.invalid && row.get('actionTaken')?.touched">
+              <div class="text-danger" *ngIf="row.get('actionTaken')?.invalid && row.get('actionTaken')?.touched">
                 Alphabets only (max 50).
               </div>
             </td>
             <td>
               <input type="text" class="form-control" formControlName="startTime" placeholder="HH:MM AM/PM" />
-              <div class="error" *ngIf="row.get('startTime')?.invalid && row.get('startTime')?.touched">
+              <div class="text-danger" *ngIf="row.get('startTime')?.invalid && row.get('startTime')?.touched">
                 Enter valid time (e.g., 09:30 AM).
               </div>
             </td>
             <td>
               <input type="text" class="form-control" formControlName="endTime" placeholder="HH:MM AM/PM" />
-              <div class="error" *ngIf="row.get('endTime')?.invalid && row.get('endTime')?.touched">
+              <div class="text-danger" *ngIf="row.get('endTime')?.invalid && row.get('endTime')?.touched">
                 Enter valid time (e.g., 05:45 PM).
               </div>
             </td>
@@ -59,19 +59,5 @@
         <button type="submit" class="btn btn-submit">Submit</button>
       </div>
     </form>
-
-    <!-- Custom Alert -->
-    <div class="custom-alert" *ngIf="showAlert">
-      <div class="alert-content">
-        <p>{{ alertMessage }}</p>
-        <div class="alert-buttons" *ngIf="confirmAction">
-          <button class="btn btn-danger" (click)="confirmYes()">Yes</button>
-          <button class="btn btn-secondary" (click)="closeAlert()">No</button>
-        </div>
-        <div class="alert-buttons" *ngIf="!confirmAction">
-          <button class="btn btn-primary" (click)="closeAlert()">OK</button>
-        </div>
-      </div>
-    </div>
   </div>
 </section>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LabourDetailsService } from '../services/labour-details.service';
 import { ROLES } from '../constants/roles.constants';
+import { AlertService } from '../services/alert.service';
 
 @Component({
   selector: 'app-labour-details',
@@ -14,12 +15,7 @@ export class LabourDetailsComponent implements OnInit {
   ROLES = ROLES;
   labourForm!: FormGroup;
 
-  // Custom alert
-  showAlert = false;
-  alertMessage = '';
-  confirmAction: (() => void) | null = null;
-
-  constructor(private fb: FormBuilder, private labourDetailsService: LabourDetailsService) { }
+  constructor(private fb: FormBuilder, private labourDetailsService: LabourDetailsService, private alert: AlertService) { }
 
   ngOnInit(): void {
     this.labourForm = this.fb.group({
@@ -45,30 +41,16 @@ export class LabourDetailsComponent implements OnInit {
   addRow(): void {
     if (this.labourDetails.length > 0 && this.labourDetails.at(this.labourDetails.length - 1).invalid) {
       this.labourForm.markAllAsTouched();
-      this.alertMessage = 'Please fill all required fields before adding a new row.';
-      this.showAlert = true;
+      this.alert.showError('Please fill all fields correctly before adding a new row.');
       return;
     }
     this.labourDetails.push(this.createRow());
   }
 
   removeRow(index: number): void {
-    this.alertMessage = 'Are you sure you want to delete this row?';
-    this.showAlert = true;
-
-    this.confirmAction = () => {
+    this.alert.confirm('Are you sure you want to remove this row?', () => {
       this.labourDetails.removeAt(index);
-      this.closeAlert();
-    };
-  }
-
-  confirmYes(): void {
-    if (this.confirmAction) this.confirmAction();
-  }
-
-  closeAlert(): void {
-    this.showAlert = false;
-    this.confirmAction = null;
+    });
   }
 
   submit(): void {
@@ -83,25 +65,22 @@ export class LabourDetailsComponent implements OnInit {
 
       this.labourDetailsService.addLabourDetails(labourArray).subscribe({
         next: (res: any) => {
-          alert(res.message || 'Labour details submitted successfully!');
-          //this.labourDetails.disable();
-          this.addRow();
-          this.alertMessage = '';
+          this.alert.showInfo(res.message || 'Labour details submitted successfully!', () => {
+            this.labourDetails.clear();
+            this.addRow();
+          });
         },
         error: (err: any) => {
-          alert(err?.error?.message || 'Error saving labour details!');
+          this.alert.showError(err?.error || 'Something went wrong');
         }
       });
 
     } else {
       this.labourForm.markAllAsTouched();
-      this.alertMessage = 'Please fix validation errors before submitting!';
-      this.showAlert = true;
-      this.confirmAction = null;
+      this.alert.showError('Please fix validation errors before submitting!');
       return;
     }
   }
-
 
   calculateTotal(): number {
     return this.labourDetails.controls.reduce((sum, row: any) => {
