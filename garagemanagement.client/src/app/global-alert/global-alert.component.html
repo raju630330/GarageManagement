@@ -1,0 +1,23 @@
+<div class="custom-alert" *ngIf="show">
+  <div class="alert-content">
+    <p [innerHTML]="message"></p>
+
+    <!-- Yes/No buttons -->
+    <div class="alert-buttons" *ngIf="isConfirm">
+      <button class="btn btn-danger" (click)="yes()">Yes</button>
+      <button class="btn btn-secondary" (click)="close()">No</button>
+    </div>
+
+    <!-- OK button -->
+    <div class="alert-buttons" *ngIf="!isConfirm">
+      <button [ngClass]="{
+          'btn-primary': type === 'success',
+          'btn-danger': type === 'error',
+          'btn-warning': type === 'warning'
+        }"
+              (click)="close(); confirmFn?.()">
+        OK
+      </button>
+    </div>
+  </div>
+</div>

@@ -30,6 +30,7 @@ import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.
 import { TechnicianMCComponent } from './TechnicianMC/TechnicianMC.component';
 import { HasRoleDirective } from './directives/has-role.directive';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
+import { GlobalAlertComponent } from './global-alert/global-alert.component';
 
 
 
@@ -58,7 +59,8 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
     TotalRepairCostComponent,
     TechnicianMCComponent,
     HasRoleDirective,
-    UnauthorizedComponent  
+    UnauthorizedComponent,
+    GlobalAlertComponent  
   ],
   imports: [
     BrowserModule,

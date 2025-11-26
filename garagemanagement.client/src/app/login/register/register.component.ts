@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-register',
@@ -12,8 +13,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 export class RegisterComponent {
   registerForm!: FormGroup;
   error = "";
-  role = ['Driver', 'Admin', 'Technician','Cashier','Manager','Supervisor'];
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
+  role = ['Driver', 'Admin', 'Technician', 'Cashier', 'Manager', 'Supervisor'];
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private alert: AlertService) { }
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
@@ -30,17 +31,23 @@ export class RegisterComponent {
   }
 
   onRegister() {
-    if (this.registerForm.invalid) { this.error = 'Enter credentials'; return; }
+    if (this.registerForm.invalid) {    
+      this.alert.showError('Please enter all required fields');
+      this.registerForm.markAllAsTouched();
+      return;
+    }
 
-    this.authService.register(this.registerForm.value).subscribe({
-      next: (res) => {
-        alert(res?.message || 'Registered successfully');
-        this.router.navigate(['/login']); 
-      },
-      error: (err) => {
-        alert(err.error?.message || 'Something went wrong');
-      }
+    this.alert.confirm('Do you want to register this user?', () => {
+      this.authService.register(this.registerForm.value).subscribe({
+        next: (res) => {
+          this.alert.showInfo('User created successfully! <br> Click OK to login', () => {
+            this.router.navigate(['/login']);
+          });
+        },
+        error: (err) => {
+          this.alert.showError(err?.error || 'Something went wrong');
+        }
+      });
     });
-
   }
 }
