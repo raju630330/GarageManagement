@@ -31,6 +31,7 @@ import { TechnicianMCComponent } from './TechnicianMC/TechnicianMC.component';
 import { HasRoleDirective } from './directives/has-role.directive';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { GlobalAlertComponent } from './global-alert/global-alert.component';
+import { LoaderComponent } from './loader/loader.component';
 
 
 
@@ -60,7 +61,8 @@ import { GlobalAlertComponent } from './global-alert/global-alert.component';
     TechnicianMCComponent,
     HasRoleDirective,
     UnauthorizedComponent,
-    GlobalAlertComponent  
+    GlobalAlertComponent,
+    LoaderComponent  
   ],
   imports: [
     BrowserModule,
