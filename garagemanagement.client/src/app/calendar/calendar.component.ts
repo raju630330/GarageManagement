@@ -24,7 +24,10 @@ export class CalendarComponent implements OnInit {
   constructor(
     private router: Router,
     private appointmentService: WorkshopProfileService
-  ) { }
+  ) {
+    this.appointmentService.refreshNeeded$.subscribe(() => {
+      this.loadAppointments();
+    }); }
 
   ngOnInit(): void {
     this.generateHours();
@@ -51,10 +54,35 @@ export class CalendarComponent implements OnInit {
     }
   }
 
-  generateMonth(date: Date) {
+/*  generateMonth(date: Date) {
     this.currentWeekDates = [];
     const start = new Date(date.getFullYear(), date.getMonth(), 1);
     const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      this.currentWeekDates.push(new Date(d));
+    }
+  }*/
+
+  generateMonth(date: Date) {
+    this.currentWeekDates = [];
+
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    // 1st day of month
+    const first = new Date(year, month, 1);
+    // last day of month
+    const last = new Date(year, month + 1, 0);
+
+    // find Monday before the first day
+    const start = new Date(first);
+    start.setDate(start.getDate() - ((start.getDay() + 6) % 7)); // convert Sun=0 to Sun=6
+
+    // find Sunday after last day
+    const end = new Date(last);
+    end.setDate(end.getDate() + (7 - ((end.getDay() + 6) % 7) - 1));
+
+    // Fill all days into the array
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       this.currentWeekDates.push(new Date(d));
     }
@@ -71,7 +99,7 @@ export class CalendarComponent implements OnInit {
     if (mode === 'month') this.generateMonth(this.currentDate);
     if (mode === 'day') this.generateDay(this.currentDate);
   }
-
+/*
   previousWeek() {
     this.currentDate.setDate(this.currentDate.getDate() - 7);
     this.generateWeek(this.currentDate);
@@ -85,7 +113,45 @@ export class CalendarComponent implements OnInit {
   today() {
     this.currentDate = new Date();
     this.generateWeek(this.currentDate);
+  }*/
+
+  previousWeek() {
+    if (this.viewMode === 'day') {
+      this.currentDate.setDate(this.currentDate.getDate() - 1);
+      this.generateDay(this.currentDate);
+    }
+    else if (this.viewMode === 'week') {
+      this.currentDate.setDate(this.currentDate.getDate() - 7);
+      this.generateWeek(this.currentDate);
+    }
+    else if (this.viewMode === 'month') {
+      this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1);
+      this.generateMonth(this.currentDate);
+    }
   }
+
+  nextWeek() {
+    if (this.viewMode === 'day') {
+      this.currentDate.setDate(this.currentDate.getDate() + 1);
+      this.generateDay(this.currentDate);
+    }
+    else if (this.viewMode === 'week') {
+      this.currentDate.setDate(this.currentDate.getDate() + 7);
+      this.generateWeek(this.currentDate);
+    }
+    else if (this.viewMode === 'month') {
+      this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
+      this.generateMonth(this.currentDate);
+    }
+  }
+
+  today() {
+    this.currentDate = new Date();
+    if (this.viewMode === 'day') this.generateDay(this.currentDate);
+    else if (this.viewMode === 'week') this.generateWeek(this.currentDate);
+    else if (this.viewMode === 'month') this.generateMonth(this.currentDate);
+  }
+
 
   isToday(date: Date): boolean {
     const today = new Date();
@@ -101,7 +167,7 @@ export class CalendarComponent implements OnInit {
       next: (data) => {
         this.appointments = data.map(a => ({
           ...a,
-          start: new Date(a.date + 'T' + a.time)
+          start: new Date(a.date.substring(0, 10) + 'T' + a.time)
         }));
         this.filteredAppointments = [...this.appointments];
       },
@@ -142,6 +208,15 @@ export class CalendarComponent implements OnInit {
     if (modifier === 'PM' && h !== 12) h += 12;
     if (modifier === 'AM' && h === 12) h = 0;
     return h;
+  }
+  //For mothly bookings update
+  hasAppointments(date: Date): any[] {
+    return this.filteredAppointments.filter(appt => {
+      const d = new Date(appt.start);
+      return d.getDate() === date.getDate() &&
+        d.getMonth() === date.getMonth() &&
+        d.getFullYear() === date.getFullYear();
+    });
   }
 }
 

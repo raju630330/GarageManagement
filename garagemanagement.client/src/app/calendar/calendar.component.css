@@ -153,6 +153,36 @@
   vertical-align: top;
 }
 
+/* Full cell stays white */
+.month-cell {
+  padding: 15px;
+  background: white;
+}
+
+.inner-box {
+  padding: 10px;
+  border-radius: 8px; /* normal box */
+  text-align: center;
+}
+
+.booked-box {
+  background: #0d6efd;
+  color: #003d99;
+}
+
+.heavy-box {
+  background: #fdeaea;
+  color: #a30000;
+}
+
+.day-number {
+  font-weight: bold;
+  font-size: 18px;
+}
+.today-box {
+  color: white !important;
+}
+
 @media (max-width: 768px) {
   table.table {
     font-size: 0.8rem;

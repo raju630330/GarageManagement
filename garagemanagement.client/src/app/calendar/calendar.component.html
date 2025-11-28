@@ -69,10 +69,22 @@
       </thead>
       <tbody>
         <tr *ngFor="let week of [].constructor((currentWeekDates.length / 7)); let row = index">
-          <td *ngFor="let day of currentWeekDates.slice(row*7, row*7+7)"
-              [ngClass]="{'bg-primary text-white rounded-circle': isToday(day)}">
-            <div>{{ day.getDate() }}</div>
+          <td *ngFor="let day of currentWeekDates.slice(row*7, row*7+7)" class="month-cell">
+
+            <div class="inner-box"
+                  [ngClass]="{ 'today-box bg-primary text-white rounded-circle px-2': isToday(day), 'booked-box text-white': hasAppointments(day).length > 0 && hasAppointments(day).length <= 12 && !isToday(day), 'heavy-box': hasAppointments(day).length > 12 }">
+
+
+              <div class="day-number">{{ day.getDate() }}</div>
+
+              <span *ngIf="hasAppointments(day).length > 0">
+                {{ hasAppointments(day).length }} Booked
+              </span>
+            </div>
+
           </td>
+
+
         </tr>
       </tbody>
     </table>

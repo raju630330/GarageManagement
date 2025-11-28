@@ -1,17 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkshopProfileService {
-
+  private baseUrl = environment.apiUrl;
+  private refreshNeeded = new Subject<void>();
+  refreshNeeded$ = this.refreshNeeded.asObservable();
   constructor(private http: HttpClient) { }
 
   saveProfile(profile: any): Observable<any> {
-    return this.http.post('http://localhost:5238/api/workshopProfile/save', profile);
+    return this.http.post(`${this.baseUrl}/workshopProfile/save`, profile);
   }
 
   //getProfile(id: number): Observable<WorkshopProfile> {
@@ -19,14 +22,15 @@ export class WorkshopProfileService {
   //}
 
   saveBookAppointment(bookingAppointmentdata: any): Observable<any> {
-    return this.http.post('http://localhost:5238/api/bookingAppointment/saveBookAppointment', bookingAppointmentdata);
+    return this.http.post(`${this.baseUrl}/bookingAppointment/saveBookAppointment`, bookingAppointmentdata).pipe(
+      tap(() => this.refreshNeeded.next()));
   }
 
   getAllAppointments(): Observable<any[]> {
-    return this.http.get<any[]>('http://localhost:5238/api/bookingAppointment/getAllAppointments');
+    return this.http.get<any[]>(`${this.baseUrl}/bookingAppointment/getAllAppointments`);
   }
 
   DeleteAppointment(id: number): Observable<any> {
-    return this.http.delete<any>(`http://localhost:5238/api/bookingAppointment/deleteAppointment/${id}`);
+    return this.http.delete<any>(`${this.baseUrl}/bookingAppointment/deleteAppointment/${id}`);
   }
 }

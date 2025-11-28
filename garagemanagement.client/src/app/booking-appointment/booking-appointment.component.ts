@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { WorkshopProfileService } from '../services/workshop-profile.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertService } from '../services/alert.service';
 
 @Component({
   selector: 'app-booking-appointment',
@@ -22,7 +23,7 @@ export class BookingAppointmentComponent {
   vehicleTypes = ['Passenger', 'Commercial'];
 
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private WorkshopProfileService: WorkshopProfileService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private fb: FormBuilder, private http: HttpClient, private WorkshopProfileService: WorkshopProfileService, private router: Router, private route: ActivatedRoute, private alert: AlertService) { }
 
   ngOnInit(): void {
     this.appointmentForm = this.fb.group({
@@ -67,29 +68,22 @@ export class BookingAppointmentComponent {
   onbookSubmit() {
     if (this.appointmentForm.invalid) {
       this.appointmentForm.markAllAsTouched();
-      console.log('Form is invalid');
+      this.alert.showError('Please fix validation errors before submitting!');
       return;
     }
-
-    console.log('Form submitted successfully:', this.appointmentForm.value);
 
     const bookingData = this.appointmentForm.value;
 
     this.WorkshopProfileService.saveBookAppointment(bookingData).subscribe({
       next: (res) => {
-        console.log('Saved successfully', res);
-        alert('Data Save successfully');
+        this.alert.showInfo(res.message || 'Booking Appointment Data saved successfully!', () => {
+          this.router.navigate(['/Calendar']);
+        });       
       },
       error: (err) => {
-        console.error('Error:', err);
-        if (err.error?.errors) {
-          for (let field in err.error.errors) {
-            console.error(`${field}: ${err.error.errors[field].join(', ')}`);
-          }
-        }
+        this.alert.showError(err?.error || 'Error in saving Booking Appointment!');
       }
     });
-    this.closeModal();
   }
   closeModal() {
     this.router.navigate(['../'], { relativeTo: this.route });
