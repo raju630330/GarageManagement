@@ -1,0 +1,48 @@
+/* Dim background when popup opens */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.2);
+  z-index: 999;
+}
+
+.time-popup {
+  position: absolute;
+  background: #fff;
+  border-radius: 12px;
+  width: 160px;
+  max-height: 250px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  padding: 10px;
+  z-index: 1000;
+}
+
+.time-list {
+  max-height: 230px;
+  overflow-y: auto;
+}
+
+.time-item {
+  padding: 12px;
+  margin: 4px 0;
+  border-radius: 8px;
+  background: #f8f8f8;
+  text-align: center;
+  font-size: 18px;
+}
+
+  .time-item:active {
+    background: #007bff;
+    color: white;
+    transform: scale(0.97);
+  }
+.time-input-group {
+  cursor: pointer;
+}
+
+  .time-input-group input {
+    pointer-events: none; /* prevent typing, allow only popup */
+  }

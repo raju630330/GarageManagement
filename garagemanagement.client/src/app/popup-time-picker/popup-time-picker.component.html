@@ -1,0 +1,22 @@
+
+<div class="input-group time-input-group" (click)="togglePopup()">
+  <input type="text"
+         class="form-control form-control-md time-input"
+         [value]="selectedDateTime"
+         placeholder="Select Time"
+         readonly />
+  <span class="input-group-text bg-white">
+    <i class="bi bi-clock"></i>
+  </span>
+</div>
+<div class="overlay" *ngIf="showPopup"></div>
+
+<div class="time-popup" *ngIf="showPopup">
+  <div class="time-list">
+    <div class="time-item"
+         *ngFor="let t of filteredSlots"
+         (click)="selectTime(t)">
+      {{ t }}
+    </div>
+  </div>
+</div>

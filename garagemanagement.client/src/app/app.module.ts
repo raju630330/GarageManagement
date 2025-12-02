@@ -32,6 +32,7 @@ import { HasRoleDirective } from './directives/has-role.directive';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { GlobalAlertComponent } from './global-alert/global-alert.component';
 import { LoaderComponent } from './loader/loader.component';
+import { PopupTimePickerComponent } from './popup-time-picker/popup-time-picker.component';
 
 
 
@@ -62,7 +63,8 @@ import { LoaderComponent } from './loader/loader.component';
     HasRoleDirective,
     UnauthorizedComponent,
     GlobalAlertComponent,
-    LoaderComponent  
+    LoaderComponent,
+    PopupTimePickerComponent  
   ],
   imports: [
     BrowserModule,
