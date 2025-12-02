@@ -45,12 +45,19 @@ export class CalendarComponent implements OnInit {
 
   generateWeek(date: Date) {
     this.currentWeekDates = [];
+
     const startOfWeek = new Date(date);
-    startOfWeek.setDate(date.getDate() - startOfWeek.getDay());
+
+    // Convert Sunday (0) to 7 for correct Monday start
+    const day = startOfWeek.getDay() === 0 ? 7 : startOfWeek.getDay();
+
+    // Move date back to Monday
+    startOfWeek.setDate(startOfWeek.getDate() - (day - 1));
+
     for (let i = 0; i < 7; i++) {
-      const day = new Date(startOfWeek);
-      day.setDate(startOfWeek.getDate() + i);
-      this.currentWeekDates.push(day);
+      const dayDate = new Date(startOfWeek);
+      dayDate.setDate(startOfWeek.getDate() + i);
+      this.currentWeekDates.push(dayDate);
     }
   }
 
@@ -117,11 +124,11 @@ export class CalendarComponent implements OnInit {
 
   previousWeek() {
     if (this.viewMode === 'day') {
-      this.currentDate.setDate(this.currentDate.getDate() - 1);
+      this.currentDate = new Date(this.currentDate.getTime() - 1 * 24 * 60 * 60 * 1000);
       this.generateDay(this.currentDate);
     }
     else if (this.viewMode === 'week') {
-      this.currentDate.setDate(this.currentDate.getDate() - 7);
+      this.currentDate = new Date(this.currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
       this.generateWeek(this.currentDate);
     }
     else if (this.viewMode === 'month') {
@@ -130,13 +137,14 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+
   nextWeek() {
     if (this.viewMode === 'day') {
-      this.currentDate.setDate(this.currentDate.getDate() + 1);
+      this.currentDate = new Date(this.currentDate.getTime() + 1 * 24 * 60 * 60 * 1000);
       this.generateDay(this.currentDate);
     }
     else if (this.viewMode === 'week') {
-      this.currentDate.setDate(this.currentDate.getDate() + 7);
+      this.currentDate = new Date(this.currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
       this.generateWeek(this.currentDate);
     }
     else if (this.viewMode === 'month') {
@@ -144,6 +152,7 @@ export class CalendarComponent implements OnInit {
       this.generateMonth(this.currentDate);
     }
   }
+
 
   today() {
     this.currentDate = new Date();

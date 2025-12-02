@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { WorkshopProfileService } from '../services/workshop-profile.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../services/alert.service';
+import { applyValidators, clearValidators } from '../shared/form-utils';
 
 @Component({
   selector: 'app-booking-appointment',
@@ -25,37 +26,60 @@ export class BookingAppointmentComponent {
 
   constructor(private fb: FormBuilder, private http: HttpClient, private WorkshopProfileService: WorkshopProfileService, private router: Router, private route: ActivatedRoute, private alert: AlertService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.appointmentForm = this.fb.group({
       search: ['', Validators.required],
       date: ['', Validators.required],
-      time: ['', [Validators.required]],
+      time: ['', Validators.required],
       customerType: ['', Validators.required],
       regPrefix: ['TS'],
-      regNo: ['', [
-        Validators.required,
-        Validators.pattern(/^[A-Z ]{2}[0-9]{6}$/) 
-      ]],
-      vehicleType: ['', Validators.required],
-      customerName: ['', [
-        Validators.required,
-        Validators.pattern(/^[A-Za-z ]+$/),
-        Validators.minLength(2),
-        Validators.maxLength(25)
-      ]],
-      mobileNo: ['', [
-        Validators.required,
-        Validators.pattern(/^\+\d{2}\s\d{10}$/)
-      ]],
-      emailID: ['', [
-        Validators.required,
-        Validators.email
-      ]],
-      service: ['',[ Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
-      serviceAdvisor: ['', Validators.required],
-      settings: ['',[Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
-      bay: ['', Validators.required]
+      regNo: [''],
+      vehicleType: [''],
+      customerName: [''],
+      mobileNo: [''],
+      emailID: [''],
+      service: [''],
+      serviceAdvisor: [''],
+      settings: [''],
+      bay: ['']
     });
+
+    this.appointmentForm.get('customerType')?.valueChanges.subscribe(type => {
+      if (type === 'Individual') {
+        applyValidators(this.appointmentForm, ['regNo'], [
+          Validators.required,
+          Validators.pattern(/^[A-Z ]{2}[0-9]{6}$/)
+        ]);
+
+        applyValidators(this.appointmentForm, ['vehicleType', 'serviceAdvisor', 'bay'], [
+          Validators.required
+        ]);
+
+        applyValidators(this.appointmentForm, ['customerName'], [
+          Validators.required,
+          Validators.pattern(/^[A-Za-z ]+$/),
+          Validators.minLength(2),
+          Validators.maxLength(25)
+        ]);
+
+        applyValidators(this.appointmentForm, ['mobileNo'], [
+          Validators.required,
+          Validators.pattern(/^\+\d{2}\s\d{10}$/)
+        ]);
+
+        applyValidators(this.appointmentForm, ['emailID'], [
+          Validators.required,
+          Validators.email
+        ]);
+
+      } else {
+        clearValidators(this.appointmentForm, [
+          'regNo', 'vehicleType', 'customerName', 'mobileNo',
+          'emailID', 'service', 'serviceAdvisor', 'settings', 'bay'
+        ]);
+      }
+    });
+
   }
 
   selectCustomerType(type: string) {

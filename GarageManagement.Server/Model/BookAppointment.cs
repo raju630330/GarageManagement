@@ -21,28 +21,28 @@ namespace GarageManagement.Server.Model
         public string regPrefix { get; set; }
 
 
-        [Required]
+        [ConditionalRequired("customerType", "Individual")]
         public string regNo { get; set; }
 
-        [Required]
+        [ConditionalRequired("customerType", "Individual")]
         public string vehicleType { get; set; }
 
-        [Required]
+        [ConditionalRequired("customerType", "Individual")]
         public string mobileNo { get; set; }
 
-        [Required]
+        [ConditionalRequired("customerType", "Individual")]
         public string emailID { get; set; }
 
-        [Required]
+        [ConditionalRequired("customerType", "Individual")]
         public string service { get; set; }
 
-        [Required]
+        [ConditionalRequired("customerType", "Individual")]
         public string serviceAdvisor { get; set; }
 
-        [Required]
+        [ConditionalRequired("customerType", "Individual")]
         public string settings { get; set; }
 
-        [Required]
+        [ConditionalRequired("customerType", "Individual")]
         public string bay { get; set; }
 
         //// Foreign Keys + Navigation

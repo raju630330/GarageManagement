@@ -5,7 +5,7 @@
       <button class="btn btn-outline-primary btn-sm" (click)="today()">Today</button>
       <button class="btn btn-outline-primary btn-sm" (click)="previousWeek()">&lt;</button>
       <button class="btn btn-outline-primary btn-sm" (click)="nextWeek()">&gt;</button>
-      <h2 class="mb-0 ms-2">{{ currentWeekDates[0] | date: 'MMMM y' }}</h2>
+      <h2 class="mb-0 ms-2">{{ currentDate | date: 'MMMM y' }}</h2>
     </div>
 
     <div class="d-flex align-items-center gap-2 mt-2 mt-md-0 flex-wrap">
@@ -47,9 +47,9 @@
           <td class="text-end small text-muted">{{ hour }}</td>
           <td *ngFor="let day of currentWeekDates">
             <div *ngFor="let appt of getAppointmentsForSlot(day, hour)">
-              <div class="badge bg-primary w-100 mb-1">
-                {{ appt.service }}
-                <br>
+              <div class="badge bg-primary w-100 mb-1 text-center"
+                   [ngClass]="{ 'py-2': !appt.service }">
+                <div *ngIf="appt.service">{{ appt.service }}</div>
                 <small>{{ appt.customerType }}</small>
               </div>
             </div>
@@ -75,7 +75,7 @@
                   [ngClass]="{ 'today-box bg-primary text-white rounded-circle px-2': isToday(day), 'booked-box text-white': hasAppointments(day).length > 0 && hasAppointments(day).length <= 12 && !isToday(day), 'heavy-box': hasAppointments(day).length > 12 }">
 
 
-              <div class="day-number">{{ day.getDate() }}</div>
+              <div>{{ day.getDate() }}</div>
 
               <span *ngIf="hasAppointments(day).length > 0">
                 {{ hasAppointments(day).length }} Booked
