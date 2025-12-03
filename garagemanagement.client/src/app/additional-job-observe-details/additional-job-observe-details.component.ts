@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ROLES } from '../constants/roles.constants';
 import { AlertService } from '../services/alert.service';
+import { AdditionalJobObserveDetailsService } from '../services/additional-job-observe-details.service';
 
 @Component({
   selector: 'app-additional-job-observe-details',
@@ -13,7 +14,7 @@ export class AdditionalJobObserveDetailsComponent implements OnInit {
   ROLES = ROLES;
   jobForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private alert: AlertService) { }
+  constructor(private fb: FormBuilder, private alert: AlertService, private observationdetailsservice: AdditionalJobObserveDetailsService) { }
 
   ngOnInit(): void {
     this.jobForm = this.fb.group({
@@ -64,11 +65,29 @@ export class AdditionalJobObserveDetailsComponent implements OnInit {
 
   submit(): void {
     if (this.jobForm.valid) {
-      this.alert.showSuccess('Form submitted successfully!');
-      console.log('✅ Submitted data:', this.jobForm.value);
+      const partsArray = this.jobForm.value.rows.map((row: any) => ({
+        description: row.description,
+        partNumber: row.partNumber,
+        make: row.make,
+        unitCost: parseFloat(row.unitCost),
+        quantity: parseInt(row.qty, 10)
+      }));
+
+      this.observationdetailsservice.createAdditionalJobObserveDetails(partsArray).subscribe({
+        next: (res: any) => {
+          this.alert.showInfo(res.message || 'All job observation details submitted successfully!', () => {
+            this.rows.clear();
+            this.addRow();
+          });
+        },
+        error: (err: any) => {
+          this.alert.showError(err?.error || 'Error saving details!');
+        }
+      });
     } else {
       this.jobForm.markAllAsTouched();
-      this.alert.showError('Please correct the errors before submitting.');
+      this.alert.showError('Please fix validation errors before submitting!');
+      return;
     }
   }
 }

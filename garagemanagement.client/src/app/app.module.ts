@@ -33,9 +33,15 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { GlobalAlertComponent } from './global-alert/global-alert.component';
 import { LoaderComponent } from './loader/loader.component';
 import { PopupTimePickerComponent } from './popup-time-picker/popup-time-picker.component';
-
-
-
+import { JobCardsComponent } from './job-cards/job-cards.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatNativeDateModule } from '@angular/material/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatMenuModule } from '@angular/material/menu';
+import { NewJobCardComponent } from './new-jobcard/new-jobcard.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +70,9 @@ import { PopupTimePickerComponent } from './popup-time-picker/popup-time-picker.
     UnauthorizedComponent,
     GlobalAlertComponent,
     LoaderComponent,
-    PopupTimePickerComponent  
+    PopupTimePickerComponent,
+    JobCardsComponent,
+    NewJobCardComponent  
   ],
   imports: [
     BrowserModule,
@@ -74,7 +82,14 @@ import { PopupTimePickerComponent } from './popup-time-picker/popup-time-picker.
     MatExpansionModule,
     MatIconModule,
     MatExpansionModule,
-    FormsModule                       
+    FormsModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatTableModule,
+    MatButtonModule,
+    BrowserAnimationsModule,
+    MatNativeDateModule,
+    MatMenuModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }

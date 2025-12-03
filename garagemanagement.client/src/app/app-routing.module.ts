@@ -19,6 +19,8 @@ import { SettingsComponent } from './settings/settings.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { authGuard } from './auth.guard';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
+import { JobCardsComponent } from './job-cards/job-cards.component';
+import { NewJobCardComponent } from './new-jobcard/new-jobcard.component';
 
 const routes: Routes = [
   {
@@ -47,6 +49,8 @@ const routes: Routes = [
 
       { path: 'profile', component: ProfileComponent, canActivate: [authGuard], data: { roles: ['Admin', 'Manager'] } },
       { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
+      { path: 'jobcardlist', component: JobCardsComponent, canActivate: [authGuard] },
+      { path: 'newjobcard', component: NewJobCardComponent, canActivate: [authGuard] },
       { path: 'unauthorized', component: UnauthorizedComponent, data: { public: true } }
     ]
   },

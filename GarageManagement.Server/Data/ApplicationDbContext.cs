@@ -29,7 +29,8 @@ namespace GarageManagement.Server.Data
             }
            public DbSet<InventoryForm> InventoryForms { get; set; }
            public DbSet<InventoryAccessories> InventoryAccessories { get; set; }
-           public DbSet<SparePartsIssueDetail> SparePartsIssueDetails { get; set; }  
+           public DbSet<SparePartsIssueDetail> SparePartsIssueDetails { get; set; }
+           public DbSet<AdditionalJobObserveDetail> AdditionalJobObserveDetail { get; set; }
     }
 
 }

@@ -17,4 +17,7 @@ export class SettingsComponent {
   repairOrder() {
     this.router.navigate(['/repair-order']);
   }
+  jobcard() {
+    this.router.navigate(['/jobcardlist']);
+  }
 }

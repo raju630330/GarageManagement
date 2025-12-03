@@ -1,0 +1,47 @@
+.status-slider {
+  display: flex;
+  overflow-x: auto; /* enable horizontal scroll */
+  cursor: grab; /* cursor indicates draggable */
+  user-select: none; /* prevent text selection while dragging */
+  scrollbar-width: none; /* hide scrollbar Firefox */
+}
+
+  .status-slider::-webkit-scrollbar {
+    display: none; /* hide scrollbar Chrome/Safari */
+  }
+
+.status-box {
+  flex: 0 0 auto;
+  width: 200px;
+  height: 80px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+  .status-box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  }
+.popup-menu .dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+  .popup-menu .dropdown-item:hover {
+    background-color: #f0f0f0;
+  }
+.popup-menu {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  z-index: 9999; /* make sure it's on top */
+  min-width: 150px;
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}

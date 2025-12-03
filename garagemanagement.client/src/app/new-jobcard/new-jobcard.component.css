@@ -1,0 +1,15 @@
+.simple-icon-box {
+  padding: 6px 10px; /* smaller height */
+  border: 1px solid #d1d1d1;
+  border-radius: 20px; /* pill shape = modern */
+  font-size: 13px; /* smaller text */
+  cursor: pointer;
+  background: #f5f5f5;
+  line-height: 1; /* compact */
+  transition: all 0.2s ease;
+}
+
+  .simple-icon-box:hover {
+    background: #e2e2e2;
+    transform: translateY(-2px); /* small lift effect */
+  }
