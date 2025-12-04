@@ -7,37 +7,55 @@ import { JobCard } from '../models/job-card';
 export class JobCardService {
 
   getJobCards(): JobCard[] {
-    return [
-      {
-        refNo: 'REF001',
-        jobCardNo: 'JC001',
-        regNo: 'TS09AB1234',
-        invoiceNo: 'INV001',
-        serviceType: 'Repair',
-        vehicle: 'Honda City',
-        status: 'Work-In-Progress',
-        customerName: 'Ravi',
-        mobileNo: '9876543210',
-        arrivalDate: '2025-12-01',
-        arrivalTime: '10:00 AM',
-        insuranceCorporate: 'Insurance',
-        claimNo: 'CLM001',
-        estDeliveryDate: '2025-12-05',
-        accidentDate: '2025-11-30'
-      },
-      {
-        refNo: 'REF002',
-        jobCardNo: 'JC002',
-        regNo: 'AP16CD5678',
-        invoiceNo: '',
-        serviceType: 'Maintenance',
-        vehicle: 'Suzuki Swift',
-        status: 'Ready for Delivery',
-        customerName: 'Sita',
-        mobileNo: '9876501234',
-        arrivalDate: '2025-12-02',
-        arrivalTime: '11:30 AM',
-      }
-    ];
+    const jobCards: JobCard[] = [];
+    const vehicles = ['Honda City', 'Suzuki Swift', 'Toyota Innova', 'Hyundai Verna', 'Maruti Alto', 'Toyota Fortuner', 'Hyundai Creta', 'Maruti Swift', 'Honda Amaze', 'Toyota Yaris', 'Hyundai i20', 'Maruti Baleno', 'Hyundai Venue', 'Honda WR-V', 'Maruti Dzire', 'Toyota Corolla', 'Hyundai Santro', 'Maruti Celerio'];
+    const serviceTypes = ['Running Repair', 'Maintenance'];
+    const statuses = ['Request for Estimation', 'Estimate', 'Spares Pending', 'Work-In-Progress', 'Ready for Delivery', 'Invoice', 'Delivered', 'In Workshop', 'Estimation Rejected', 'Ins Approval Pending', 'Approval Pending'];
+    const customers = ['Srinivasa Garage Main', 'Srinivasa Garage Tcs', 'Srinivasa Garage Madhapur'];
+    const insurance = ['SRT', 'HDFC', 'ICICI', 'Bajaj'];
+
+    for (let i = 1; i <= 100; i++) {
+      const refNo = 'REF' + i.toString().padStart(3, '0');
+      const jobCardNo = `SRT-J${(2992 + i).toString().padStart(6, '0')}`;
+      const regNo = `TS07UE${8530 + i}`;
+      const invoiceNo = `SRT-I${2214 + i}`;
+      const serviceType = serviceTypes[Math.floor(Math.random() * serviceTypes.length)];
+      const vehicle = vehicles[Math.floor(Math.random() * vehicles.length)];
+      const status = statuses[Math.floor(Math.random() * statuses.length)];
+      const customerName = customers[Math.floor(Math.random() * customers.length)];
+      const mobileNo = '******' + (3200 + i);
+      const insuranceCorporate = insurance[Math.floor(Math.random() * insurance.length)];
+      const claimNo = `CLM${i.toString().padStart(3, '0')}`;
+
+      const arrivalDate = new Date(2025, 11, 1 + (i % 30)); // Dec 1-30
+      const estDeliveryDate = new Date(arrivalDate);
+      estDeliveryDate.setDate(arrivalDate.getDate() + Math.floor(Math.random() * 7) + 1); // 1-7 days later
+      const accidentDate = new Date(arrivalDate);
+      accidentDate.setDate(arrivalDate.getDate() - Math.floor(Math.random() * 3)); // 0-2 days before
+
+      const formatDate = (d: Date) => d.toISOString().split('T')[0];
+      const formatTime = () => `${Math.floor(Math.random() * 12 + 8)}:${Math.floor(Math.random() / 2 * 60).toString().padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}`;
+
+      jobCards.push({
+        refNo,
+        jobCardNo,
+        regNo,
+        invoiceNo,
+        serviceType,
+        vehicle,
+        status,
+        customerName,
+        mobileNo,
+        insuranceCorporate,
+        claimNo,
+        arrivalDate: formatDate(arrivalDate),
+        arrivalTime: formatTime(),
+        estDeliveryDate: formatDate(estDeliveryDate),
+        accidentDate: formatDate(accidentDate)
+      });
+    }
+
+    return jobCards;
   }
+
 }

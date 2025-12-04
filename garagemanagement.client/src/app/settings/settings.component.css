@@ -1,0 +1,8 @@
+.flex-card {
+  flex: 1 1 0; /* fully flexible width */
+  min-width: 200px; /* optional: prevent extreme shrinking */
+}
+
+.card-body {
+  width: 100%;
+}

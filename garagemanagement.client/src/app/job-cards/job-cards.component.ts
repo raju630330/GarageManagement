@@ -14,52 +14,71 @@ export class JobCardsComponent implements OnInit {
   @ViewChild('slider') slider!: ElementRef;
   @ViewChild('popupContainer') popupContainer!: ElementRef;
 
+  // Status Slider drag
   isDown = false;
   startX = 0;
   scrollLeft = 0;
 
+  // Forms & search
   dateForm!: FormGroup;
   searchText: string = '';
 
+  // Job cards data
   jobCards: JobCard[] = [];
   filteredJobCards: JobCard[] = [];
 
+  // Popup
   showPopup = false;
 
+  // Table columns
   displayedColumns: string[] = [
-    'refNo', 'jobCardNo', 'regNo', 'invoiceNo', 'serviceType',
-    'vehicle', 'status', 'customerName', 'mobileNo',
-    'arrivalDate', 'arrivalTime', 'insuranceCorporate',
-    'claimNo', 'estDeliveryDate', 'accidentDate'
+    'REF No.', 'Job Card No.', 'Reg. No.', 'Invoice No.', 'Service Type',
+    'Vehicle', 'Status', 'Customer Name', 'Mobile No.',
+    'Arrival Date', 'Arrival Time', 'Insurance Corporate',
+    'Claim No.', 'Est Delivery Date', 'Accident Date'
   ];
 
+  // Status list for slider
   statusList = [
-    { name: 'Request for Estimation', color: '#2196F3', icon: 'request_quote', count: 0, amount: 0 },
-    { name: 'Estimate', color: '#3F51B5', icon: 'edit', count: 0, amount: 0 },
-    { name: 'Spares Pending', color: '#FF9800', icon: 'build', count: 0, amount: 0 },
-    { name: 'Work-In-Progress', color: '#9C27B0', icon: 'pending', count: 0, amount: 0 },
-    { name: 'Ready for Delivery', color: '#4CAF50', icon: 'local_shipping', count: 0, amount: 0 },
-    { name: 'Invoice', color: '#795548', icon: 'receipt_long', count: 0, amount: 0 },
-    { name: 'Delivered', color: '#009688', icon: 'check_circle', count: 0, amount: 0 },
-    { name: 'In Workshop', color: '#607D8B', icon: 'garage', count: 0, amount: 0 },
-    { name: 'Estimation Rejected', color: '#F44336', icon: 'cancel', count: 0, amount: 0 },
-    { name: 'Ins Approval Pending', color: '#673AB7', icon: 'hourglass_empty', count: 0, amount: 0 },
-    { name: 'Approval Pending', color: '#E91E63', icon: 'approval', count: 0, amount: 0 }
+    { name: 'Request for Estimation', color: '#2196F3', iconClass: 'bi bi-file-earmark-text', count: 0, amount: 0 },
+    { name: 'Estimate', color: '#3F51B5', iconClass: 'bi bi-calculator', count: 0, amount: 0 },
+    { name: 'Spares Pending', color: '#FF9800', iconClass: 'bi bi-tools', count: 0, amount: 0 },
+    { name: 'Work-In-Progress', color: '#9C27B0', iconClass: 'bi bi-hourglass-split', count: 0, amount: 0 },
+    { name: 'Ready for Delivery', color: '#4CAF50', iconClass: 'bi bi-truck', count: 0, amount: 0 },
+    { name: 'Invoice', color: '#795548', iconClass: 'bi bi-receipt', count: 0, amount: 0 },
+    { name: 'Delivered', color: '#009688', iconClass: 'bi bi-check-circle', count: 0, amount: 0 },
+    { name: 'In Workshop', color: '#607D8B', iconClass: 'bi bi-garage', count: 0, amount: 0 },
+    { name: 'Estimation Rejected', color: '#F44336', iconClass: 'bi bi-x-circle', count: 0, amount: 0 },
+    { name: 'Ins Approval Pending', color: '#673AB7', iconClass: 'bi bi-hourglass', count: 0, amount: 0 },
+    { name: 'Approval Pending', color: '#E91E63', iconClass: 'bi bi-patch-exclamation', count: 0, amount: 0 }
   ];
+
+  // Pagination
+  rowsPerPageOptions = [10, 20, 30];
+  rowsPerPage = 10;
+  currentPage = 1;
+  totalPages = 1;
+  paginatedJobCards: JobCard[] = [];
+  maxPageButtons = 3;
 
   constructor(private fb: FormBuilder, private jobCardService: JobCardService, private router: Router) { }
 
   ngOnInit(): void {
+    // Initialize form
     this.dateForm = this.fb.group({
       fromDate: [''],
       toDate: ['']
     });
 
+    // Load job cards
     this.jobCards = this.jobCardService.getJobCards();
     this.filteredJobCards = [...this.jobCards];
+
+    // Initialize pagination
+    this.updatePagination();
   }
 
-  // Status box drag
+  // =================== Status Slider Drag ===================
   dragStart(e: MouseEvent) {
     this.isDown = true;
     this.startX = e.pageX - this.slider.nativeElement.offsetLeft;
@@ -80,7 +99,7 @@ export class JobCardsComponent implements OnInit {
     this.slider.nativeElement.scrollLeft = this.scrollLeft - walk;
   }
 
-  // Search filter
+  // =================== Search Filter ===================
   applyFilter() {
     const text = this.searchText.toLowerCase();
     this.filteredJobCards = this.jobCards.filter(card =>
@@ -88,9 +107,11 @@ export class JobCardsComponent implements OnInit {
       (card.regNo?.toLowerCase().includes(text) ?? false) ||
       (card.claimNo?.toLowerCase().includes(text) ?? false)
     );
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
-  // Popup toggle
+  // =================== Popup Toggle ===================
   togglePopup() {
     this.showPopup = !this.showPopup;
   }
@@ -98,13 +119,74 @@ export class JobCardsComponent implements OnInit {
   createNewJobCard() {
     this.showPopup = false;
     this.router.navigate(['/newjobcard']);
-    console.log('New Job Card clicked');
   }
 
   createNewEstimate() {
     this.showPopup = false;
-    console.log('New Estimate clicked');
   }
 
+  // =================== Pagination ===================
+  updatePagination() {
+    const totalItems = this.filteredJobCards.length;
+    this.totalPages = Math.ceil(totalItems / this.rowsPerPage);
 
+    const start = (this.currentPage - 1) * this.rowsPerPage;
+    const end = start + this.rowsPerPage;
+
+    this.paginatedJobCards = this.filteredJobCards.slice(start, end);
+  }
+
+  changeRowsPerPage(event: any) {
+    this.rowsPerPage = +event.target.value;
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.updatePagination();
+  }
+
+  // Safe template call
+  goToPageSafe(page: number | string) {
+    if (typeof page === 'number') {
+      this.goToPage(page);
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+    }
+  }
+
+  // =================== Get Visible Pages (max 3 + ellipsis) ===================
+  getVisiblePages(): (number | string)[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+    const pages: (number | string)[] = [];
+
+    if (total <= this.maxPageButtons) {
+      for (let i = 1; i <= total; i++) pages.push(i);
+    } else {
+      if (current <= 2) {
+        pages.push(1, 2, 3, '...');
+      } else if (current >= total - 1) {
+        pages.push('...', total - 2, total - 1, total);
+      } else {
+        pages.push('...', current - 1, current, current + 1, '...');
+      }
+    }
+
+    return pages;
+  }
 }

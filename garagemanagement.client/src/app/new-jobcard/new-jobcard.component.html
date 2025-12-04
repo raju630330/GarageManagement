@@ -1,265 +1,198 @@
-<div class="container my-3">
+<div>
 
+  <!-- MAIN TITLE -->
   <div class="card mb-2">
     <div class="card-header bg-light d-flex justify-content-center align-items-center border-0"
          style="padding: 16px; font-size: 18px; font-weight: 600;">
-      <span>📝 New Job Card</span>
+      📝 New Job Card
     </div>
-
-
   </div>
-      <!-- Section 1: Search & Icons -->
-      <div class="card mb-2">
-        <div class="card-header d-flex justify-content-between align-items-center" (click)="toggleSection(1)" style="cursor:pointer">
-          <h5 class="mb-0">Search Options & Vehicle Info</h5>
-          <span>{{ isSectionOpen[1] ? '-' : '+' }}</span>
-        </div>
-        <div class="card-body" *ngIf="isSectionOpen[1]">
-          <!-- Search Bar -->
-          <input type="text" class="form-control mb-2" placeholder="Search by Reg No / Customer No / Mobile / Email / VIN / Vehicle / Corporate">
 
-          <!-- Icons -->
-          <div class="d-flex gap-2 flex-wrap mt-2">
-            <div class="simple-icon-box" (click)="openPopup('servicePackage')">Service Package</div>
-            <div class="simple-icon-box" (click)="openPopup('serviceHistory')">Service History</div>
-            <div class="simple-icon-box" (click)="openPopup('feedback')">Feedback</div>
-            <div class="simple-icon-box" (click)="openPopup('dueAmount')">Due Amount</div>
-            <div class="simple-icon-box" (click)="openPopup('reminders')">Reminders</div>
-            <div class="simple-icon-box" (click)="openPopup('batteryTyre')">Battery/Tyre</div>
-          </div>
+  <mat-accordion multi>
+
+    <!-- SECTION 1: Search Options & Vehicle Info -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header style="background-color: #3f51b5; color: white;" class="mt-4">
+        <mat-panel-title style="color: white;">Search Options & Vehicle Info</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="mt-2">
+        <input type="text" class="form-control mb-2"
+               placeholder="Search by Reg No / Customer No / Mobile / Email / VIN / Vehicle / Corporate">
+
+        <div style="display: flex; gap: 10px; overflow-x: auto; padding: 5px;">
+          <div class="simple-icon-box" (click)="openPopup('servicePackage')">Service Package</div>
+          <div class="simple-icon-box" (click)="openPopup('serviceHistory')">Service History</div>
+          <div class="simple-icon-box" (click)="openPopup('feedback')">Feedback</div>
+          <div class="simple-icon-box" (click)="openPopup('dueAmount')">Due Amount</div>
+          <div class="simple-icon-box" (click)="openPopup('reminders')">Reminders</div>
+          <div class="simple-icon-box" (click)="openPopup('batteryTyre')">Battery/Tyre</div>
+        </div>
+
+      </div>
+    </mat-expansion-panel>
+
+    <!-- SECTION 2: Vehicle Data -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header style="background-color: #00bcd4; color: white;" class="mt-4">
+        <mat-panel-title style="color: white;">Vehicle Data</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="row g-2 mt-2">
+        <div class="col-md-4"><label>Registration No</label><input class="form-control" placeholder="ABCD123456"></div>
+        <div class="col-md-4"><label>Odometer In</label><input class="form-control" placeholder="12000"></div>
+        <div class="col-md-4"><label>Avg KMS/Day</label><input class="form-control" placeholder="50"></div>
+        <div class="col-md-4"><label>VIN</label><input class="form-control" placeholder="1HGCM82633A123456"></div>
+        <div class="col-md-4"><label>Engine No</label><input class="form-control" placeholder="ENG123456"></div>
+
+        <div class="col-md-4">
+          <label>Vehicle Colour</label>
+          <select class="form-select">
+            <option disabled selected>Select Colour</option>
+            <option>White</option>
+            <option>Black</option>
+            <option>Silver</option>
+            <option>Red</option>
+            <option>Blue</option>
+            <option>Grey</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Fuel Type</label>
+          <select class="form-select">
+            <option disabled selected>Select Fuel</option>
+            <option>Petrol</option>
+            <option>Diesel</option>
+            <option>CNG</option>
+            <option>Electric</option>
+            <option>Hybrid</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Service Type</label>
+          <select class="form-select">
+            <option disabled selected>Select Service</option>
+            <option>Periodic Service</option>
+            <option>Running Repairs</option>
+            <option>Accidental Repair</option>
+            <option>Major Service</option>
+            <option>Inspection</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Service Advisor</label>
+          <select class="form-select">
+            <option disabled selected>Select Advisor</option>
+            <option>John</option>
+            <option>Jane</option>
+            <option>Robert</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Technician</label>
+          <select class="form-select">
+            <option disabled selected>Select Technician</option>
+            <option>Mike</option>
+            <option>Sarah</option>
+            <option>David</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Vendors</label>
+          <select class="form-select">
+            <option disabled selected>Select Vendor</option>
+            <option>Vendor A</option>
+            <option>Vendor B</option>
+            <option>Vendor C</option>
+          </select>
         </div>
       </div>
+    </mat-expansion-panel>
 
-      <!-- Section 2: Vehicle Data -->
-      <div class="card mb-2">
-        <div class="card-header d-flex justify-content-between align-items-center" (click)="toggleSection(2)" style="cursor:pointer">
-          <h5 class="mb-0">Vehicle Data</h5>
-          <span>{{ isSectionOpen[2] ? '-' : '+' }}</span>
-        </div>
-        <div class="card-body" *ngIf="isSectionOpen[2]">
-          <div class="row g-2">
-            <div class="col-md-4">
-              <label>Registration No</label>
-              <input type="text" class="form-control" placeholder="Enter Registration Number">
-            </div>
+    <!-- SECTION 3: Customer Concerns -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header style="background-color: #ff69b4; color: white;" class="mt-4">
+        <mat-panel-title style="color: white;">Customer Concerns</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="mt-2">
+        <textarea class="form-control" [(ngModel)]="newConcern" placeholder="Enter customer concerns"></textarea>
+        <button class="btn btn-primary mt-2" (click)="addConcern()">Add Service</button>
 
-            <div class="col-md-4">
-              <label>Odometer In</label>
-              <input type="text" class="form-control" placeholder="Enter Odometer Reading">
-            </div>
-
-            <div class="col-md-4">
-              <label>Avg KMS/Day</label>
-              <input type="text" class="form-control" placeholder="Enter Average KMS/Day">
-            </div>
-
-            <div class="col-md-4">
-              <label>VIN</label>
-              <input type="text" class="form-control" placeholder="Enter VIN Number">
-            </div>
-
-            <div class="col-md-4">
-              <label>Engine No</label>
-              <input type="text" class="form-control" placeholder="Enter Engine Number">
-            </div>
-
-            <div class="col-md-4">
-              <label>Vehicle Colour</label>
-              <select class="form-select">
-                <option value="" disabled selected>Select Colour</option>
-                <option>White</option>
-                <option>Black</option>
-                <option>Silver</option>
-                <option>Red</option>
-                <option>Blue</option>
-                <option>Grey</option>
-              </select>
-            </div>
-
-            <div class="col-md-4">
-              <label>Fuel Type</label>
-              <select class="form-select">
-                <option value="" disabled selected>Select Fuel Type</option>
-                <option>Petrol</option>
-                <option>Diesel</option>
-                <option>CNG</option>
-                <option>Electric</option>
-                <option>Hybrid</option>
-              </select>
-            </div>
-
-            <div class="col-md-4">
-              <label>Service Type</label>
-              <select class="form-select">
-                <option value="" disabled selected>Select Service Type</option>
-                <option>Periodic Service</option>
-                <option>Running Repairs</option>
-                <option>Accidental Repair</option>
-                <option>Major Service</option>
-                <option>Inspection</option>
-              </select>
-            </div>
-
-            <div class="col-md-4">
-              <label>Service Advisor</label>
-              <select class="form-select">
-                <option disabled selected>Select Advisor</option>
-                <option>Advisor 1</option>
-                <option>Advisor 2</option>
-                <option>Advisor 3</option>
-              </select>
-            </div>
-
-            <div class="col-md-4">
-              <label>Technician</label>
-              <select class="form-select">
-                <option disabled selected>Select Technician</option>
-                <option>Technician 1</option>
-                <option>Technician 2</option>
-                <option>Technician 3</option>
-              </select>
-            </div>
-
-            <div class="col-md-4">
-              <label>Vendors</label>
-              <select class="form-select">
-                <option disabled selected>Select Vendor</option>
-                <option>Vendor 1</option>
-                <option>Vendor 2</option>
-                <option>Vendor 3</option>
-              </select>
-            </div>
-
-          </div>
+        <div *ngFor="let c of concerns; let i = index" class="p-2 mb-1"
+             [ngClass]="{'bg-success text-white': c.active, 'bg-secondary text-white': !c.active}"
+             (click)="toggleConcern(i)">
+          {{ c.text }}
         </div>
       </div>
+    </mat-expansion-panel>
 
-      <!-- Section 3: Customer Concerns -->
-      <div class="card mb-2">
-        <div class="card-header d-flex justify-content-between align-items-center" (click)="toggleSection(3)" style="cursor:pointer">
-          <h5 class="mb-0">Customer Concerns</h5>
-          <span>{{ isSectionOpen[3] ? '-' : '+' }}</span>
+    <!-- SECTION 4: Customer & Corporate Info -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header style="background-color: #ffc107; color: white;" class="mt-4">
+        <mat-panel-title style="color: white;">Customer & Corporate Info</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="row g-2 mt-2">
+        <div class="col-md-4"><label>Corporate/Float</label>
+        <select class="form-select">
+          <option disabled selected>Select</option>
+          </select>
         </div>
-        <div class="card-body" *ngIf="isSectionOpen[3]">
-          <div class="mb-2">
-            <textarea class="form-control" [(ngModel)]="newConcern" placeholder="Enter customer concerns here"></textarea>
-            <button class="btn btn-primary mt-2" (click)="addConcern()">Add Service</button>
-          </div>
-          <div *ngFor="let c of concerns; let i = index" class="p-2 mb-1"
-               [ngClass]="{'bg-success text-white': c.active, 'bg-secondary text-white': !c.active}"
-               (click)="toggleConcern(i)">
-            {{ c.text }}
-          </div>
-        </div>
-      </div>
-
-      <!-- Section 4: Customer & Corporate Info -->
-      <div class="card mb-2">
-        <div class="card-header d-flex justify-content-between align-items-center" (click)="toggleSection(4)" style="cursor:pointer">
-          <h5 class="mb-0">Customer & Corporate Info</h5>
-          <span>{{ isSectionOpen[4] ? '-' : '+' }}</span>
-        </div>
-        <div class="card-body" *ngIf="isSectionOpen[4]">
-          <div class="row g-2">
-            <div class="col-md-4">
-              <label>Corporate/Float</label>
-              <select class="form-select">
-                <option value="">Select Type</option>
-                <option value="Corporate">Corporate</option>
-                <option value="Float">Float</option>
-              </select>
-            </div>
-
-            <div class="col-md-4">
-              <label>Customer Name</label>
-              <input type="text" class="form-control" placeholder="Enter customer name">
-            </div>
-
-            <div class="col-md-4">
-              <label>Mobile Number</label>
-              <input type="text" class="form-control" placeholder="Enter mobile number">
-            </div>
-
-            <div class="col-md-4">
-              <label>Alternative Number</label>
-              <input type="text" class="form-control" placeholder="Enter alternate number">
-            </div>
-
-            <div class="col-md-4">
-              <label>Email ID</label>
-              <input type="email" class="form-control" placeholder="Enter email address">
-            </div>
-
-            <div class="col-md-4">
-              <label>Est. Delivery Date</label>
-              <input type="date" class="form-control">
-            </div>
-
-            <div class="col-md-4">
-              <label>Insurance Company</label>
-              <select class="form-select">
-                <option value="">Select Insurance Company</option>
-                <option>LIC</option>
-                <option>HDFC Ergo</option>
-                <option>ICICI Lombard</option>
-                <option>Bajaj Allianz</option>
-                <option>Tata AIG</option>
-                <option>SBI General</option>
-              </select>
-            </div>
-
-          </div>
+        <div class="col-md-4"><label>Customer Name</label><input class="form-control" placeholder="John Doe"></div>
+        <div class="col-md-4"><label>Mobile Number</label><input class="form-control" placeholder="+91XXXXXXXXXX"></div>
+        <div class="col-md-4"><label>Alternate Number</label><input class="form-control" placeholder="+91XXXXXXXXXX"></div>
+        <div class="col-md-4"><label>Email</label><input class="form-control" placeholder="customer@example.com"></div>
+        <div class="col-md-4"><label>Est. Delivery Date</label><input type="date" class="form-control"></div>
+        <div class="col-md-4">
+          <label>Insurance Company</label>
+          <select class="form-select">
+            <option disabled selected>Select Insurance</option>
+            <option>LIC</option>
+            <option>HDFC Ergo</option>
+            <option>ICICI Lombard</option>
+            <option>Bajaj Allianz</option>
+            <option>Tata AIG</option>
+            <option>SBI General</option>
+          </select>
         </div>
       </div>
+    </mat-expansion-panel>
 
-      <!-- Section 5: Advance Payment -->
-      <div class="card mb-2">
-        <div class="card-header d-flex justify-content-between align-items-center" (click)="toggleSection(5)" style="cursor:pointer">
-          <h5 class="mb-0">Advance Payment</h5>
-          <span>{{ isSectionOpen[5] ? '-' : '+' }}</span>
+    <!-- SECTION 5: Advance Payment -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header style="background-color: #4caf50; color: white;" class="mt-4">
+        <mat-panel-title style="color: white;">Advance Payment</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="row g-2 mt-2">
+        <div class="col-md-3"><label>Cash</label><input class="form-control" placeholder="Enter Cash"></div>
+        <div class="col-md-3">
+          <label>Bank Name</label>
+          <select class="form-select">
+            <option disabled selected>Select Bank</option>
+            <option>State Bank of India</option>
+            <option>HDFC</option>
+            <option>ICICI</option>
+            <option>Axis Bank</option>
+            <option>PNB</option>
+          </select>
         </div>
-        <div class="card-body" *ngIf="isSectionOpen[5]">
-          <div class="row g-2">
-            <div class="col-md-3">
-              <label>Cash</label>
-              <input type="text" class="form-control" placeholder="Enter cash amount">
-            </div>
-
-            <div class="col-md-3">
-              <label>Bank Name</label>
-              <select class="form-select">
-                <option value="">Select bank</option>
-                <option>SBI</option>
-                <option>HDFC</option>
-                <option>ICICI</option>
-                <option>AXIS Bank</option>
-                <option>Kotak Mahindra</option>
-                <option>Punjab National Bank</option>
-              </select>
-            </div>
-
-            <div class="col-md-3">
-              <label>Cheque No</label>
-              <input type="text" class="form-control" placeholder="Enter cheque number">
-            </div>
-
-            <div class="col-md-3">
-              <label>Amount</label>
-              <input type="number" class="form-control" placeholder="Enter amount">
-            </div>
-
-            <div class="col-md-3">
-              <label>Date</label>
-              <input type="date" class="form-control">
-            </div>
-
-          </div>
-        </div>
+        <div class="col-md-3"><label>Cheque No</label><input class="form-control" placeholder="Enter Cheque No"></div>
+        <div class="col-md-3"><label>Amount</label><input type="number" class="form-control" placeholder="Enter Amount"></div>
+        <div class="col-md-3"><label>Date</label><input type="date" class="form-control"></div>
       </div>
+    </mat-expansion-panel>
 
-      <!-- Section 6: Action Buttons -->
-      <div class="d-flex gap-2 mt-3">
-        <button class="btn btn-warning">Give Estimation Later</button>
-        <button class="btn btn-success">Prepare Estimate Now</button>
-      </div>
-    </div>
+  </mat-accordion>
+
+  <!-- ACTION BUTTONS -->
+  <div class="d-flex gap-2 mt-3">
+    <button class="btn btn-warning">Give Estimation Later</button>
+    <button class="btn btn-success">Prepare Estimate Now</button>
+  </div>
+
+</div>
