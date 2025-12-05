@@ -1,54 +1,100 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid">
-    <div class="navbar-brand d-flex align-items-center">
-      <img src="Workshop.jpg" alt="Logo" width="70" height="70" class="me-2" />
-      <h2 class="mb-0">WORKSHOP</h2>
+<nav class="navbar navbar-dark bg-primary">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+
+    <!-- Logo + Brand -->
+    <a class="d-flex align-items-center text-white text-decoration-none" href="#">
+      <img src="Workshop.jpg" alt="Logo" class="me-2 logo">
+      <span class="fw-bold d-none d-md-inline brand-name">WORKSHOP</span>
+    </a>
+
+    <!-- Company Name (Centered) -->
+    <div class="text-center flex-grow-1 mx-2">
+      <h6 class="mb-0 text-white text-truncate company-name fw-bold">
+        SRINIVASA ROAD TRANSPORT<br class="mobile-break"> PRIVATE LIMITED
+      </h6>
     </div>
 
-    <div class="text-white fw-bold text-center flex-grow-1">
-      <h2 class="mb-0">
-        SRINIVASA ROAD TRANSPORT <br /> PRIVATE LIMITED
-      </h2>
-    </div>
-
-    <div *ngIf="!isLoggedIn" class="ms-auto">
-      <button class="btn btn-success" routerLink="/login">Login</button>
-      <button class="btn btn-success ms-2" routerLink="/register">Sign up</button>
-    </div>
-
-    <div *ngIf="isLoggedIn && user" class="dropdown ms-auto">
-      <a class="dropdown-toggle text-decoration-none text-white fw-bold"
-         href="#"
-         role="button"
-         data-bs-toggle="dropdown">
-        {{ user?.username }}
-        <i class="bi bi-person-circle fs-5"></i>
-      </a>
-
-      <ul class="dropdown-menu dropdown-menu-end p-3" style="width: 320px;">
-        <li><strong>{{ user?.username }}</strong></li>
-        <li>{{ user?.email }}</li>
-        <li><span class="badge bg-info">{{ role }}</span></li>
-        <hr />
-        <div class="d-flex flex-wrap gap-2">
-          <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
+    <!-- Desktop User Dropdown -->
+    <div class="d-none d-md-block">
+      <ng-container *ngIf="isLoggedIn && user; else loginSignupDesktop">
+        <div class="dropdown">
+          <button class="btn btn-primary btn-sm d-flex align-items-center"
+                  type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-5 me-1"></i>
+            {{ user?.username }}
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end p-3" style="min-width: 220px;">
+            <li><strong>{{ user?.username }}</strong></li>
+            <li>{{ user?.email }}</li>
+            <li><span class="badge bg-info">{{ role }}</span></li>
+            <hr>
+            <li>
+              <button class="btn btn-danger btn-sm w-100" (click)="logout()">Logout</button>
+            </li>
+          </ul>
         </div>
-      </ul>
+      </ng-container>
+
+      <ng-template #loginSignupDesktop>
+        <a class="btn btn-success btn-sm me-2" routerLink="/login">Login</a>
+        <a class="btn btn-success btn-sm" routerLink="/register">Sign up</a>
+      </ng-template>
     </div>
+
+    <!-- Mobile Hamburger -->
+    <div class="d-md-none position-relative">
+      <button class="btn btn-light btn-sm" type="button" (click)="toggleUserPopup()">
+        &#9776;
+      </button>
+
+      <!-- Mobile Popup -->
+      <div *ngIf="showUserPopup"
+           class="position-absolute end-0 mt-2 bg-white border shadow-sm rounded"
+           style="min-width: 220px; z-index: 1000;">
+
+        <!-- Logged In -->
+        <ng-container *ngIf="isLoggedIn && user; else loginSignupMobile">
+          <div class="p-3">
+            <div><strong>{{ user?.username }}</strong></div>
+            <div>{{ user?.email }}</div>
+            <div class="mt-1"><span class="badge bg-info">{{ role }}</span></div>
+            <hr>
+            <button class="btn btn-danger btn-sm w-100" (click)="logout(); closePopup();">
+              Logout
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- Login / Signup -->
+        <ng-template #loginSignupMobile>
+          <div class="p-3 d-flex flex-column gap-2">
+            <a class="btn btn-success btn-sm w-100"
+               routerLink="/login"
+               (click)="closePopup()">
+              Login
+            </a>
+            <a class="btn btn-success btn-sm w-100"
+               routerLink="/register"
+               (click)="closePopup()">
+              Sign up
+            </a>
+          </div>
+        </ng-template>
+
+      </div>
+    </div>
+
   </div>
 </nav>
 
-<!-- SCROLLABLE MENU BAR -->
+<!-- SCROLLABLE MENU -->
 <div *ngIf="isLoggedIn" class="tab-container">
 
-  <!-- LEFT BUTTON -->
   <button *ngIf="showLeftArrow" class="scroll-btn left-btn" (click)="scrollTabs(-200)">
     <i class="bi bi-chevron-left"></i>
   </button>
 
-  <!-- SCROLL WRAPPER -->
   <div class="scrollable-tabs" #tabScroll (scroll)="checkScroll()">
-
     <a *ngFor="let tab of filteredTabs"
        class="nav-link fw-semibold"
        [routerLink]="tab.route"
@@ -56,10 +102,8 @@
        [routerLinkActiveOptions]="{ exact: true }">
       {{ tab.name }}
     </a>
-
   </div>
 
-  <!-- RIGHT BUTTON -->
   <button *ngIf="showRightArrow" class="scroll-btn right-btn" (click)="scrollTabs(200)">
     <i class="bi bi-chevron-right"></i>
   </button>

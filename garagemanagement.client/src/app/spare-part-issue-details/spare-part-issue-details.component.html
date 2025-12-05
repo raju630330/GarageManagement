@@ -2,105 +2,91 @@
 <section class="supervisor-section">
   <div class="container p-4">
     <form [formGroup]="partsForm" (ngSubmit)="onSubmit()">
-      <table class="table table-bordered text-center align-middle">
-        <thead>
-          <tr>
-            <th>Sl.No.</th>
-            <th>Part Description</th>
-            <th>Part Number</th>
-            <th>Make</th>
-            <th>Unit Cost (₹)</th>
-            <th>Qty</th>
-            <th>Amount (₹)</th>
-            <th *appHasRole="[ROLES.ADMIN]">Action</th>
-          </tr>
-        </thead>
+      <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+          <thead>
+            <tr>
+              <th>Sl.No.</th>
+              <th>Part Description</th>
+              <th>Part Number</th>
+              <th>Make</th>
+              <th>Unit Cost (₹)</th>
+              <th>Qty</th>
+              <th>Amount (₹)</th>
+              <th *appHasRole="[ROLES.ADMIN]">Action</th>
+            </tr>
+          </thead>
 
-        <tbody formArrayName="parts">
-          <tr *ngFor="let part of pagedParts; let i = index"
-              [formGroupName]="((currentPage - 1) * pageSize) + i">
-            <td>{{ i + 1 }}</td>
+          <tbody formArrayName="parts">
+            <tr *ngFor="let part of pagedParts; let i = index"
+                [formGroupName]="((currentPage - 1) * pageSize) + i">
+              <td>{{ i + 1 }}</td>
 
-            <!-- Description -->
-            <td>
-              <div class="cell-wrapper"
-                   [ngClass]="{ 'cell-valid': part.get('description')?.valid && part.get('description')?.value }">
+              <!-- Description -->
+              <td>
                 <input type="text" class="form-control" formControlName="description" placeholder="Part Description" />
-              </div>
-              <small class="text-danger" *ngIf="part.get('description')?.invalid && part.get('description')?.touched">
-                Alphabets only
-              </small>
-            </td>
+                <div class="text-danger" *ngIf="part.get('description')?.invalid && part.get('description')?.touched">
+                  Alphabets only
+                </div>
+              </td>
 
-            <!-- Part Number -->
-            <td>
-              <div class="cell-wrapper"
-                   [ngClass]="{ 'cell-valid': part.get('partNumber')?.valid && part.get('partNumber')?.value }">
+              <!-- Part Number -->
+              <td>
                 <input type="text" class="form-control" formControlName="partNumber" placeholder="Part Number" />
-              </div>
-              <small class="text-danger" *ngIf="part.get('partNumber')?.invalid && part.get('partNumber')?.touched">
-                Alphanumeric & - _ / # allowed
-              </small>
-            </td>
+                <div class="text-danger" *ngIf="part.get('partNumber')?.invalid && part.get('partNumber')?.touched">
+                  Alphanumeric & - _ / # allowed
+                </div>
+              </td>
 
-            <!-- Make -->
-            <td>
-              <div class="cell-wrapper"
-                   [ngClass]="{ 'cell-valid': part.get('make')?.valid && part.get('make')?.value }">
+              <!-- Make -->
+              <td>
                 <input type="text" class="form-control" formControlName="make" placeholder="Make" />
-              </div>
-              <small class="text-danger" *ngIf="part.get('make')?.invalid && part.get('make')?.touched">
-                Alphabets only
-              </small>
-            </td>
+                <div class="text-danger" *ngIf="part.get('make')?.invalid && part.get('make')?.touched">
+                  Alphabets only
+                </div>
+              </td>
 
-            <!-- Unit Cost -->
-            <td>
-              <div class="cell-wrapper"
-                   [ngClass]="{ 'cell-valid': part.get('unitCost')?.valid && part.get('unitCost')?.value }">
+              <!-- Unit Cost -->
+              <td>
                 <input type="text" class="form-control" formControlName="unitCost" (input)="forceNumberswithtwodecimalsOnly(i, 'unitCost'); updateTotals()" placeholder="Unit Cost (₹)" />
-              </div>
-              <small class="text-danger" *ngIf="part.get('unitCost')?.invalid && part.get('unitCost')?.touched">
-                Valid number (max 2 decimals)
-              </small>
-            </td>
+                <div class="text-danger" *ngIf="part.get('unitCost')?.invalid && part.get('unitCost')?.touched">
+                  Valid number (max 2 decimals)
+                </div>
+              </td>
 
-            <!-- Qty -->
-            <td>
-              <div class="cell-wrapper"
-                   [ngClass]="{ 'cell-valid': part.get('qty')?.valid && part.get('qty')?.value }">
+              <!-- Qty -->
+              <td>
                 <input type="text" class="form-control" formControlName="qty" (input)="forceNumbersOnly(i, 'qty'); updateTotals()" placeholder="Qty" />
-              </div>
-              <small class="text-danger" *ngIf="part.get('qty')?.invalid && part.get('qty')?.touched">
-                Numbers only
-              </small>
-            </td>
+                <div class="text-danger" *ngIf="part.get('qty')?.invalid && part.get('qty')?.touched">
+                  Numbers only
+                </div>
+              </td>
 
-            <!-- Amount -->
-            <td style="width: 100px;">{{ getAmount(((currentPage - 1) * pageSize) + i) | currency:'INR':'symbol' }}</td>
+              <!-- Amount -->
+              <td style="width: 100px;">{{ getAmount(((currentPage - 1) * pageSize) + i) | currency:'INR':'symbol' }}</td>
 
-            <!-- Action -->
-            <td *appHasRole="[ROLES.ADMIN]">
-              <button type="button" class="btn btn-outline-danger btn-sm"
-                      title="Delete"
-                      (click)="removePart(((currentPage - 1) * pageSize) + i)">
-                <i class="bi bi-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="6" class="text-end fw-bold">Total:</td>
-            <td class="fw-bold">
-              {{ getTotalAmount() | currency:'INR':'symbol' }}
-            </td>
-            <td *appHasRole="[ROLES.ADMIN]"></td>
-          </tr>
-        </tfoot>
+              <!-- Action -->
+              <td *appHasRole="[ROLES.ADMIN]">
+                <button type="button" class="btn btn-outline-danger btn-sm"
+                        title="Delete"
+                        (click)="removePart(((currentPage - 1) * pageSize) + i)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="6" class="text-end fw-bold">Total:</td>
+              <td class="fw-bold">
+                {{ getTotalAmount() | currency:'INR':'symbol' }}
+              </td>
+              <td *appHasRole="[ROLES.ADMIN]"></td>
+            </tr>
+          </tfoot>
 
-      </table>
-
+        </table>
+      </div>     
       <!-- Pagination -->
 
       <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">

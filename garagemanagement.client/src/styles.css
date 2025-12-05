@@ -11,3 +11,67 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background-color: #f1f5f9;
   color: #1E90FF;
 }
+:root input.ng-invalid.ng-touched {
+  border: 1px solid #e53935;
+}
+/* Responsive fixes for table, checkboxes & labels */
+@media (max-width: 576px) {
+
+  /* Ensure table scrolls nicely */
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  /* Text inputs, selects, textareas inside table should expand */
+  table td input:not([type="checkbox"]):not([type="radio"]),
+  table td select,
+  table td textarea {
+    width: 100% !important;
+    min-width: 140px; /* helps usability */
+    box-sizing: border-box;
+  }
+
+  /* FIX: Keep checkboxes normal size */
+  table td input[type="checkbox"],
+  table td input[type="radio"] {
+    width: 18px !important;
+    height: 18px !important;
+    transform: scale(1); /* reset scaling */
+    margin: 0;
+  }
+
+  /* Improve checkbox + label alignment */
+  .form-check,
+  .d-flex {
+    align-items: center;
+    gap: 8px !important;
+  }
+
+  /* Label readability */
+  table td label {
+    font-size: 14px;
+    white-space: normal; /* allow wrapping */
+  }
+
+}
+
+/* REMOVE TOP GAP */
+body, html, app-root, app-userprofile {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Remove any padding Bootstrap adds to body when using fixed navbars */
+body {
+  padding-top: 0 !important;
+}
+
+/* Force navbar to sit at exact top */
+nav.navbar {
+  margin-top: 0 !important;
+}
+
+
+
+
+

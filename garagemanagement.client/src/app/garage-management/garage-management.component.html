@@ -1,59 +1,60 @@
 <section class="supervisor-section">
   <div class="container p-4">
     <form [formGroup]="jobForm" (ngSubmit)="submit()">
-      <table class="table table-bordered text-center align-middle">
-        <thead>
-          <tr>
-            <th>Sl. No.</th>
-            <th>Voice of the Driver</th>
-            <th>Supervisor Instructions</th>
-            <th>Action Taken</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th *appHasRole="[ROLES.ADMIN]">Action</th>
-          </tr>
-        </thead>
+      <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+          <thead>
+            <tr>
+              <th>Sl. No.</th>
+              <th>Voice of the Driver</th>
+              <th>Supervisor Instructions</th>
+              <th>Action Taken</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th *appHasRole="[ROLES.ADMIN]">Action</th>
+            </tr>
+          </thead>
 
-        <tbody formArrayName="rows">
-          <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i">
-            <td>{{ i + 1 }}</td>
-            <td>
-              <input type="text" class="form-control" formControlName="driverVoice" placeholder="Driver Voice" maxlength="50" />
-              <div class="text-danger" *ngIf="row.get('driverVoice')?.invalid && row.get('driverVoice')?.touched">
-                Alphabets only (max 50).
-              </div>
-            </td>
-            <td>
-              <input type="text" class="form-control" formControlName="supervisorInstructions" placeholder="Supervisor Instructions" maxlength="50" />
-              <div class="text-danger" *ngIf="row.get('supervisorInstructions')?.invalid && row.get('supervisorInstructions')?.touched">
-                Alphabets only (max 50).
-              </div>
-            </td>
-            <td>
-              <input type="text" class="form-control" formControlName="actionTaken" placeholder="Action Taken" maxlength="50" />
-              <div class="text-danger" *ngIf="row.get('actionTaken')?.invalid && row.get('actionTaken')?.touched">
-                Alphabets only (max 50).
-              </div>
-            </td>
-            <td>
-              <input type="text" class="form-control" formControlName="startTime" placeholder="HH:MM AM/PM" />
-              <div class="text-danger" *ngIf="row.get('startTime')?.invalid && row.get('startTime')?.touched">
-                Enter valid time (e.g., 09:30 AM).
-              </div>
-            </td>
-            <td>
-              <input type="text" class="form-control" formControlName="endTime" placeholder="HH:MM AM/PM" />
-              <div class="text-danger" *ngIf="row.get('endTime')?.invalid && row.get('endTime')?.touched">
-                Enter valid time (e.g., 05:45 PM).
-              </div>
-            </td>
-            <td *appHasRole="[ROLES.ADMIN]">
-              <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeRow(i)" title="Delete"><i class="bi bi-trash"></i></button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
+          <tbody formArrayName="rows">
+            <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <input type="text" class="form-control" formControlName="driverVoice" placeholder="Driver Voice" maxlength="50" />
+                <div class="text-danger" *ngIf="row.get('driverVoice')?.invalid && row.get('driverVoice')?.touched">
+                  Alphabets only (max 50).
+                </div>
+              </td>
+              <td>
+                <input type="text" class="form-control" formControlName="supervisorInstructions" placeholder="Supervisor Instructions" maxlength="50" />
+                <div class="text-danger" *ngIf="row.get('supervisorInstructions')?.invalid && row.get('supervisorInstructions')?.touched">
+                  Alphabets only (max 50).
+                </div>
+              </td>
+              <td>
+                <input type="text" class="form-control" formControlName="actionTaken" placeholder="Action Taken" maxlength="50" />
+                <div class="text-danger" *ngIf="row.get('actionTaken')?.invalid && row.get('actionTaken')?.touched">
+                  Alphabets only (max 50).
+                </div>
+              </td>
+              <td>
+                <input type="text" class="form-control" formControlName="startTime" placeholder="HH:MM AM/PM" />
+                <div class="text-danger" *ngIf="row.get('startTime')?.invalid && row.get('startTime')?.touched">
+                  Enter valid time (e.g., 09:30 AM).
+                </div>
+              </td>
+              <td>
+                <input type="text" class="form-control" formControlName="endTime" placeholder="HH:MM AM/PM" />
+                <div class="text-danger" *ngIf="row.get('endTime')?.invalid && row.get('endTime')?.touched">
+                  Enter valid time (e.g., 05:45 PM).
+                </div>
+              </td>
+              <td *appHasRole="[ROLES.ADMIN]">
+                <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeRow(i)" title="Delete"><i class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div class="button-group mt-3">
         <button type="button" class="btn btn-add" (click)="addRow()">Add Row</button>
         <button type="submit" class="btn btn-submit">Submit</button>

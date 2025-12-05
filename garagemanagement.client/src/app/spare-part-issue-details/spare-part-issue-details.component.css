@@ -21,10 +21,6 @@
   border-radius: 6px;
 }
 
-input.ng-invalid.ng-touched {
-  border: 1px solid #e53935;
-}
-
 /* Disabled pagination buttons */
 button[disabled] {
   opacity: 0.6;

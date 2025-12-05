@@ -1,67 +1,67 @@
 <section class="labour-section">
   <div class="container p-4">
     <form [formGroup]="labourForm" (ngSubmit)="submit()">
+      <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+          <thead>
+            <tr>
+              <th>Sl. No.</th>
+              <th>Description</th>
+              <th>Labour Charges</th>
+              <th>Outside Labour</th>
+              <th>Total</th>
+              <th *appHasRole="[ROLES.ADMIN]">Action</th>
+            </tr>
+          </thead>
 
-      <table class="table table-bordered text-center align-middle">
-        <thead>
-          <tr>
-            <th>Sl. No.</th>
-            <th>Description</th>
-            <th>Labour Charges</th>
-            <th>Outside Labour</th>
-            <th>Total</th>
-            <th *appHasRole="[ROLES.ADMIN]">Action</th>
-          </tr>
-        </thead>
+          <tbody formArrayName="labourDetails">
+            <tr *ngFor="let row of labourDetails.controls; let i = index" [formGroupName]="i">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <input type="text" class="form-control" formControlName="description" placeholder="Description" maxlength="50" />
+                <div class="text-danger" *ngIf="row.get('description')?.invalid && row.get('description')?.touched">
+                  Description is required (max 50 chars).
+                </div>
+              </td>
+              <td>
+                <input type="text" class="form-control" formControlName="labourCharges" placeholder="0" (input)="forceNumberswithtwodecimalsOnly(i, 'labourCharges')" />
+                <div class="text-danger" *ngIf="row.get('labourCharges')?.invalid && row.get('labourCharges')?.touched">
+                  Enter valid numeric value.
+                </div>
+              </td>
+              <td>
+                <input type="text" class="form-control" formControlName="outsideLabour" placeholder="0" (input)="forceNumberswithtwodecimalsOnly(i, 'outsideLabour')" />
+                <div class="text-danger" *ngIf="row.get('outsideLabour')?.invalid && row.get('outsideLabour')?.touched">
+                  Enter valid numeric value.
+                </div>
+              </td>
+              <td>
+                {{
+          (+row.get('labourCharges')?.value || 0) +
+          (+row.get('outsideLabour')?.value || 0)
+                }}
+              </td>
+              <td *appHasRole="[ROLES.ADMIN]">
+                <button type="button"
+                        class="btn btn-outline-danger btn-sm"
+                        (click)="removeRow(i)"
+                        title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
 
-        <tbody formArrayName="labourDetails">
-          <tr *ngFor="let row of labourDetails.controls; let i = index" [formGroupName]="i">
-            <td>{{ i + 1 }}</td>
-            <td>
-              <input type="text" class="form-control" formControlName="description" placeholder="Description" maxlength="50" />
-              <div class="text-danger" *ngIf="row.get('description')?.invalid && row.get('description')?.touched">
-                Description is required (max 50 chars).
-              </div>
-            </td>
-            <td>
-              <input type="text" class="form-control" formControlName="labourCharges" placeholder="0" (input)="forceNumberswithtwodecimalsOnly(i, 'labourCharges')"/>
-              <div class="text-danger" *ngIf="row.get('labourCharges')?.invalid && row.get('labourCharges')?.touched">
-                Enter valid numeric value.
-              </div>
-            </td>
-            <td>
-              <input type="text" class="form-control" formControlName="outsideLabour" placeholder="0" (input)="forceNumberswithtwodecimalsOnly(i, 'outsideLabour')" />
-              <div class="text-danger" *ngIf="row.get('outsideLabour')?.invalid && row.get('outsideLabour')?.touched">
-                Enter valid numeric value.
-              </div>
-            </td>
-            <td>
-              {{
-                (+row.get('labourCharges')?.value || 0) +
-                (+row.get('outsideLabour')?.value || 0) 
-              }}
-            </td>
-            <td *appHasRole="[ROLES.ADMIN]">
-              <button type="button"
-                      class="btn btn-outline-danger btn-sm"
-                      (click)="removeRow(i)"
-                      title="Delete">
-                <i class="bi bi-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" class="text-end"><strong>Total</strong></td>
+              <td><strong>{{ calculateTotal()  | currency:'INR':'symbol' }}</strong></td>
+              <td *appHasRole="[ROLES.ADMIN]"></td>
+            </tr>
+          </tfoot>
 
-        <tfoot>
-          <tr>
-            <td colspan="4" class="text-end"><strong>Total</strong></td>
-            <td><strong>{{ calculateTotal()  | currency:'INR':'symbol' }}</strong></td>
-            <td *appHasRole="[ROLES.ADMIN]"></td>
-          </tr>
-        </tfoot>
-
-      </table>
-
+        </table>
+      </div>
       <div class="button-group mt-3">
         <button type="button" class="btn btn-add" (click)="addRow()">Add Row</button>
         <button type="submit" class="btn btn-submit">Submit</button>

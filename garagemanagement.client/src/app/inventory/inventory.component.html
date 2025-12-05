@@ -5,48 +5,47 @@
       ✅ Inventory Saved Successfully!
     </div>
   </div>
+  <div class="table-responsive">
+    <table class="table table-bordered text-center align-middle">
+      <thead>
+        <tr>
+          <th colspan="2">INVENTORY OF ACCESSORIES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of accessoriesLeft; let idx = index">
+          <td class="text-start">
+            <div class="form-check d-flex gap-5" *ngIf="accessoriesLeft[idx]">
+              <input type="checkbox"
+                     [(ngModel)]="accessoriesLeft[idx].checked"
+                     class="form-check-input" />
+              <label class="form-check-label">
+                {{ accessoriesLeft[idx].label }}
+              </label>
+            </div>
+            <div *ngIf="formSubmitted && !accessoriesLeft[idx].checked" class="text-danger small ms-4">
+              * This item is required
+            </div>
+          </td>
 
-  <table class="table table-bordered text-center align-middle">
-    <thead>
-      <tr>
-        <th colspan="2">INVENTORY OF ACCESSORIES</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let i of accessoriesLeft; let idx = index">
-        <td class="text-start">
-          <div class="form-check d-flex gap-5" *ngIf="accessoriesLeft[idx]">
-            <input type="checkbox"
-                   [(ngModel)]="accessoriesLeft[idx].checked"
-                   class="form-check-input" />
-            <label class="form-check-label">
-              {{ accessoriesLeft[idx].label }}
-            </label>
-          </div>
-          <div *ngIf="formSubmitted && !accessoriesLeft[idx].checked" class="text-danger small ms-4">
-            * This item is required
-          </div>
-        </td>
-
-        <td class="text-start">
-          <div class="form-check d-flex gap-5" *ngIf="accessoriesRight[idx]">
-            <input type="checkbox"
-                   [(ngModel)]="accessoriesRight[idx].checked"
-                   class="form-check-input" />
-            <label class="form-check-label">
-              {{ accessoriesRight[idx].label }}
-            </label>
-          </div>
-          <div *ngIf="formSubmitted && !accessoriesRight[idx].checked" class="text-danger small ms-4">
-            * This item is required
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-
-
+          <td class="text-start">
+            <div class="form-check d-flex gap-5" *ngIf="accessoriesRight[idx]">
+              <input type="checkbox"
+                     [(ngModel)]="accessoriesRight[idx].checked"
+                     class="form-check-input" />
+              <label class="form-check-label">
+                {{ accessoriesRight[idx].label }}
+              </label>
+            </div>
+            <div *ngIf="formSubmitted && !accessoriesRight[idx].checked" class="text-danger small ms-4">
+              * This item is required
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
   <div class="text-center mt-3">
     <button class="btn btn-primary px-4" (click)="saveInventory()">Submit</button>
   </div>

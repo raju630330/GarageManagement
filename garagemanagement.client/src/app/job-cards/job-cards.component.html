@@ -1,11 +1,12 @@
 <!-- Wrapper without overflow for popup -->
-<div class="d-flex justify-content-between align-items-center w-100 mt-2 mb-2">
+<!-- Wrapper -->
+<div class="d-flex flex-wrap justify-content-between align-items-center w-100 mt-2 mb-2 gap-2">
 
   <!-- Title -->
-  <h4 class="fw-bold m-0 me-3">Job Cards</h4>
+  <h4 class="fw-bold m-0">Job Cards</h4>
 
   <!-- Filters + Button -->
-  <div class="d-flex align-items-center gap-2 flex-nowrap">
+  <div class="d-flex flex-wrap align-items-center gap-2">
 
     <div class="d-flex align-items-center gap-1">
       <label class="m-0">From</label>
@@ -17,10 +18,12 @@
       <input type="date" class="form-control form-control-sm" style="width:120px;">
     </div>
 
-    <input type="text" disabled value="Sell Products" class="form-control form-control-sm" style="width:150px;">
+    <input type="text" disabled value="Sell Products"
+           class="form-control form-control-sm"
+           style="width:150px;">
 
-    <!-- Button + Popup -->
-    <div class="position-relative d-inline-block">
+    <!-- Popup Button -->
+    <div class="position-relative">
       <button class="btn btn-primary btn-sm d-flex justify-content-center align-items-center"
               style="width:31px; height:31px;"
               (click)="togglePopup()">
@@ -28,15 +31,16 @@
       </button>
 
       <div *ngIf="showPopup"
-           class="popup-menu position-absolute bg-white border shadow-sm"
-           style="top: 35px; right: 0; z-index: 1000; min-width: 150px;">
-        <div class="dropdown-item" (click)="createNewJobCard()">📝 New Job Card</div>
-        <div class="dropdown-item" (click)="createNewEstimate()">New Estimate</div>
+           class="position-absolute bg-white border shadow-sm rounded"
+           style="top: 38px; right: 0; z-index: 1000; min-width: 160px;">
+        <button class="dropdown-item" (click)="createNewJobCard()">📝 New Job Card</button>
+        <button class="dropdown-item" (click)="createNewEstimate()">New Estimate</button>
       </div>
     </div>
 
   </div>
 </div>
+
 
 <!-- Status Slider -->
 <div #slider class="status-slider d-flex gap-2 p-2"

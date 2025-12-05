@@ -49,6 +49,7 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
 
   logout() {
     this.authService.logout();
+    this.showUserPopup = false;
     this.router.navigate(['/']);
     this.user = null;
   }
@@ -96,4 +97,15 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
 
     this.showRightArrow = !atRightEnd;
   }
+  showUserPopup = false;
+
+  toggleUserPopup() {
+    this.showUserPopup = !this.showUserPopup;
+  }
+
+  // FIX – close popup when clicking Login/Signup
+  closePopup() {
+    this.showUserPopup = false;
+  }
+
 }

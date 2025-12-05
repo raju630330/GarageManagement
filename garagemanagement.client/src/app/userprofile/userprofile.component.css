@@ -1,4 +1,58 @@
-/* TAB CONTAINER BAR */
+/* ------------ GLOBAL DEFAULTS ------------ */
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* ------------ LOGO + COMPANY NAME ------------ */
+
+/* Desktop Logo */
+.logo {
+  width: 70px;
+  height: 70px;
+}
+
+/* Desktop Brand Name */
+.brand-name {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+/* Desktop Company Name */
+.company-name {
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+.mobile-break {
+  display: none;
+}
+
+/* ------------ MOBILE VIEW ------------ */
+@media (max-width: 767px) {
+  .logo {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .brand-name {
+    font-size: 0.9rem !important;
+  }
+
+  .company-name {
+    font-size: 0.75rem !important;
+  }
+
+  .mobile-break {
+    display: inline;
+  }
+}
+
+/* ------------ TAB CONTAINER ------------ */
 .tab-container {
   display: flex;
   align-items: center;
@@ -6,34 +60,26 @@
   background-color: #f8f9fa;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
-  position: relative; /* IMPORTANT for arrow positioning */
+  position: relative;
 }
 
-/* SCROLLABLE TABS WRAPPER */
+/* Scrollable Tab Row */
 .scrollable-tabs {
   overflow-x: auto;
-  overflow-y: hidden;
   white-space: nowrap;
   scroll-behavior: smooth;
   flex-grow: 1;
-  padding: 4px 0;
-  display: flex; /* REQUIRED */
+  display: flex;
   gap: 10px;
-  min-height: 40px;
-  /* Firefox */
+  padding: 4px 0;
+  /* FIREFOX SCROLLBAR FIX */
   scrollbar-width: thin;
   scrollbar-color: rgba(0,0,0,0.2) transparent;
-  /* Edge/IE */
-  -ms-overflow-style: none;
 }
 
-  /* Chrome / Safari Scrollbar */
+  /* Chrome Scrollbar */
   .scrollable-tabs::-webkit-scrollbar {
-    height: 6px; /* thin scrollbar */
-  }
-
-  .scrollable-tabs::-webkit-scrollbar-track {
-    background: transparent;
+    height: 6px;
   }
 
   .scrollable-tabs::-webkit-scrollbar-thumb {
@@ -41,50 +87,30 @@
     border-radius: 10px;
   }
 
-/* NAV TAB */
+/* Tab Link */
 .nav-link {
   color: #333;
-  font-weight: 500;
   padding: 6px 12px;
-  text-decoration: none;
-  display: inline-block;
-  transition: color 0.3s, background 0.3s;
 }
 
-  /* Hover effect */
-  .nav-link:hover {
-    background: #eaeaea;
-    border-radius: 4px;
-  }
-
-  /* Active tab style */
   .nav-link.active {
     background: #0d6efd;
-    color: #fff !important;
+    color: white !important;
     border-radius: 4px;
   }
 
-/* LEFT & RIGHT SCROLL BUTTONS */
+/* Scroll Buttons */
 .scroll-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   background: #0d6efd;
-  color: #fff;
-  border: none;
-  font-size: 1.2rem;
-  padding: 4px 10px;
+  color: white;
   border-radius: 50%;
-  cursor: pointer;
-  z-index: 10;
-  transition: background 0.3s;
+  padding: 4px 10px;
+  border: none;
 }
 
-  .scroll-btn:hover {
-    background: #0b5ed7;
-  }
-
-/* Positioning */
 .left-btn {
   left: 5px;
 }
@@ -93,9 +119,37 @@
   right: 5px;
 }
 
-/* MOBILE VIEW */
-@media (max-width: 767.98px) {
-  .tab-container {
-    padding: 0.25rem;
+/* ------------ TABLE RESPONSIVE FIXES ------------ */
+@media (max-width: 576px) {
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  table td input:not([type="checkbox"]):not([type="radio"]),
+  table td select,
+  table td textarea {
+    width: 100% !important;
+    min-width: 140px;
+    box-sizing: border-box;
+  }
+
+  table td input[type="checkbox"],
+  table td input[type="radio"] {
+    width: 18px !important;
+    height: 18px !important;
+    transform: scale(1);
+    margin: 0;
+  }
+
+  .form-check,
+  .d-flex {
+    align-items: center;
+    gap: 8px !important;
+  }
+
+  table td label {
+    font-size: 14px;
+    white-space: normal;
   }
 }
