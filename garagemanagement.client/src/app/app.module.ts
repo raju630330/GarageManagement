@@ -42,6 +42,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatMenuModule } from '@angular/material/menu';
 import { NewJobCardComponent } from './new-jobcard/new-jobcard.component';
+import { EstimationComponent } from './estimation/estimation.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import { NewJobCardComponent } from './new-jobcard/new-jobcard.component';
     LoaderComponent,
     PopupTimePickerComponent,
     JobCardsComponent,
-    NewJobCardComponent  
+    NewJobCardComponent,
+    EstimationComponent  
   ],
   imports: [
     BrowserModule,

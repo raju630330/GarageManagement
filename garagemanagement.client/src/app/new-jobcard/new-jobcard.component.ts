@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-jobcard',
@@ -7,6 +8,10 @@ import { Component } from '@angular/core';
   standalone: false
 })
 export class NewJobCardComponent {
+
+  constructor(private router : Router) { };
+
+  jobCardId: number = 0;
   // Track section collapse state
   isSectionOpen: { [key: number]: boolean } = {
     1: false, 2: false, 3: false, 4: false, 5: false
@@ -32,5 +37,9 @@ export class NewJobCardComponent {
 
   openPopup(type: string) {
     alert(`Open details for: ${type}`);
+  }
+  onPrepareEstimate() {
+    const id = this.jobCardId;
+    this.router.navigate(['/estimate'], { queryParams: { jobCardId: this.jobCardId } });
   }
 }

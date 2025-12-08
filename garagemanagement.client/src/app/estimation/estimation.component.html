@@ -1,0 +1,200 @@
+<div class="jobcard-wrapper position-relative mb-5">
+  <!-- Job Card Header -->
+  <div class="jobcard-header border p-3 d-flex justify-content-between align-items-center">
+    <div class="d-flex gap-3 align-items-center">
+      <div class="fw-bold fs-5">{{jobCardLabel}}</div>
+      <div class="text-muted">|</div>
+      <div class="text-muted">Reg: <span class="fw-semibold">{{est.regNo}}</span></div>
+    </div>
+
+    <div class="d-flex gap-2 align-items-center">
+      <select class="form-select form-select-sm" style="width: 100px">
+        <option selected>English</option>
+        <option>Telugu</option>
+        <option>Hindi</option>
+      </select>
+      <button class="btn btn-sm btn-outline-secondary" (click)="openPreviousJobCards()">R</button>
+      <div>Total Due: ₹{{totalDue | number:'1.0-2'}}</div>
+      <button class="btn btn-sm btn-outline-primary" (click)="openDetails()">Details</button>
+    </div>
+  </div>
+
+  <!-- Arrow Box always on top -->
+  <button class="arrow-box position-absolute"
+          style="bottom: -15px; left: 50%; transform: translateX(-50%); z-index: 2000;"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseVehicleDetails"
+          aria-expanded="false"
+          aria-controls="collapseVehicleDetails">
+    ▼
+  </button>
+
+  <!-- Collapsible Popup Section -->
+  <div class="collapse collapse-popup" id="collapseVehicleDetails">
+    <div class="border p-3 rounded shadow bg-white">
+      <div class="d-flex justify-content-between align-items-end">
+
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover text-center local-table">
+          <tbody>
+            <tr>
+              <th>Name</th>
+              <td>{{est.customerName}}</td>
+              <th>Contact</th>
+              <td>{{est.mobile}}</td>
+              <th>Email</th>
+              <td>{{est.email}}</td>
+              <th>Odometer</th>
+              <td>{{est.odometer}}</td>
+              <td>
+                <button type="button" title="Edit" class="btn btn-primary btn-sm">
+                  <i class="bi bi-pen"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <th>Vehicle</th>
+              <td>{{est.model}}</td>
+              <th>Fuel Type</th>
+              <td>{{est.fuelType}}</td>
+              <th>VIN</th>
+              <td>{{est.vin}}</td>
+              <th>Engine No</th>
+              <td>{{est.engineNo}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide-row">
+  <div *ngFor="let c of categories" class="item fw-bold p-5 text-nowrap">
+    <i class="bi" [ngClass]="c.icon"></i>
+    <div class="text-primary d-flex">{{ c.label }}</div>
+  </div>
+</div>
+<!-- SEARCH SECTION -->
+<div class="card">
+  <div class="row m-2 px-2">
+
+    <div class="col-md-3">
+      <input type="text" class="form-control" placeholder="Search Part Name / Number" [(ngModel)]="searchText">
+    </div>
+
+    <div class="col-md-2">
+      <select class="form-select" [(ngModel)]="workshopStatus">
+        <option>In Workshop</option>
+        <option>Delivered</option>
+      </select>
+    </div>
+
+    <div class="col-md-1">
+      <input type="number" class="form-control" placeholder="Qty" [(ngModel)]="qty">
+    </div>
+
+    <div class="col-md-2">
+      <input type="number" class="form-control" placeholder="Price" [(ngModel)]="price">
+    </div>
+
+    <div class="col-md-2">
+      <select class="form-select" [(ngModel)]="serviceType">
+        <option>Part</option>
+        <option>Labour</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-primary btn-sm" (click)="addItem()">+ Add Item</button>
+    </div>
+  </div>
+</div>
+<div class="table-responsive px-2 mt-3">
+  <table class="table table-striped table-hover text-center">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>Part Name</th>
+        <th>Part/Labour</th>
+        <th>Part No.</th>
+        <th>Unit/Rate</th>
+        <th>Discount</th>
+        <th>HSN/SAC</th>
+        <th>Tax %</th>
+        <th>Tax ₹</th>
+        <th>Total ₹</th>
+        <th>Approval</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let item of items; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.type }}</td>
+        <td>{{ item.partNo }}</td>
+        <td>{{ item.rate }}</td>
+        <td>{{ item.discount }}</td>
+        <td>{{ item.hsn }}</td>
+        <td>{{ item.taxPercent }}</td>
+        <td>{{ item.taxAmount }}</td>
+        <td>{{ item.total }}</td>
+        <td>
+          <select class="form-select form-select-sm" [(ngModel)]="item.approval">
+            <option>Approved</option>
+            <option>Rejected</option>
+            <option>Pending</option>
+          </select>
+        </td>
+        <td><input class="form-control form-control-sm" [(ngModel)]="item.reason" /></td>
+      </tr>
+    </tbody>
+
+    <tfoot>
+      <tr class="text-center">
+        <td colspan="5" class="text-start fw-bold">Apply Discount:</td>
+        <td class="d-flex justify-content-end">
+          <input style="width:100px" type="text" class="form-control text-center" />
+        </td>
+        <td colspan="6"></td>
+      </tr>
+
+      <tr>
+        <td colspan="5" class="text-start fw-bold">Grand Total:</td>
+        <td class="fw-bold text-end">0</td>
+        <td colspan="2"></td>
+        <td class="fw-bold text-end">0</td>
+        <td class="fw-bold text-end">0</td>
+        <td colspan="2"></td>
+      </tr>
+      <tr>
+        <td colspan="11" class="text-start fw-bold">Discount:</td>
+        <td class="fw-bold text-end">0</td>
+      </tr>
+
+      <tr>
+        <td colspan="11" class="text-start fw-bold">Round Off:</td>
+        <td class="fw-bold text-end">0</td>
+      </tr>
+
+      <tr>
+        <td colspan="11" class="text-start fw-bold">Paid:</td>
+        <td class="fw-bold text-end">0</td>
+      </tr>
+
+      <tr>
+        <td colspan="11" class="text-start fw-bold">Balance:</td>
+        <td class="fw-bold text-end">0</td>
+      </tr>
+
+    </tfoot>
+  </table>
+</div>
+
+
+
+
+
+
