@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ROLES } from '../constants/roles.constants';
 import { AlertService } from '../services/alert.service';
+import { TobeFilledBySupervisor } from '../services/tobefilledbysupervisor.service';
 
 @Component({
   selector: 'app-garage-management',
@@ -12,7 +13,7 @@ import { AlertService } from '../services/alert.service';
 export class GarageManagementComponent implements OnInit {
   ROLES = ROLES;
   jobForm!: FormGroup;
-  constructor(private fb: FormBuilder, private alert: AlertService) { }
+  constructor(private fb: FormBuilder, private alert: AlertService, private tobefilledbysupervisor: TobeFilledBySupervisor) { }
 
   ngOnInit(): void {
     this.jobForm = this.fb.group({
