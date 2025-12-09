@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
-import { JobCard } from '../models/job-card';
-
+import { JobCard, JobCardDto } from '../models/job-card';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class JobCardService {
-
+  private baseUrl = environment.apiUrl;
+  constructor(private http: HttpClient) { }
   getJobCards(): JobCard[] {
     const jobCards: JobCard[] = [];
     const vehicles = ['Honda City', 'Suzuki Swift', 'Toyota Innova', 'Hyundai Verna', 'Maruti Alto', 'Toyota Fortuner', 'Hyundai Creta', 'Maruti Swift', 'Honda Amaze', 'Toyota Yaris', 'Hyundai i20', 'Maruti Baleno', 'Hyundai Venue', 'Honda WR-V', 'Maruti Dzire', 'Toyota Corolla', 'Hyundai Santro', 'Maruti Celerio'];
@@ -57,5 +60,10 @@ export class JobCardService {
 
     return jobCards;
   }
+
+  saveJobCard(dto: JobCardDto): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/NewJobCard/save-jobcard`, dto);
+  }
+
 
 }

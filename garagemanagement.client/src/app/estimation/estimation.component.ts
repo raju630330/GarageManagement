@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-estimation',
@@ -6,8 +7,28 @@ import { Component } from '@angular/core';
   templateUrl: './estimation.component.html',
   styleUrl: './estimation.component.css'
 })
-export class EstimationComponent {
+export class EstimationComponent implements OnInit {
   // top jobcard label visible under global header
+  regNo: string = '';
+
+  constructor(private route: ActivatedRoute) { }
+
+  ngOnInit() {
+    // Subscribe to query param changes
+    this.route.queryParamMap.subscribe(params => {
+      this.regNo = params.get('registrationNo') || '';
+      console.log('Current registration number:', this.regNo);
+
+      // Fetch or refresh estimation data whenever regNo changes
+      this.loadEstimationData(this.regNo);
+    });
+  }
+
+  loadEstimationData(regNo: string) {
+    // Use regNo to fetch data from server or update table
+    console.log('Load estimation data for:', regNo);
+  }
+
   jobCardLabel = 'Job Card: JC-0001';
   totalDue = 10000;
 
@@ -25,7 +46,7 @@ export class EstimationComponent {
 
   // jobcard / vehicle stub
   est = {
-    regNo: 'TS09 AB 1234',
+    regNo: this.regNo,
     jobCardNo: 'JC-0001',
     customerName: 'Ramesh',
     mobile: '9876543210',
@@ -39,8 +60,8 @@ export class EstimationComponent {
   // categories shown as buttons
   categories = [
     { key: 'packages', label: 'Packages', icon: 'bi-box-seam' },
-    { key: 'parts', label: 'Relevant Parts', icon: 'bi-tools' },
-    { key: 'services', label: 'All Services', icon: 'bi-gear' },
+    { key: 'parts', label: 'Relevant Parts', icon: 'bi-gear' },
+    { key: 'services', label: 'All Services', icon: 'bi-car-front' },
     { key: 'alignment', label: 'Wheel Alignment', icon: 'bi-arrow-left-right' },
     { key: 'balancing', label: 'Wheel Balancing', icon: 'bi-circle-half' },
     { key: 'wash', label: 'Wash & Detailing', icon: 'bi-droplet' },
@@ -61,6 +82,7 @@ export class EstimationComponent {
     { key: 'custom', label: 'Custom Requests', icon: 'bi-stars' },
     { key: 'accessories', label: 'Accessories', icon: 'bi-bag-plus' }
   ];
+
 
     toggleMenu() {
     this.showMenu = !this.showMenu;
@@ -119,28 +141,37 @@ export class EstimationComponent {
 
     this.calculateTotals();
   }
-  getColumnTotal(column: string): number {
-    return this.items.reduce((sum, item) => sum + (item[column] || 0), 0);
-  }
+
+  grossTotal: number = 0;
+  netTotal: number = 0;
+  paid: number = 0;
+
+  totalDiscount: number = 0;
+  totalTax: number = 0;
   calculateTotals() {
-    this.grandTotal = this.items.reduce((a, b) => a + b.total, 0);
+    // Sum of discount column
+    this.totalDiscount = this.items.reduce((s, x) => s + (+x.discount || 0), 0);
 
-    this.roundOff = Math.round(this.grandTotal) - this.grandTotal;
+    // Sum of tax column
+    this.totalTax = this.items.reduce((s, x) => s + (+x.taxAmount || 0), 0);
 
-    this.balance = this.grandTotal - (this.paidAmount || 0);
+    // Sum of total column
+    this.grossTotal = this.items.reduce((s, x) => s + (+x.total || 0), 0);
+
+    // Apply discount entered by user
+    const afterDiscount = this.grossTotal - (this.applyDiscount || 0);
+
+    // Round Off
+    this.roundOff = +(Math.round(afterDiscount) - afterDiscount).toFixed(2);
+
+    // Final net total
+    this.netTotal = afterDiscount + this.roundOff;
+
+    // Balance (Paid assumed 0)
+    this.balance = this.netTotal - (this.paid || 0);
   }
 
-  get totalDiscount() {
-    return this.items.reduce((sum, item) => sum + (item.discount || 0), 0);
-  }
 
-  get totalTax() {
-    return this.items.reduce((sum, item) => sum + (item.taxAmount || 0), 0);
-  }
-
-  get totalAmount() {
-    return this.items.reduce((sum, item) => sum + (item.total || 0), 0);
-  }
   openTyreBattery() {
     alert("Tyre/Battery clicked!");
   }
