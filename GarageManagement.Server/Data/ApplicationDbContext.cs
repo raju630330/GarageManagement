@@ -26,11 +26,25 @@ namespace GarageManagement.Server.Data
                 .WithOne(c => c.TechnicianMC)
                 .HasForeignKey(c => c.TechnicianMCId)
                 .OnDelete(DeleteBehavior.Cascade);
-            }
+
+            modelBuilder.Entity<JobCard>()
+           .HasMany(j => j.Concerns)
+           .WithOne(c => c.JobCard)
+           .HasForeignKey(c => c.JobCardId);
+
+            modelBuilder.Entity<JobCard>()
+                .HasOne(j => j.AdvancePayment)
+                .WithOne(a => a.JobCard)
+                .HasForeignKey<JobCardAdvancePayment>(a => a.JobCardId);
+        }
            public DbSet<InventoryForm> InventoryForms { get; set; }
            public DbSet<InventoryAccessories> InventoryAccessories { get; set; }
            public DbSet<SparePartsIssueDetail> SparePartsIssueDetails { get; set; }
            public DbSet<AdditionalJobObserveDetail> AdditionalJobObserveDetail { get; set; }
+
+           public DbSet<JobCard> JobCards { get; set; }
+           public DbSet<JobCardConcern> JobCardConcerns { get; set; }
+           public DbSet<JobCardAdvancePayment> JobCardAdvancePayments { get; set; }
     }
 
 }

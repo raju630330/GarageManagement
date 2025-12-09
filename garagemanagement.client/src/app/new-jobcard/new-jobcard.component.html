@@ -1,4 +1,4 @@
-<div>
+<div [formGroup]="jobCardForm">
 
   <!-- MAIN TITLE -->
   <div class="card mb-2">
@@ -27,27 +27,75 @@
           <div class="simple-icon-box" (click)="openPopup('reminders')">Reminders</div>
           <div class="simple-icon-box" (click)="openPopup('batteryTyre')">Battery/Tyre</div>
         </div>
-
       </div>
     </mat-expansion-panel>
 
     <!-- SECTION 2: Vehicle Data -->
-    <mat-expansion-panel>
+    <mat-expansion-panel formGroupName="vehicleData">
       <mat-expansion-panel-header style="background-color: #00bcd4; color: white;" class="mt-4">
         <mat-panel-title style="color: white;">Vehicle Data</mat-panel-title>
       </mat-expansion-panel-header>
 
       <div class="row g-2 mt-2">
-        <div class="col-md-4"><label>Registration No</label><input class="form-control" placeholder="ABCD123456"></div>
-        <div class="col-md-4"><label>Odometer In</label><input class="form-control" placeholder="12000"></div>
-        <div class="col-md-4"><label>Avg KMS/Day</label><input class="form-control" placeholder="50"></div>
-        <div class="col-md-4"><label>VIN</label><input class="form-control" placeholder="1HGCM82633A123456"></div>
-        <div class="col-md-4"><label>Engine No</label><input class="form-control" placeholder="ENG123456"></div>
+        <div class="col-md-4">
+          <label>Registration No</label>
+          <input class="form-control"
+                 formControlName="registrationNo"
+                 placeholder="ABCD123456">
+          <div *ngIf="vehicleData.get('registrationNo')?.touched && vehicleData.get('registrationNo')?.invalid"
+               class="text-danger small">
+            Registration No is required.
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label>Odometer In</label>
+          <input class="form-control"
+                 formControlName="odometerIn"
+                 placeholder="12000">
+          <div *ngIf="vehicleData.get('odometerIn')?.touched && vehicleData.get('odometerIn')?.invalid"
+               class="text-danger small">
+            Enter valid Odometer (positive number).
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label>Avg KMS/Day</label>
+          <input class="form-control"
+                 formControlName="avgKmsPerDay"
+                 placeholder="50">
+          <div *ngIf="vehicleData.get('avgKmsPerDay')?.touched && vehicleData.get('avgKmsPerDay')?.invalid"
+               class="text-danger small">
+            Average KMS/Day is required.
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label>VIN</label>
+          <input class="form-control"
+                 formControlName="vin"
+                 placeholder="1HGCM82633A123456">
+          <div *ngIf="vehicleData.get('vin')?.touched && vehicleData.get('vin')?.invalid"
+               class="text-danger small">
+            VIN is required.
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label>Engine No</label>
+          <input class="form-control"
+                 formControlName="engineNo"
+                 placeholder="ENG123456">
+          <div *ngIf="vehicleData.get('engineNo')?.touched && vehicleData.get('engineNo')?.invalid"
+               class="text-danger small">
+            Engine No is required.
+          </div>
+        </div>
 
         <div class="col-md-4">
           <label>Vehicle Colour</label>
-          <select class="form-select">
-            <option disabled selected>Select Colour</option>
+          <select class="form-select" formControlName="vehicleColor">
+            <option value="" disabled selected>Select Colour</option>
             <option>White</option>
             <option>Black</option>
             <option>Silver</option>
@@ -55,60 +103,84 @@
             <option>Blue</option>
             <option>Grey</option>
           </select>
+          <div *ngIf="vehicleData.get('vehicleColor')?.touched && vehicleData.get('vehicleColor')?.invalid"
+               class="text-danger small">
+            Vehicle colour is required.
+          </div>
         </div>
 
         <div class="col-md-4">
           <label>Fuel Type</label>
-          <select class="form-select">
-            <option disabled selected>Select Fuel</option>
+          <select class="form-select" formControlName="fuelType">
+            <option value="" disabled selected>Select Fuel</option>
             <option>Petrol</option>
             <option>Diesel</option>
             <option>CNG</option>
             <option>Electric</option>
             <option>Hybrid</option>
           </select>
+          <div *ngIf="vehicleData.get('fuelType')?.touched && vehicleData.get('fuelType')?.invalid"
+               class="text-danger small">
+            Fuel type is required.
+          </div>
         </div>
 
         <div class="col-md-4">
           <label>Service Type</label>
-          <select class="form-select">
-            <option disabled selected>Select Service</option>
+          <select class="form-select" formControlName="serviceType">
+            <option value="" disabled selected>Select Service</option>
             <option>Periodic Service</option>
             <option>Running Repairs</option>
             <option>Accidental Repair</option>
             <option>Major Service</option>
             <option>Inspection</option>
           </select>
+          <div *ngIf="vehicleData.get('serviceType')?.touched && vehicleData.get('serviceType')?.invalid"
+               class="text-danger small">
+            Service type is required.
+          </div>
         </div>
 
         <div class="col-md-4">
           <label>Service Advisor</label>
-          <select class="form-select">
-            <option disabled selected>Select Advisor</option>
+          <select class="form-select" formControlName="serviceAdvisor">
+            <option value="" disabled selected>Select Advisor</option>
             <option>John</option>
             <option>Jane</option>
             <option>Robert</option>
           </select>
+          <div *ngIf="vehicleData.get('serviceAdvisor')?.touched && vehicleData.get('serviceAdvisor')?.invalid"
+               class="text-danger small">
+            Service advisor is required.
+          </div>
         </div>
 
         <div class="col-md-4">
           <label>Technician</label>
-          <select class="form-select">
-            <option disabled selected>Select Technician</option>
+          <select class="form-select" formControlName="technician">
+            <option value="" disabled selected>Select Technician</option>
             <option>Mike</option>
             <option>Sarah</option>
             <option>David</option>
           </select>
+          <div *ngIf="vehicleData.get('technician')?.touched && vehicleData.get('technician')?.invalid"
+               class="text-danger small">
+            Technician is required.
+          </div>
         </div>
 
         <div class="col-md-4">
           <label>Vendors</label>
-          <select class="form-select">
-            <option disabled selected>Select Vendor</option>
+          <select class="form-select" formControlName="vendor">
+            <option value="" disabled selected>Select Vendor</option>
             <option>Vendor A</option>
             <option>Vendor B</option>
             <option>Vendor C</option>
           </select>
+          <div *ngIf="vehicleData.get('vendor')?.touched && vehicleData.get('vendor')?.invalid"
+               class="text-danger small">
+            Vendor is required.
+          </div>
         </div>
       </div>
     </mat-expansion-panel>
@@ -118,39 +190,96 @@
       <mat-expansion-panel-header style="background-color: #ff69b4; color: white;" class="mt-4">
         <mat-panel-title style="color: white;">Customer Concerns</mat-panel-title>
       </mat-expansion-panel-header>
+
       <div class="mt-2">
-        <textarea class="form-control" [(ngModel)]="newConcern" placeholder="Enter customer concerns"></textarea>
+        <textarea class="form-control" [formControl]="newConcern" placeholder="Enter customer concerns"></textarea>
+        <div *ngIf="newConcern.touched && newConcern.invalid" class="text-danger small">
+          Enter a concern before adding.
+        </div>
+
         <button class="btn btn-primary mt-2" (click)="addConcern()">Add Service</button>
 
-        <div *ngFor="let c of concerns; let i = index" class="p-2 mb-1"
-             [ngClass]="{'bg-success text-white': c.active, 'bg-secondary text-white': !c.active}"
-             (click)="toggleConcern(i)">
-          {{ c.text }}
+        <div *ngIf="(concernsArray.invalid || concernsArray.length === 0) && (jobCardForm.touched || submitted)" class="text-danger small mt-2">
+          Add at least one concern.
+        </div>
+
+        <div class="mt-2" *ngFor="let c of concernsArray.controls; let i = index">
+          <div class="d-flex align-items-center">
+            <div class="p-2 mb-1 flex-grow-1"
+                 [ngClass]="{'bg-success text-white': c.value.active, 'bg-secondary text-white': !c.value.active}"
+                 style="cursor: pointer;"
+                 (click)="toggleConcern(i)">
+              {{ c.value.text }}
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger ms-2" (click)="removeConcern(i)">Remove</button>
+          </div>
         </div>
       </div>
     </mat-expansion-panel>
 
     <!-- SECTION 4: Customer & Corporate Info -->
-    <mat-expansion-panel>
+    <mat-expansion-panel formGroupName="customerInfo">
       <mat-expansion-panel-header style="background-color: #ffc107; color: white;" class="mt-4">
         <mat-panel-title style="color: white;">Customer & Corporate Info</mat-panel-title>
       </mat-expansion-panel-header>
 
       <div class="row g-2 mt-2">
-        <div class="col-md-4"><label>Corporate/Float</label>
-        <select class="form-select">
-          <option disabled selected>Select</option>
+        <div class="col-md-4">
+          <label>Corporate/Float</label>
+          <select class="form-select" formControlName="corporate">
+            <option value="" disabled selected>Select</option>
+            <option value="Corporate">Corporate</option>
+            <option value="Float">Float</option>
           </select>
+          <div *ngIf="customerInfo.get('corporate')?.touched && customerInfo.get('corporate')?.invalid" class="text-danger small">
+            Corporate/Float is required.
+          </div>
         </div>
-        <div class="col-md-4"><label>Customer Name</label><input class="form-control" placeholder="John Doe"></div>
-        <div class="col-md-4"><label>Mobile Number</label><input class="form-control" placeholder="+91XXXXXXXXXX"></div>
-        <div class="col-md-4"><label>Alternate Number</label><input class="form-control" placeholder="+91XXXXXXXXXX"></div>
-        <div class="col-md-4"><label>Email</label><input class="form-control" placeholder="customer@example.com"></div>
-        <div class="col-md-4"><label>Est. Delivery Date</label><input type="date" class="form-control"></div>
+
+        <div class="col-md-4">
+          <label>Customer Name</label>
+          <input class="form-control" formControlName="customerName" placeholder="John Doe">
+          <div *ngIf="customerInfo.get('customerName')?.touched && customerInfo.get('customerName')?.invalid" class="text-danger small">
+            Customer name is required.
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label>Mobile Number</label>
+          <input class="form-control" formControlName="mobile" placeholder="+91XXXXXXXXXX">
+          <div *ngIf="customerInfo.get('mobile')?.touched && customerInfo.get('mobile')?.invalid" class="text-danger small">
+            Enter valid 10-digit Indian mobile number.
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label>Alternate Number</label>
+          <input class="form-control" formControlName="alternateMobile" placeholder="+91XXXXXXXXXX">
+          <div *ngIf="customerInfo.get('alternateMobile')?.touched && customerInfo.get('alternateMobile')?.invalid" class="text-danger small">
+            Enter valid alternate mobile (10 digits) or leave empty.
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label>Email</label>
+          <input class="form-control" formControlName="email" placeholder="customer@example.com">
+          <div *ngIf="customerInfo.get('email')?.touched && customerInfo.get('email')?.invalid" class="text-danger small">
+            Enter valid email.
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <label>Est. Delivery Date</label>
+          <input type="date" class="form-control" formControlName="deliveryDate">
+          <div *ngIf="customerInfo.get('deliveryDate')?.touched && customerInfo.get('deliveryDate')?.invalid" class="text-danger small">
+            Delivery date is required.
+          </div>
+        </div>
+
         <div class="col-md-4">
           <label>Insurance Company</label>
-          <select class="form-select">
-            <option disabled selected>Select Insurance</option>
+          <select class="form-select" formControlName="insuranceCompany">
+            <option value="" disabled selected>Select Insurance</option>
             <option>LIC</option>
             <option>HDFC Ergo</option>
             <option>ICICI Lombard</option>
@@ -158,32 +287,66 @@
             <option>Tata AIG</option>
             <option>SBI General</option>
           </select>
+          <div *ngIf="customerInfo.get('insuranceCompany')?.touched && customerInfo.get('insuranceCompany')?.invalid" class="text-danger small">
+            Insurance company is required.
+          </div>
         </div>
       </div>
     </mat-expansion-panel>
 
     <!-- SECTION 5: Advance Payment -->
-    <mat-expansion-panel>
+    <mat-expansion-panel formGroupName="advancePayment">
       <mat-expansion-panel-header style="background-color: #4caf50; color: white;" class="mt-4">
         <mat-panel-title style="color: white;">Advance Payment</mat-panel-title>
       </mat-expansion-panel-header>
 
       <div class="row g-2 mt-2">
-        <div class="col-md-3"><label>Cash</label><input class="form-control" placeholder="Enter Cash"></div>
+        <div class="col-md-3">
+          <label>Cash</label>
+          <input class="form-control" formControlName="cash" placeholder="Enter Cash">
+          <div *ngIf="advancePayment.get('cash')?.touched && advancePayment.get('cash')?.invalid" class="text-danger small">
+            Cash is required.
+          </div>
+        </div>
+
         <div class="col-md-3">
           <label>Bank Name</label>
-          <select class="form-select">
-            <option disabled selected>Select Bank</option>
+          <select class="form-select" formControlName="bankName">
+            <option value="" disabled selected>Select Bank</option>
             <option>State Bank of India</option>
             <option>HDFC</option>
             <option>ICICI</option>
             <option>Axis Bank</option>
             <option>PNB</option>
           </select>
+          <div *ngIf="advancePayment.get('bankName')?.touched && advancePayment.get('bankName')?.invalid" class="text-danger small">
+            Bank name is required.
+          </div>
         </div>
-        <div class="col-md-3"><label>Cheque No</label><input class="form-control" placeholder="Enter Cheque No"></div>
-        <div class="col-md-3"><label>Amount</label><input type="number" class="form-control" placeholder="Enter Amount"></div>
-        <div class="col-md-3"><label>Date</label><input type="date" class="form-control"></div>
+
+        <div class="col-md-3">
+          <label>Cheque No</label>
+          <input class="form-control" formControlName="chequeNo" placeholder="Enter Cheque No">
+          <div *ngIf="advancePayment.get('chequeNo')?.touched && advancePayment.get('chequeNo')?.invalid" class="text-danger small">
+            Cheque number is required.
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label>Amount</label>
+          <input type="number" class="form-control" formControlName="amount" placeholder="Enter Amount">
+          <div *ngIf="advancePayment.get('amount')?.touched && advancePayment.get('amount')?.invalid" class="text-danger small">
+            Enter a valid amount (> 0).
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label>Date</label>
+          <input type="date" class="form-control" formControlName="date">
+          <div *ngIf="advancePayment.get('date')?.touched && advancePayment.get('date')?.invalid" class="text-danger small">
+            Payment date is required.
+          </div>
+        </div>
       </div>
     </mat-expansion-panel>
 
@@ -191,8 +354,14 @@
 
   <!-- ACTION BUTTONS -->
   <div class="d-flex gap-2 mt-3">
-    <button class="btn btn-warning">Give Estimation Later</button>
-    <button class="btn btn-success" (click)="onPrepareEstimate()">Prepare Estimate Now</button>
+    <button class="btn btn-warning" type="button">Give Estimation Later</button>
+
+    <!-- Submit disabled until form valid -->
+    <button class="btn btn-success"
+            type="button"
+            (click)="onPrepareEstimate()">
+      Prepare Estimate Now
+    </button>
   </div>
 
 </div>
