@@ -41,7 +41,7 @@ export interface TobeFilledBySupervisor {
 })
 export class ToBeFilledBySupervisorService {
 
-  private baseUrl = environment.apiUrl + 'ToBeFilledBySupervisor';
+  private baseUrl = environment.apiUrl + '/ToBeFilledBySupervisor/savedetails';
 
   constructor(private http: HttpClient) { }
 
