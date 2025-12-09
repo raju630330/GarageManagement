@@ -52,11 +52,23 @@ export class GarageManagementComponent implements OnInit {
 
   submit(): void {
     if (this.jobForm.valid) {
-      this.alert.showSuccess('Form submitted successfully!');
-      console.log('✅ Submitted:', this.jobForm.value);
+
+      // API Call
+      this.tobefilledbysupervisor.createSupervisor(this.jobForm.value)
+        .subscribe({
+          next: (res) => {
+            this.alert.showSuccess("Form submitted successfully!");
+            console.log(res);
+          },
+          error: (err) => {
+            console.error(err);
+            this.alert.showError("Failed to save the form!");
+          }
+        });
+
     } else {
       this.jobForm.markAllAsTouched();
       this.alert.showError('Please correct the errors before submitting.');
     }
   }
-}
+  }
