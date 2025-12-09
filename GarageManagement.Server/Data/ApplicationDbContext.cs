@@ -5,7 +5,9 @@ namespace GarageManagement.Server.Data
 {
         public class ApplicationDbContext : DbContext
         {
-            public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+        internal readonly object ToBeFilledBySupervisors;
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
             public DbSet<WorkshopProfile> WorkshopProfiles { get; set; }
 
@@ -16,8 +18,9 @@ namespace GarageManagement.Server.Data
            public DbSet<LabourDetail> LabourDetails { get; set; }
            public DbSet<TechnicianMC> TechnicianMCForms { get; set; }
            public DbSet<CheckItemEntity> CheckItems { get; set; }
+           public DbSet<ToBeFilledBySupervisor> ToBeFilledBySupervisor{ get; set; }
 
-           protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
            {
              base.OnModelCreating(modelBuilder);
 
