@@ -21,7 +21,7 @@ namespace GarageManagement.Api.Controllers
             return Ok(_context.ToBeFilledBySupervisor.ToList());
         }
 
-        [HttpPost]
+        [HttpPost("savedetails")]
         public IActionResult Create([FromBody] ToBeFilledBySupervisor model)
         {
             if (!ModelState.IsValid)
