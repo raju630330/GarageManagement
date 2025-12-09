@@ -2,9 +2,7 @@
   <!-- Job Card Header -->
   <div class="jobcard-header border p-3 d-flex justify-content-between align-items-center">
     <div class="d-flex gap-3 align-items-center">
-      <div class="fw-bold fs-5">{{jobCardLabel}}</div>
-      <div class="text-muted">|</div>
-      <div class="text-muted">Reg: <span class="fw-semibold">{{est.regNo}}</span></div>
+      <div class="text-primary">Registration No. / Job Card No. </div> {{regNo}}
     </div>
 
     <div class="d-flex gap-2 align-items-center">
@@ -155,29 +153,44 @@
     <tfoot>
       <tr class="text-center">
         <td colspan="5" class="text-start fw-bold">Apply Discount:</td>
+
         <td class="d-flex justify-content-end">
-          <input style="width:100px" type="text" class="form-control text-center" />
+          <input style="width:100px"
+                 type="number"
+                 class="form-control text-center"
+                 [(ngModel)]="applyDiscount"
+                 (input)="calculateTotals()" />
         </td>
+
         <td colspan="6"></td>
       </tr>
 
       <tr>
         <td colspan="5" class="text-start fw-bold">Grand Total:</td>
-        <td class="fw-bold text-end">0</td>
+
+        <!-- Discount Total -->
+        <td class="fw-bold text-end">{{ totalDiscount | number:'1.0-2' }}</td>
+
         <td colspan="2"></td>
-        <td class="fw-bold text-end">0</td>
-        <td class="fw-bold text-end">0</td>
+
+        <!-- Tax Total -->
+        <td class="fw-bold text-end">{{ totalTax | number:'1.0-2' }}</td>
+
+        <!-- Final Amount After Applying Discount -->
+        <td class="fw-bold text-end">{{ netTotal | number:'1.0-2' }}</td>
+
         <td colspan="2"></td>
       </tr>
       <tr>
         <td colspan="11" class="text-start fw-bold">Discount:</td>
-        <td class="fw-bold text-end">0</td>
+        <td class="fw-bold text-end">{{ applyDiscount | number:'1.0-2' }}</td>
       </tr>
 
       <tr>
         <td colspan="11" class="text-start fw-bold">Round Off:</td>
-        <td class="fw-bold text-end">0</td>
+        <td class="fw-bold text-end">{{ roundOff | number:'1.0-2' }}</td>
       </tr>
+
 
       <tr>
         <td colspan="11" class="text-start fw-bold">Paid:</td>
@@ -186,11 +199,69 @@
 
       <tr>
         <td colspan="11" class="text-start fw-bold">Balance:</td>
-        <td class="fw-bold text-end">0</td>
+        <td class="fw-bold text-end">{{ balance | number:'1.0-2' }}</td>
       </tr>
 
     </tfoot>
   </table>
+</div>
+<br />
+<br />
+<br />
+<!-- FIXED ACTION BAR -->
+<div class="fixed-bottom bg-white border-top shadow-sm px-3 py-2 d-flex justify-content-between align-items-center">
+
+  <!-- LEFT ICONS -->
+  <div class="d-flex align-items-center gap-3">
+
+    <!-- 3-line menu (DROPUP WITHOUT ARROW) -->
+    <div class="dropup">
+      <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
+        <i class="bi bi-list fs-5"></i>
+      </button>
+
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">TYRE/BATTERY</a></li>
+        <li><a class="dropdown-item" href="#">CANCELLED INVOICES</a></li>
+        <li><a class="dropdown-item" href="#">SERVICE SUGGESTIONS</a></li>
+        <li><a class="dropdown-item" href="#">COLLECTIONS</a></li>
+        <li><a class="dropdown-item" href="#">REMARKS</a></li>
+      </ul>
+    </div>
+
+    <!-- Printer -->
+    <button class="btn btn-light btn-sm">
+      <i class="bi bi-printer fs-5"></i>
+    </button>
+
+    <!-- Email -->
+    <button class="btn btn-light btn-sm">
+      <i class="bi bi-envelope fs-5"></i>
+    </button>
+
+    <!-- Car -->
+    <button class="btn btn-light btn-sm">
+      <i class="bi bi-car-front fs-5"></i>
+    </button>
+
+    <!-- Discount -->
+    <button class="btn btn-light btn-sm">
+      <i class="bi bi-percent fs-5"></i>
+    </button>
+
+    <!-- Cancel Job Card -->
+    <button class="btn btn-danger btn-sm">
+      Cancel Job Card
+    </button>
+
+  </div>
+
+  <!-- RIGHT SECTION: ORDER PARTS -->
+  <div>
+    <button class="btn btn-primary btn-sm">
+      Order Parts
+    </button>
+  </div>
 </div>
 
 
