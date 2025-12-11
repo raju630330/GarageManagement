@@ -2,7 +2,7 @@
 {
     public class JobCard
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         // --- Vehicle Data ---
         public string? RegistrationNo { get; set; }

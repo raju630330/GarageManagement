@@ -23,7 +23,7 @@
                           [searchFn]="jobcardService.searchRegistration.bind(jobcardService)"
                           (selected)="onSelectedRegistration($event)">
         </app-autocomplete>
-
+        <input type="hidden" formControlName="id" />
         <br />
         <br />
         <div style="display: flex; gap: 10px; overflow-x: auto; padding: 5px;">

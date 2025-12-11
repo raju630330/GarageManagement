@@ -2,8 +2,8 @@
 {
     public class JobCardAdvancePayment
     {
-        public int Id { get; set; }
-        public int JobCardId { get; set; }
+        public long Id { get; set; }
+        public long JobCardId { get; set; }
 
         public decimal? Cash { get; set; }
         public string? BankName { get; set; }

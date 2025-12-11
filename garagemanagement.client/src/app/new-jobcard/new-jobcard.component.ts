@@ -33,6 +33,7 @@ export class NewJobCardComponent implements OnInit {
   ngOnInit(): void {
     this.newConcern = this.fb.control('', Validators.required);
     this.jobCardForm = this.fb.group({
+      id:[0],
       vehicleData: this.fb.group({
         registrationNo: ['', Validators.required],
         odometerIn: ['', [Validators.required, Validators.min(0.1)]],
@@ -73,7 +74,7 @@ export class NewJobCardComponent implements OnInit {
       return;
     }
     this.jobcardService.getJobCardDetails(item.id).subscribe(res => {
-
+      this.jobCardForm.get('id')!.patchValue(res.id);
       // Patch vehicleData directly
       this.jobCardForm.get('vehicleData')!.patchValue(res.vehicleData);
 

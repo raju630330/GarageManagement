@@ -16,6 +16,7 @@ export interface JobCard {
   accidentDate?: string;
 }
 export interface JobCardDto {
+  id: number;
   vehicleData: {
     registrationNo: string;
     odometerIn: string;
