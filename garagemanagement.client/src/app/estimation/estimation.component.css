@@ -1,8 +1,14 @@
+/* ================================
+   Jobcard Header
+================================ */
 .jobcard-header {
   min-height: 56px;
   position: relative;
 }
 
+/* ================================
+   Arrow Box (Toggle Button)
+================================ */
 .arrow-box {
   width: 40px;
   height: 15px;
@@ -11,10 +17,10 @@
   background-color: limegreen;
   border: none;
   cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   transition: transform 0.2s ease;
   z-index: 2000;
 }
@@ -23,19 +29,30 @@
     transform: scale(1.1);
   }
 
+/* ================================
+   Collapse Popup
+================================ */
 .collapse-popup {
   position: absolute;
   top: 100%;
   left: 50%;
-  transform: translateX(-50%);
   width: 100%;
+  transform: translateX(-50%);
   z-index: 1500;
 }
+
+/* ================================
+   Local Table Styles
+================================ */
 .local-table th {
   background-color: white;
   color: black;
   font-weight: 600;
 }
+
+/* ================================
+   Slide Row (Category Icons)
+================================ */
 .slide-row {
   display: flex;
   overflow-x: auto;
@@ -45,15 +62,22 @@
 .item {
   text-align: center;
 }
+
   .item i {
     font-size: 45px;
   }
 
-/* category buttons */
+/* ================================
+   Category Buttons
+================================ */
 .category-btn {
   border-radius: 20px;
   padding: 6px 14px;
 }
+
+/* ================================
+   Table Footer Borders
+================================ */
 table tfoot tr {
   border-top: 1px solid #dee2e6 !important;
 }
@@ -62,7 +86,9 @@ table tfoot td {
   border: 1px solid #dee2e6 !important;
 }
 
-/* small responsive tweaks */
+/* ================================
+   Responsive Adjustments
+================================ */
 @media (max-width: 768px) {
   .jobcard-header {
     flex-direction: column;

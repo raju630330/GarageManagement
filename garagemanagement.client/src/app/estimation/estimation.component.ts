@@ -1,5 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { AlertService } from '../services/alert.service';
+import { ROLES } from '../constants/roles.constants';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+interface EstimationItem {
+  name: string;
+  type: string;
+  partNo: string;
+  rate: number;
+  discount: number;
+  hsn: string;
+  taxPercent: number;
+  taxAmount: number;
+  total: number;
+  approval: string;
+  reason: string;
+}
 
 @Component({
   selector: 'app-estimation',
@@ -8,45 +25,66 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './estimation.component.css'
 })
 export class EstimationComponent implements OnInit {
-  // top jobcard label visible under global header
-  regNo: string = '';
 
-  constructor(private route: ActivatedRoute) { }
+  ROLES = ROLES;
 
-  ngOnInit() {
-    // Subscribe to query param changes
+  registrationNumber: string = '';
+  totalDue = 10000;
+  showCanvas = false;
+  showEstimation = true;
+  showMenu = false;
+
+  /* -----------------------------------------
+     Reactive Form Setup
+  ----------------------------------------- */
+  estimationForm!: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private alert: AlertService
+  ) { }
+
+  ngOnInit(): void {
+
+    this.estimationForm = this.fb.group({
+      addItemForm: this.fb.group({
+        search: ['', Validators.required],
+        workshopState: ['In Workshop', Validators.required],
+        quantity: [null, Validators.required],
+        unitPrice: [null, Validators.required],
+        serviceType: ['Part', Validators.required]
+      }),
+
+      discountInput: [0],
+      paidAmount: [0],
+
+      items: this.fb.array([])
+    });
+
     this.route.queryParamMap.subscribe(params => {
-      this.regNo = params.get('registrationNo') || '';
-      console.log('Current registration number:', this.regNo);
-
-      // Fetch or refresh estimation data whenever regNo changes
-      this.loadEstimationData(this.regNo);
+      this.registrationNumber = params.get('registrationNo') || '';
+      this.loadEstimationData(this.registrationNumber);
     });
   }
 
-  loadEstimationData(regNo: string) {
-    // Use regNo to fetch data from server or update table
+  get addItemForm() {
+    return this.estimationForm.get('addItemForm') as FormGroup;
+  }
+
+  get items(): FormArray {
+    return this.estimationForm.get('items') as FormArray;
+  }
+
+  loadEstimationData(regNo: string): void {
     console.log('Load estimation data for:', regNo);
   }
 
-  jobCardLabel = 'Job Card: JC-0001';
-  totalDue = 10000;
-
-  // whether to show canvas (vehicle details)
-  showCanvas = false;
-
-  // whether estimation table is visible
-  showEstimation = true;
-
-  // right-side menu
-  showMenu = false;
-
-  // search + inputs
-  searchText = '';
-
-  // jobcard / vehicle stub
-  est = {
-    regNo: this.regNo,
+  /* -----------------------------------------
+   Vehicle / Customer Details
+----------------------------------------- */
+  vehicleDetails = {
+    regNo: '',
     jobCardNo: 'JC-0001',
     customerName: 'Ramesh',
     mobile: '9876543210',
@@ -57,8 +95,11 @@ export class EstimationComponent implements OnInit {
     vin: 'KMH1VIN0001',
     engineNo: 'ENG-12345'
   };
-  // categories shown as buttons
-  categories = [
+
+  /* -----------------------------------------
+   Service Categories
+----------------------------------------- */
+  serviceCategories = [
     { key: 'packages', label: 'Packages', icon: 'bi-box-seam' },
     { key: 'parts', label: 'Relevant Parts', icon: 'bi-gear' },
     { key: 'services', label: 'All Services', icon: 'bi-car-front' },
@@ -84,107 +125,92 @@ export class EstimationComponent implements OnInit {
   ];
 
 
-    toggleMenu() {
-    this.showMenu = !this.showMenu;
-  }
-  openDetails() {
-    alert('Open "Details" popup (not implemented)');
-  }
 
-  openPreviousJobCards() {
-    alert('Open previous job cards (not implemented)');
-  }
-  toggleContent() {
-    this.showCanvas = !this.showCanvas;
-  }
-  selectCategory(c: any) {
-    // simple behavior: set search text to category label
-    this.searchText = c.label;
-  }
+  /* -----------------------------------------
+     Add Item (Reactive)
+  ----------------------------------------- */
+  addItem(): void {
+    if (this.addItemForm.invalid) {
+      this.addItemForm.markAllAsTouched();
+      return;
+    }
 
-  /*Table section */
+    const { search, quantity, unitPrice, serviceType } = this.addItemForm.value;
 
-  workshopStatus = "In Workshop";
-  qty: any;
-  price: any;
-  serviceType = "Part";
+    const taxPercent = 18;
+    const baseAmount = quantity * unitPrice;
+    const taxAmount = (baseAmount * taxPercent) / 100;
+    const total = baseAmount + taxAmount;
 
-  items: any[] = [];
-
-  applyDiscount: any;
-  grandTotal = 0;
-  roundOff = 0;
-  paidAmount: any;
-  balance = 0;
-
-
-  addItem() {
-    if (!this.searchText || !this.qty || !this.price) return;
-
-    let taxPercent = 18;
-    let taxAmount = (this.price * this.qty * taxPercent) / 100;
-    let total = (this.price * this.qty) + taxAmount;
-
-    this.items.push({
-      name: this.searchText,
-      type: this.serviceType,
-      partNo: "PN-" + Math.floor(Math.random() * 1000),
-      rate: this.price,
-      discount: 0,
-      hsn: "9987",
-      taxPercent: taxPercent,
-      taxAmount: taxAmount,
-      total: total,
-      approval: "Pending",
-      reason: ""
+    const item = this.fb.group({
+      name: [search],
+      type: [serviceType],
+      partNo: [`PN-${Math.floor(Math.random() * 1000)}`],
+      rate: [unitPrice],
+      discount: [0],
+      hsn: ['9987'],
+      taxPercent: [taxPercent],
+      taxAmount: [taxAmount],
+      total: [total],
+      approval: ['Pending'],
+      reason: ['']
     });
 
+    this.items.push(item);
     this.calculateTotals();
+    this.addItemForm.reset({ workshopState: 'In Workshop', serviceType: 'Part' });
   }
 
-  grossTotal: number = 0;
-  netTotal: number = 0;
-  paid: number = 0;
-
-  totalDiscount: number = 0;
-  totalTax: number = 0;
-  calculateTotals() {
-    // Sum of discount column
-    this.totalDiscount = this.items.reduce((s, x) => s + (+x.discount || 0), 0);
-
-    // Sum of tax column
-    this.totalTax = this.items.reduce((s, x) => s + (+x.taxAmount || 0), 0);
-
-    // Sum of total column
-    this.grossTotal = this.items.reduce((s, x) => s + (+x.total || 0), 0);
-
-    // Apply discount entered by user
-    const afterDiscount = this.grossTotal - (this.applyDiscount || 0);
-
-    // Round Off
-    this.roundOff = +(Math.round(afterDiscount) - afterDiscount).toFixed(2);
-
-    // Final net total
-    this.netTotal = afterDiscount + this.roundOff;
-
-    // Balance (Paid assumed 0)
-    this.balance = this.netTotal - (this.paid || 0);
+  /* -----------------------------------------
+     Remove Row
+  ----------------------------------------- */
+  removeRow(index: number): void {
+    this.alert.confirm('Are you sure you want to remove this row?', () => {
+      this.items.removeAt(index);
+      this.calculateTotals();
+    });
   }
 
+  totalDiscountAmount = 0;
+  totalTaxAmount = 0;
+  grossAmount = 0;
+  netPayableAmount = 0;
+  roundOffAmount = 0;
+  balanceAmount = 0;
 
-  openTyreBattery() {
-    alert("Tyre/Battery clicked!");
+  /* -----------------------------------------
+     Totals Calculation
+  ----------------------------------------- */
+  calculateTotals(): void {
+    const items = this.items.controls as FormGroup[];
+
+    this.totalDiscountAmount = items.reduce((sum, item) => sum + (item.value.discount || 0), 0);
+    this.totalTaxAmount = items.reduce((sum, item) => sum + item.value.taxAmount, 0);
+    this.grossAmount = items.reduce((sum, item) => sum + item.value.total, 0);
+
+    const discountInput = this.estimationForm.value.discountInput || 0;
+    const paidAmount = this.estimationForm.value.paidAmount || 0;
+
+    const afterDiscount = this.grossAmount - discountInput;
+    this.roundOffAmount = +(Math.round(afterDiscount) - afterDiscount).toFixed(2);
+
+    this.netPayableAmount = afterDiscount + this.roundOffAmount;
+
+    this.balanceAmount = this.netPayableAmount - paidAmount;
   }
 
-  openCancelledInvoices() {
-    alert("Cancelled Invoices clicked!");
+  /* -----------------------------------------
+     UI Toggles
+  ----------------------------------------- */
+  toggleMenu(): void {
+    this.showMenu = !this.showMenu;
   }
 
-  openSuggestions() {
-    alert("Service Suggestions clicked!");
+  toggleContent(): void {
+    this.showCanvas = !this.showCanvas;
   }
 
-  openCollections() {
-    alert("Collections clicked!");
+  selectCategory(cat: any): void {
+    this.addItemForm.get('search')?.setValue(cat.label);
   }
 }

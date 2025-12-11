@@ -1,0 +1,21 @@
+<div class="autocomplete-container">
+  <input type="text"
+         class="form-control"
+         [placeholder]="placeholder"
+         [formControl]="control">
+
+  <!-- Results -->
+  <ul class="dropdown-list"
+      *ngIf="control.value && control.value.trim().length >= 3 && results.length > 0">
+    <li class="text-start mb-2" *ngFor="let item of results"
+        (click)="choose(item)">
+      <span class="fw-bold">{{ item[displayKey] }}</span>
+    </li>
+  </ul>
+
+  <!-- No results -->
+  <div class="no-results"
+       *ngIf="control.value && control.value.trim().length >= 3 && results.length === 0">
+    No results found
+  </div>
+</div>

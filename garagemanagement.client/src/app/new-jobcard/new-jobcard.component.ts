@@ -10,6 +10,9 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { JobCardService } from '../services/job-card.service';
+import { MatDialog } from '@angular/material/dialog';
+import { GlobalPopupComponent } from '../global-popup/global-popup.component';
+import { AlertService } from '../services/alert.service';
 
 @Component({
   selector: 'app-new-jobcard',
@@ -25,7 +28,7 @@ export class NewJobCardComponent implements OnInit {
   // optional flag used to show global errors after first submit attempt
   submitted = false;
 
-  constructor(private fb: FormBuilder, private router: Router, private jobcardService: JobCardService) { }
+  constructor(private fb: FormBuilder, private router: Router, public jobcardService: JobCardService, private dialog: MatDialog, private alert: AlertService) { }
 
   ngOnInit(): void {
     this.newConcern = this.fb.control('', Validators.required);
@@ -62,6 +65,38 @@ export class NewJobCardComponent implements OnInit {
       })
     });
   }
+
+
+  onSelectedRegistration(item: any) {
+    if (!item || !item.id) { // validate
+      console.warn('Invalid selection:', item);
+      return;
+    }
+    this.jobcardService.getJobCardDetails(item.id).subscribe(res => {
+
+      // Patch vehicleData directly
+      this.jobCardForm.get('vehicleData')!.patchValue(res.vehicleData);
+
+      // Patch customerInfo with formatted deliveryDate
+      this.jobCardForm.get('customerInfo')!.patchValue({
+        ...res.customerInfo,
+        deliveryDate: res.customerInfo?.deliveryDate?.split('T')[0] // yyyy-MM-dd
+      });
+
+      // Patch concerns
+      const concernsArray = this.jobCardForm.get('concerns') as FormArray;
+      concernsArray.clear();
+      res.concerns?.forEach((c:any) => concernsArray.push(this.fb.group({ text: c.text, active: c.active })));
+
+      // Patch advancePayment
+      this.jobCardForm.get('advancePayment')!.patchValue({
+        ...res.advancePayment,
+        date: res.advancePayment?.date?.split('T')[0]
+      });
+    });
+  }
+
+
 
   // Custom validator to ensure FormArray has min length
   private minLengthArray(min: number): ValidatorFn {
@@ -114,10 +149,13 @@ export class NewJobCardComponent implements OnInit {
   }
 
   removeConcern(index: number) {
-    this.concernsArray.removeAt(index);
+    this.alert.confirm('Are you want to remove this concern ?', () => {
+      this.concernsArray.removeAt(index);
+    })   
   }
 
   // ----------------- SUBMIT -------------------
+  expandAll = false;
   onPrepareEstimate() {
     this.submitted = true;
 
@@ -125,6 +163,7 @@ export class NewJobCardComponent implements OnInit {
     if (this.jobCardForm.invalid) {
       // mark all controls as touched so validation messages appear
       this.markAllTouched(this.jobCardForm);
+      this.expandAll = true;
       return;
     }
 
@@ -141,8 +180,25 @@ export class NewJobCardComponent implements OnInit {
           queryParams: { registrationNo: res.registrationNo }
         });
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.error(err);
+
+        // Check if backend returned validation errors
+        if (err.status === 400 && err.error?.errors) {
+          // err.error.errors should be a dictionary { fieldName: errorMessage }
+          Object.keys(err.error.errors).forEach((field) => {
+            const control = this.jobCardForm.get(field);
+            if (control) {
+              control.setErrors({ backend: err.error.errors[field] });
+            }
+          });
+        } else {
+          // Generic error alert
+          alert(err.error?.message || 'Something went wrong!');
+        }
+      }
     });
+
   }
 
   // utility to mark controls touched
@@ -160,6 +216,30 @@ export class NewJobCardComponent implements OnInit {
   }
 
   openPopup(type: string) {
-    alert(`Open details for: ${type}`);
+    const data = {
+      title: type,
+      fields: {
+        'Registration No': 'ABCD123456',
+        'VIN': '1HGCM82633A123456',
+        'Engine No': 'ENG123456',
+        'Odometer': 12000,
+        'Registratidon No': 'ABCD123456',
+        'VIdN': '1HGCM82633A123456',
+        'Engdine No': 'ENG123456',
+        'Odomedter': 12000,
+        'RegWistration No': 'ABCD123456',
+        'VFIN': '1HGCM82633A123456',
+        'EnRgine No': 'ENG123456',
+        'OdBometer': 12000
+      }
+    };
+
+    this.dialog.open(GlobalPopupComponent, {
+      data,
+      width: '800px', 
+      maxWidth: '95vw',
+      autoFocus: false,
+      disableClose: true,
+    });
   }
 }

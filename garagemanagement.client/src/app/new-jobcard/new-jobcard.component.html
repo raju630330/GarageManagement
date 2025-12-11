@@ -11,27 +11,37 @@
   <mat-accordion multi>
 
     <!-- SECTION 1: Search Options & Vehicle Info -->
-    <mat-expansion-panel>
+    <mat-expansion-panel [expanded]="expandAll">
       <mat-expansion-panel-header style="background-color: #3f51b5; color: white;" class="mt-4">
         <mat-panel-title style="color: white;">Search Options & Vehicle Info</mat-panel-title>
       </mat-expansion-panel-header>
-      <div class="mt-2">
-        <input type="text" class="form-control mb-2"
-               placeholder="Search by Reg No / Customer No / Mobile / Email / VIN / Vehicle / Corporate">
 
+      <br />
+      <div class="mt-2">
+
+        <app-autocomplete placeholder="Search by Reg No / Customer No / Mobile"
+                          [searchFn]="jobcardService.searchRegistration.bind(jobcardService)"
+                          (selected)="onSelectedRegistration($event)">
+        </app-autocomplete>
+
+        <br />
+        <br />
         <div style="display: flex; gap: 10px; overflow-x: auto; padding: 5px;">
-          <div class="simple-icon-box" (click)="openPopup('servicePackage')">Service Package</div>
-          <div class="simple-icon-box" (click)="openPopup('serviceHistory')">Service History</div>
-          <div class="simple-icon-box" (click)="openPopup('feedback')">Feedback</div>
-          <div class="simple-icon-box" (click)="openPopup('dueAmount')">Due Amount</div>
-          <div class="simple-icon-box" (click)="openPopup('reminders')">Reminders</div>
-          <div class="simple-icon-box" (click)="openPopup('batteryTyre')">Battery/Tyre</div>
+          <div class="simple-icon-box" (click)="openPopup('Service Package')">Service Package</div>
+          <div class="simple-icon-box" (click)="openPopup('Service History')">Service History</div>
+          <div class="simple-icon-box" (click)="openPopup('Feedback')">Feedback</div>
+          <div class="simple-icon-box" (click)="openPopup('Due Amount')">Due Amount</div>
+          <div class="simple-icon-box" (click)="openPopup('Reminders')">Reminders</div>
+          <div class="simple-icon-box" (click)="openPopup('Battery/Tyre')">Battery/Tyre</div>
         </div>
       </div>
+      
+      <br />
+      <br />
     </mat-expansion-panel>
 
     <!-- SECTION 2: Vehicle Data -->
-    <mat-expansion-panel formGroupName="vehicleData">
+    <mat-expansion-panel formGroupName="vehicleData" [expanded]="expandAll">
       <mat-expansion-panel-header style="background-color: #00bcd4; color: white;" class="mt-4">
         <mat-panel-title style="color: white;">Vehicle Data</mat-panel-title>
       </mat-expansion-panel-header>
@@ -41,7 +51,7 @@
           <label>Registration No</label>
           <input class="form-control"
                  formControlName="registrationNo"
-                 placeholder="ABCD123456">
+                 placeholder="Enter Registration Number">
           <div *ngIf="vehicleData.get('registrationNo')?.touched && vehicleData.get('registrationNo')?.invalid"
                class="text-danger small">
             Registration No is required.
@@ -50,9 +60,9 @@
 
         <div class="col-md-4">
           <label>Odometer In</label>
-          <input class="form-control"
+          <input type="number" class="form-control"
                  formControlName="odometerIn"
-                 placeholder="12000">
+                 placeholder="Enter Odometer Reading">
           <div *ngIf="vehicleData.get('odometerIn')?.touched && vehicleData.get('odometerIn')?.invalid"
                class="text-danger small">
             Enter valid Odometer (positive number).
@@ -61,9 +71,9 @@
 
         <div class="col-md-4">
           <label>Avg KMS/Day</label>
-          <input class="form-control"
+          <input type="number" class="form-control"
                  formControlName="avgKmsPerDay"
-                 placeholder="50">
+                 placeholder="Enter Avg KMS/Day">
           <div *ngIf="vehicleData.get('avgKmsPerDay')?.touched && vehicleData.get('avgKmsPerDay')?.invalid"
                class="text-danger small">
             Average KMS/Day is required.
@@ -74,7 +84,7 @@
           <label>VIN</label>
           <input class="form-control"
                  formControlName="vin"
-                 placeholder="1HGCM82633A123456">
+                 placeholder="Enter VIN">
           <div *ngIf="vehicleData.get('vin')?.touched && vehicleData.get('vin')?.invalid"
                class="text-danger small">
             VIN is required.
@@ -85,7 +95,7 @@
           <label>Engine No</label>
           <input class="form-control"
                  formControlName="engineNo"
-                 placeholder="ENG123456">
+                 placeholder="Enter Engine Number">
           <div *ngIf="vehicleData.get('engineNo')?.touched && vehicleData.get('engineNo')?.invalid"
                class="text-danger small">
             Engine No is required.
@@ -186,7 +196,7 @@
     </mat-expansion-panel>
 
     <!-- SECTION 3: Customer Concerns -->
-    <mat-expansion-panel>
+    <mat-expansion-panel [expanded]="expandAll">
       <mat-expansion-panel-header style="background-color: #ff69b4; color: white;" class="mt-4">
         <mat-panel-title style="color: white;">Customer Concerns</mat-panel-title>
       </mat-expansion-panel-header>
@@ -202,23 +212,38 @@
         <div *ngIf="(concernsArray.invalid || concernsArray.length === 0) && (jobCardForm.touched || submitted)" class="text-danger small mt-2">
           Add at least one concern.
         </div>
-
-        <div class="mt-2" *ngFor="let c of concernsArray.controls; let i = index">
-          <div class="d-flex align-items-center">
-            <div class="p-2 mb-1 flex-grow-1"
-                 [ngClass]="{'bg-success text-white': c.value.active, 'bg-secondary text-white': !c.value.active}"
-                 style="cursor: pointer;"
-                 (click)="toggleConcern(i)">
+        <div class="d-flex flex-wrap m-2">
+          <div *ngFor="let c of concernsArray.controls; let i = index" class="d-flex align-items-center me-2 mb-2">
+            <span class="me-2 px-2 py-1 rounded-pill border" [ngClass]="{'bg-success text-white': c.value.active, 'bg-secondary text-white': !c.value.active}" style="cursor: pointer; width:200px;text-align:start;height:40px;"
+                  (click)="toggleConcern(i)">
               {{ c.value.text }}
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-danger ms-2" (click)="removeConcern(i)">Remove</button>
+            </span>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeConcern(i)">Remove</button>
           </div>
         </div>
+       
+        
+    
+        <!--<div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div *ngFor="let c of concernsArray.controls; let i = index">
+                  <div [ngClass]="{'bg-success text-white': c.value.active, 'bg-secondary text-white': !c.value.active}"
+                       style="cursor: pointer;"
+                       (click)="toggleConcern(i)">
+                    {{ c.value.text }}
+                  </div>
+                  <button type="button" class="btn btn-sm btn-outline-danger ms-2" (click)="removeConcern(i)">Remove</button>
+              </div>           
+            </div>
+          </div>
+        </div>-->
+        
       </div>
     </mat-expansion-panel>
 
     <!-- SECTION 4: Customer & Corporate Info -->
-    <mat-expansion-panel formGroupName="customerInfo">
+    <mat-expansion-panel formGroupName="customerInfo" [expanded]="expandAll">
       <mat-expansion-panel-header style="background-color: #ffc107; color: white;" class="mt-4">
         <mat-panel-title style="color: white;">Customer & Corporate Info</mat-panel-title>
       </mat-expansion-panel-header>
@@ -238,7 +263,7 @@
 
         <div class="col-md-4">
           <label>Customer Name</label>
-          <input class="form-control" formControlName="customerName" placeholder="John Doe">
+          <input class="form-control" formControlName="customerName" placeholder="Enter Customer Name">
           <div *ngIf="customerInfo.get('customerName')?.touched && customerInfo.get('customerName')?.invalid" class="text-danger small">
             Customer name is required.
           </div>
@@ -246,7 +271,7 @@
 
         <div class="col-md-4">
           <label>Mobile Number</label>
-          <input class="form-control" formControlName="mobile" placeholder="+91XXXXXXXXXX">
+          <input class="form-control" formControlName="mobile" placeholder="Enter Mobile Number">
           <div *ngIf="customerInfo.get('mobile')?.touched && customerInfo.get('mobile')?.invalid" class="text-danger small">
             Enter valid 10-digit Indian mobile number.
           </div>
@@ -254,7 +279,7 @@
 
         <div class="col-md-4">
           <label>Alternate Number</label>
-          <input class="form-control" formControlName="alternateMobile" placeholder="+91XXXXXXXXXX">
+          <input class="form-control" formControlName="alternateMobile" placeholder="Enter Alternate Mobile">
           <div *ngIf="customerInfo.get('alternateMobile')?.touched && customerInfo.get('alternateMobile')?.invalid" class="text-danger small">
             Enter valid alternate mobile (10 digits) or leave empty.
           </div>
@@ -262,7 +287,7 @@
 
         <div class="col-md-4">
           <label>Email</label>
-          <input class="form-control" formControlName="email" placeholder="customer@example.com">
+          <input class="form-control" formControlName="email" placeholder="Enter Email">
           <div *ngIf="customerInfo.get('email')?.touched && customerInfo.get('email')?.invalid" class="text-danger small">
             Enter valid email.
           </div>
@@ -295,7 +320,7 @@
     </mat-expansion-panel>
 
     <!-- SECTION 5: Advance Payment -->
-    <mat-expansion-panel formGroupName="advancePayment">
+    <mat-expansion-panel formGroupName="advancePayment" [expanded]="expandAll">
       <mat-expansion-panel-header style="background-color: #4caf50; color: white;" class="mt-4">
         <mat-panel-title style="color: white;">Advance Payment</mat-panel-title>
       </mat-expansion-panel-header>
@@ -303,7 +328,7 @@
       <div class="row g-2 mt-2">
         <div class="col-md-3">
           <label>Cash</label>
-          <input class="form-control" formControlName="cash" placeholder="Enter Cash">
+          <input type="number" class="form-control" formControlName="cash" placeholder="Enter Cash">
           <div *ngIf="advancePayment.get('cash')?.touched && advancePayment.get('cash')?.invalid" class="text-danger small">
             Cash is required.
           </div>
@@ -326,7 +351,7 @@
 
         <div class="col-md-3">
           <label>Cheque No</label>
-          <input class="form-control" formControlName="chequeNo" placeholder="Enter Cheque No">
+          <input class="form-control" formControlName="chequeNo" placeholder="Enter Cheque Number">
           <div *ngIf="advancePayment.get('chequeNo')?.touched && advancePayment.get('chequeNo')?.invalid" class="text-danger small">
             Cheque number is required.
           </div>

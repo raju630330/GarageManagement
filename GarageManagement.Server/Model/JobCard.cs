@@ -6,8 +6,8 @@
 
         // --- Vehicle Data ---
         public string? RegistrationNo { get; set; }
-        public string? OdometerIn { get; set; }
-        public string? AvgKmsPerDay { get; set; }
+        public long? OdometerIn { get; set; }
+        public long? AvgKmsPerDay { get; set; }
         public string? Vin { get; set; }
         public string? EngineNo { get; set; }
         public string? VehicleColor { get; set; }

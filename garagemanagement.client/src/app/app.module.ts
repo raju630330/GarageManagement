@@ -43,6 +43,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatMenuModule } from '@angular/material/menu';
 import { NewJobCardComponent } from './new-jobcard/new-jobcard.component';
 import { EstimationComponent } from './estimation/estimation.component';
+import { GlobalPopupComponent } from './global-popup/global-popup.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { AutocompleteComponent } from './autocomplete/autocomplete.component';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 @NgModule({
   declarations: [
@@ -74,7 +78,9 @@ import { EstimationComponent } from './estimation/estimation.component';
     PopupTimePickerComponent,
     JobCardsComponent,
     NewJobCardComponent,
-    EstimationComponent  
+    EstimationComponent,
+    GlobalPopupComponent,
+    AutocompleteComponent
   ],
   imports: [
     BrowserModule,
@@ -91,7 +97,9 @@ import { EstimationComponent } from './estimation/estimation.component';
     MatButtonModule,
     BrowserAnimationsModule,
     MatNativeDateModule,
-    MatMenuModule
+    MatMenuModule,
+    MatDialogModule,
+    OverlayModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }

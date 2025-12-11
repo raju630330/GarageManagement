@@ -30,6 +30,8 @@ namespace GarageManagement.Server.Data
                 .HasForeignKey(c => c.TechnicianMCId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<AdditionalJobObserveDetail>().ToTable("AdditionalJobObserveDetail");
+
             modelBuilder.Entity<JobCard>()
            .HasMany(j => j.Concerns)
            .WithOne(c => c.JobCard)
@@ -39,6 +41,14 @@ namespace GarageManagement.Server.Data
                 .HasOne(j => j.AdvancePayment)
                 .WithOne(a => a.JobCard)
                 .HasForeignKey<JobCardAdvancePayment>(a => a.JobCardId);
+
+            modelBuilder.Entity<JobCardAdvancePayment>(entity =>
+            {
+                entity.Property(e => e.Amount)
+                      .HasColumnType("decimal(18,2)");
+                entity.Property(e => e.Cash)
+                      .HasColumnType("decimal(18,2)");
+            });
         }
            public DbSet<InventoryForm> InventoryForms { get; set; }
            public DbSet<InventoryAccessories> InventoryAccessories { get; set; }

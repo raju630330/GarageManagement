@@ -65,5 +65,12 @@ export class JobCardService {
     return this.http.post<any>(`${this.baseUrl}/NewJobCard/save-jobcard`, dto);
   }
 
+  searchRegistration(query: string) {
+    return this.http.get<any[]>(`${this.baseUrl}/NewJobCard/search-registration?query=${query}`);
+  }
+
+  getJobCardDetails(id: number) {
+    return this.http.get<any>(`${this.baseUrl}/NewJobCard/get-jobcard/${id}`);
+  }
 
 }
