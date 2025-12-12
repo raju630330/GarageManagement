@@ -52,7 +52,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdditionalJobObserveDetail");
+                    b.ToTable("AdditionalJobObserveDetail", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.BookAppointment", b =>
@@ -187,17 +187,17 @@ namespace GarageManagement.Server.Migrations
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCard", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AlternateMobile")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("AvgKmsPerDay")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long?>("AvgKmsPerDay")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Corporate")
                         .HasColumnType("nvarchar(max)");
@@ -223,8 +223,8 @@ namespace GarageManagement.Server.Migrations
                     b.Property<string>("Mobile")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("OdometerIn")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long?>("OdometerIn")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("RegistrationNo")
                         .HasColumnType("nvarchar(max)");
@@ -254,11 +254,11 @@ namespace GarageManagement.Server.Migrations
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardAdvancePayment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(18,2)");
@@ -275,8 +275,8 @@ namespace GarageManagement.Server.Migrations
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("JobCardId")
-                        .HasColumnType("int");
+                    b.Property<long>("JobCardId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -288,17 +288,17 @@ namespace GarageManagement.Server.Migrations
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardConcern", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<int>("JobCardId")
-                        .HasColumnType("int");
+                    b.Property<long>("JobCardId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");

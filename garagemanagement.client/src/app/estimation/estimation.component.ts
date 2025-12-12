@@ -3,6 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { AlertService } from '../services/alert.service';
 import { ROLES } from '../constants/roles.constants';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { JobCardService } from '../services/job-card.service';
+import { MatDialog } from '@angular/material/dialog';
+import { GlobalPopupComponent } from '../global-popup/global-popup.component';
 
 interface EstimationItem {
   name: string;
@@ -38,11 +41,11 @@ export class EstimationComponent implements OnInit {
      Reactive Form Setup
   ----------------------------------------- */
   estimationForm!: FormGroup;
-
+  previousJobCards: any[] = [];
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private alert: AlertService
+    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -65,6 +68,7 @@ export class EstimationComponent implements OnInit {
     this.route.queryParamMap.subscribe(params => {
       this.registrationNumber = params.get('registrationNo') || '';
       this.loadEstimationData(this.registrationNumber);
+      this.loadPreviousJobCards(this.registrationNumber);
     });
   }
 
@@ -188,6 +192,7 @@ export class EstimationComponent implements OnInit {
     this.totalTaxAmount = items.reduce((sum, item) => sum + item.value.taxAmount, 0);
     this.grossAmount = items.reduce((sum, item) => sum + item.value.total, 0);
 
+    this.estimationForm.get('discountInput')?.setValue(this.totalDiscountAmount);
     const discountInput = this.estimationForm.value.discountInput || 0;
     const paidAmount = this.estimationForm.value.paidAmount || 0;
 
@@ -213,4 +218,36 @@ export class EstimationComponent implements OnInit {
   selectCategory(cat: any): void {
     this.addItemForm.get('search')?.setValue(cat.label);
   }
+
+  loadPreviousJobCards(regNo: string) {
+    this.previousJobCards = this.jobcardService.getPreviousJobCards(regNo);
+  }
+  openPreviousJobCardsPopup() {
+    if (!this.previousJobCards || this.previousJobCards.length === 0) {
+      this.openPopup("Previous Job Cards (R)", { Message: "No previous job cards found." });
+      return;
+    }
+
+    const formatted: any = {};
+    this.previousJobCards.forEach((jc: any, i: number) => {
+      formatted[`#${i + 1} - Job Card No`] = jc.jobCardNo;
+      formatted[`Date (${i + 1})`] = jc.date?.split('T')[0];
+      formatted[`Status (${i + 1})`] = jc.status;
+    });
+
+    this.openPopup("Previous Job Cards (R)", formatted);
+  }
+
+  // Reusable popup open function
+  openPopup(title: string, fields: any) {
+    this.dialog.open(GlobalPopupComponent, {
+      data: { title, fields },
+      width: '800px',
+      maxWidth: '95vw',
+      autoFocus: false,
+      disableClose: true,
+      panelClass: 'custom-dialog-zindex'
+    });
+  }
+
 }

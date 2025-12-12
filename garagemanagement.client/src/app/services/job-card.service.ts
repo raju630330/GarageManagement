@@ -72,5 +72,18 @@ export class JobCardService {
   getJobCardDetails(id: number) {
     return this.http.get<any>(`${this.baseUrl}/NewJobCard/get-jobcard/${id}`);
   }
+  private previousJobCardsMock = [
+    { regNo: "REG001", jobCardNo: "SRT-J003210", date: "2025-02-05T10:30:00", status: "Delivered" },
+    { regNo: "REG002", jobCardNo: "SRT-J003145", date: "2025-01-18T15:10:00", status: "Invoice" },
+    { regNo: "REG003", jobCardNo: "SRT-J003099", date: "2025-01-02T11:45:00", status: "Ready for Delivery" },
 
+    { regNo: "REG004", jobCardNo: "SRT-J002980", date: "2024-12-22T09:20:00", status: "Work-In-Progress" },
+    { regNo: "REG005", jobCardNo: "SRT-J002910", date: "2024-12-01T14:00:00", status: "Spares Pending" }
+  ];
+
+  // 🔹 GET Previous Job Cards by Registration Number
+  getPreviousJobCards(regNo: string) {
+    const filtered = this.previousJobCardsMock.filter(x => x.regNo === regNo);
+    return filtered; // return array (mock)
+  }
 }

@@ -11,7 +11,7 @@
         <option>Hindi</option>
       </select>
 
-      <button class="btn btn-sm btn-outline-secondary">R</button>
+      <button class="btn btn-sm btn-outline-secondary" (click)="openPreviousJobCardsPopup()">R</button>
       <div>Total Due: ₹{{ totalDue | number:'1.0-2' }}</div>
       <button class="btn btn-sm btn-outline-primary">Details</button>
     </div>
@@ -19,7 +19,6 @@
 
   <!-- Arrow -->
   <button class="arrow-box position-absolute"
-          style="bottom: -15px; left: 50%; transform: translateX(-50%); z-index: 2000;"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#collapseVehicleDetails">
@@ -184,22 +183,22 @@
         <tr class="text-center">
           <td colspan="5" class="text-start fw-bold">Apply Discount:</td>
           <td class="d-flex justify-content-end">
-            <input style="width:100px" type="number" class="form-control text-center" formControlName="discountInput" (input)="calculateTotals()" />
+            <input style="width:100px" type="number" class="form-control text-center" formControlName="discountInput" (input)="calculateTotals()" readonly />
           </td>
           <td colspan="6"></td>
         </tr>
         <tr>
           <td colspan="5" class="text-start fw-bold">Grand Total:</td> <!-- Discount Total -->
-          <td class="fw-bold text-end">{{ 0 | number:'1.0-2' }}</td>
+          <td class="fw-bold text-end">{{ totalDiscountAmount | number:'1.0-2' }}</td>
           <td colspan="2"></td> <!-- Tax Total -->
-          <td class="fw-bold text-end">{{ 0 | number:'1.0-2' }}</td> <!-- Final Amount After Applying Discount -->
-          <td class="fw-bold text-end">{{ 0 | number:'1.0-2' }}</td>
+          <td class="fw-bold text-end">{{ totalTaxAmount | number:'1.0-2' }}</td> <!-- Final Amount After Applying Discount -->
+          <td class="fw-bold text-end">{{ grossAmount | number:'1.0-2' }}</td>
           <td colspan="2"></td>
         </tr>
 
         <tr>
           <td colspan="11" class="text-start fw-bold">Discount:</td>
-          <td class="fw-bold text-end">{{ 0 | number:'1.0-2' }}</td>
+          <td class="fw-bold text-end">{{ totalDiscountAmount | number:'1.0-2' }}</td>
         </tr>
 
         <tr> <td colspan="11" class="text-start fw-bold">Round Off:</td> <td class="fw-bold text-end">{{ roundOffAmount | number:'1.0-2' }}</td> </tr>

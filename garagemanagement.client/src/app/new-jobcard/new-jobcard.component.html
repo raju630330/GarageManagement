@@ -295,7 +295,7 @@
 
         <div class="col-md-4">
           <label>Est. Delivery Date</label>
-          <input type="date" class="form-control" formControlName="deliveryDate">
+          <input type="date" class="form-control" formControlName="deliveryDate" [min]="today">
           <div *ngIf="customerInfo.get('deliveryDate')?.touched && customerInfo.get('deliveryDate')?.invalid" class="text-danger small">
             Delivery date is required.
           </div>

@@ -24,13 +24,16 @@ export class NewJobCardComponent implements OnInit {
 
   jobCardForm!: FormGroup;
   newConcern!: FormControl;
-
+  today: string = '';
   // optional flag used to show global errors after first submit attempt
   submitted = false;
 
   constructor(private fb: FormBuilder, private router: Router, public jobcardService: JobCardService, private dialog: MatDialog, private alert: AlertService) { }
 
   ngOnInit(): void {
+    const now = new Date();
+    this.today = now.toISOString().split('T')[0];
+
     this.newConcern = this.fb.control('', Validators.required);
     this.jobCardForm = this.fb.group({
       id:[0],
@@ -70,7 +73,7 @@ export class NewJobCardComponent implements OnInit {
 
   onSelectedRegistration(item: any) {
     if (!item || !item.id) { // validate
-      console.warn('Invalid selection:', item);
+      console.log('Invalid selection:', item);
       return;
     }
     this.jobcardService.getJobCardDetails(item.id).subscribe(res => {

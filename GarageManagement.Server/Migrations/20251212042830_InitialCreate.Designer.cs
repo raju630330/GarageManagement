@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251209110329_MyChanges")]
-    partial class MyChanges
+    [Migration("20251212042830_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,7 +55,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdditionalJobObserveDetail");
+                    b.ToTable("AdditionalJobObserveDetail", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.BookAppointment", b =>
@@ -190,17 +190,17 @@ namespace GarageManagement.Server.Migrations
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCard", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AlternateMobile")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("AvgKmsPerDay")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long?>("AvgKmsPerDay")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Corporate")
                         .HasColumnType("nvarchar(max)");
@@ -226,8 +226,8 @@ namespace GarageManagement.Server.Migrations
                     b.Property<string>("Mobile")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("OdometerIn")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long?>("OdometerIn")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("RegistrationNo")
                         .HasColumnType("nvarchar(max)");
@@ -257,20 +257,20 @@ namespace GarageManagement.Server.Migrations
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardAdvancePayment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Amount")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("BankName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Cash")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal?>("Cash")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ChequeNo")
                         .HasColumnType("nvarchar(max)");
@@ -278,8 +278,8 @@ namespace GarageManagement.Server.Migrations
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("JobCardId")
-                        .HasColumnType("int");
+                    b.Property<long>("JobCardId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -291,17 +291,17 @@ namespace GarageManagement.Server.Migrations
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardConcern", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<int>("JobCardId")
-                        .HasColumnType("int");
+                    b.Property<long>("JobCardId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
@@ -452,6 +452,39 @@ namespace GarageManagement.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TechnicianMCForms", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.ToBeFilledBySupervisor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ActionTaken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DriverVoice")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EndTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StartTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupervisorInstruction")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ToBeFilledBySupervisor");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.User", b =>
