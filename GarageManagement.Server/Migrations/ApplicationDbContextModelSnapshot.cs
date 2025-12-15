@@ -52,7 +52,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdditionalJobObserveDetail", (string)null);
+                    b.ToTable("AdditionalJobObserveDetail");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.BookAppointment", b =>
@@ -114,7 +114,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("bookAppointments");
+                    b.ToTable("BookAppointments");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.CheckItemEntity", b =>
@@ -475,7 +475,7 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SupervisorInstruction")
+                    b.Property<string>("SupervisorInstructions")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

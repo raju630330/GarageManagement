@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using GarageManagement.Server.Data;
+﻿using GarageManagement.Server.Data;
+using GarageManagement.Server.dtos;
 using GarageManagement.Server.Model;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GarageManagement.Api.Controllers
 {
@@ -15,20 +16,26 @@ namespace GarageManagement.Api.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            return Ok(_context.ToBeFilledBySupervisor.ToList());
-        }
-
         [HttpPost("savedetails")]
-        public IActionResult Create([FromBody] ToBeFilledBySupervisor model)
+        public async Task<IActionResult> Create([FromBody] List<ToBeFilledBySupervisorDto> models)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (models == null || !models.Any())
+            {
+                return BadRequest(new { message = "No supervisor details provided." });
+            }
 
-            _context.ToBeFilledBySupervisor.Add(model);
-            _context.SaveChanges();
+            // Map DTOs to entity
+            var entities = models.Select(d => new ToBeFilledBySupervisor
+            {
+                DriverVoice = d.DriverVoice,
+                SupervisorInstructions = d.SupervisorInstructions,
+                ActionTaken = d.ActionTaken,
+                StartTime = d.StartTime,
+                EndTime = d.EndTime
+            }).ToList();
+
+            await _context.ToBeFilledBySupervisor.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
 
             return Ok(new { message = "Supervisor section saved successfully" });
         }

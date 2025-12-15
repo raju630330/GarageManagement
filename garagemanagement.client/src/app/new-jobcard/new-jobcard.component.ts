@@ -25,9 +25,6 @@ export class NewJobCardComponent implements OnInit {
   jobCardForm!: FormGroup;
   newConcern!: FormControl;
   today: string = '';
-  // optional flag used to show global errors after first submit attempt
-  submitted = false;
-
   constructor(private fb: FormBuilder, private router: Router, public jobcardService: JobCardService, private dialog: MatDialog, private alert: AlertService) { }
 
   ngOnInit(): void {
@@ -35,6 +32,7 @@ export class NewJobCardComponent implements OnInit {
     this.today = now.toISOString().split('T')[0];
 
     this.newConcern = this.fb.control('', Validators.required);
+
     this.jobCardForm = this.fb.group({
       id:[0],
       vehicleData: this.fb.group({
@@ -70,38 +68,6 @@ export class NewJobCardComponent implements OnInit {
     });
   }
 
-
-  onSelectedRegistration(item: any) {
-    if (!item || !item.id) { // validate
-      console.log('Invalid selection:', item);
-      return;
-    }
-    this.jobcardService.getJobCardDetails(item.id).subscribe(res => {
-      this.jobCardForm.get('id')!.patchValue(res.id);
-      // Patch vehicleData directly
-      this.jobCardForm.get('vehicleData')!.patchValue(res.vehicleData);
-
-      // Patch customerInfo with formatted deliveryDate
-      this.jobCardForm.get('customerInfo')!.patchValue({
-        ...res.customerInfo,
-        deliveryDate: res.customerInfo?.deliveryDate?.split('T')[0] // yyyy-MM-dd
-      });
-
-      // Patch concerns
-      const concernsArray = this.jobCardForm.get('concerns') as FormArray;
-      concernsArray.clear();
-      res.concerns?.forEach((c:any) => concernsArray.push(this.fb.group({ text: c.text, active: c.active })));
-
-      // Patch advancePayment
-      this.jobCardForm.get('advancePayment')!.patchValue({
-        ...res.advancePayment,
-        date: res.advancePayment?.date?.split('T')[0]
-      });
-    });
-  }
-
-
-
   // Custom validator to ensure FormArray has min length
   private minLengthArray(min: number): ValidatorFn {
     return (control: AbstractControl | null) => {
@@ -111,23 +77,24 @@ export class NewJobCardComponent implements OnInit {
   }
 
   // ------- convenience getters ----------
+
+  // in html we need this otherwise we need to get formgroup then code will increase
+  // <div * ngIf="vehicleData.get('registrationNo')?.touched && vehicleData.get('registrationNo')?.invalid"
   get vehicleData(): FormGroup {
     return this.jobCardForm.get('vehicleData') as FormGroup;
   }
-
   get concernsArray(): FormArray {
     return this.jobCardForm.get('concerns') as FormArray;
   }
-
   get customerInfo(): FormGroup {
     return this.jobCardForm.get('customerInfo') as FormGroup;
   }
-
   get advancePayment(): FormGroup {
     return this.jobCardForm.get('advancePayment') as FormGroup;
   }
 
   // ----------------- CONCERNS ARRAY -------------------
+
   addConcern() {
     const text = (this.newConcern.value || '').toString().trim();
     if (!text) {
@@ -142,7 +109,10 @@ export class NewJobCardComponent implements OnInit {
       })
     );
 
+    // After Concern is added then validation need to reset means
+    //form should not validate cocern text box so below we rest the control
     this.newConcern.reset();
+
     // mark concerns as touched so validation hides after push
     this.concernsArray.markAsTouched();
   }
@@ -161,25 +131,20 @@ export class NewJobCardComponent implements OnInit {
   // ----------------- SUBMIT -------------------
   expandAll = false;
   onPrepareEstimate() {
-    this.submitted = true;
 
     // if invalid, stop — submit button normally disabled but guard anyway
     if (this.jobCardForm.invalid) {
       // mark all controls as touched so validation messages appear
       this.markAllTouched(this.jobCardForm);
       this.expandAll = true;
+      this.alert.showError('Please fix validation errors before submitting!');
       return;
     }
-
-    const payload = this.jobCardForm.value;
-    if (this.jobCardForm.invalid) return;
 
     const dto = this.jobCardForm.value;
 
     this.jobcardService.saveJobCard(dto).subscribe({
       next: (res) => {
-        console.log("Saved successfully", res);
-
         this.router.navigate(['/estimate'], {
           queryParams: { registrationNo: res.registrationNo }
         });
@@ -219,6 +184,7 @@ export class NewJobCardComponent implements OnInit {
     control.markAsTouched();
   }
 
+// This block is for opening popup for buttons below the search 
   openPopup(type: string) {
     const data = {
       title: type,
@@ -244,6 +210,35 @@ export class NewJobCardComponent implements OnInit {
       maxWidth: '95vw',
       autoFocus: false,
       disableClose: true,
+    });
+  }
+
+  // To fetch data after select option in autocomplete
+  onSelectedRegistration(item: any) {
+    if (!item || !item.id) { // validate
+      return;
+    }
+    this.jobcardService.getJobCardDetails(item.id).subscribe(res => {
+      this.jobCardForm.get('id')!.patchValue(res.id);
+      // Patch vehicleData directly
+      this.jobCardForm.get('vehicleData')!.patchValue(res.vehicleData);
+
+      // Patch customerInfo with formatted deliveryDate
+      this.jobCardForm.get('customerInfo')!.patchValue({
+        ...res.customerInfo,
+        deliveryDate: res.customerInfo?.deliveryDate?.split('T')[0] // yyyy-MM-dd
+      });
+
+      // Patch concerns
+      const concernsArray = this.jobCardForm.get('concerns') as FormArray;
+      concernsArray.clear();
+      res.concerns?.forEach((c: any) => concernsArray.push(this.fb.group({ text: c.text, active: c.active })));
+
+      // Patch advancePayment
+      this.jobCardForm.get('advancePayment')!.patchValue({
+        ...res.advancePayment,
+        date: res.advancePayment?.date?.split('T')[0]
+      });
     });
   }
 }

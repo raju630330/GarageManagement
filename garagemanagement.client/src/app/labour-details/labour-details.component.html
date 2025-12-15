@@ -24,13 +24,13 @@
                 </div>
               </td>
               <td>
-                <input type="text" class="form-control" formControlName="labourCharges" placeholder="0" (input)="forceNumberswithtwodecimalsOnly(i, 'labourCharges')" />
+                <input appTwoDecimalNumbers type="text" class="form-control" formControlName="labourCharges" placeholder="0" />
                 <div class="text-danger" *ngIf="row.get('labourCharges')?.invalid && row.get('labourCharges')?.touched">
                   Enter valid numeric value.
                 </div>
               </td>
               <td>
-                <input type="text" class="form-control" formControlName="outsideLabour" placeholder="0" (input)="forceNumberswithtwodecimalsOnly(i, 'outsideLabour')" />
+                <input appTwoDecimalNumbers type="text" class="form-control" formControlName="outsideLabour" placeholder="0" />
                 <div class="text-danger" *ngIf="row.get('outsideLabour')?.invalid && row.get('outsideLabour')?.touched">
                   Enter valid numeric value.
                 </div>

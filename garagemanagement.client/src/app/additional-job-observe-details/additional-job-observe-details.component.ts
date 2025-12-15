@@ -65,15 +65,15 @@ export class AdditionalJobObserveDetailsComponent implements OnInit {
 
   submit(): void {
     if (this.jobForm.valid) {
-      const partsArray = this.jobForm.value.rows.map((row: any) => ({
-        description: row.description,
-        partNumber: row.partNumber,
-        make: row.make,
-        unitCost: parseFloat(row.unitCost),
-        quantity: parseInt(row.qty, 10)
+      const additionalJobObserveDetails = this.jobForm.value.rows.map((row: any) => ({
+        technicianVoice: row.technicianVoice,
+        supervisorInstructions: row.supervisorInstructions,
+        actionTaken: row.actionTaken,
+        startTime: row.startTime,
+        endTime: row.endTime
       }));
 
-      this.observationdetailsservice.createAdditionalJobObserveDetails(partsArray).subscribe({
+      this.observationdetailsservice.createAdditionalJobObserveDetails(additionalJobObserveDetails).subscribe({
         next: (res: any) => {
           this.alert.showInfo(res.message || 'All job observation details submitted successfully!', () => {
             this.rows.clear();
@@ -81,7 +81,7 @@ export class AdditionalJobObserveDetailsComponent implements OnInit {
           });
         },
         error: (err: any) => {
-          this.alert.showError(err?.error || 'Error saving details!');
+          this.alert.showError(err?.error.title || 'Error saving details!');
         }
       });
     } else {

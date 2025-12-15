@@ -60,7 +60,7 @@
 
         <div class="col-md-4">
           <label>Odometer In</label>
-          <input type="number" class="form-control"
+          <input appNumbersOnly class="form-control"
                  formControlName="odometerIn"
                  placeholder="Enter Odometer Reading">
           <div *ngIf="vehicleData.get('odometerIn')?.touched && vehicleData.get('odometerIn')?.invalid"
@@ -71,7 +71,7 @@
 
         <div class="col-md-4">
           <label>Avg KMS/Day</label>
-          <input type="number" class="form-control"
+          <input appNumbersOnly class="form-control"
                  formControlName="avgKmsPerDay"
                  placeholder="Enter Avg KMS/Day">
           <div *ngIf="vehicleData.get('avgKmsPerDay')?.touched && vehicleData.get('avgKmsPerDay')?.invalid"
@@ -209,7 +209,7 @@
 
         <button class="btn btn-primary mt-2" (click)="addConcern()">Add Service</button>
 
-        <div *ngIf="(concernsArray.invalid || concernsArray.length === 0) && (jobCardForm.touched || submitted)" class="text-danger small mt-2">
+        <div *ngIf="(concernsArray.invalid || concernsArray.length === 0) && (jobCardForm.touched)" class="text-danger small mt-2">
           Add at least one concern.
         </div>
         <div class="d-flex flex-wrap m-2">
@@ -217,19 +217,8 @@
                class="d-flex align-items-center me-2 mb-2">
 
             <!-- Concern text -->
-            <span class="me-2 px-3 py-2 rounded-pill border text-white"
-                  [ngClass]="{
-        'bg-success': c.value.active,
-        'bg-secondary': !c.value.active
-      }"
-                  style="
-        cursor: pointer;
-        width: 200px;
-        white-space: normal;
-        word-break: break-word;
-        text-align: left;
-      "
-                  (click)="toggleConcern(i)">
+      
+            <span (click)="toggleConcern(i)" class="me-2 px-3 py-2 rounded-pill border text-white"  style="cursor: pointer;  width: 200px; white-space: normal; word-break: break-word;text-align: left;" [ngClass]="{  'bg-success': c.value.active,'bg-secondary': !c.value.active }">                                      
               {{ c.value.text }}
             </span>
 
@@ -239,27 +228,8 @@
                     (click)="removeConcern(i)">
               Remove
             </button>
-
           </div>
         </div>
-
-
-
-
-        <!--<div class="card-body">
-    <div class="row">
-      <div class="col-md-12">
-        <div *ngFor="let c of concernsArray.controls; let i = index">
-            <div [ngClass]="{'bg-success text-white': c.value.active, 'bg-secondary text-white': !c.value.active}"
-                 style="cursor: pointer;"
-                 (click)="toggleConcern(i)">
-              {{ c.value.text }}
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-danger ms-2" (click)="removeConcern(i)">Remove</button>
-        </div>
-      </div>
-    </div>
-  </div>-->
 
       </div>
     </mat-expansion-panel>
@@ -293,7 +263,7 @@
 
         <div class="col-md-4">
           <label>Mobile Number</label>
-          <input class="form-control" formControlName="mobile" placeholder="Enter Mobile Number">
+          <input appNumbersOnly class="form-control" formControlName="mobile" placeholder="Enter Mobile Number">
           <div *ngIf="customerInfo.get('mobile')?.touched && customerInfo.get('mobile')?.invalid" class="text-danger small">
             Enter valid 10-digit Indian mobile number.
           </div>
@@ -301,7 +271,7 @@
 
         <div class="col-md-4">
           <label>Alternate Number</label>
-          <input class="form-control" formControlName="alternateMobile" placeholder="Enter Alternate Mobile">
+          <input appNumbersOnly class="form-control" formControlName="alternateMobile" placeholder="Enter Alternate Mobile">
           <div *ngIf="customerInfo.get('alternateMobile')?.touched && customerInfo.get('alternateMobile')?.invalid" class="text-danger small">
             Enter valid alternate mobile (10 digits) or leave empty.
           </div>
@@ -350,7 +320,7 @@
       <div class="row g-2 mt-2">
         <div class="col-md-3">
           <label>Cash</label>
-          <input type="number" class="form-control" formControlName="cash" placeholder="Enter Cash">
+          <input appTwoDecimalNumbers class="form-control" formControlName="cash" placeholder="Enter Cash">
           <div *ngIf="advancePayment.get('cash')?.touched && advancePayment.get('cash')?.invalid" class="text-danger small">
             Cash is required.
           </div>
@@ -381,7 +351,7 @@
 
         <div class="col-md-3">
           <label>Amount</label>
-          <input type="number" class="form-control" formControlName="amount" placeholder="Enter Amount">
+          <input appTwoDecimalNumbers class="form-control" formControlName="amount" placeholder="Enter Amount">
           <div *ngIf="advancePayment.get('amount')?.touched && advancePayment.get('amount')?.invalid" class="text-danger small">
             Enter a valid amount (> 0).
           </div>

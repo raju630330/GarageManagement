@@ -12,7 +12,7 @@ import { adminGuard } from './admin.guard';
 import { RepairOrderComponent } from './repair-order/repair-order.component';
 import { LabourDetailsComponent } from './labour-details/labour-details.component';  
 import { SparePartIssueDetailsComponent } from './spare-part-issue-details/spare-part-issue-details.component';
-import { GarageManagementComponent } from './garage-management/garage-management.component';
+import { ToBeFilledBySupervisorComponent } from './to-be-filled-by-supervisor/to-be-filled-by-supervisor.component';
 import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { SettingsComponent } from './settings/settings.component';
@@ -43,7 +43,7 @@ const routes: Routes = [
 
       { path: 'repair-order', component: RepairOrderComponent, canActivate: [authGuard], data: { roles: ['Admin', 'Manager'] } },
       { path: 'spare-part', component: SparePartIssueDetailsComponent, canActivate: [authGuard] },
-      { path: 'garagemanagement', component: GarageManagementComponent, canActivate: [authGuard] },
+      { path: 'tobefilledbysupervisor', component: ToBeFilledBySupervisorComponent, canActivate: [authGuard] },
       { path: 'jobobservedetails', component: AdditionalJobObserveDetailsComponent, canActivate: [authGuard] },
       { path: 'labour-details', component: LabourDetailsComponent, canActivate: [authGuard] },
       { path: 'inventory', component: InventoryComponent, canActivate: [authGuard] },

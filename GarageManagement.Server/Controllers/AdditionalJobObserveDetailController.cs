@@ -1,4 +1,5 @@
 ﻿using GarageManagement.Server.Data;
+using GarageManagement.Server.dtos;
 using GarageManagement.Server.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -16,15 +17,28 @@ namespace GarageManagement.Server.Controllers
         }
 
         [HttpPost("additionaljobobservedetails")]
-        public async Task<ActionResult> CreateAdditionalJobObserveDetails([FromBody]List<AdditionalJobObserveDetail> details)
+        public async Task<ActionResult> CreateAdditionalJobObserveDetails([FromBody] List<AdditionalJobObserveDetailDto> details)
         {
-            if (!details.Any() || details == null)
+            if (details == null || !details.Any())
             {
                 return BadRequest("No Additional Job Observe Details Found");
             }
-            await _context.AdditionalJobObserveDetail.AddRangeAsync(details);   
+
+            // Map DTO to Entity
+            var entities = details.Select(d => new AdditionalJobObserveDetail
+            {
+                TechnicianVoice = d.TechnicianVoice,
+                SupervisorInstructions = d.SupervisorInstructions,
+                ActionTaken = d.ActionTaken,
+                StartTime = d.StartTime,
+                EndTime = d.EndTime
+            }).ToList();
+
+            await _context.AdditionalJobObserveDetail.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
-            return Ok(new { message = "Additional Job Observe Details Saved Sucessfully" });                     
+
+            return Ok(new { message = "Additional Job Observe Details Saved Successfully" });
         }
+
     }
 }

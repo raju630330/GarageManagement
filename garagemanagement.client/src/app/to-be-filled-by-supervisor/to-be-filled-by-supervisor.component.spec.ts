@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GarageManagementComponent } from './garage-management.component';
+import { ToBeFilledBySupervisorComponent } from './to-be-filled-by-supervisor.component';
 
 describe('GarageManagementComponent', () => {
-  let component: GarageManagementComponent;
-  let fixture: ComponentFixture<GarageManagementComponent>;
+  let component: ToBeFilledBySupervisorComponent;
+  let fixture: ComponentFixture<ToBeFilledBySupervisorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [GarageManagementComponent]
+      declarations: [ToBeFilledBySupervisorComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(GarageManagementComponent);
+    fixture = TestBed.createComponent(ToBeFilledBySupervisorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GarageManagement.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class IntialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -150,7 +150,7 @@ namespace GarageManagement.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DriverVoice = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SupervisorInstruction = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SupervisorInstructions = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ActionTaken = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EndTime = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -287,7 +287,7 @@ namespace GarageManagement.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "bookAppointments",
+                name: "BookAppointments",
                 columns: table => new
                 {
                     search = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -307,17 +307,17 @@ namespace GarageManagement.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_bookAppointments", x => x.search);
+                    table.PrimaryKey("PK_BookAppointments", x => x.search);
                     table.ForeignKey(
-                        name: "FK_bookAppointments_Users_UserId",
+                        name: "FK_BookAppointments_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_bookAppointments_UserId",
-                table: "bookAppointments",
+                name: "IX_BookAppointments_UserId",
+                table: "BookAppointments",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -349,7 +349,7 @@ namespace GarageManagement.Server.Migrations
                 name: "AdditionalJobObserveDetail");
 
             migrationBuilder.DropTable(
-                name: "bookAppointments");
+                name: "BookAppointments");
 
             migrationBuilder.DropTable(
                 name: "CheckItems");

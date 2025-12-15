@@ -18,13 +18,12 @@ import { RepairOrderComponent } from './repair-order/repair-order.component';
 import { SparePartIssueDetailsComponent } from './spare-part-issue-details/spare-part-issue-details.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { GarageManagementComponent } from './garage-management/garage-management.component';
+import { ToBeFilledBySupervisorComponent } from './to-be-filled-by-supervisor/to-be-filled-by-supervisor.component';
 import { AdditionalJobObserveDetailsComponent } from './additional-job-observe-details/additional-job-observe-details.component';
 import { LabourDetailsComponent } from './labour-details/labour-details.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { SettingsComponent } from './settings/settings.component';
-import { from } from 'rxjs';
 import { ComponentNameComponent } from './component-name/component-name.component';
 import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.component';
 import { TechnicianMCComponent } from './TechnicianMC/TechnicianMC.component';
@@ -47,6 +46,9 @@ import { GlobalPopupComponent } from './global-popup/global-popup.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AutocompleteComponent } from './autocomplete/autocomplete.component';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { NumbersOnlyDirective } from './directives/appNumbersOnly.directive';
+import { DecimalNumbersDirective } from './directives/appDecimalNumbers.directive';
+import { TwoDecimalNumbersDirective } from './directives/appTwoDecimalNumbers.directive';
 
 @NgModule({
   declarations: [
@@ -61,7 +63,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
     ForgetpasswordComponent,
     ResetpasswordComponent,
     RepairOrderComponent,             
-    GarageManagementComponent,
+    ToBeFilledBySupervisorComponent,
     AdditionalJobObserveDetailsComponent,
     SparePartIssueDetailsComponent,
     NavbarComponent,
@@ -80,7 +82,10 @@ import { OverlayModule } from '@angular/cdk/overlay';
     NewJobCardComponent,
     EstimationComponent,
     GlobalPopupComponent,
-    AutocompleteComponent
+    AutocompleteComponent,
+    NumbersOnlyDirective,
+    DecimalNumbersDirective,
+    TwoDecimalNumbersDirective
   ],
   imports: [
     BrowserModule,

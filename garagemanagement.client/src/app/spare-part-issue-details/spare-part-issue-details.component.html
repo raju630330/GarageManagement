@@ -48,7 +48,7 @@
 
               <!-- Unit Cost -->
               <td>
-                <input type="text" class="form-control" formControlName="unitCost" (input)="forceNumberswithtwodecimalsOnly(i, 'unitCost'); updateTotals()" placeholder="Unit Cost (₹)" />
+                <input appTwoDecimalNumbers type="text" class="form-control" formControlName="unitCost" (input)="updateTotals()" placeholder="Unit Cost (₹)" />
                 <div class="text-danger" *ngIf="part.get('unitCost')?.invalid && part.get('unitCost')?.touched">
                   Valid number (max 2 decimals)
                 </div>
@@ -56,7 +56,7 @@
 
               <!-- Qty -->
               <td>
-                <input type="text" class="form-control" formControlName="qty" (input)="forceNumbersOnly(i, 'qty'); updateTotals()" placeholder="Qty" />
+                <input appNumbersOnly type="text" class="form-control" formControlName="qty" (input)="updateTotals()" placeholder="Qty" />
                 <div class="text-danger" *ngIf="part.get('qty')?.invalid && part.get('qty')?.touched">
                   Numbers only
                 </div>

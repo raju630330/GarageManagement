@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251212042830_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251215080613_IntialCreate")]
+    partial class IntialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,7 +55,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdditionalJobObserveDetail", (string)null);
+                    b.ToTable("AdditionalJobObserveDetail");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.BookAppointment", b =>
@@ -117,7 +117,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("bookAppointments");
+                    b.ToTable("BookAppointments");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.CheckItemEntity", b =>
@@ -478,7 +478,7 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SupervisorInstruction")
+                    b.Property<string>("SupervisorInstructions")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

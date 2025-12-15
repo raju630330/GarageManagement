@@ -22,7 +22,7 @@ namespace GarageManagement.Server.Controllers
             {
                 return BadRequest(ModelState);
             }
-            _context.bookAppointments.Add(bookingAppointmentdata);
+            _context.BookAppointments.Add(bookingAppointmentdata);
             await _context.SaveChangesAsync();
             return Ok(new { message = " Booking Appointment Data saved successfully" });
         }
@@ -30,19 +30,19 @@ namespace GarageManagement.Server.Controllers
         [HttpGet("getAllAppointments")]
         public async Task<IActionResult> GetAllBookingAppointments()
         {
-            var bookingAppointments = await _context.bookAppointments.ToListAsync();
+            var bookingAppointments = await _context.BookAppointments.ToListAsync();
             return Ok(bookingAppointments);
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteBookingAppointment(int id)
         {
-            var bookingAppointment = await _context.bookAppointments.FindAsync(id);
+            var bookingAppointment = await _context.BookAppointments.FindAsync(id);
             if (bookingAppointment == null)
             {
                 return NotFound(new { message = "Booking Appointment not found" });
             }
-            _context.bookAppointments.Remove(bookingAppointment);
+            _context.BookAppointments.Remove(bookingAppointment);
             await _context.SaveChangesAsync();
             return Ok(new { message = "Booking Appointment deleted successfully" });
         }

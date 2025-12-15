@@ -12,46 +12,18 @@ export interface TobeFilledBySupervisor {
   status: string;
 }
 
-//@Injectable({
-//  providedIn: 'root'
-//})
-//export class TobeFilledBySupervisorService {
-
-//  baseUrl = environment.apiUrl;
-//  private supervisorSubject = new BehaviorSubject<TobeFilledBySupervisor[]>([]);
-//  supervisor$ = this.supervisorSubject.asObservable();
-
-//  constructor(private http: HttpClient) { }
-
-//  setSupervisorList(value: TobeFilledBySupervisor[]) {
-//    this.supervisorSubject.next(value);
-//  }
-
-//  //  GET all records
-//  getAllTobeFilledBySupervisor(): Observable<any> {
-//    return this.http.get<TobeFilledBySupervisor[]>(`${this.baseUrl}/TobeFilledBySupervisor/TobeFilledBySupervisor`,);
-//  }
-//  //Create 
-//  createTobeFilledBySupervisor(data:any): Observable<any> {
-//    return this.http.post(`${this.baseUrl}/TobeFilledBySupervisor/TobeFilledBySupervisor`, data);
-//  }
-//}
 @Injectable({
   providedIn: 'root'
 })
 export class ToBeFilledBySupervisorService {
 
-  private baseUrl = environment.apiUrl + '/ToBeFilledBySupervisor/savedetails';
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
   // CREATE record
   createSupervisor(data: any): Observable<any> {
-    return this.http.post(this.baseUrl, data);
+    return this.http.post(`${this.baseUrl}/ToBeFilledBySupervisor/savedetails`, data);
   }
 
-  // GET all records
-  getAllSupervisors(): Observable<any> {
-    return this.http.get(this.baseUrl);
-  }
 }

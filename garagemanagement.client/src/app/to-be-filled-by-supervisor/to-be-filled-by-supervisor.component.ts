@@ -5,12 +5,12 @@ import { AlertService } from '../services/alert.service';
 import { ToBeFilledBySupervisorService } from '../services/tobefilledbysupervisor.service';
 
 @Component({
-  selector: 'app-garage-management',
+  selector: 'app-to-be-filled-by-supervisor',
   standalone: false,
-  templateUrl: './garage-management.component.html',
-  styleUrl: './garage-management.component.css'
+  templateUrl: './to-be-filled-by-supervisor.component.html',
+  styleUrl: './to-be-filled-by-supervisor.component.css'
 })
-export class GarageManagementComponent implements OnInit {
+export class ToBeFilledBySupervisorComponent implements OnInit {
   ROLES = ROLES;
   jobForm!: FormGroup;
   constructor(private fb: FormBuilder, private alert: AlertService, private tobefilledbysupervisor: ToBeFilledBySupervisorService) { }
@@ -53,22 +53,30 @@ export class GarageManagementComponent implements OnInit {
   submit(): void {
     if (this.jobForm.valid) {
 
-      // API Call
-      this.tobefilledbysupervisor.createSupervisor(this.jobForm.value)
-        .subscribe({
-          next: (res) => {
-            this.alert.showSuccess("Form submitted successfully!");
-            console.log(res);
+      const tobefilledbysupervisorDetails = this.jobForm.value.rows.map((row: any) => ({
+          driverVoice: row.driverVoice,
+          supervisorInstructions: row.supervisorInstructions,
+          actionTaken: row.actionTaken,
+          startTime: row.startTime,
+          endTime: row.endTime
+        }));
+
+      this.tobefilledbysupervisor.createSupervisor(tobefilledbysupervisorDetails).subscribe({
+          next: (res: any) => {
+            this.alert.showInfo(res.message || 'All details submitted successfully!', () => {
+              this.rows.clear();
+              this.addRow();
+            });
           },
-          error: (err) => {
-            console.error(err);
-            this.alert.showError("Failed to save the form!");
+          error: (err: any) => {
+            this.alert.showError(err?.error.title || 'Error saving details!');
           }
         });
-
-    } else {
-      this.jobForm.markAllAsTouched();
-      this.alert.showError('Please correct the errors before submitting.');
+      } else {
+        this.jobForm.markAllAsTouched();
+        this.alert.showError('Please fix validation errors before submitting!');
+        return;
+      }
     }
-  }
-  }
+ }
+  
