@@ -6,6 +6,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JobCardService } from '../services/job-card.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GlobalPopupComponent } from '../global-popup/global-popup.component';
+import { TablePopupComponent } from '../table-popup/table-popup.component';
 
 interface EstimationItem {
   name: string;
@@ -249,5 +250,37 @@ export class EstimationComponent implements OnInit {
       panelClass: 'custom-dialog-zindex'
     });
   }
+
+  openPopupForBottomMenu(activeTab: string) {
+
+    this.dialog.open(TablePopupComponent, {
+      width: '95%',
+      maxWidth: '95vw',
+      autoFocus: false,
+      disableClose: true,
+      data: {
+        title: 'Job Card Details',
+
+        tabs: [
+          'TYRE/BATTERY',
+          'CANCELLED INVOICES',
+          'SERVICE SUGGESTIONS',
+          'COLLECTIONS',
+          'REMARKS'
+        ],
+
+        activeTab: activeTab,
+
+        tyreBattery: [],
+        cancelledInvoices: [],
+        serviceSuggestions: [],
+        collections: [],
+        remarks: []
+      }
+    });
+  }
+
+
+
 
 }

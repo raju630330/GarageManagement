@@ -255,13 +255,22 @@
       <button class="btn btn-light btn-sm" data-bs-toggle="dropdown"><i class="bi bi-list fs-5"></i> </button>
       <ul class="dropdown-menu">
         <li>
-          <a class="dropdown-item" href="#">TYRE/BATTERY</a>
+          <a class="dropdown-item" href="#" (click)="$event.preventDefault(); openPopupForBottomMenu('TYRE/BATTERY')">TYRE/BATTERY</a>
         </li>
-        <li><a class="dropdown-item" href="#">CANCELLED INVOICES</a></li>
-        <li><a class="dropdown-item" href="#">SERVICE SUGGESTIONS</a></li>
-        <li><a class="dropdown-item" href="#">COLLECTIONS</a></li>
-        <li><a class="dropdown-item" href="#">REMARKS</a></li>
+        <li>
+          <a class="dropdown-item" href="#" (click)="$event.preventDefault(); openPopupForBottomMenu('CANCELLED INVOICES')">CANCELLED INVOICES</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="#" (click)="$event.preventDefault(); openPopupForBottomMenu('SERVICE SUGGESTIONS')">SERVICE SUGGESTIONS</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="#" (click)="$event.preventDefault(); openPopupForBottomMenu('COLLECTIONS')">COLLECTIONS</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="#" (click)="$event.preventDefault(); openPopupForBottomMenu('REMARKS')">REMARKS</a>
+        </li>
       </ul>
+
     </div>
     <button class="btn btn-light btn-sm"> <i class="bi bi-printer fs-5"></i> </button>
     <button class="btn btn-light btn-sm"> <i class="bi bi-envelope fs-5"></i> </button>

@@ -49,6 +49,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { NumbersOnlyDirective } from './directives/appNumbersOnly.directive';
 import { DecimalNumbersDirective } from './directives/appDecimalNumbers.directive';
 import { TwoDecimalNumbersDirective } from './directives/appTwoDecimalNumbers.directive';
+import { TablePopupComponent } from './table-popup/table-popup.component';
 
 @NgModule({
   declarations: [
@@ -85,7 +86,8 @@ import { TwoDecimalNumbersDirective } from './directives/appTwoDecimalNumbers.di
     AutocompleteComponent,
     NumbersOnlyDirective,
     DecimalNumbersDirective,
-    TwoDecimalNumbersDirective
+    TwoDecimalNumbersDirective,
+    TablePopupComponent
   ],
   imports: [
     BrowserModule,
