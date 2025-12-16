@@ -1,7 +1,7 @@
 <div class="jobcard-wrapper position-relative mb-5">
   <div class="jobcard-header border p-3 d-flex justify-content-between align-items-center">
     <div class="d-flex gap-3 align-items-center">
-      <div class="text-primary">Registration No. / Job Card No. </div> {{ registrationNumber }}
+      <div class="text-primary">Registration No. / Job Card No. </div> {{ vehicleDetails.regNo }}
     </div>
 
     <div class="d-flex gap-2 align-items-center">
@@ -95,13 +95,13 @@
       </div>
 
       <div class="col-md-1">
-        <input type="number" class="form-control"
+        <input appNumbersOnly class="form-control"
                placeholder="Qty"
                formControlName="quantity">
       </div>
 
       <div class="col-md-2">
-        <input type="number" class="form-control"
+        <input appTwoDecimalNumbers class="form-control"
                placeholder="Price"
                formControlName="unitPrice">
       </div>
@@ -151,7 +151,7 @@
           <td>{{ item.value.rate }}</td>
 
           <td class="d-flex justify-content-end">
-            <input style="width:100px" type="number" class="form-control form-control-sm"
+            <input style="width:100px" appNumbersOnly class="form-control form-control-sm"
                    formControlName="discount"
                    (input)="calculateTotals()">
           </td>
@@ -206,7 +206,7 @@
         <tr>
           <td colspan="11" class="text-start fw-bold">Paid:</td>
           <td class="fw-bold text-end">
-            <input type="number" formControlName="paidAmount"
+            <input appTwoDecimalNumbers formControlName="paidAmount"
                    class="form-control form-control-sm"
                    (input)="calculateTotals()">
           </td>
@@ -214,33 +214,6 @@
         <tr> <td colspan="11" class="text-start fw-bold">Balance:</td> <td class="fw-bold text-end">{{ balanceAmount | number:'1.0-2' }}</td> </tr>
 
       </tfoot>
-
-      <!--<tfoot>
-      <tr class="text-center">
-        <td colspan="5" class="text-start fw-bold">Apply Discount:</td>
-        <td class="d-flex justify-content-end">
-        <input style="width:100px" type="number" class="form-control text-center" [(ngModel)]="applyDiscount" (input)="calculateTotals()" />
-          </td>
-        <td colspan="6"></td>
-        </tr>
-      <tr>
-        <td colspan="5" class="text-start fw-bold">Grand Total:</td>--> <!-- Discount Total -->
-        <!--<td class="fw-bold text-end">{{ totalDiscount | number:'1.0-2' }}</td> <td colspan="2"></td>--> <!-- Tax Total -->
-        <!--<td class="fw-bold text-end">{{ totalTax | number:'1.0-2' }}</td>--> <!-- Final Amount After Applying Discount -->
-        <!--<td class="fw-bold text-end">{{ netTotal | number:'1.0-2' }}</td>
-        <td colspan="2"></td> </tr> <tr> <td colspan="11" class="text-start fw-bold">Discount:</td>
-        <td class="fw-bold text-end">{{ applyDiscount | number:'1.0-2' }}</td>
-             </tr>
-      <tr>
-        <td colspan="11" class="text-start fw-bold">Round Off:</td>
-        <td class="fw-bold text-end">{{ roundOff | number:'1.0-2' }}</td>
-        </tr>
-      <tr>
-        <td colspan="11" class="text-start fw-bold">Paid:</td>
-        <td class="fw-bold text-end">0</td> </tr> <tr> <td colspan="11" class="text-start fw-bold">Balance:</td>
-        <td class="fw-bold text-end">{{ balanceAmount | number:'1.0-2' }}</td>
-              </tr>
-      </tfoot>-->
     </table>
   </div>
 
@@ -254,29 +227,70 @@
     <div class="dropup">
       <button class="btn btn-light btn-sm" data-bs-toggle="dropdown"><i class="bi bi-list fs-5"></i> </button>
       <ul class="dropdown-menu">
+
         <li>
-          <a class="dropdown-item" href="#" (click)="$event.preventDefault(); openPopupForBottomMenu('TYRE/BATTERY')">TYRE/BATTERY</a>
+          <a class="dropdown-item d-flex align-items-center gap-2"
+             href="#"
+             (click)="$event.preventDefault(); openPopupForBottomMenu('TYRE/BATTERY')">
+            <i class="bi bi-disc text-primary"></i>
+            TYRE / BATTERY
+          </a>
         </li>
+
         <li>
-          <a class="dropdown-item" href="#" (click)="$event.preventDefault(); openPopupForBottomMenu('CANCELLED INVOICES')">CANCELLED INVOICES</a>
+          <a class="dropdown-item d-flex align-items-center gap-2"
+             href="#"
+             (click)="$event.preventDefault(); openPopupForBottomMenu('CANCELLED INVOICES')">
+            <i class="bi bi-file-earmark-x text-primary"></i>
+            CANCELLED INVOICES
+          </a>
         </li>
+
         <li>
-          <a class="dropdown-item" href="#" (click)="$event.preventDefault(); openPopupForBottomMenu('SERVICE SUGGESTIONS')">SERVICE SUGGESTIONS</a>
+          <a class="dropdown-item d-flex align-items-center gap-2"
+             href="#"
+             (click)="$event.preventDefault(); openPopupForBottomMenu('SERVICE SUGGESTIONS')">
+            <i class="bi bi-lightbulb text-primary"></i>
+            SERVICE SUGGESTIONS
+          </a>
         </li>
+
         <li>
-          <a class="dropdown-item" href="#" (click)="$event.preventDefault(); openPopupForBottomMenu('COLLECTIONS')">COLLECTIONS</a>
+          <a class="dropdown-item d-flex align-items-center gap-2"
+             href="#"
+             (click)="$event.preventDefault(); openPopupForBottomMenu('COLLECTIONS')">
+            <i class="bi bi-cash-coin text-primary"></i>
+            COLLECTIONS
+          </a>
         </li>
+
         <li>
-          <a class="dropdown-item" href="#" (click)="$event.preventDefault(); openPopupForBottomMenu('REMARKS')">REMARKS</a>
+          <a class="dropdown-item d-flex align-items-center gap-2"
+             href="#"
+             (click)="$event.preventDefault(); openPopupForBottomMenu('REMARKS')">
+            <i class="bi bi-chat-left-text text-primary"></i>
+            REMARKS
+          </a>
         </li>
+
       </ul>
+
 
     </div>
     <button class="btn btn-light btn-sm"> <i class="bi bi-printer fs-5"></i> </button>
     <button class="btn btn-light btn-sm"> <i class="bi bi-envelope fs-5"></i> </button>
     <button class="btn btn-light btn-sm"> <i class="bi bi-car-front fs-5"></i> </button>
     <button class="btn btn-light btn-sm"> <i class="bi bi-percent fs-5"></i> </button>
-    <button class="btn btn-danger btn-sm"> Cancel Job Card </button>
+    <div>
+      <button *ngIf="estimationForm.get('items')?.value.length > 0; else cancelBtn"
+              class="btn btn-success btn-sm"
+              (click)="markJobAsDone()">
+        Job Done
+      </button>
+      <ng-template #cancelBtn>
+        <button class="btn btn-danger btn-sm" (click)="cancelJobCard()">Cancel Job Card</button>
+      </ng-template>
+    </div>
   </div>
   <!-- RIGHT SECTION: ORDER PARTS -->
   <div>

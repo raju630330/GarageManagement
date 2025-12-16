@@ -146,7 +146,7 @@ export class NewJobCardComponent implements OnInit {
     this.jobcardService.saveJobCard(dto).subscribe({
       next: (res) => {
         this.router.navigate(['/estimate'], {
-          queryParams: { registrationNo: res.registrationNo }
+          queryParams: { id: res.id }
         });
       },
       error: (err) => {

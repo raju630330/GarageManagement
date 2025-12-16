@@ -4,30 +4,38 @@
     {
         public long Id { get; set; }
 
-        // --- Vehicle Data ---
-        public string? RegistrationNo { get; set; }
+        // Vehicle
+        public string RegistrationNo { get; set; } = string.Empty;
         public long? OdometerIn { get; set; }
         public long? AvgKmsPerDay { get; set; }
-        public string? Vin { get; set; }
-        public string? EngineNo { get; set; }
-        public string? VehicleColor { get; set; }
-        public string? FuelType { get; set; }
-        public string? ServiceType { get; set; }
-        public string? ServiceAdvisor { get; set; }
-        public string? Technician { get; set; }
-        public string? Vendor { get; set; }
+        public string Vin { get; set; } = string.Empty;
+        public string EngineNo { get; set; } = string.Empty;
+        public string VehicleColor { get; set; } = string.Empty;
+        public string FuelType { get; set; } = string.Empty;
+        public string ServiceType { get; set; } = string.Empty;
+        public string ServiceAdvisor { get; set; } = string.Empty;
+        public string Technician { get; set; } = string.Empty;
+        public string Vendor { get; set; } = string.Empty;
 
-        // --- Customer Info ---
-        public string? Corporate { get; set; }
-        public string? CustomerName { get; set; }
-        public string? Mobile { get; set; }
-        public string? AlternateMobile { get; set; }
-        public string? Email { get; set; }
+        // Customer
+        public string Corporate { get; set; } = string.Empty;
+        public string CustomerName { get; set; } = string.Empty;
+        public string Mobile { get; set; } = string.Empty;
+        public string AlternateMobile { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public DateTime? DeliveryDate { get; set; }
-        public string? InsuranceCompany { get; set; }
+        public string InsuranceCompany { get; set; } = string.Empty;
 
-        // --- Navigation ---
+        // Popup (single column)
+        public string ServiceSuggestions { get; set; } = string.Empty;
+        public string Remarks { get; set; } = string.Empty;
+
+        // Navigation
         public JobCardAdvancePayment? AdvancePayment { get; set; }
-        public ICollection<JobCardConcern>? Concerns { get; set; }
+        public ICollection<JobCardConcern> Concerns { get; set; } = new List<JobCardConcern>();
+        public ICollection<JobCardTyreBattery>? TyreBatteries { get; set; }
+        public ICollection<JobCardCancelledInvoice>? CancelledInvoices { get; set; }
+        public ICollection<JobCardCollection>? Collections { get; set; }
+
     }
 }

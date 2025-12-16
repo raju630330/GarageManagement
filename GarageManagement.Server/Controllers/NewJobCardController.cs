@@ -126,7 +126,7 @@ namespace GarageManagement.Server.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(new { registrationNo = job.RegistrationNo });
+            return Ok(new { id = job.Id });
         }
 
         [HttpGet("search-registration")]
@@ -197,6 +197,75 @@ namespace GarageManagement.Server.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("save-estimation")]
+        public async Task<IActionResult> saveEstimationDetails(JobCardSaveDto model)
+        {
+            if (model == null || model.JobCardId == 0)
+                return BadRequest("Invalid JobCard data.");
+
+            var jobCard = await _context.JobCards
+                .Include(j => j.Collections)
+                .Include(j => j.TyreBatteries)
+                .Include(j => j.CancelledInvoices)
+                .FirstOrDefaultAsync(j => j.Id == model.JobCardId);
+
+            if (jobCard == null)
+                return NotFound("JobCard not found.");
+
+            // --- Tyre/Battery ---
+            jobCard.TyreBatteries.Clear();
+            foreach (var tb in model.Popup.TyreBattery)
+            {
+                jobCard.TyreBatteries.Add(new JobCardTyreBattery
+                {
+                    Type = tb.Type,
+                    Brand = tb.Brand,
+                    Model = tb.Model,
+                    ManufactureDate = tb.ManufactureDate,
+                    ExpiryDate = tb.ExpiryDate,
+                    Condition = tb.Condition
+                });
+            }
+
+            // --- Cancelled Invoices ---
+            jobCard.CancelledInvoices.Clear();
+            foreach (var ci in model.Popup.CancelledInvoices)
+            {
+                jobCard.CancelledInvoices.Add(new JobCardCancelledInvoice
+                {
+                    InvoiceNo = ci.InvoiceNo,
+                    Date = ci.Date,
+                    Amount = ci.Amount
+                });
+            }
+
+            // --- Collections ---
+            jobCard.Collections.Clear();
+            foreach (var c in model.Popup.Collections)
+            {
+                jobCard.Collections.Add(new JobCardCollection
+                {
+                    Type = c.Type,
+                    Bank = c.Bank,
+                    ChequeNo = c.ChequeNo,
+                    Amount = c.Amount,
+                    Date = c.Date,
+                    InvoiceNo = c.InvoiceNo,
+                    Remarks = c.Remarks
+                });
+            }
+
+            // --- Simple fields ---
+            jobCard.ServiceSuggestions = model.Popup.ServiceSuggestions;
+            jobCard.Remarks = model.Popup.Remarks;
+
+            _context.JobCards.Update(jobCard);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, jobCardId = jobCard.Id });
+        }
+
 
     }
 }

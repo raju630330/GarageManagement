@@ -54,3 +54,32 @@ export interface JobCardDto {
     date: string;
   };
 }
+
+export interface VehicleDetailsUI {
+  regNo: string;
+  jobCardNo: string;
+
+  customerName: string;
+  mobile: string;
+  email: string;
+
+  odometer: number;
+  model: string;
+  fuelType: string;
+  vin: string;
+  engineNo: string;
+}
+
+export interface EstimationItem {
+  name: string;
+  type: string;
+  partNo: string;
+  rate: number;
+  discount: number;
+  hsn: string;
+  taxPercent: number;
+  taxAmount: number;
+  total: number;
+  approval: string;
+  reason: string;
+}

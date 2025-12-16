@@ -16,13 +16,13 @@
     <table class="table table-bordered table-sm text-center">
       <thead>
         <tr>
-          <th>Type *</th>
-          <th>Brand *</th>
-          <th>Model *</th>
-          <th>MFG Date *</th>
-          <th>Expiry Date *</th>
-          <th>Condition *</th>
-          <th>Action</th>
+          <th>Type</th>
+          <th>Brand</th>
+          <th>Model</th>
+          <th>Manufacture Date</th>
+          <th>Expiry Date</th>
+          <th>Condition</th>
+          <th></th>
         </tr>
       </thead>
       <tbody formArrayName="tyreBattery">
@@ -36,8 +36,20 @@
             <div *ngIf="row.get('type')?.invalid && row.get('type')?.touched" class="text-danger small">Select Type</div>
           </td>
           <td>
-            <input class="form-control form-control-sm" formControlName="brand">
-            <div *ngIf="row.get('brand')?.invalid && row.get('brand')?.touched" class="text-danger small">Brand is required</div>
+            <select class="form-select form-select-sm" formControlName="brand">
+              <option value="">Select Brand</option>
+              <option *ngFor="let b of (row.get('type')?.value === 'Tyre'
+                              ? ['MRF', 'Apollo', 'JK']
+                              : row.get('type')?.value === 'Battery'
+                              ? ['Exide', 'Amaron', 'SF Sonic']
+                              : [])"
+                      [value]="b">
+                {{ b }}
+              </option>
+            </select>
+            <div *ngIf="row.get('brand')?.invalid && row.get('brand')?.touched" class="text-danger small">
+              Brand is required
+            </div>
           </td>
           <td>
             <input class="form-control form-control-sm" formControlName="model">
@@ -53,20 +65,19 @@
           </td>
           <td>
             <select class="form-select form-select-sm" formControlName="condition">
-              <option value="">Select Condition</option>
+              <option value="" selected>Select Condition</option>
               <option>New</option>
               <option>Used</option>
               <option>Damaged</option>
             </select>
             <div *ngIf="row.get('condition')?.invalid && row.get('condition')?.touched" class="text-danger small">Condition is required</div>
           </td>
-          <td>
-            <button class="btn btn-danger btn-sm" (click)="removeRow('TYRE/BATTERY', i)">X</button>
+          <td *appHasRole="[ROLES.ADMIN]">
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeRow('TYRE/BATTERY', i)" title="Delete"><i class="bi bi-trash"></i></button>
           </td>
         </tr>
       </tbody>
     </table>
-    <button class="btn btn-primary btn-sm" (click)="addRow('TYRE/BATTERY')">+ Add</button>
   </div>
 
   <!-- ================= CANCELLED INVOICES ================= -->
@@ -74,93 +85,64 @@
     <table class="table table-bordered table-sm text-center">
       <thead>
         <tr>
-          <th>Invoice No *</th>
-          <th>Date *</th>
-          <th>Cancelled By</th>
-          <th>Reason</th>
-          <th>Amount ₹ *</th>
-          <th>Action</th>
+          <th>Sl No.</th>
+          <th>Invoice No.</th>
+          <th>Invoice Date</th>
+          <th>Invoice Amount</th>
+          <th></th>
         </tr>
       </thead>
       <tbody formArrayName="cancelledInvoices">
         <tr *ngFor="let row of getArray('CANCELLED INVOICES').controls; let i=index" [formGroupName]="i">
+          <td>{{ i + 1 }}</td>
           <td>
             <input class="form-control form-control-sm" formControlName="invoiceNo">
             <div *ngIf="row.get('invoiceNo')?.invalid && row.get('invoiceNo')?.touched" class="text-danger small">Invoice No is required</div>
           </td>
           <td>
             <input type="date" class="form-control form-control-sm" formControlName="date">
-            <div *ngIf="row.get('date')?.invalid && row.get('date')?.touched" class="text-danger small">Date is required</div>
+            <div *ngIf="row.get('date')?.invalid && row.get('date')?.touched" class="text-danger small">Invoice Date is required</div>
           </td>
           <td>
-            <input class="form-control form-control-sm" formControlName="cancelledBy">
-            <div *ngIf="row.get('cancelledBy')?.invalid && row.get('cancelledBy')?.touched" class="text-danger small">Cancelled by required</div>
-          </td>
-          <td>
-            <input class="form-control form-control-sm" formControlName="reason">
-            <div *ngIf="row.get('reason')?.invalid && row.get('reason')?.touched" class="text-danger small">Reason is required</div>
-          </td>
-          <td>
-            <input type="number" class="form-control form-control-sm" formControlName="amount">
+            <input appTwoDecimalNumbers class="form-control form-control-sm" formControlName="amount">
             <div *ngIf="row.get('amount')?.invalid && row.get('amount')?.touched" class="text-danger small">Amount is required & must be ≥0</div>
           </td>
-          <td><button class="btn btn-danger btn-sm" (click)="removeRow('CANCELLED INVOICES', i)">X</button></td>
+          <td *appHasRole="[ROLES.ADMIN]">
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeRow('CANCELLED INVOICES', i)" title="Delete"><i class="bi bi-trash"></i></button>
+          </td>
         </tr>
       </tbody>
     </table>
-    <button class="btn btn-primary btn-sm" (click)="addRow('CANCELLED INVOICES')">+ Add</button>
   </div>
 
   <!-- ================= SERVICE SUGGESTIONS ================= -->
   <div *ngIf="activeTab === 'SERVICE SUGGESTIONS'">
-    <table class="table table-bordered table-sm text-center">
-      <thead>
-        <tr>
-          <th>Suggestion *</th>
-          <th>Priority *</th>
-          <th>Remarks</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody formArrayName="serviceSuggestions">
-        <tr *ngFor="let row of getArray('SERVICE SUGGESTIONS').controls; let i=index" [formGroupName]="i">
-          <td>
-            <input class="form-control form-control-sm" formControlName="suggestion">
-            <div *ngIf="row.get('suggestion')?.invalid && row.get('suggestion')?.touched" class="text-danger small">Suggestion is required</div>
-          </td>
-          <td>
-            <select class="form-select form-select-sm" formControlName="priority">
-              <option value="">Select Priority</option>
-              <option>Low</option>
-              <option>Medium</option>
-              <option>High</option>
-            </select>
-            <div *ngIf="row.get('priority')?.invalid && row.get('priority')?.touched" class="text-danger small">Priority is required</div>
-          </td>
-          <td>
-            <input class="form-control form-control-sm" formControlName="remarks">
-            <div *ngIf="row.get('remarks')?.invalid && row.get('remarks')?.touched" class="text-danger small">Reamarks is required</div>
-          </td>
-          <td><button class="btn btn-danger btn-sm" (click)="removeRow('SERVICE SUGGESTIONS', i)">X</button></td>
-        </tr>
-      </tbody>
-    </table>
-    <button class="btn btn-primary btn-sm" (click)="addRow('SERVICE SUGGESTIONS')">+ Add</button>
+    <textarea class="form-control"
+              formControlName="serviceSuggestions"
+              placeholder="Enter service suggestions">
+  </textarea>
+
+    <div class="text-danger small"
+         *ngIf="form.get('serviceSuggestions')?.invalid
+           && form.get('serviceSuggestions')?.touched">
+      Suggestion is required
+    </div>
   </div>
+
 
   <!-- ================= COLLECTIONS ================= -->
   <div *ngIf="activeTab === 'COLLECTIONS'">
     <table class="table table-bordered table-sm text-center">
       <thead>
         <tr>
-          <th>Type *</th>
-          <th>Bank *</th>
+          <th>Type</th>
+          <th>Bank Name</th>
           <th>Cheque No</th>
-          <th>Amount ₹ *</th>
+          <th>Amount</th>
           <th>Date</th>
           <th>Invoice No</th>
           <th>Remarks</th>
-          <th>Action</th>
+          <th></th>
         </tr>
       </thead>
       <tbody formArrayName="collections">
@@ -190,7 +172,7 @@
             <div *ngIf="row.get('chequeNo')?.invalid && row.get('chequeNo')?.touched" class="text-danger small">Cheque No. is required</div>
           </td>
           <td>
-            <input type="number" class="form-control form-control-sm" formControlName="amount">
+            <input appTwoDecimalNumbers class="form-control form-control-sm" formControlName="amount">
             <div *ngIf="row.get('amount')?.invalid && row.get('amount')?.touched" class="text-danger small">Amount is required & must be ≥0</div>
           </td>
           <td>
@@ -205,48 +187,46 @@
             <input class="form-control form-control-sm" formControlName="remarks">
             <div *ngIf="row.get('remarks')?.invalid && row.get('remarks')?.touched" class="text-danger small">Remarks is required</div>
           </td>
-          <td><button class="btn btn-danger btn-sm" (click)="removeRow('COLLECTIONS', i)">X</button></td>
+          <td *appHasRole="[ROLES.ADMIN]">
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeRow('COLLECTIONS', i)" title="Delete"><i class="bi bi-trash"></i></button>
+          </td>
         </tr>
       </tbody>
     </table>
-    <button class="btn btn-primary btn-sm" (click)="addRow('COLLECTIONS')">+ Add</button>
   </div>
 
   <!-- ================= REMARKS ================= -->
   <div *ngIf="activeTab === 'REMARKS'">
-    <table class="table table-bordered table-sm text-center">
-      <thead>
-        <tr>
-          <th>Remark *</th>
-          <th>Added By *</th>
-          <th>Date *</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody formArrayName="remarks">
-        <tr *ngFor="let row of getArray('REMARKS').controls; let i=index" [formGroupName]="i">
-          <td>
-            <input class="form-control form-control-sm" formControlName="remark">
-            <div *ngIf="row.get('remark')?.invalid && row.get('remark')?.touched" class="text-danger small">Remark is required</div>
-          </td>
-          <td>
-            <input class="form-control form-control-sm" formControlName="addedBy">
-            <div *ngIf="row.get('addedBy')?.invalid && row.get('addedBy')?.touched" class="text-danger small">Added By is required</div>
-          </td>
-          <td>
-            <input type="date" class="form-control form-control-sm" formControlName="date">
-            <div *ngIf="row.get('date')?.invalid && row.get('date')?.touched" class="text-danger small">Date is required</div>
-          </td>
-          <td><button class="btn btn-danger btn-sm" (click)="removeRow('REMARKS', i)">X</button></td>
-        </tr>
-      </tbody>
-    </table>
-    <button class="btn btn-primary btn-sm" (click)="addRow('REMARKS')">+ Add</button>
+    <textarea class="form-control"
+              formControlName="remarks"
+              placeholder="Enter remarks">
+    </textarea>
+
+    <div class="text-danger small"
+         *ngIf="form.get('remarks')?.invalid
+         && form.get('remarks')?.touched">
+      Remarks is required
+    </div>
   </div>
 
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-raised-button color="primary" (click)="save()">Save</button>
-  <button mat-raised-button color="warn" (click)="close()">Close</button>
+<mat-dialog-actions class="d-flex align-items-center">
+
+  <!-- ADD BUTTON (only when needed) -->
+  <button *ngIf="activeTab !== 'SERVICE SUGGESTIONS' && activeTab !== 'REMARKS'"
+          class="btn btn-primary btn-sm"
+          (click)="addRow(activeTab)">
+    + Add
+  </button>
+
+  <!-- CLOSE BUTTON (always at END) -->
+  <button mat-raised-button
+          color="warn"
+          class="ms-auto"
+          (click)="close()">
+    Close
+  </button>
+
 </mat-dialog-actions>
+

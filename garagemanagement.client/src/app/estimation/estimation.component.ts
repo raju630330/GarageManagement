@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../services/alert.service';
 import { ROLES } from '../constants/roles.constants';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -7,20 +7,9 @@ import { JobCardService } from '../services/job-card.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GlobalPopupComponent } from '../global-popup/global-popup.component';
 import { TablePopupComponent } from '../table-popup/table-popup.component';
+import { JobCardDto, VehicleDetailsUI } from '../models/job-card';
 
-interface EstimationItem {
-  name: string;
-  type: string;
-  partNo: string;
-  rate: number;
-  discount: number;
-  hsn: string;
-  taxPercent: number;
-  taxAmount: number;
-  total: number;
-  approval: string;
-  reason: string;
-}
+
 
 @Component({
   selector: 'app-estimation',
@@ -32,11 +21,27 @@ export class EstimationComponent implements OnInit {
 
   ROLES = ROLES;
 
-  registrationNumber: string = '';
+  id!: number;
+
+  vehicleDetails: VehicleDetailsUI = {
+    regNo: '',
+    jobCardNo: '',
+    customerName: '',
+    mobile: '',
+    email: '',
+    odometer: 0,
+    model: '',
+    fuelType: '',
+    vin: '',
+    engineNo: ''
+  };
+
   totalDue = 10000;
   showCanvas = false;
   showEstimation = true;
   showMenu = false;
+  popupData: any = {};
+
 
   /* -----------------------------------------
      Reactive Form Setup
@@ -46,7 +51,7 @@ export class EstimationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog,
+    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog, private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -67,9 +72,12 @@ export class EstimationComponent implements OnInit {
     });
 
     this.route.queryParamMap.subscribe(params => {
-      this.registrationNumber = params.get('registrationNo') || '';
-      this.loadEstimationData(this.registrationNumber);
-      this.loadPreviousJobCards(this.registrationNumber);
+      const idParam = params.get('id');
+      if (idParam) {
+        this.id = Number(idParam);
+        this.loadEstimationData(this.id);
+        this.loadPreviousJobCards(this.id);
+      }
     });
   }
 
@@ -81,25 +89,30 @@ export class EstimationComponent implements OnInit {
     return this.estimationForm.get('items') as FormArray;
   }
 
-  loadEstimationData(regNo: string): void {
-    console.log('Load estimation data for:', regNo);
+  loadEstimationData(id: number): void {
+    this.jobcardService.getJobCardDetails(id).subscribe({
+      next: (res) => {
+
+        this.vehicleDetails = {
+          regNo: res.vehicleData.registrationNo,
+          jobCardNo: id.toString(),
+
+          customerName: res.customerInfo.customerName,
+          mobile: res.customerInfo.mobile,
+          email: res.customerInfo.email,
+
+          odometer: +res.vehicleData.odometerIn,
+          model: res.vehicleData.serviceType,   // or actual model field
+          fuelType: res.vehicleData.fuelType,
+          vin: res.vehicleData.vin,
+          engineNo: res.vehicleData.engineNo
+        };
+
+      },
+      error: err => console.error(err)
+    });
   }
 
-  /* -----------------------------------------
-   Vehicle / Customer Details
------------------------------------------ */
-  vehicleDetails = {
-    regNo: '',
-    jobCardNo: 'JC-0001',
-    customerName: 'Ramesh',
-    mobile: '9876543210',
-    email: 'ramesh@mail.test',
-    odometer: 45200,
-    model: 'i20 Magna',
-    fuelType: 'Petrol',
-    vin: 'KMH1VIN0001',
-    engineNo: 'ENG-12345'
-  };
 
   /* -----------------------------------------
    Service Categories
@@ -137,6 +150,7 @@ export class EstimationComponent implements OnInit {
   addItem(): void {
     if (this.addItemForm.invalid) {
       this.addItemForm.markAllAsTouched();
+      this.alert.showError('Please fill all required fields before adding the item.');
       return;
     }
 
@@ -220,8 +234,8 @@ export class EstimationComponent implements OnInit {
     this.addItemForm.get('search')?.setValue(cat.label);
   }
 
-  loadPreviousJobCards(regNo: string) {
-    this.previousJobCards = this.jobcardService.getPreviousJobCards(regNo);
+  loadPreviousJobCards(id: number) {
+    this.previousJobCards = this.jobcardService.getPreviousJobCards(id);
   }
   openPreviousJobCardsPopup() {
     if (!this.previousJobCards || this.previousJobCards.length === 0) {
@@ -252,15 +266,15 @@ export class EstimationComponent implements OnInit {
   }
 
   openPopupForBottomMenu(activeTab: string) {
+    console.log('BOTTOM MENU CLICKED:', activeTab);
 
-    this.dialog.open(TablePopupComponent, {
+    const dialogRef = this.dialog.open(TablePopupComponent, {
       width: '95%',
       maxWidth: '95vw',
       autoFocus: false,
       disableClose: true,
       data: {
         title: 'Job Card Details',
-
         tabs: [
           'TYRE/BATTERY',
           'CANCELLED INVOICES',
@@ -268,19 +282,101 @@ export class EstimationComponent implements OnInit {
           'COLLECTIONS',
           'REMARKS'
         ],
-
         activeTab: activeTab,
+        // send previously saved data to the popup
+        tyreBattery: this.popupData.tyreBattery || [],
+        cancelledInvoices: this.popupData.cancelledInvoices || [],
+        serviceSuggestions: this.popupData.serviceSuggestions || '',
+        collections: this.popupData.collections || [],
+        remarks: this.popupData.remarks || ''
+      }
+    });
 
-        tyreBattery: [],
-        cancelledInvoices: [],
-        serviceSuggestions: [],
-        collections: [],
-        remarks: []
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log(`POPUP DATA FOR ${activeTab}:`, result);
+        // store the result in popupData
+        this.popupData = { ...this.popupData, ...result };
+      } else {
+        console.log(`POPUP CLOSED WITHOUT DATA FOR ${activeTab}`);
       }
     });
   }
 
 
+  markJobAsDone() {
+    if (!this.popupData) {
+      this.alert.showError('Please fill the Job Card popup details before saving.');
+      return;
+    }
 
+    const requiredFields: Record<string, string[]> = {
+      tyreBattery: ['type', 'brand', 'model', 'manufactureDate', 'expiryDate', 'condition'],
+      cancelledInvoices: ['invoiceNo', 'date', 'amount'],
+      collections: ['type', 'bank', 'chequeNo', 'amount', 'date', 'invoiceNo', 'remarks'],
+      serviceSuggestions: ['serviceSuggestions'],
+      remarks: ['remarks']
+    };
 
+    for (const tabKey of Object.keys(requiredFields)) {
+      const tabData = this.popupData[tabKey];
+
+      if (Array.isArray(tabData)) {
+        const invalidRow = tabData.find((row: any) =>
+          requiredFields[tabKey].some(field => !row[field] && row[field] !== 0)
+        );
+        if (invalidRow) {
+          this.alert.showError(`Please fill all required fields in ${tabKey}.`);
+          return;
+        }
+      } else {
+        if (!tabData || tabData.toString().trim() === '') {
+          this.alert.showError(`Please enter ${tabKey}.`);
+          return;
+        }
+      }
+    }
+
+    // Exclude addItemForm
+    const { addItemForm, ...estimationDetails } = this.estimationForm.value;
+
+    // Include JobCardId in payload
+    const payload = {
+      jobCardId: this.id,    // <--- HERE
+      estimation: estimationDetails,
+      popup: this.popupData
+    };
+
+    console.log(payload);
+
+    // Call API
+    this.jobcardService.saveJobCardEstimation(payload).subscribe({
+      next: (res) => {
+        this.router.navigate(['/jobcardlist']);
+      },
+      error: (err) => {
+        console.error(err);
+
+        // Check if backend returned validation errors
+        if (err.status === 400 && err.error?.errors) {
+          // err.error.errors should be a dictionary { fieldName: errorMessage }
+          Object.keys(err.error.errors).forEach((field) => {
+            const control = this.estimationForm.get(field);
+            if (control) {
+              control.setErrors({ backend: err.error.errors[field] });
+            }
+          });
+        } else {
+          // Generic error alert
+          alert(err.error?.message || 'Something went wrong!');
+        }
+      }
+    });
+  }
+
+  cancelJobCard() {
+    this.alert.showInfo("Job Card Cancelled");
+    this.router.navigate(['/jobcardlist']);
+    return;
+  }
 }

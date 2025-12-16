@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormArray, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from '../services/alert.service';
+import { ROLES } from '../constants/roles.constants';
 
 @Component({
   selector: 'app-table-popup',
@@ -10,7 +11,7 @@ import { AlertService } from '../services/alert.service';
   standalone: false
 })
 export class TablePopupComponent implements OnInit {
-
+  ROLES = ROLES;
   activeTab: string;
   form!: FormGroup;
 
@@ -26,19 +27,36 @@ export class TablePopupComponent implements OnInit {
     this.form = this.fb.group({
       tyreBattery: this.fb.array([]),
       cancelledInvoices: this.fb.array([]),
-      serviceSuggestions: this.fb.array([]),
+      serviceSuggestions: ['', Validators.required], // single control
       collections: this.fb.array([]),
-      remarks: this.fb.array([])
+      remarks: ['', Validators.required],
     });
 
-    // Initialize existing data or add one empty row per tab
     for (const tab of this.data.tabs) {
+
+      // IMPORTANT: skip SERVICE SUGGESTIONS
+      if (tab === 'SERVICE SUGGESTIONS') {
+        this.form.patchValue({
+          serviceSuggestions: this.data.serviceSuggestions || ''
+        });
+        continue;
+      }
+      if (tab === 'REMARKS') {
+        this.form.patchValue({
+          remarks: this.data.remarks || ''
+        });
+        continue;
+      }
+
       const arr = this.getArray(tab);
       const existingData = this.data[toCamelCase(tab)] || [];
+
       if (existingData.length) {
-        existingData.forEach((item: any) => arr.push(this.createRow(tab, item)));
+        existingData.forEach((item: any) =>
+          arr.push(this.createRow(tab, item))
+        );
       } else {
-        arr.push(this.createRow(tab)); // Add empty row
+        arr.push(this.createRow(tab));
       }
     }
   }
@@ -57,21 +75,13 @@ export class TablePopupComponent implements OnInit {
           model: [data.model || '', Validators.required],
           manufactureDate: [data.manufactureDate || '', Validators.required],
           expiryDate: [data.expiryDate || '', Validators.required],
-          condition: [data.condition || 'New', Validators.required]
+          condition: [data.condition || '', Validators.required]
         });
       case 'CANCELLED INVOICES':
         return this.fb.group({
           invoiceNo: [data.invoiceNo || '', Validators.required],
           date: [data.date || '', Validators.required],
-          cancelledBy: [data.cancelledBy || '', Validators.required],
-          reason: [data.reason || '', Validators.required],
           amount: [data.amount || 0, [Validators.required, Validators.min(0)]]
-        });
-      case 'SERVICE SUGGESTIONS':
-        return this.fb.group({
-          suggestion: [data.suggestion || '', Validators.required],
-          priority: [data.priority || 'Low', Validators.required],
-          remarks: [data.remarks || '', Validators.required]
         });
       case 'COLLECTIONS':
         return this.fb.group({
@@ -82,12 +92,6 @@ export class TablePopupComponent implements OnInit {
           date: [data.date || '', Validators.required],
           invoiceNo: [data.invoiceNo || '', Validators.required],
           remarks: [data.remarks || '', Validators.required]
-        });
-      case 'REMARKS':
-        return this.fb.group({
-          remark: [data.remark || '', Validators.required],
-          addedBy: [data.addedBy || '', Validators.required],
-          date: [data.date || '', Validators.required]
         });
       default:
         return this.fb.group({});
@@ -157,7 +161,12 @@ export class TablePopupComponent implements OnInit {
   }
 
   close() {
-    this.dialogRef.close();
+    this.form.markAllAsTouched();
+    if (this.form.invalid) {
+      this.alert.showError('Please fill all required fields.');
+      return;
+    }
+    this.dialogRef.close(this.form.value);
   }
 
 }

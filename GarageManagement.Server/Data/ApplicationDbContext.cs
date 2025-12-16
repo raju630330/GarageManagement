@@ -23,6 +23,10 @@ namespace GarageManagement.Server.Data
         public DbSet<JobCardAdvancePayment> JobCardAdvancePayments { get; set; }
         public DbSet<AdditionalJobObserveDetail> AdditionalJobObserveDetail { get; set; }
         public DbSet<ToBeFilledBySupervisor> ToBeFilledBySupervisor { get; set; }
+        public DbSet<JobCardTyreBattery> JobCardTyreBatteries { get; set; }
+        public DbSet<JobCardCancelledInvoice> JobCardCancelledInvoices { get; set; }
+        public DbSet<JobCardCollection> JobCardCollections { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,6 +56,29 @@ namespace GarageManagement.Server.Data
                 entity.Property(e => e.Cash)
                       .HasColumnType("decimal(18,2)");
             });
+            modelBuilder.Entity<JobCardTyreBattery>()
+                .HasOne(t => t.JobCard)
+                .WithMany(j => j.TyreBatteries)
+                .HasForeignKey(t => t.JobCardId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<JobCardCancelledInvoice>()
+                .HasOne(c => c.JobCard)
+                .WithMany(j => j.CancelledInvoices)
+                .HasForeignKey(c => c.JobCardId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<JobCardCollection>(entity =>
+            {
+                entity.HasOne(c => c.JobCard)
+                      .WithMany(j => j.Collections)
+                      .HasForeignKey(c => c.JobCardId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Property(e => e.Amount)
+                      .HasColumnType("decimal(18,2)");
+            });
+
         }
     }
 }
