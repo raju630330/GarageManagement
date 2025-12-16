@@ -27,12 +27,15 @@
         public string InsuranceCompany { get; set; } = string.Empty;
 
         // Popup (single column)
+        public decimal Discount { get; set; }
+        public decimal Paid { get; set; }
         public string ServiceSuggestions { get; set; } = string.Empty;
         public string Remarks { get; set; } = string.Empty;
 
         // Navigation
         public JobCardAdvancePayment? AdvancePayment { get; set; }
         public ICollection<JobCardConcern> Concerns { get; set; } = new List<JobCardConcern>();
+        public ICollection<JobCardEstimationItem>? JobCardEstimationItems { get; set; }
         public ICollection<JobCardTyreBattery>? TyreBatteries { get; set; }
         public ICollection<JobCardCancelledInvoice>? CancelledInvoices { get; set; }
         public ICollection<JobCardCollection>? Collections { get; set; }

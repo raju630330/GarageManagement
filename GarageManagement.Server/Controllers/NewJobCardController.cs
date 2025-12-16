@@ -205,6 +205,7 @@ namespace GarageManagement.Server.Controllers
                 return BadRequest("Invalid JobCard data.");
 
             var jobCard = await _context.JobCards
+                .Include(j => j.JobCardEstimationItems)
                 .Include(j => j.Collections)
                 .Include(j => j.TyreBatteries)
                 .Include(j => j.CancelledInvoices)
@@ -212,6 +213,24 @@ namespace GarageManagement.Server.Controllers
 
             if (jobCard == null)
                 return NotFound("JobCard not found.");
+
+            jobCard.JobCardEstimationItems.Clear();
+            foreach (var item in model.Estimation.Items)
+            {
+                jobCard.JobCardEstimationItems.Add(new JobCardEstimationItem
+                {
+                    Name = item.Name,
+                    Type = item.Type,
+                    PartNo = item.PartNo,
+                    Rate = item.Rate,
+                    Discount = item.Discount,
+                    HSN = item.HSN,
+                    TaxPercent = item.TaxPercent,
+                    TaxAmount = item.TaxAmount,
+                    Total = item.Total
+                });
+            }
+
 
             // --- Tyre/Battery ---
             jobCard.TyreBatteries.Clear();
@@ -257,6 +276,8 @@ namespace GarageManagement.Server.Controllers
             }
 
             // --- Simple fields ---
+            jobCard.Discount = model.Estimation.DiscountInput;
+            jobCard.Paid = model.Estimation.PaidAmount;
             jobCard.ServiceSuggestions = model.Popup.ServiceSuggestions;
             jobCard.Remarks = model.Popup.Remarks;
 
@@ -265,6 +286,131 @@ namespace GarageManagement.Server.Controllers
 
             return Ok(new { success = true, jobCardId = jobCard.Id });
         }
+
+        [HttpGet("get-estimation/{jobCardId}")]
+        public async Task<IActionResult> GetEstimationDetails(long jobCardId)
+        {
+            var jobCard = await _context.JobCards
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == jobCardId);
+
+            if (jobCard == null)
+                return NotFound("JobCard not found");
+
+            // ================= ESTIMATION ITEMS =================
+            var estimationItems = await _context.JobCardEstimationItems
+                .AsNoTracking()
+                .Where(e => e.JobCardId == jobCardId)
+                .ToListAsync();
+
+            var tyreBattery = await _context.JobCardTyreBatteries
+                .AsNoTracking()
+                .Where(x => x.JobCardId == jobCardId)
+                .ToListAsync();
+
+            var cancelledInvoices = await _context.JobCardCancelledInvoices
+                .AsNoTracking()
+                .Where(x => x.JobCardId == jobCardId)
+                .ToListAsync();
+
+            var collections = await _context.JobCardCollections
+                .AsNoTracking()
+                .Where(x => x.JobCardId == jobCardId)
+                .ToListAsync();
+
+            // ================= CALCULATIONS =================
+            decimal grossAmount = estimationItems.Sum(i => i.Total);
+            decimal totalDiscount = estimationItems.Sum(i => i.Discount);
+            decimal paidAmount = jobCard.Paid;
+
+            decimal netAmount = grossAmount - totalDiscount;
+            decimal balanceAmount = netAmount - paidAmount;
+            // =================================================
+
+            var result = new
+            {
+                // 🔹 VEHICLE DATA (USED IN HEADER)
+                vehicleData = new
+                {
+                    registrationNo = jobCard.RegistrationNo,
+                    odometerIn = jobCard.OdometerIn,
+                    serviceType = jobCard.ServiceType,
+                    fuelType = jobCard.FuelType,
+                    vin = jobCard.Vin,
+                    engineNo = jobCard.EngineNo
+                },
+
+                // 🔹 CUSTOMER DATA (USED IN HEADER)
+                customerInfo = new
+                {
+                    customerName = jobCard.CustomerName,
+                    mobile = jobCard.Mobile,
+                    email = jobCard.Email
+                },
+
+                // 🔹 ESTIMATION
+                estimation = new
+                {
+                    discountInput = totalDiscount,
+                    paidAmount = paidAmount,
+                    grossAmount = grossAmount,
+                    netAmount = netAmount,
+                    balanceAmount = balanceAmount,
+
+                    items = estimationItems.Select(i => new
+                    {
+                        name = i.Name,
+                        type = i.Type,
+                        partNo = i.PartNo,
+                        rate = i.Rate,
+                        discount = i.Discount,
+                        hsn = i.HSN,
+                        taxPercent = i.TaxPercent,
+                        taxAmount = i.TaxAmount,
+                        total = i.Total
+                    })
+                },
+
+                // 🔹 POPUP DATA
+                popup = new
+                {
+                    tyreBattery = tyreBattery.Select(t => new
+                    {
+                        type = t.Type,
+                        brand = t.Brand,
+                        model = t.Model,
+                        manufactureDate = t.ManufactureDate,
+                        expiryDate = t.ExpiryDate,
+                        condition = t.Condition
+                    }),
+
+                    cancelledInvoices = cancelledInvoices.Select(c => new
+                    {
+                        invoiceNo = c.InvoiceNo,
+                        date = c.Date,
+                        amount = c.Amount
+                    }),
+
+                    collections = collections.Select(c => new
+                    {
+                        type = c.Type,
+                        bank = c.Bank,
+                        chequeNo = c.ChequeNo,
+                        amount = c.Amount,
+                        date = c.Date,
+                        invoiceNo = c.InvoiceNo,
+                        remarks = c.Remarks
+                    }),
+
+                    serviceSuggestions = jobCard.ServiceSuggestions ?? string.Empty,
+                    remarks = jobCard.Remarks ?? string.Empty
+                }
+            };
+
+            return Ok(result);
+        }
+
+
 
 
     }

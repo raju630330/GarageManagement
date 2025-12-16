@@ -90,7 +90,7 @@ export class EstimationComponent implements OnInit {
   }
 
   loadEstimationData(id: number): void {
-    this.jobcardService.getJobCardDetails(id).subscribe({
+   /* this.jobcardService.getJobCardDetails(id).subscribe({
       next: (res) => {
 
         this.vehicleDetails = {
@@ -110,7 +110,64 @@ export class EstimationComponent implements OnInit {
 
       },
       error: err => console.error(err)
+    });*/
+
+    this.jobcardService.getEstimationDetails(id).subscribe({
+      next: (res) => {
+
+        /* =============================
+           1. Estimation Items
+        ============================= */
+        const itemsArray = this.items;
+        itemsArray.clear(); // 🔴 IMPORTANT – avoid duplicates
+
+        if (res.estimation?.items?.length) {
+          res.estimation.items.forEach((i: any) => {
+            itemsArray.push(this.fb.group({
+              name: [i.name],
+              type: [i.type],
+              partNo: [i.partNo],
+              rate: [i.rate],
+              discount: [i.discount],
+              hsn: [i.hSN],               // ✅ matches backend
+              taxPercent: [i.taxPercent],
+              taxAmount: [i.taxAmount],
+              total: [i.total],
+              approval: ['Pending'],
+              reason: ['']
+            }));
+          });
+        }
+
+        /* =============================
+           2. Patch Estimation Totals
+        ============================= */
+        this.estimationForm.patchValue({
+          discountInput: res.estimation?.discountInput ?? 0,
+          paidAmount: res.estimation?.paidAmount ?? 0
+        });
+
+        /* =============================
+           3. Popup Data (IMPORTANT FIX)
+        ============================= */
+        this.popupData = {
+          tyreBattery: [...(res.popup?.tyreBattery || [])],
+          cancelledInvoices: [...(res.popup?.cancelledInvoices || [])],
+          collections: [...(res.popup?.collections || [])],
+          serviceSuggestions: res.popup?.serviceSuggestions || '',
+          remarks: res.popup?.remarks || ''
+        };
+
+        /* =============================
+           4. Recalculate Totals
+        ============================= */
+        this.calculateTotals(); // ✅ MUST
+      },
+      error: err => console.error(err)
     });
+
+    
+
   }
 
 

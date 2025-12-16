@@ -87,6 +87,14 @@ export class JobCardService {
     return filtered; // return array (mock)
   }
 
+
+  getEstimationDetails(jobCardId: number) {
+    return this.http.get<any>(
+      `${this.baseUrl}/NewJobCard/get-estimation/${jobCardId}`
+    );
+  }
+
+
   saveJobCardEstimation(model: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/NewJobCard/save-estimation`, model);
   }

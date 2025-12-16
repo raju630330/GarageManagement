@@ -4,6 +4,7 @@ using GarageManagement.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251216132708_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -211,9 +214,6 @@ namespace GarageManagement.Server.Migrations
                     b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Discount")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -236,9 +236,6 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<long?>("OdometerIn")
                         .HasColumnType("bigint");
-
-                    b.Property<decimal>("Paid")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("RegistrationNo")
                         .IsRequired()
@@ -409,59 +406,6 @@ namespace GarageManagement.Server.Migrations
                     b.HasIndex("JobCardId");
 
                     b.ToTable("JobCardConcerns");
-                });
-
-            modelBuilder.Entity("GarageManagement.Server.Model.JobCardEstimationItem", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("ApprovalStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Discount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("HSN")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("JobCardId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PartNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Rate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TaxAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TaxPercent")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JobCardId");
-
-                    b.ToTable("JobCardEstimationItems");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardTyreBattery", b =>
@@ -830,17 +774,6 @@ namespace GarageManagement.Server.Migrations
                     b.Navigation("JobCard");
                 });
 
-            modelBuilder.Entity("GarageManagement.Server.Model.JobCardEstimationItem", b =>
-                {
-                    b.HasOne("GarageManagement.Server.Model.JobCard", "JobCard")
-                        .WithMany("JobCardEstimationItems")
-                        .HasForeignKey("JobCardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("JobCard");
-                });
-
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardTyreBattery", b =>
                 {
                     b.HasOne("GarageManagement.Server.Model.JobCard", "JobCard")
@@ -866,8 +799,6 @@ namespace GarageManagement.Server.Migrations
                     b.Navigation("Collections");
 
                     b.Navigation("Concerns");
-
-                    b.Navigation("JobCardEstimationItems");
 
                     b.Navigation("TyreBatteries");
                 });

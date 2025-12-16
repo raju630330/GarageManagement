@@ -27,34 +27,29 @@ export class TablePopupComponent implements OnInit {
     this.form = this.fb.group({
       tyreBattery: this.fb.array([]),
       cancelledInvoices: this.fb.array([]),
-      serviceSuggestions: ['', Validators.required], // single control
+      serviceSuggestions: ['', Validators.required],
       collections: this.fb.array([]),
       remarks: ['', Validators.required],
     });
 
     for (const tab of this.data.tabs) {
 
-      // IMPORTANT: skip SERVICE SUGGESTIONS
+      // Skip single-value tabs
       if (tab === 'SERVICE SUGGESTIONS') {
-        this.form.patchValue({
-          serviceSuggestions: this.data.serviceSuggestions || ''
-        });
+        this.form.patchValue({ serviceSuggestions: this.data.serviceSuggestions || '' });
         continue;
       }
       if (tab === 'REMARKS') {
-        this.form.patchValue({
-          remarks: this.data.remarks || ''
-        });
+        this.form.patchValue({ remarks: this.data.remarks || '' });
         continue;
       }
 
       const arr = this.getArray(tab);
-      const existingData = this.data[toCamelCase(tab)] || [];
+      const key = tabKey(tab);             // ✅ use tabKey here
+      const existingData = this.data[key] || [];
 
       if (existingData.length) {
-        existingData.forEach((item: any) =>
-          arr.push(this.createRow(tab, item))
-        );
+        existingData.forEach((item: any) => arr.push(this.createRow(tab, item)));
       } else {
         arr.push(this.createRow(tab));
       }
@@ -67,32 +62,37 @@ export class TablePopupComponent implements OnInit {
 
   // Create row with default values and validators
   createRow(tab: string, data: any = {}): FormGroup {
+    const parseDate = (d: string | undefined) => d ? new Date(d) : null;
+
     switch (tab) {
       case 'TYRE/BATTERY':
         return this.fb.group({
           type: [data.type || 'Tyre', Validators.required],
           brand: [data.brand || '', Validators.required],
           model: [data.model || '', Validators.required],
-          manufactureDate: [data.manufactureDate || '', Validators.required],
-          expiryDate: [data.expiryDate || '', Validators.required],
+          manufactureDate: [parseDate(data.manufactureDate), Validators.required],
+          expiryDate: [parseDate(data.expiryDate), Validators.required],
           condition: [data.condition || '', Validators.required]
         });
+
       case 'CANCELLED INVOICES':
         return this.fb.group({
           invoiceNo: [data.invoiceNo || '', Validators.required],
-          date: [data.date || '', Validators.required],
+          date: [parseDate(data.date), Validators.required],
           amount: [data.amount || 0, [Validators.required, Validators.min(0)]]
         });
+
       case 'COLLECTIONS':
         return this.fb.group({
           type: [data.type || 'Cash', Validators.required],
           bank: [data.bank || '', Validators.required],
           chequeNo: [data.chequeNo || '', Validators.required],
           amount: [data.amount || 0, [Validators.required, Validators.min(0)]],
-          date: [data.date || '', Validators.required],
+          date: [parseDate(data.date), Validators.required],
           invoiceNo: [data.invoiceNo || '', Validators.required],
           remarks: [data.remarks || '', Validators.required]
         });
+
       default:
         return this.fb.group({});
     }

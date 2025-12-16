@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251215080613_IntialCreate")]
-    partial class IntialCreate
+    [Migration("20251216140745_AddedColumns")]
+    partial class AddedColumns
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -197,57 +197,86 @@ namespace GarageManagement.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AlternateMobile")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long?>("AvgKmsPerDay")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Corporate")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EngineNo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FuelType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InsuranceCompany")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Mobile")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long?>("OdometerIn")
                         .HasColumnType("bigint");
 
+                    b.Property<decimal>("Paid")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("RegistrationNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remarks")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ServiceAdvisor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceSuggestions")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ServiceType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Technician")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VehicleColor")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Vendor")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Vin")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -289,6 +318,78 @@ namespace GarageManagement.Server.Migrations
                     b.ToTable("JobCardAdvancePayments");
                 });
 
+            modelBuilder.Entity("GarageManagement.Server.Model.JobCardCancelledInvoice", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InvoiceNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("JobCardId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobCardId");
+
+                    b.ToTable("JobCardCancelledInvoices");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.JobCardCollection", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Bank")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChequeNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InvoiceNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("JobCardId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Remarks")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobCardId");
+
+                    b.ToTable("JobCardCollections");
+                });
+
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardConcern", b =>
                 {
                     b.Property<long>("Id")
@@ -311,6 +412,99 @@ namespace GarageManagement.Server.Migrations
                     b.HasIndex("JobCardId");
 
                     b.ToTable("JobCardConcerns");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.JobCardEstimationItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ApprovalStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("HSN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("JobCardId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PartNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Rate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TaxPercent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobCardId");
+
+                    b.ToTable("JobCardEstimationItems");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.JobCardTyreBattery", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Condition")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("JobCardId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ManufactureDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobCardId");
+
+                    b.ToTable("JobCardTyreBatteries");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.LabourDetail", b =>
@@ -606,10 +800,54 @@ namespace GarageManagement.Server.Migrations
                     b.Navigation("JobCard");
                 });
 
+            modelBuilder.Entity("GarageManagement.Server.Model.JobCardCancelledInvoice", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.JobCard", "JobCard")
+                        .WithMany("CancelledInvoices")
+                        .HasForeignKey("JobCardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobCard");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.JobCardCollection", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.JobCard", "JobCard")
+                        .WithMany("Collections")
+                        .HasForeignKey("JobCardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobCard");
+                });
+
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardConcern", b =>
                 {
                     b.HasOne("GarageManagement.Server.Model.JobCard", "JobCard")
                         .WithMany("Concerns")
+                        .HasForeignKey("JobCardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobCard");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.JobCardEstimationItem", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.JobCard", "JobCard")
+                        .WithMany("JobCardEstimationItems")
+                        .HasForeignKey("JobCardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobCard");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.JobCardTyreBattery", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.JobCard", "JobCard")
+                        .WithMany("TyreBatteries")
                         .HasForeignKey("JobCardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -626,7 +864,15 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.Navigation("AdvancePayment");
 
+                    b.Navigation("CancelledInvoices");
+
+                    b.Navigation("Collections");
+
                     b.Navigation("Concerns");
+
+                    b.Navigation("JobCardEstimationItems");
+
+                    b.Navigation("TyreBatteries");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.TechnicianMC", b =>

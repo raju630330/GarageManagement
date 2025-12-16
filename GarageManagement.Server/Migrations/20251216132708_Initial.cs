@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GarageManagement.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class IntialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,24 +46,26 @@ namespace GarageManagement.Server.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RegistrationNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RegistrationNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OdometerIn = table.Column<long>(type: "bigint", nullable: true),
                     AvgKmsPerDay = table.Column<long>(type: "bigint", nullable: true),
-                    Vin = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EngineNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    VehicleColor = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FuelType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ServiceType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ServiceAdvisor = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Technician = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Vendor = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Corporate = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Mobile = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AlternateMobile = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Vin = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EngineNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VehicleColor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FuelType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ServiceType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ServiceAdvisor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Technician = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Vendor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Corporate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Mobile = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AlternateMobile = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    InsuranceCompany = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    InsuranceCompany = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ServiceSuggestions = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -244,6 +246,54 @@ namespace GarageManagement.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "JobCardCancelledInvoices",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    JobCardId = table.Column<long>(type: "bigint", nullable: false),
+                    InvoiceNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobCardCancelledInvoices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_JobCardCancelledInvoices_JobCards_JobCardId",
+                        column: x => x.JobCardId,
+                        principalTable: "JobCards",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JobCardCollections",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    JobCardId = table.Column<long>(type: "bigint", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Bank = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ChequeNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    InvoiceNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobCardCollections", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_JobCardCollections_JobCards_JobCardId",
+                        column: x => x.JobCardId,
+                        principalTable: "JobCards",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "JobCardConcerns",
                 columns: table => new
                 {
@@ -258,6 +308,31 @@ namespace GarageManagement.Server.Migrations
                     table.PrimaryKey("PK_JobCardConcerns", x => x.Id);
                     table.ForeignKey(
                         name: "FK_JobCardConcerns_JobCards_JobCardId",
+                        column: x => x.JobCardId,
+                        principalTable: "JobCards",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JobCardTyreBatteries",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    JobCardId = table.Column<long>(type: "bigint", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Brand = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Model = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ManufactureDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Condition = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobCardTyreBatteries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_JobCardTyreBatteries_JobCards_JobCardId",
                         column: x => x.JobCardId,
                         principalTable: "JobCards",
                         principalColumn: "Id",
@@ -337,8 +412,23 @@ namespace GarageManagement.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_JobCardCancelledInvoices_JobCardId",
+                table: "JobCardCancelledInvoices",
+                column: "JobCardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobCardCollections_JobCardId",
+                table: "JobCardCollections",
+                column: "JobCardId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_JobCardConcerns_JobCardId",
                 table: "JobCardConcerns",
+                column: "JobCardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobCardTyreBatteries_JobCardId",
+                table: "JobCardTyreBatteries",
                 column: "JobCardId");
         }
 
@@ -361,7 +451,16 @@ namespace GarageManagement.Server.Migrations
                 name: "JobCardAdvancePayments");
 
             migrationBuilder.DropTable(
+                name: "JobCardCancelledInvoices");
+
+            migrationBuilder.DropTable(
+                name: "JobCardCollections");
+
+            migrationBuilder.DropTable(
                 name: "JobCardConcerns");
+
+            migrationBuilder.DropTable(
+                name: "JobCardTyreBatteries");
 
             migrationBuilder.DropTable(
                 name: "LabourDetails");

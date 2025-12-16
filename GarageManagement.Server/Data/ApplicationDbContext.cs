@@ -23,6 +23,7 @@ namespace GarageManagement.Server.Data
         public DbSet<JobCardAdvancePayment> JobCardAdvancePayments { get; set; }
         public DbSet<AdditionalJobObserveDetail> AdditionalJobObserveDetail { get; set; }
         public DbSet<ToBeFilledBySupervisor> ToBeFilledBySupervisor { get; set; }
+        public DbSet<JobCardEstimationItem> JobCardEstimationItems { get; set; }
         public DbSet<JobCardTyreBattery> JobCardTyreBatteries { get; set; }
         public DbSet<JobCardCancelledInvoice> JobCardCancelledInvoices { get; set; }
         public DbSet<JobCardCollection> JobCardCollections { get; set; }

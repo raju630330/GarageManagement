@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251216115145_AddedEstimationEntities")]
-    partial class AddedEstimationEntities
+    [Migration("20251216140003_Update")]
+    partial class Update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -408,6 +408,59 @@ namespace GarageManagement.Server.Migrations
                     b.ToTable("JobCardConcerns");
                 });
 
+            modelBuilder.Entity("GarageManagement.Server.Model.JobCardEstimationItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ApprovalStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("HSN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("JobCardId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PartNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Rate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TaxPercent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobCardId");
+
+                    b.ToTable("JobCardEstimationItems");
+                });
+
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardTyreBattery", b =>
                 {
                     b.Property<long>("Id")
@@ -767,6 +820,17 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.HasOne("GarageManagement.Server.Model.JobCard", "JobCard")
                         .WithMany("Concerns")
+                        .HasForeignKey("JobCardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobCard");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.JobCardEstimationItem", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.JobCard", "JobCard")
+                        .WithMany()
                         .HasForeignKey("JobCardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
