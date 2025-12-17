@@ -1,189 +1,213 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormArray, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PopupColumnConfig, PopupTabConfig } from '../models/job-card';
 import { AlertService } from '../services/alert.service';
 import { ROLES } from '../constants/roles.constants';
 
 @Component({
   selector: 'app-table-popup',
   templateUrl: './table-popup.component.html',
-  styleUrls: ['./table-popup.component.css'],  // corrected: styleUrls not styleUrl
+  styleUrls: ['./table-popup.component.css'],
   standalone: false
 })
 export class TablePopupComponent implements OnInit {
-  ROLES = ROLES;
-  activeTab: string;
+
   form!: FormGroup;
+  activeTab!: PopupTabConfig;
+  ROLES = ROLES;
+  // Optional: dynamic brand lists
+  tyreBrands = [
+    { label: 'MRF', value: 'MRF' },
+    { label: 'Apollo', value: 'Apollo' },
+    { label: 'JK Tyre', value: 'JK Tyre' }
+  ];
+
+  batteryBrands = [
+    { label: 'Exide', value: 'Exide' },
+    { label: 'Amaron', value: 'Amaron' },
+    { label: 'Luminous', value: 'Luminous' }
+  ];
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<TablePopupComponent>,
-    private fb: FormBuilder, private alert: AlertService,
-  ) {
-    this.activeTab = data.activeTab || data.tabs[0];
-  }
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<TablePopupComponent>, private alert: AlertService,
+    @Inject(MAT_DIALOG_DATA) public data: {
+      tabs: PopupTabConfig[];
+      popupData: any;
+      activeTabKey?: string;
+    }
+  ) { }
 
   ngOnInit(): void {
-    this.form = this.fb.group({
-      tyreBattery: this.fb.array([]),
-      cancelledInvoices: this.fb.array([]),
-      serviceSuggestions: ['', Validators.required],
-      collections: this.fb.array([]),
-      remarks: ['', Validators.required],
-    });
+    this.createEmptyForm();   // STEP 1: Build form structure
+    this.populateForm();      // STEP 2: Patch existing data
 
-    for (const tab of this.data.tabs) {
-
-      // Skip single-value tabs
-      if (tab === 'SERVICE SUGGESTIONS') {
-        this.form.patchValue({ serviceSuggestions: this.data.serviceSuggestions || '' });
-        continue;
-      }
-      if (tab === 'REMARKS') {
-        this.form.patchValue({ remarks: this.data.remarks || '' });
-        continue;
-      }
-
-      const arr = this.getArray(tab);
-      const key = tabKey(tab);             // ✅ use tabKey here
-      const existingData = this.data[key] || [];
-
-      if (existingData.length) {
-        existingData.forEach((item: any) => arr.push(this.createRow(tab, item)));
-      } else {
-        arr.push(this.createRow(tab));
-      }
-    }
+    this.activeTab =
+      this.data.tabs.find(t => t.tabKey === this.data.activeTabKey)
+      || this.data.tabs[0];
   }
 
-  setTab(tab: string) {
+  /* ================= FORM BUILD ================= */
+  private createEmptyForm() {
+    const group: any = {};
+    this.data.tabs.forEach(tab => {
+      if (tab.isTextarea) {
+        group[tab.tabKey] = [''];
+      } else {
+        group[tab.tabKey] = this.fb.array([]);
+      }
+    });
+
+    this.form = this.fb.group(group);
+  }
+
+  private populateForm() {
+    this.data.tabs.forEach(tab => {
+      if (tab.isTextarea) {
+        this.form.get(tab.tabKey)?.setValue(
+          this.data.popupData?.[tab.tabKey] || ''
+        );
+      } else {
+        const arr = this.getArray(tab);
+        const rows = this.data.popupData?.[tab.tabKey] || [];
+
+        if (rows.length) {
+          rows.forEach((r: any) => arr.push(this.createRow(tab, r)));
+        } else {
+          arr.push(this.createRow(tab));
+        }
+      }
+    });
+  }
+
+  /* ================= HELPERS ================= */
+  getArray(tab: PopupTabConfig): FormArray {
+    return this.form.get(tab.tabKey) as FormArray;
+  }
+
+  createRow(tab: PopupTabConfig, data: any = {}): FormGroup {
+    const row: any = {};
+
+    tab.columns?.forEach(col => {
+      let value = data[col.field];
+
+      // ✅ EXISTING DATA → USE IT
+      if (value !== undefined && value !== null && value !== '') {
+        if (col.type === 'date') {
+          value = this.formatDateForInput(value);
+        }
+      }
+      // ✅ NEW ROW → APPLY DEFAULT
+      else {
+        value = this.getDefaultValue(col);
+      }
+
+      row[col.field] = [
+        value,
+        col.validators || []
+      ];
+    });
+
+    return this.fb.group(row);
+  }
+
+
+  setTab(tab: PopupTabConfig) {
     this.activeTab = tab;
   }
 
-  // Create row with default values and validators
-  createRow(tab: string, data: any = {}): FormGroup {
-    const parseDate = (d: string | undefined) => d ? new Date(d) : null;
+  getErrorMessage(ctrl: AbstractControl | null, col: PopupColumnConfig): string {
+    if (!ctrl || !ctrl.errors) return '';
 
-    switch (tab) {
-      case 'TYRE/BATTERY':
-        return this.fb.group({
-          type: [data.type || 'Tyre', Validators.required],
-          brand: [data.brand || '', Validators.required],
-          model: [data.model || '', Validators.required],
-          manufactureDate: [parseDate(data.manufactureDate), Validators.required],
-          expiryDate: [parseDate(data.expiryDate), Validators.required],
-          condition: [data.condition || '', Validators.required]
-        });
+    if (ctrl.hasError('required')) return `${col.header} is required`;
+    if (ctrl.hasError('min')) return `${col.header} must be greater than zero`;
 
-      case 'CANCELLED INVOICES':
-        return this.fb.group({
-          invoiceNo: [data.invoiceNo || '', Validators.required],
-          date: [parseDate(data.date), Validators.required],
-          amount: [data.amount || 0, [Validators.required, Validators.min(0)]]
-        });
-
-      case 'COLLECTIONS':
-        return this.fb.group({
-          type: [data.type || 'Cash', Validators.required],
-          bank: [data.bank || '', Validators.required],
-          chequeNo: [data.chequeNo || '', Validators.required],
-          amount: [data.amount || 0, [Validators.required, Validators.min(0)]],
-          date: [parseDate(data.date), Validators.required],
-          invoiceNo: [data.invoiceNo || '', Validators.required],
-          remarks: [data.remarks || '', Validators.required]
-        });
-
-      default:
-        return this.fb.group({});
-    }
+    return 'Invalid value';
   }
 
-  // Get FormArray for a given tab
-  getArray(tab: string): FormArray {
-    const key = tabKey(tab);
-    return this.form.get(key) as FormArray;
-  }
-
-  // Add a new row to a tab
-  addRow(tab: string): void {
+  /* ================= ACTIONS ================= */
+  addRow(tab: PopupTabConfig) {
     const arr = this.getArray(tab);
-    if (!arr) return;
 
-    // Check if last row is invalid
-    const lastRow = arr.at(arr.length - 1);
-    if (lastRow.invalid) {
-      // Mark all controls in the form as touched to show validation messages
-      this.form.markAllAsTouched();
-      this.alert.showError('Please fill all fields correctly before adding a new row.');
+    // Stop if any existing row is invalid
+    if (arr.invalid) {
+      arr.markAllAsTouched();
       return;
     }
 
-    // If valid, add a new row
     arr.push(this.createRow(tab));
   }
 
-  // Remove a row from a tab
-  removeRow(tab: string, index: number): void {
-    const arr = this.getArray(tab);
-    if (!arr) return;
-
-    const row = arr.at(index);
-
-    if (arr.length <= 1) {
-      this.alert.showError('At least one row is required.');
-      return;
-    }
-
-    if (row.invalid) {
-      this.alert.confirm('This row has invalid/unsaved data. Are you sure you want to remove it?', () => {
+  removeRow(tab: PopupTabConfig, index: number) {
+    const arr = this.getArray(tab); 
+    if (arr.length > 1) {
+    this.alert.confirm('Are you sure you want to remove this row?', () => {      
         arr.removeAt(index);
-      });
-      return;
-    }
-
-    // Normal remove
-    this.alert.confirm('Are you sure you want to remove this row?', () => {
-      arr.removeAt(index);
     });
+      return;
+    }
+    this.alert.showWarning('Atleast one row is required');
   }
 
-  // Save data
   save() {
-    this.form.markAllAsTouched();
-    if (this.form.invalid) {
-      this.alert.showError('Please fill all required fields.');
-      return;
-    }
-
-    const result = this.form.value;
-    console.log('Saved data:', result);
-    this.dialogRef.close(result);
-  }
-
-  close() {
-    this.form.markAllAsTouched();
-    if (this.form.invalid) {
-      this.alert.showError('Please fill all required fields.');
-      return;
-    }
     this.dialogRef.close(this.form.value);
   }
 
-}
+  close() {
+    // Preserve current form data
+    const updatedData: any = {};
 
-// Helper functions to map tab names to FormArray keys
-function tabKey(tab: string): string {
-  switch (tab) {
-    case 'TYRE/BATTERY': return 'tyreBattery';
-    case 'CANCELLED INVOICES': return 'cancelledInvoices';
-    case 'SERVICE SUGGESTIONS': return 'serviceSuggestions';
-    case 'COLLECTIONS': return 'collections';
-    case 'REMARKS': return 'remarks';
-    default: return '';
+    this.data.tabs.forEach(tab => {
+      if (tab.isTextarea) {
+        updatedData[tab.tabKey] = this.form.get(tab.tabKey)?.value;
+      } else {
+        updatedData[tab.tabKey] = this.getArray(tab).value;
+      }
+    });
+
+    this.dialogRef.close(updatedData); // Pass updated data to parent
   }
-}
 
-function toCamelCase(tab: string): string {
-  const key = tab.replace(/\s/g, '');
-  return key.charAt(0).toLowerCase() + key.slice(1);
+  /* ================= DYNAMIC OPTIONS ================= */
+  getBrandOptions(row: any) {
+    if (row.type === 'Tyre') return this.tyreBrands;
+    if (row.type === 'Battery') return this.batteryBrands;
+    return [];
+  }
+  private formatDateForInput(value: any): string {
+    if (!value) return '';
+
+    // Already yyyy-MM-dd
+    if (typeof value === 'string' && value.length === 10 && value.includes('-')) {
+      return value;
+    }
+
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return '';
+
+    const yyyy = date.getFullYear();
+    const mm = ('0' + (date.getMonth() + 1)).slice(-2);
+    const dd = ('0' + date.getDate()).slice(-2);
+
+    return `${yyyy}-${mm}-${dd}`;
+  }
+  private getToday(): string {
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = ('0' + (d.getMonth() + 1)).slice(-2);
+    const dd = ('0' + d.getDate()).slice(-2);
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  private getDefaultValue(col: PopupColumnConfig): any {
+    switch (col.type) {
+      case 'date':
+        return this.getToday();               // ✅ TODAY
+      case 'select':
+        return col.options?.length ? col.options[0].value : '';
+      default:
+        return '';
+    }
+  }
 }

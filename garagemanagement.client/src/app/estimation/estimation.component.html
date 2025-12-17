@@ -81,40 +81,102 @@
   <div class="card">
     <div class="row m-2 px-2" formGroupName="addItemForm">
 
+      <!-- Search -->
       <div class="col-md-3">
         <input type="text" class="form-control"
                placeholder="Search Part Name / Number"
                formControlName="search">
+        <div class="text-danger"
+             *ngIf="
+             estimationForm.get('addItemForm.search')?.invalid &&
+             (estimationForm.get('addItemForm.search')?.touched ||
+              estimationForm.get('addItemForm.search')?.dirty)
+           ">
+          Search Part Name / Number is required
+        </div>
       </div>
 
+      <!-- Workshop State -->
       <div class="col-md-2">
         <select class="form-select" formControlName="workshopState">
+          <option value="">Select</option>
           <option>In Workshop</option>
           <option>Delivered</option>
         </select>
+        <div class="text-danger"
+             *ngIf="
+             estimationForm.get('addItemForm.workshopState')?.invalid &&
+             (estimationForm.get('addItemForm.workshopState')?.touched ||
+              estimationForm.get('addItemForm.workshopState')?.dirty)
+           ">
+          Workshop state is required
+        </div>
       </div>
 
+      <!-- Quantity -->
       <div class="col-md-1">
         <input appNumbersOnly class="form-control"
                placeholder="Qty"
                formControlName="quantity">
+        <div class="text-danger"
+             *ngIf="
+             estimationForm.get('addItemForm.quantity')?.invalid &&
+             (estimationForm.get('addItemForm.quantity')?.touched ||
+              estimationForm.get('addItemForm.quantity')?.dirty)
+           ">
+          <span *ngIf="estimationForm.get('addItemForm.quantity')?.hasError('required')">
+            Quantity is required
+          </span>
+          <span *ngIf="estimationForm.get('addItemForm.quantity')?.hasError('min')">
+            Quantity must be at least 1
+          </span>
+        </div>
       </div>
 
+      <!-- Unit Price -->
       <div class="col-md-2">
         <input appTwoDecimalNumbers class="form-control"
                placeholder="Price"
                formControlName="unitPrice">
+        <div class="text-danger"
+             *ngIf="
+             estimationForm.get('addItemForm.unitPrice')?.invalid &&
+             (estimationForm.get('addItemForm.unitPrice')?.touched ||
+              estimationForm.get('addItemForm.unitPrice')?.dirty)
+           ">
+          <span *ngIf="estimationForm.get('addItemForm.unitPrice')?.hasError('required')">
+            Price is required
+          </span>
+          <span *ngIf="estimationForm.get('addItemForm.unitPrice')?.hasError('min')">
+            Price must be greater than 0
+          </span>
+        </div>
       </div>
 
+      <!-- Service Type -->
       <div class="col-md-2">
         <select class="form-select" formControlName="serviceType">
+          <option value="">Select</option>
           <option>Part</option>
           <option>Labour</option>
         </select>
+        <div class="text-danger"
+             *ngIf="
+             estimationForm.get('addItemForm.serviceType')?.invalid &&
+             (estimationForm.get('addItemForm.serviceType')?.touched ||
+              estimationForm.get('addItemForm.serviceType')?.dirty)
+           ">
+          Service type is required
+        </div>
       </div>
 
-      <div class="col-md-2">
-        <button type="button" class="btn btn-primary btn-sm" (click)="addItem()">+ Add Item</button>
+      <!-- Add Button -->
+      <div class="col-md-2 d-flex align-items-start">
+        <button type="button"
+                class="btn btn-primary btn-sm mt-1"
+                (click)="addItem()">
+          + Add Item
+        </button>
       </div>
 
     </div>
@@ -156,26 +218,26 @@
                    (input)="calculateTotals()">
           </td>
 
-          <td>{{ item.value.hsn }}</td>
+          <td>{{ item.value.hSN }}</td>
           <td>{{ item.value.taxPercent }}</td>
           <td>{{ item.value.taxAmount | number:'1.2-2' }}</td>
           <td>{{ item.value.total | number:'1.2-2' }}</td>
 
           <td>
-            <select class="form-select form-select-sm">
-            <option>Approved</option>
-            <option>Rejected</option>
-            <option>Pending</option>
+            <select class="form-select form-select-sm" formControlName="approval">
+              <option>Approved</option>
+              <option>Rejected</option>
+              <option>Pending</option>
             </select>
           </td>
-
-          <td>
-            <button type="button" class="btn btn-danger btn-sm"
-                    (click)="removeRow(i)">
-              X
+          <td *appHasRole="[ROLES.ADMIN]">
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    (click)="removeRow(i)"
+                    title="Delete">
+              <i class="bi bi-trash"></i>
             </button>
           </td>
-
         </tr>
       </tbody>
 
@@ -222,7 +284,7 @@
 <br />
 <br />
 <br />
-<div class="fixed-bottom bg-white border-top shadow-sm px-3 py-2 d-flex justify-content-between align-items-center">
+<div class="fixed-bottom bg-white border-top shadow-sm px-3 py-2 d-flex justify-content-between align-items-center" style="z-index:100;">
   <div class="d-flex align-items-center gap-3">
     <div class="dropup">
       <button class="btn btn-light btn-sm" data-bs-toggle="dropdown"><i class="bi bi-list fs-5"></i> </button>
@@ -231,7 +293,7 @@
         <li>
           <a class="dropdown-item d-flex align-items-center gap-2"
              href="#"
-             (click)="$event.preventDefault(); openPopupForBottomMenu('TYRE/BATTERY')">
+             (click)="$event.preventDefault(); openPopupForBottomMenu('TYRE / BATTERY')">
             <i class="bi bi-disc text-primary"></i>
             TYRE / BATTERY
           </a>

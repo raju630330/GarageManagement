@@ -34,6 +34,7 @@
         public decimal TaxPercent { get; set; }
         public decimal TaxAmount { get; set; }
         public decimal Total { get; set; }
+        public string Approval { get; set; } = string.Empty;
     }
 
     public class PopupDto

@@ -7,7 +7,7 @@ import { JobCardService } from '../services/job-card.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GlobalPopupComponent } from '../global-popup/global-popup.component';
 import { TablePopupComponent } from '../table-popup/table-popup.component';
-import { JobCardDto, VehicleDetailsUI } from '../models/job-card';
+import { JobCardDto, PopupTabConfig, VehicleDetailsUI } from '../models/job-card';
 
 
 
@@ -15,7 +15,7 @@ import { JobCardDto, VehicleDetailsUI } from '../models/job-card';
   selector: 'app-estimation',
   standalone: false,
   templateUrl: './estimation.component.html',
-  styleUrl: './estimation.component.css'
+  styleUrl: './estimation.component.css',
 })
 export class EstimationComponent implements OnInit {
 
@@ -90,46 +90,35 @@ export class EstimationComponent implements OnInit {
   }
 
   loadEstimationData(id: number): void {
-   /* this.jobcardService.getJobCardDetails(id).subscribe({
+    this.jobcardService.getEstimationDetails(id).subscribe({
       next: (res) => {
 
+        // 1️⃣ Vehicle details
         this.vehicleDetails = {
           regNo: res.vehicleData.registrationNo,
           jobCardNo: id.toString(),
-
           customerName: res.customerInfo.customerName,
           mobile: res.customerInfo.mobile,
           email: res.customerInfo.email,
-
           odometer: +res.vehicleData.odometerIn,
-          model: res.vehicleData.serviceType,   // or actual model field
+          model: res.vehicleData.serviceType, // or actual model field
           fuelType: res.vehicleData.fuelType,
           vin: res.vehicleData.vin,
           engineNo: res.vehicleData.engineNo
         };
 
-      },
-      error: err => console.error(err)
-    });*/
-
-    this.jobcardService.getEstimationDetails(id).subscribe({
-      next: (res) => {
-
-        /* =============================
-           1. Estimation Items
-        ============================= */
+        // 2️⃣ Estimation Items
         const itemsArray = this.items;
-        itemsArray.clear(); // 🔴 IMPORTANT – avoid duplicates
-
+        itemsArray.clear(); // remove old items
         if (res.estimation?.items?.length) {
           res.estimation.items.forEach((i: any) => {
             itemsArray.push(this.fb.group({
-              name: [i.name],
-              type: [i.type],
-              partNo: [i.partNo],
-              rate: [i.rate],
-              discount: [i.discount],
-              hsn: [i.hSN],               // ✅ matches backend
+              name: [i.name, Validators.required],
+              type: [i.type, Validators.required],
+              partNo: [i.partNo, Validators.required],
+              rate: [i.rate, [Validators.required, Validators.min(0)]],
+              discount: [i.discount, Validators.min(0)],
+              hSN: [i.hSN],
               taxPercent: [i.taxPercent],
               taxAmount: [i.taxAmount],
               total: [i.total],
@@ -139,17 +128,13 @@ export class EstimationComponent implements OnInit {
           });
         }
 
-        /* =============================
-           2. Patch Estimation Totals
-        ============================= */
+        // 3️⃣ Patch Estimation Totals
         this.estimationForm.patchValue({
           discountInput: res.estimation?.discountInput ?? 0,
           paidAmount: res.estimation?.paidAmount ?? 0
         });
 
-        /* =============================
-           3. Popup Data (IMPORTANT FIX)
-        ============================= */
+        // 4️⃣ Patch Popup Data
         this.popupData = {
           tyreBattery: [...(res.popup?.tyreBattery || [])],
           cancelledInvoices: [...(res.popup?.cancelledInvoices || [])],
@@ -158,17 +143,14 @@ export class EstimationComponent implements OnInit {
           remarks: res.popup?.remarks || ''
         };
 
-        /* =============================
-           4. Recalculate Totals
-        ============================= */
-        this.calculateTotals(); // ✅ MUST
+        // 5️⃣ Recalculate totals
+        this.calculateTotals();
+
       },
-      error: err => console.error(err)
+      error: (err) => console.error(err)
     });
-
-    
-
   }
+
 
 
   /* -----------------------------------------
@@ -224,7 +206,7 @@ export class EstimationComponent implements OnInit {
       partNo: [`PN-${Math.floor(Math.random() * 1000)}`],
       rate: [unitPrice],
       discount: [0],
-      hsn: ['9987'],
+      hSN: ['9987'],
       taxPercent: [taxPercent],
       taxAmount: [taxAmount],
       total: [total],
@@ -322,43 +304,148 @@ export class EstimationComponent implements OnInit {
     });
   }
 
-  openPopupForBottomMenu(activeTab: string) {
-    console.log('BOTTOM MENU CLICKED:', activeTab);
+  // Define available brands
+   tyreBrands = [
+    { label: 'MRF', value: 'MRF' },
+    { label: 'Apollo', value: 'Apollo' },
+    { label: 'JK Tyre', value: 'JK Tyre' }
+  ];
 
-    const dialogRef = this.dialog.open(TablePopupComponent, {
-      width: '95%',
-      maxWidth: '95vw',
-      autoFocus: false,
+   batteryBrands = [
+    { label: 'Exide', value: 'Exide' },
+    { label: 'Amaron', value: 'Amaron' },
+    { label: 'Luminous', value: 'Luminous' }
+  ];
+
+  popupTabs: PopupTabConfig[] = [
+    {
+      tabKey: 'tyreBattery',
+      label: 'TYRE / BATTERY',
+      allowAdd: true,
+      allowDelete: true,
+      columns: [
+        {
+          field: 'type',
+          header: 'Type',
+          type: 'select',
+          options: [
+            { label: 'Tyre', value: 'Tyre' },
+            { label: 'Battery', value: 'Battery' }
+          ],
+          validators: [Validators.required]
+        },
+        {
+          field: 'brand',
+          header: 'Brand',
+          type: 'select',
+          options: [], // dynamically populated
+          validators: [Validators.required],
+          getOptions: (row: any) => {
+            // row contains the form value for this row
+            if (row.type === 'Tyre') return this.tyreBrands;
+            if (row.type === 'Battery') return this.batteryBrands;
+            return [];
+          }
+        },
+        { field: 'model', header: 'Model', type: 'text', validators: [Validators.required] },
+        { field: 'manufactureDate', header: 'Mfg Date', type: 'date', validators: [Validators.required] },
+        { field: 'expiryDate', header: 'Expiry Date', type: 'date', validators: [Validators.required] },
+        {
+          field: 'condition',
+          header: 'Condition',
+          type: 'select',
+          options: [
+            { label: 'Good', value: 'Good' },
+            { label: 'Average', value: 'Average' },
+            { label: 'Poor', value: 'Poor' }
+          ],
+          validators: [Validators.required]
+        }
+      ]
+    },
+    {
+      tabKey: 'cancelledInvoices',
+      label: 'CANCELLED INVOICES',
+      allowAdd: true,
+      allowDelete: true,
+      columns: [
+        { field: 'invoiceNo', header: 'Invoice No', type: 'text', validators: [Validators.required] },
+        { field: 'date', header: 'Date', type: 'date', validators: [Validators.required] },
+        { field: 'amount', header: 'Amount', type: 'number', validators: [Validators.required, Validators.min(0)] }
+      ]
+    },
+    {
+      tabKey: 'serviceSuggestions',
+      label: 'SERVICE SUGGESTIONS',
+      isTextarea: true
+    },
+    {
+      tabKey: 'collections',
+      label: 'COLLECTIONS',
+      allowAdd: true,
+      allowDelete: true,
+      columns: [
+        {
+          field: 'type',
+          header: 'Payment Type',
+          type: 'select',
+          options: [
+            { label: 'Cash', value: 'Cash' },
+            { label: 'Cheque', value: 'Cheque' },
+            { label: 'Online', value: 'Online' }
+          ],
+          validators: [Validators.required]
+        },
+        {
+          field: 'bank',
+          header: 'Bank',
+          type: 'select',
+          options: [
+            { label: 'HDFC', value: 'HDFC' },
+            { label: 'ICICI', value: 'ICICI' },
+            { label: 'SBI', value: 'SBI' }
+          ],
+          validators: [Validators.required]
+        },
+        { field: 'chequeNo', header: 'Cheque No', type: 'text', validators: [Validators.required] },
+        { field: 'amount', header: 'Amount', type: 'number', validators: [Validators.required, Validators.min(0)] },
+        { field: 'date', header: 'Date', type: 'date', validators: [Validators.required] },
+        { field: 'invoiceNo', header: 'Invoice No', type: 'text', validators: [Validators.required] },
+        { field: 'remarks', header: 'Remarks', type: 'text', validators: [Validators.required] }
+      ]
+    },
+    {
+      tabKey: 'remarks',
+      label: 'REMARKS',
+      isTextarea: true
+    }
+  ];
+
+
+  openPopupForBottomMenu(label: string) {
+    const tab = this.popupTabs.find(t => t.label === label);
+    if (!tab) return;
+
+    const ref = this.dialog.open(TablePopupComponent, {
+      width: '95vw',
+      maxWidth: '1200px',
       disableClose: true,
       data: {
-        title: 'Job Card Details',
-        tabs: [
-          'TYRE/BATTERY',
-          'CANCELLED INVOICES',
-          'SERVICE SUGGESTIONS',
-          'COLLECTIONS',
-          'REMARKS'
-        ],
-        activeTab: activeTab,
-        // send previously saved data to the popup
-        tyreBattery: this.popupData.tyreBattery || [],
-        cancelledInvoices: this.popupData.cancelledInvoices || [],
-        serviceSuggestions: this.popupData.serviceSuggestions || '',
-        collections: this.popupData.collections || [],
-        remarks: this.popupData.remarks || ''
+        tabs: this.popupTabs,
+        popupData: this.popupData || {},
+        activeTabKey: tab.tabKey
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(`POPUP DATA FOR ${activeTab}:`, result);
-        // store the result in popupData
-        this.popupData = { ...this.popupData, ...result };
-      } else {
-        console.log(`POPUP CLOSED WITHOUT DATA FOR ${activeTab}`);
+    ref.afterClosed().subscribe(updatedData => {
+      if (updatedData) {
+        // Merge returned data with existing popupData
+        this.popupData = { ...this.popupData, ...updatedData };
       }
+      // If updatedData is undefined/null, do nothing → preserves previous data
     });
   }
+
 
 
   markJobAsDone() {

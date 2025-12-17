@@ -227,7 +227,8 @@ namespace GarageManagement.Server.Controllers
                     HSN = item.HSN,
                     TaxPercent = item.TaxPercent,
                     TaxAmount = item.TaxAmount,
-                    Total = item.Total
+                    Total = item.Total,
+                    ApprovalStatus = item.Approval
                 });
             }
 
@@ -364,7 +365,7 @@ namespace GarageManagement.Server.Controllers
                         partNo = i.PartNo,
                         rate = i.Rate,
                         discount = i.Discount,
-                        hsn = i.HSN,
+                        hSN = i.HSN,
                         taxPercent = i.TaxPercent,
                         taxAmount = i.TaxAmount,
                         total = i.Total

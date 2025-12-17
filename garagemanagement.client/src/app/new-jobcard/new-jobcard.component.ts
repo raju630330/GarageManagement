@@ -54,7 +54,9 @@ export class NewJobCardComponent implements OnInit {
         customerName: ['', Validators.required],
         mobile: ['', [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]],
         alternateMobile: ['', Validators.pattern(/^[6-9]\d{9}$/)],
-        email: ['', [Validators.required, Validators.email]],
+        email: ['', [Validators.required, Validators.pattern(
+          '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
+        )]],
         deliveryDate: ['', Validators.required],
         insuranceCompany: ['', Validators.required]
       }),
@@ -220,6 +222,7 @@ export class NewJobCardComponent implements OnInit {
     }
     this.jobcardService.getJobCardDetails(item.id).subscribe(res => {
       this.jobCardForm.get('id')!.patchValue(res.id);
+      this.expandAll = true;
       // Patch vehicleData directly
       this.jobCardForm.get('vehicleData')!.patchValue(res.vehicleData);
 

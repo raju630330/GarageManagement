@@ -1,3 +1,5 @@
+import { ValidatorFn } from "@angular/forms";
+
 export interface JobCard {
   refNo: string;
   jobCardNo: string;
@@ -82,4 +84,22 @@ export interface EstimationItem {
   total: number;
   approval: string;
   reason: string;
+}
+export type ColumnType = 'text' | 'number' | 'date' | 'select';
+export interface PopupColumnConfig {
+  field: string;
+  header: string;
+  type: ColumnType;
+  validators?: ValidatorFn[];
+  options?: { label: string; value: any }[];
+  getOptions?: (row: any) => { label: string; value: string }[];
+}
+
+export interface PopupTabConfig {
+  tabKey: string;
+  label: string;
+  columns?: PopupColumnConfig[];
+  isTextarea?: boolean;
+  allowAdd?: boolean;
+  allowDelete?: boolean;
 }
