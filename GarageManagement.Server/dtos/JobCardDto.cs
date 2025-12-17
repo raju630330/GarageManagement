@@ -73,4 +73,23 @@
         public string InvoiceNo { get; set; } = string.Empty;
         public string Remarks { get; set; } = string.Empty;
     }
+    public class JobCardListDto
+    {
+        public string RefNo { get; set; }
+        public string JobCardNo { get; set; }
+        public string RegNo { get; set; }
+        public string InvoiceNo { get; set; }
+        public string ServiceType { get; set; }
+        public string Vehicle { get; set; }
+        public string Status { get; set; }
+        public string CustomerName { get; set; }
+        public string MobileNo { get; set; }
+        public DateTime ArrivalDate { get; set; }
+        public TimeSpan ArrivalTime { get; set; }
+        public string InsuranceCorporate { get; set; }
+        public string ClaimNo { get; set; }
+        public DateTime EstDeliveryDate { get; set; }
+        public DateTime AccidentDate { get; set; }
+    }
+
 }

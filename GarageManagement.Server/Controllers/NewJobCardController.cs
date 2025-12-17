@@ -411,8 +411,41 @@ namespace GarageManagement.Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet("jobcards")]
+        public IActionResult GetJobCards()
+        {
+            var jobCards = _context.JobCards
+                .Select(j => new
+                {
 
+                    refNo = "REF" + j.Id.ToString().PadLeft(3, '0'),
+                    jobCardNo = "SRT-J" + (2992 + j.Id).ToString().PadLeft(6, '0'),
+                    invoiceNo = "SRT-I" + (2214 + j.Id).ToString(),
+                    claimNo = "CLM" + j.Id.ToString().PadLeft(3, '0'),
+                    regNo = j.RegistrationNo,
+                    vehicle = j.VehicleColor,
+                    serviceType = j.ServiceType,
+                    status = "Pending",
+                    customerName = j.CustomerName,
+                    mobileNo = "******" +
+                               j.Mobile.Substring(
+                                   j.Mobile.Length - 4),
+                    insuranceCorporate = j.InsuranceCompany,
+                    arrivalDate = DateTime.Now.Date,
+                    arrivalTime = DateTime.Now.TimeOfDay.ToString("hh:mm tt"),
+                    estDeliveryDate = j.DeliveryDate,
+                    accidentDate = DateTime.Now
+                })
+                .OrderByDescending(x => x.arrivalDate)
+                .ToList();
 
+            return Ok(jobCards);
+        }
 
     }
 }
+
+
+
+    
+
