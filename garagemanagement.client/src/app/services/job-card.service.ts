@@ -98,4 +98,9 @@ export class JobCardService {
   saveJobCardEstimation(model: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/NewJobCard/save-estimation`, model);
   }
+
+
+  searchJobCardDetailsForEstimation(query: string) {
+    return this.http.get<any[]>(`${this.baseUrl}/NewJobCard/searchJobCradsForEstimation?query=${query}`);
+  }
 }

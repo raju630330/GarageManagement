@@ -61,7 +61,14 @@ export class JobCardsComponent implements OnInit {
   paginatedJobCards: JobCard[] = [];
   maxPageButtons = 3;
 
-  constructor(private fb: FormBuilder, private jobCardService: JobCardService, private router: Router) { }
+
+  // For Estimation
+
+  showPopupForEstimation: boolean = false;
+  estimateForm!: FormGroup;
+  selectedJobCard: any = null; 
+
+  constructor(private fb: FormBuilder, public jobCardService: JobCardService, private router: Router) { }
 
   ngOnInit(): void {
     // Initialize form
@@ -119,10 +126,6 @@ export class JobCardsComponent implements OnInit {
   createNewJobCard() {
     this.showPopup = false;
     this.router.navigate(['/newjobcard']);
-  }
-
-  createNewEstimate() {
-    this.showPopup = false;
   }
 
   // =================== Pagination ===================
@@ -189,4 +192,48 @@ export class JobCardsComponent implements OnInit {
 
     return pages;
   }
+
+
+  // For Estimation
+
+  createNewEstimate() {
+    this.showPopupForEstimation = true;
+    this.selectedJobCard = null; // reset previous selection
+    this.estimateForm = this.fb.group({
+      id: [''] // hidden field for selected job card id
+    });
+  }
+
+  onSelectedJobCardDetailForEstimation(event: any) {
+    // Set hidden id
+    this.estimateForm.patchValue({ id: event.id });
+
+    // Fetch Job Card details from service
+    this.jobCardService.getJobCardDetails(event.id).subscribe(res => {
+      // res should contain 4 fields for table display
+      this.selectedJobCard = {
+        showEstimateButton: true,
+        displayDate: new Date(res.customerInfo.deliveryDate).toLocaleDateString(),
+        jobCardNo: res.vehicleData.registrationNo,
+        customer: res.customerInfo.customerName,
+        status: 'Estimation Pending'
+
+      };
+    });
+  }
+
+  navigateToEstimate() {
+      let jobCardId =  this.estimateForm.get('id')?.value
+
+    if (this.selectedJobCard && jobCardId != null) {
+      this.router.navigate(['/estimate'], { queryParams: { id: jobCardId } });
+      this.showPopupForEstimation = false;
+    }
+  }
+
+  closeEstimatePopup() {
+    this.showPopupForEstimation = false;
+    this.selectedJobCard = null;
+  }
+
 }

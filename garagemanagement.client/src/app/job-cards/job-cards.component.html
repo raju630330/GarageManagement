@@ -34,7 +34,11 @@
            class="position-absolute bg-white border shadow-sm rounded"
            style="top: 38px; right: 0; z-index: 1000; min-width: 160px;">
         <button class="dropdown-item" (click)="createNewJobCard()">📝 New Job Card</button>
-        <button class="dropdown-item" (click)="createNewEstimate()">New Estimate</button>
+
+        <button class="dropdown-item" (click)="createNewEstimate()">
+          <i class="bi bi-calculator fs-6 me-1"></i> New Estimate
+        </button>
+
       </div>
     </div>
 
@@ -145,5 +149,64 @@
     </button>
 
     <span class="ms-2">Total: {{filteredJobCards.length}}</span>
+  </div>
+</div>
+
+
+
+
+<!-- Inline Bootstrap Popup -->
+<div class="modal fade show d-block" tabindex="-1" *ngIf="showPopupForEstimation" role="dialog" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog  modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h2 class="modal-title w-100 text-center">New Estimate</h2>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeEstimatePopup()"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <form [formGroup]="estimateForm">
+          <!-- Autocomplete -->
+          <div class="mb-3">
+            <label class="form-label">Search Job Card Details</label>
+            <app-autocomplete placeholder="Search by Reg No / Customer No / Mobile"
+                              [searchFn]="jobCardService.searchJobCardDetailsForEstimation.bind(jobCardService)"
+                              (selected)="onSelectedJobCardDetailForEstimation($event)">
+            </app-autocomplete>
+            <input type="hidden" formControlName="id" />
+          </div>
+        </form>
+
+        <!-- Job Card Details Table -->
+        <table *ngIf="selectedJobCard" class="table table-bordered mt-3">
+          <thead class="table-light">
+            <tr>
+              <th>Job Card No</th>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ selectedJobCard.jobCardNo }}</td>
+              <td>{{ selectedJobCard.displayDate | date:'dd/MM/yyyy' }}</td>
+              <td>{{ selectedJobCard.customer }}</td>
+              <td>{{ selectedJobCard.status }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" [disabled]="!selectedJobCard" (click)="navigateToEstimate()">Go to Estimation</button>
+        <button type="button" class="btn btn-secondary" (click)="closeEstimatePopup()">Cancel</button>
+      </div>
+
+    </div>
   </div>
 </div>

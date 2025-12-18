@@ -282,25 +282,19 @@ export class EstimationComponent implements OnInit {
       return;
     }
 
-    const formatted: any = {};
-    this.previousJobCards.forEach((jc: any, i: number) => {
-      formatted[`#${i + 1} - Job Card No`] = jc.jobCardNo;
-      formatted[`Date (${i + 1})`] = jc.date?.split('T')[0];
-      formatted[`Status (${i + 1})`] = jc.status;
-    });
+    const formatted = this.previousJobCards.map(jc => ({
+      jobCardNo: jc.jobCardNo,
+      date: jc.date?.split('T')[0],
+      status: jc.status
+    }));
 
-    this.openPopup("Previous Job Cards (R)", formatted);
+    this.openPopup("Previous Job Cards (R)", { fieldsArray: formatted });
   }
 
-  // Reusable popup open function
-  openPopup(title: string, fields: any) {
+  openPopup(title: string, data: any) {
     this.dialog.open(GlobalPopupComponent, {
-      data: { title, fields },
-      width: '800px',
-      maxWidth: '95vw',
-      autoFocus: false,
-      disableClose: true,
-      panelClass: 'custom-dialog-zindex'
+      width: '600px',
+      data: { title, ...data }
     });
   }
 

@@ -1,11 +1,29 @@
 <h2 class="popup-title">{{ data.title || 'Details' }}</h2>
 
 <mat-dialog-content class="popup-content">
-  <div class="popup-grid">
-    <div *ngFor="let item of data.fields | keyvalue" class="popup-cell">
-      <strong>{{ item.key }}:</strong> {{ item.value }}
-    </div>
-  </div>
+  <table mat-table [dataSource]="tableData" class="mat-elevation-z1" style="width:100%;">
+
+    <!-- Job Card No Column -->
+    <ng-container matColumnDef="jobCardNo">
+      <th mat-header-cell *matHeaderCellDef> Job Card No </th>
+      <td mat-cell *matCellDef="let element"> {{ element.jobCardNo }} </td>
+    </ng-container>
+
+    <!-- Date Column -->
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef> Date </th>
+      <td mat-cell *matCellDef="let element"> {{ element.date | date:'dd/MM/yyyy' }} </td>
+    </ng-container>
+
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let element"> {{ element.status }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

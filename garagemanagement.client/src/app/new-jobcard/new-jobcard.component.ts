@@ -172,6 +172,44 @@ export class NewJobCardComponent implements OnInit {
 
   }
 
+  onGiveEstimationLater() {
+
+    // if invalid, stop — submit button normally disabled but guard anyway
+    if (this.jobCardForm.invalid) {
+      // mark all controls as touched so validation messages appear
+      this.markAllTouched(this.jobCardForm);
+      this.expandAll = true;
+      this.alert.showError('Please fix validation errors before submitting!');
+      return;
+    }
+
+    const dto = this.jobCardForm.value;
+
+    this.jobcardService.saveJobCard(dto).subscribe({
+      next: (res) => {
+        this.router.navigate(['/jobcardlist']);
+      },
+      error: (err) => {
+        console.error(err);
+
+        // Check if backend returned validation errors
+        if (err.status === 400 && err.error?.errors) {
+          // err.error.errors should be a dictionary { fieldName: errorMessage }
+          Object.keys(err.error.errors).forEach((field) => {
+            const control = this.jobCardForm.get(field);
+            if (control) {
+              control.setErrors({ backend: err.error.errors[field] });
+            }
+          });
+        } else {
+          // Generic error alert
+          this.alert.showError(err.error?.message || 'Something went wrong!');
+        }
+      }
+    });
+
+  }
+
   // utility to mark controls touched
   private markAllTouched(control: AbstractControl) {
     if (control.hasOwnProperty('controls')) {
@@ -244,4 +282,5 @@ export class NewJobCardComponent implements OnInit {
       });
     });
   }
+
 }

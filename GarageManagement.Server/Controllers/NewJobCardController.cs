@@ -4,6 +4,7 @@ using GarageManagement.Server.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace GarageManagement.Server.Controllers
 {
@@ -440,6 +441,30 @@ namespace GarageManagement.Server.Controllers
                 .ToList();
 
             return Ok(jobCards);
+        }
+
+
+
+
+
+
+
+        [HttpGet("searchJobCradsForEstimation")]
+        public async Task<IActionResult> SearchJobCradsForEstimation([FromQuery] string query)
+        {
+            if (string.IsNullOrEmpty(query))
+                return BadRequest("Query is required");
+
+            var registrations = await _context.JobCards.Include(a=> a.JobCardEstimationItems)
+                .Where(j => j.RegistrationNo.Contains(query) && !j.JobCardEstimationItems.Any())
+                .Select(j => new IdNameDto
+                {
+                    Id = j.Id,
+                    Name = j.RegistrationNo
+                })
+                .ToListAsync();
+
+            return Ok(registrations);
         }
 
     }
