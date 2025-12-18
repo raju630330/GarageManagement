@@ -71,19 +71,25 @@ export class JobCardsComponent implements OnInit {
   constructor(private fb: FormBuilder, public jobCardService: JobCardService, private router: Router) { }
 
   ngOnInit(): void {
-    // Initialize form
+
     this.dateForm = this.fb.group({
       fromDate: [''],
       toDate: ['']
     });
 
-    // Load job cards
-    this.jobCards = this.jobCardService.getJobCards();
-    this.filteredJobCards = [...this.jobCards];
-
-    // Initialize pagination
-    this.updatePagination();
+    // ✅ API call
+    this.jobCardService.getJobCards().subscribe({
+      next: (res) => {
+        this.jobCards = res;
+        this.filteredJobCards = [...res];
+        this.updatePagination();
+      },
+      error: (err) => {
+        console.error('Failed to load job cards', err);
+      }
+    });
   }
+
 
   // =================== Status Slider Drag ===================
   dragStart(e: MouseEvent) {

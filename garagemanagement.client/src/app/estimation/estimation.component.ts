@@ -239,24 +239,63 @@ export class EstimationComponent implements OnInit {
   /* -----------------------------------------
      Totals Calculation
   ----------------------------------------- */
+  //calculateTotals(): void {
+  //  const items = this.items.controls as FormGroup[];
+
+  //  this.totalDiscountAmount = items.reduce((sum, item) => sum + item.value.discount, 0);
+  //  this.totalTaxAmount = items.reduce((sum, item) => sum + item.value.taxAmount, 0);
+  //  this.grossAmount = items.reduce((sum, item) => sum + item.value.total, 0);
+
+  //  this.estimationForm.get('discountInput')?.setValue(this.totalDiscountAmount);
+  //  const discountInput = this.estimationForm.value.discountInput || 0;
+  //  const paidAmount = this.estimationForm.value.paidAmount || 0;
+
+  //  const afterDiscount = this.grossAmount - discountInput;
+  //  this.roundOffAmount = +(Math.round(afterDiscount) - afterDiscount).toFixed(2);
+
+  //  this.netPayableAmount = afterDiscount + this.roundOffAmount;
+
+  //  this.balanceAmount = this.netPayableAmount - paidAmount;
+  //}
+
   calculateTotals(): void {
     const items = this.items.controls as FormGroup[];
 
-    this.totalDiscountAmount = items.reduce((sum, item) => sum + (item.value.discount || 0), 0);
-    this.totalTaxAmount = items.reduce((sum, item) => sum + item.value.taxAmount, 0);
-    this.grossAmount = items.reduce((sum, item) => sum + item.value.total, 0);
+    this.totalDiscountAmount = items.reduce(
+      (sum, item) => sum + (+item.get('discount')?.value || 0),
+      0
+    );
 
-    this.estimationForm.get('discountInput')?.setValue(this.totalDiscountAmount);
-    const discountInput = this.estimationForm.value.discountInput || 0;
+    this.totalTaxAmount = items.reduce(
+      (sum, item) => sum + (+item.get('taxAmount')?.value || 0),
+      0
+    );
+
+    this.grossAmount = items.reduce(
+      (sum, item) => sum + (+item.get('total')?.value || 0),
+      0
+    );
+
+    // ✅ Set value safely without triggering valueChanges loop
+    this.estimationForm.get('discountInput')?.setValue(
+      this.totalDiscountAmount,
+      { emitEvent: false }
+    );
+
+    const discountInput = this.totalDiscountAmount || 0;
     const paidAmount = this.estimationForm.value.paidAmount || 0;
 
     const afterDiscount = this.grossAmount - discountInput;
-    this.roundOffAmount = +(Math.round(afterDiscount) - afterDiscount).toFixed(2);
+
+    this.roundOffAmount = +(
+      Math.round(afterDiscount) - afterDiscount
+    ).toFixed(2);
 
     this.netPayableAmount = afterDiscount + this.roundOffAmount;
 
     this.balanceAmount = this.netPayableAmount - paidAmount;
   }
+
 
   /* -----------------------------------------
      UI Toggles

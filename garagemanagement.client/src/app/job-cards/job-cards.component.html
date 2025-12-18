@@ -106,12 +106,12 @@
         <td>{{card.status}}</td>
         <td>{{card.customerName}}</td>
         <td>{{card.mobileNo}}</td>
-        <td>{{card.arrivalDate}}</td>
+        <td>{{card.arrivalDate | date:'dd-MMM-yyyy' }}</td>
         <td>{{card.arrivalTime}}</td>
         <td>{{card.insuranceCorporate}}</td>
         <td>{{card.claimNo}}</td>
-        <td>{{card.estDeliveryDate}}</td>
-        <td>{{card.accidentDate}}</td>
+        <td>{{card.estDeliveryDate | date:'dd-MMM-yyyy' }}</td>
+        <td>{{card.accidentDate | date:'dd-MMM-yyyy' }}</td>
       </tr>
     </tbody>
   </table>

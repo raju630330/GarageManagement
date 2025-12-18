@@ -418,24 +418,38 @@ namespace GarageManagement.Server.Controllers
             var jobCards = _context.JobCards
                 .Select(j => new
                 {
-
                     refNo = "REF" + j.Id.ToString().PadLeft(3, '0'),
+
                     jobCardNo = "SRT-J" + (2992 + j.Id).ToString().PadLeft(6, '0'),
-                    invoiceNo = "SRT-I" + (2214 + j.Id).ToString(),
+
+                    invoiceNo = "SRT-I" + (2214 + j.Id),
+
                     claimNo = "CLM" + j.Id.ToString().PadLeft(3, '0'),
-                    regNo = j.RegistrationNo,
-                    vehicle = j.VehicleColor,
-                    serviceType = j.ServiceType,
+
+                    regNo = j.RegistrationNo ?? "",
+
+                    vehicle = j.VehicleColor ?? "",
+
+                    serviceType = j.ServiceType ?? "",
+
                     status = "Pending",
-                    customerName = j.CustomerName,
-                    mobileNo = "******" +
-                               j.Mobile.Substring(
-                                   j.Mobile.Length - 4),
-                    insuranceCorporate = j.InsuranceCompany,
+
+                    customerName = j.CustomerName ?? "",
+
+                    mobileNo = string.IsNullOrEmpty(j.Mobile) || j.Mobile.Length < 4
+                        ? "******"
+                        : "******" + j.Mobile.Substring(j.Mobile.Length - 4),
+
+                    insuranceCorporate = j.InsuranceCompany ?? "",
+
                     arrivalDate = DateTime.Now.Date,
-                    arrivalTime = DateTime.Now.TimeOfDay.ToString("hh:mm tt"),
+
+                    // ✅ FIXED
+                    arrivalTime = DateTime.Now.ToString("hh:mm tt"),
+
                     estDeliveryDate = j.DeliveryDate,
-                    accidentDate = DateTime.Now
+
+                    accidentDate = DateTime.Now.Date
                 })
                 .OrderByDescending(x => x.arrivalDate)
                 .ToList();
@@ -443,19 +457,13 @@ namespace GarageManagement.Server.Controllers
             return Ok(jobCards);
         }
 
-
-
-
-
-
-
         [HttpGet("searchJobCradsForEstimation")]
         public async Task<IActionResult> SearchJobCradsForEstimation([FromQuery] string query)
         {
             if (string.IsNullOrEmpty(query))
                 return BadRequest("Query is required");
 
-            var registrations = await _context.JobCards.Include(a=> a.JobCardEstimationItems)
+            var registrations = await _context.JobCards.Include(a => a.JobCardEstimationItems)
                 .Where(j => j.RegistrationNo.Contains(query) && !j.JobCardEstimationItems.Any())
                 .Select(j => new IdNameDto
                 {
@@ -466,9 +474,11 @@ namespace GarageManagement.Server.Controllers
 
             return Ok(registrations);
         }
+        }
 
     }
-}
+
+
 
 
 
