@@ -11,7 +11,7 @@
       <!-- Optional Company Name -->
       
       <h6 class="mb-0 text-white text-truncate company-name fw-bold">
-        SRINIVASA ROAD TRANSPORT<br class="mobile-break">PRIVATE LIMITED
+        SRINIVASA ROAD TRANSPORT<br class="mobile-break"> PRIVATE LIMITED
       </h6>
      
     </div>
@@ -95,7 +95,7 @@
 
 <!-- Sidebar -->
 <div class="sidebar" [class.open]="isSidebarOpen">
-  <a *ngFor="let tab of filteredSidebarTabs" [routerLink]="tab.route" (click)="toggleSidebar()">
+  <a *ngFor="let tab of filteredSidebarTabs" [routerLink]="tab.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
     {{ tab.name }}
   </a>
 </div>

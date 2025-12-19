@@ -146,7 +146,7 @@ html, body {
 .sidebar {
   position: fixed;
   left: 0;
-  width: 180px;
+  width: 250px;
   height: 100%;
   background: #e0f0ff;
   border-right: 1px solid #ddd;

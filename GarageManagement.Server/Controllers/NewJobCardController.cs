@@ -217,7 +217,7 @@ namespace GarageManagement.Server.Controllers
                         EF.Functions.Like(j.Email, $"%{query}%"))
                 .Select(j => new IdNameDto { 
                     Id = j.Id,
-                    Name = $"{j.JobCardNo} - {j.RegistrationNo}"
+                    Name = $"{j.JobCardNo} ({j.RegistrationNo})"
                 })
                 .ToListAsync();
 
@@ -406,6 +406,7 @@ namespace GarageManagement.Server.Controllers
                 vehicleData = new
                 {
                     registrationNo = jobCard.RegistrationNo,
+                    jobCardNumbetForEstimation = jobCard.JobCardNo,
                     odometerIn = jobCard.OdometerIn,
                     serviceType = jobCard.ServiceType,
                     fuelType = jobCard.FuelType,
@@ -490,7 +491,7 @@ namespace GarageManagement.Server.Controllers
                     regNo = j.RegistrationNo ?? "",
                     vehicle = j.VehicleColor ?? "",
                     serviceType = j.ServiceType ?? "",
-                    status = "Pending",
+                    status = j.Status,
                     customerName = j.CustomerName ?? "",
                     mobileNo = string.IsNullOrEmpty(j.Mobile) || j.Mobile.Length < 4
                         ? "******"
@@ -527,7 +528,7 @@ namespace GarageManagement.Server.Controllers
                                      .Select(j => new IdNameDto
                                      {
                                          Id = j.Id,
-                                         Name = $"{j.JobCardNo} - {j.RegistrationNo}"
+                                         Name = $"{j.JobCardNo} ({j.RegistrationNo})"
                                      }).ToListAsync();
 
 

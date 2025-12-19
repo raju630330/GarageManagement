@@ -24,6 +24,7 @@ export class EstimationComponent implements OnInit {
   id!: number;
 
   vehicleDetails: VehicleDetailsUI = {
+    jobCardNumbetForEstimation:'',
     regNo: '',
     jobCardNo: '',
     customerName: '',
@@ -95,6 +96,7 @@ export class EstimationComponent implements OnInit {
 
         // 1️⃣ Vehicle details
         this.vehicleDetails = {
+          jobCardNumbetForEstimation: res.vehicleData.jobCardNumbetForEstimation,
           regNo: res.vehicleData.registrationNo,
           jobCardNo: id.toString(),
           customerName: res.customerInfo.customerName,

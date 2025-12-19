@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { JobCardService } from '../services/job-card.service';
 import { JobCard } from '../models/job-card';
 import { Router } from '@angular/router';
+import { AlertService } from '../services/alert.service';
 
 @Component({
   selector: 'app-job-cards',
@@ -68,7 +69,7 @@ export class JobCardsComponent implements OnInit {
   estimateForm!: FormGroup;
   selectedJobCard: any = null; 
 
-  constructor(private fb: FormBuilder, public jobCardService: JobCardService, private router: Router) { }
+  constructor(private fb: FormBuilder, public jobCardService: JobCardService, private router: Router, private alert: AlertService) { }
 
   ngOnInit(): void {
 
@@ -203,6 +204,7 @@ export class JobCardsComponent implements OnInit {
   // For Estimation
 
   createNewEstimate() {
+    this.showPopup = false;
     this.showPopupForEstimation = true;
     this.selectedJobCard = null; // reset previous selection
     this.estimateForm = this.fb.group({
@@ -229,11 +231,15 @@ export class JobCardsComponent implements OnInit {
   }
 
   navigateToEstimate() {
-      let jobCardId =  this.estimateForm.get('id')?.value
+    let jobCardId = this.estimateForm.get('id')?.value
 
     if (this.selectedJobCard && jobCardId != null) {
       this.router.navigate(['/estimate'], { queryParams: { id: jobCardId } });
       this.showPopupForEstimation = false;
+    }
+    else {
+      this.alert.showError("Please search Job Card Setails before going to estimation!");
+      return;
     }
   }
 

@@ -68,7 +68,7 @@
 <!-- Search Box -->
 <div class="position-relative mt-2">
   <input type="text" class="form-control ps-5"
-         placeholder="Customer Name/Mobile No./Vehicle No./Claim No."
+         placeholder="Customer Name/Vehicle No./Claim No."
          [(ngModel)]="searchText" (ngModelChange)="applyFilter()">
   <i class="bi bi-search position-absolute" style="top: 50%; left: 10px; transform: translateY(-50%);"></i>
 </div>
@@ -96,13 +96,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let card of paginatedJobCards">
-        <td>{{card.refNo}}</td>
+      <tr *ngFor="let card of paginatedJobCards; let i = index">
+        <td>{{i+1}}</td>
         <td>{{card.jobCardNo}}</td>
         <td>{{card.regNo}}</td>
         <td>{{card.invoiceNo}}</td>
         <td>{{card.serviceType}}</td>
-        <td>{{card.vehicle}}</td>
+        <td>Tata Ace</td>
         <td>{{card.status}}</td>
         <td>{{card.customerName}}</td>
         <td>{{card.mobileNo}}</td>
@@ -161,7 +161,7 @@
     <div class="modal-content">
 
       <!-- Modal Header -->
-      <div class="modal-header">
+      <div class="modal-header bg-primary">
         <h2 class="modal-title w-100 text-center">New Estimate</h2>
         <button type="button" class="btn-close" aria-label="Close" (click)="closeEstimatePopup()"></button>
       </div>
@@ -171,7 +171,7 @@
         <form [formGroup]="estimateForm">
           <!-- Autocomplete -->
           <div class="mb-3">
-            <label class="form-label">Search Job Card Details</label>
+            <label class="form-label fw-bold">Search Job Card Details</label>
             <app-autocomplete placeholder="Search by JobCard No/ Reg No /Customer / Mobile"
                               [searchFn]="jobCardService.searchJobCardDetailsForEstimation.bind(jobCardService)"
                               (selected)="onSelectedJobCardDetailForEstimation($event)" (clearForm)="resetEntireForm()">
@@ -203,7 +203,7 @@
 
       <!-- Modal Footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" [disabled]="!selectedJobCard" (click)="navigateToEstimate()">Go to Estimation</button>
+        <button type="button" class="btn btn-success" (click)="navigateToEstimate()">Go to Estimation</button>
         <button type="button" class="btn btn-secondary" (click)="closeEstimatePopup()">Cancel</button>
       </div>
 

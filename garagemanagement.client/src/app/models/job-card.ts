@@ -58,6 +58,7 @@ export interface JobCardDto {
 }
 
 export interface VehicleDetailsUI {
+  jobCardNumbetForEstimation: string;
   regNo: string;
   jobCardNo: string;
 
