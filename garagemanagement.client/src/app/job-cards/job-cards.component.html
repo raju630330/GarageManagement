@@ -172,9 +172,9 @@
           <!-- Autocomplete -->
           <div class="mb-3">
             <label class="form-label">Search Job Card Details</label>
-            <app-autocomplete placeholder="Search by Reg No / Customer No / Mobile"
+            <app-autocomplete placeholder="Search by JobCard No/ Reg No /Customer / Mobile"
                               [searchFn]="jobCardService.searchJobCardDetailsForEstimation.bind(jobCardService)"
-                              (selected)="onSelectedJobCardDetailForEstimation($event)">
+                              (selected)="onSelectedJobCardDetailForEstimation($event)" (clearForm)="resetEntireForm()">
             </app-autocomplete>
             <input type="hidden" formControlName="id" />
           </div>

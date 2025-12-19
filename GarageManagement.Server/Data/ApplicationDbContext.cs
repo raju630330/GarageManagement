@@ -50,24 +50,42 @@ namespace GarageManagement.Server.Data
                 .WithOne(a => a.JobCard)
                 .HasForeignKey<JobCardAdvancePayment>(a => a.JobCardId);
 
+            // ✅ JobCard decimal fields
+            modelBuilder.Entity<JobCard>(entity =>
+            {
+                entity.Property(e => e.Discount)
+                      .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.Paid)
+                      .HasColumnType("decimal(18,2)");
+            });
+
             modelBuilder.Entity<JobCardAdvancePayment>(entity =>
             {
                 entity.Property(e => e.Amount)
                       .HasColumnType("decimal(18,2)");
+
                 entity.Property(e => e.Cash)
                       .HasColumnType("decimal(18,2)");
             });
+
             modelBuilder.Entity<JobCardTyreBattery>()
                 .HasOne(t => t.JobCard)
                 .WithMany(j => j.TyreBatteries)
                 .HasForeignKey(t => t.JobCardId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<JobCardCancelledInvoice>()
-                .HasOne(c => c.JobCard)
-                .WithMany(j => j.CancelledInvoices)
-                .HasForeignKey(c => c.JobCardId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<JobCardCancelledInvoice>(entity =>
+            {
+                entity.HasOne(c => c.JobCard)
+                      .WithMany(j => j.CancelledInvoices)
+                      .HasForeignKey(c => c.JobCardId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                // ✅ Fix warning
+                entity.Property(e => e.Amount)
+                      .HasColumnType("decimal(18,2)");
+            });
 
             modelBuilder.Entity<JobCardCollection>(entity =>
             {
@@ -80,6 +98,24 @@ namespace GarageManagement.Server.Data
                       .HasColumnType("decimal(18,2)");
             });
 
+            // ✅ JobCardEstimationItem decimal fields
+            modelBuilder.Entity<JobCardEstimationItem>(entity =>
+            {
+                entity.Property(e => e.Rate)
+                      .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.Discount)
+                      .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.TaxAmount)
+                      .HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.TaxPercent)
+                      .HasColumnType("decimal(5,2)");
+
+                entity.Property(e => e.Total)
+                      .HasColumnType("decimal(18,2)");
+            });
         }
     }
 }

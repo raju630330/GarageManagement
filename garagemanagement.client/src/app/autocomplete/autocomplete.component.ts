@@ -16,7 +16,8 @@ export class AutocompleteComponent implements OnInit {
   @Input() displayKey: string = 'name';
   @Input() idKey: string = 'id';
 
-  @Output() selected = new EventEmitter<any>();
+  @Output() selected = new EventEmitter<any>(); 
+  @Output() clearForm = new EventEmitter<void>();
 
   control = new FormControl('');
   results: any[] = [];
@@ -63,10 +64,10 @@ export class AutocompleteComponent implements OnInit {
 
   onKeyDown(event: KeyboardEvent) {
     if ((event.key === 'Backspace' || event.key === 'Delete') && this.selectedItem) {
-      this.selected.emit({ [this.idKey]: null });
       this.selectedItem = null;
       this.results = [];
       this.showNoResults = false;
+      this.clearForm.emit();
     }
   }
 

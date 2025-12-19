@@ -220,9 +220,9 @@ export class JobCardsComponent implements OnInit {
       this.selectedJobCard = {
         showEstimateButton: true,
         displayDate: new Date(res.customerInfo.deliveryDate).toLocaleDateString(),
-        jobCardNo: res.vehicleData.registrationNo,
+        jobCardNo: res.vehicleData.jobCardNo,
         customer: res.customerInfo.customerName,
-        status: 'Estimation Pending'
+        status: res.vehicleData.status
 
       };
     });
@@ -241,5 +241,7 @@ export class JobCardsComponent implements OnInit {
     this.showPopupForEstimation = false;
     this.selectedJobCard = null;
   }
-
+  resetEntireForm() {
+    this.selectedJobCard = null; 
+  }
 }

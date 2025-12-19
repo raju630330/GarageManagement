@@ -19,7 +19,7 @@ namespace GarageManagement.Server.Controllers
         }
 
 
-        [HttpPost("save-jobcard")]
+        /*[HttpPost("save-jobcard")]
         public async Task<IActionResult> SaveJobCard([FromBody] JobCardDto dto)
         {
             if (dto == null)
@@ -32,7 +32,8 @@ namespace GarageManagement.Server.Controllers
                 // ADD NEW
                 job = new JobCard
                 {
-                    RegistrationNo = dto.VehicleData.RegistrationNo,
+                    RegistrationNo = dto.VehicleData.RegistrationNo, 
+                    JobCardNo = "SRT-J" + (2992 + job.Id).ToString().PadLeft(6, '0'),
                     OdometerIn = dto.VehicleData.OdometerIn,
                     AvgKmsPerDay = dto.VehicleData.AvgKmsPerDay,
                     Vin = dto.VehicleData.Vin,
@@ -127,6 +128,74 @@ namespace GarageManagement.Server.Controllers
 
             await _context.SaveChangesAsync();
 
+
+
+            return Ok(new { id = job.Id });
+        }*/
+
+        [HttpPost("save-jobcard")]
+        public async Task<IActionResult> SaveJobCard([FromBody] JobCardDto dto)
+        {
+            if (dto == null)
+                return BadRequest("Invalid data");
+
+            var job = dto.Id == 0
+                ? new JobCard()
+                : await _context.JobCards
+                    .Include(x => x.Concerns)
+                    .Include(x => x.AdvancePayment)
+                    .FirstOrDefaultAsync(x => x.Id == dto.Id);
+
+            if (job == null)
+                return NotFound("JobCard not found");
+
+            job.RegistrationNo = dto.VehicleData.RegistrationNo;
+            job.OdometerIn = dto.VehicleData.OdometerIn;
+            job.AvgKmsPerDay = dto.VehicleData.AvgKmsPerDay;
+            job.Vin = dto.VehicleData.Vin;
+            job.EngineNo = dto.VehicleData.EngineNo;
+            job.VehicleColor = dto.VehicleData.VehicleColor;
+            job.FuelType = dto.VehicleData.FuelType;
+            job.ServiceType = dto.VehicleData.ServiceType;
+            job.ServiceAdvisor = dto.VehicleData.ServiceAdvisor;
+            job.Technician = dto.VehicleData.Technician;
+            job.Vendor = dto.VehicleData.Vendor;
+            job.Corporate = dto.CustomerInfo.Corporate;
+            job.CustomerName = dto.CustomerInfo.CustomerName;
+            job.Mobile = dto.CustomerInfo.Mobile;
+            job.AlternateMobile = dto.CustomerInfo.AlternateMobile;
+            job.Email = dto.CustomerInfo.Email;
+            job.DeliveryDate = dto.CustomerInfo.DeliveryDate;
+            job.InsuranceCompany = dto.CustomerInfo.InsuranceCompany;
+            job.Status = "Estimation Pending";
+            job.Concerns ??= new List<JobCardConcern>();
+            job.Concerns.Clear();
+            foreach (var c in dto.Concerns)
+            {
+                job.Concerns.Add(new JobCardConcern
+                {
+                    Text = c.Text,
+                    Active = c.Active
+                });
+            }
+
+            job.AdvancePayment ??= new JobCardAdvancePayment();
+            job.AdvancePayment.Cash = dto.AdvancePayment.Cash;
+            job.AdvancePayment.BankName = dto.AdvancePayment.BankName;
+            job.AdvancePayment.ChequeNo = dto.AdvancePayment.ChequeNo;
+            job.AdvancePayment.Amount = dto.AdvancePayment.Amount;
+            job.AdvancePayment.Date = dto.AdvancePayment.Date;
+
+            if (dto.Id == 0)
+                _context.JobCards.Add(job);
+
+            await _context.SaveChangesAsync(); 
+
+            if (dto.Id == 0)
+            {
+                job.JobCardNo = "SRT-J" + (2992 + job.Id).ToString().PadLeft(6, '0');
+                await _context.SaveChangesAsync();
+            }
             return Ok(new { id = job.Id });
         }
 
@@ -137,10 +206,18 @@ namespace GarageManagement.Server.Controllers
                 return BadRequest("Query is required");
 
             var registrations = await _context.JobCards
-                .Where(j => j.RegistrationNo.Contains(query))
+                .Where(j =>
+                        EF.Functions.Like(j.RegistrationNo, $"%{query}%") ||
+                        EF.Functions.Like(j.JobCardNo, $"%{query}%") ||
+                        EF.Functions.Like(j.CustomerName, $"%{query}%") ||
+                        EF.Functions.Like(j.Mobile, $"%{query}%") ||
+                        EF.Functions.Like(j.Vin, $"%{query}%") ||
+                        EF.Functions.Like(j.VehicleColor, $"%{query}%") ||
+                        EF.Functions.Like(j.Vin, $"%{query}%") ||
+                        EF.Functions.Like(j.Email, $"%{query}%"))
                 .Select(j => new IdNameDto { 
                     Id = j.Id,
-                    Name = j.RegistrationNo
+                    Name = $"{j.JobCardNo} - {j.RegistrationNo}"
                 })
                 .ToListAsync();
 
@@ -173,7 +250,9 @@ namespace GarageManagement.Server.Controllers
                     job.ServiceType,
                     job.ServiceAdvisor,
                     job.Technician,
-                    job.Vendor
+                    job.Vendor,
+                    job.JobCardNo,
+                    job.Status
                 },
                 CustomerInfo = new
                 {
@@ -233,8 +312,6 @@ namespace GarageManagement.Server.Controllers
                 });
             }
 
-
-            // --- Tyre/Battery ---
             jobCard.TyreBatteries.Clear();
             foreach (var tb in model.Popup.TyreBattery)
             {
@@ -249,7 +326,6 @@ namespace GarageManagement.Server.Controllers
                 });
             }
 
-            // --- Cancelled Invoices ---
             jobCard.CancelledInvoices.Clear();
             foreach (var ci in model.Popup.CancelledInvoices)
             {
@@ -261,7 +337,6 @@ namespace GarageManagement.Server.Controllers
                 });
             }
 
-            // --- Collections ---
             jobCard.Collections.Clear();
             foreach (var c in model.Popup.Collections)
             {
@@ -277,11 +352,11 @@ namespace GarageManagement.Server.Controllers
                 });
             }
 
-            // --- Simple fields ---
             jobCard.Discount = model.Estimation.DiscountInput;
             jobCard.Paid = model.Estimation.PaidAmount;
             jobCard.ServiceSuggestions = model.Popup.ServiceSuggestions;
             jobCard.Remarks = model.Popup.Remarks;
+            jobCard.Status = "Estimation Completed";
 
             _context.JobCards.Update(jobCard);
             await _context.SaveChangesAsync();
@@ -299,7 +374,6 @@ namespace GarageManagement.Server.Controllers
             if (jobCard == null)
                 return NotFound("JobCard not found");
 
-            // ================= ESTIMATION ITEMS =================
             var estimationItems = await _context.JobCardEstimationItems
                 .AsNoTracking()
                 .Where(e => e.JobCardId == jobCardId)
@@ -320,18 +394,15 @@ namespace GarageManagement.Server.Controllers
                 .Where(x => x.JobCardId == jobCardId)
                 .ToListAsync();
 
-            // ================= CALCULATIONS =================
             decimal grossAmount = estimationItems.Sum(i => i.Total);
             decimal totalDiscount = estimationItems.Sum(i => i.Discount);
             decimal paidAmount = jobCard.Paid;
 
             decimal netAmount = grossAmount - totalDiscount;
             decimal balanceAmount = netAmount - paidAmount;
-            // =================================================
 
             var result = new
             {
-                // 🔹 VEHICLE DATA (USED IN HEADER)
                 vehicleData = new
                 {
                     registrationNo = jobCard.RegistrationNo,
@@ -341,16 +412,12 @@ namespace GarageManagement.Server.Controllers
                     vin = jobCard.Vin,
                     engineNo = jobCard.EngineNo
                 },
-
-                // 🔹 CUSTOMER DATA (USED IN HEADER)
                 customerInfo = new
                 {
                     customerName = jobCard.CustomerName,
                     mobile = jobCard.Mobile,
                     email = jobCard.Email
                 },
-
-                // 🔹 ESTIMATION
                 estimation = new
                 {
                     discountInput = totalDiscount,
@@ -372,8 +439,6 @@ namespace GarageManagement.Server.Controllers
                         total = i.Total
                     })
                 },
-
-                // 🔹 POPUP DATA
                 popup = new
                 {
                     tyreBattery = tyreBattery.Select(t => new
@@ -419,36 +484,21 @@ namespace GarageManagement.Server.Controllers
                 .Select(j => new
                 {
                     refNo = "REF" + j.Id.ToString().PadLeft(3, '0'),
-
-                    jobCardNo = "SRT-J" + (2992 + j.Id).ToString().PadLeft(6, '0'),
-
+                    jobCardNo = j.JobCardNo,
                     invoiceNo = "SRT-I" + (2214 + j.Id),
-
                     claimNo = "CLM" + j.Id.ToString().PadLeft(3, '0'),
-
                     regNo = j.RegistrationNo ?? "",
-
                     vehicle = j.VehicleColor ?? "",
-
                     serviceType = j.ServiceType ?? "",
-
                     status = "Pending",
-
                     customerName = j.CustomerName ?? "",
-
                     mobileNo = string.IsNullOrEmpty(j.Mobile) || j.Mobile.Length < 4
                         ? "******"
                         : "******" + j.Mobile.Substring(j.Mobile.Length - 4),
-
                     insuranceCorporate = j.InsuranceCompany ?? "",
-
                     arrivalDate = DateTime.Now.Date,
-
-                    // ✅ FIXED
                     arrivalTime = DateTime.Now.ToString("hh:mm tt"),
-
                     estDeliveryDate = j.DeliveryDate,
-
                     accidentDate = DateTime.Now.Date
                 })
                 .OrderByDescending(x => x.arrivalDate)
@@ -463,14 +513,23 @@ namespace GarageManagement.Server.Controllers
             if (string.IsNullOrEmpty(query))
                 return BadRequest("Query is required");
 
-            var registrations = await _context.JobCards.Include(a => a.JobCardEstimationItems)
-                .Where(j => j.RegistrationNo.Contains(query) && !j.JobCardEstimationItems.Any())
-                .Select(j => new IdNameDto
-                {
-                    Id = j.Id,
-                    Name = j.RegistrationNo
-                })
-                .ToListAsync();
+            var registrations = await _context.JobCards
+                                     .Where(j =>
+                                         !j.JobCardEstimationItems.Any() &&
+                                         (
+                                             EF.Functions.Like(j.RegistrationNo, $"%{query}%") ||
+                                             EF.Functions.Like(j.JobCardNo, $"%{query}%") ||
+                                             EF.Functions.Like(j.CustomerName, $"%{query}%") ||
+                                             EF.Functions.Like(j.Mobile, $"%{query}%") ||
+                                             EF.Functions.Like(j.Vin, $"%{query}%")
+                                         )
+                                     )
+                                     .Select(j => new IdNameDto
+                                     {
+                                         Id = j.Id,
+                                         Name = $"{j.JobCardNo} - {j.RegistrationNo}"
+                                     }).ToListAsync();
+
 
             return Ok(registrations);
         }

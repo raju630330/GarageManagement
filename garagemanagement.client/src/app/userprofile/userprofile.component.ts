@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-userprofile',
@@ -9,50 +10,16 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./userprofile.component.css']
 })
 export class UserprofileComponent implements OnInit, AfterViewInit {
-
   user: any = null;
   isLoggedIn = false;
   role: string | null = null;
   filteredTabs: any = [];
+  showLeftArrow = false;
+  showRightArrow = false;
+  showUserPopup = false;
+  isSidebarOpen = false;
 
-  constructor(private authService: AuthService, private router: Router) { }
-
-  ngOnInit(): void {
-    // Subscribe to login state
-    this.authService.loggedIn$.subscribe(status => {
-      this.isLoggedIn = status;
-
-      if (status) {
-        this.authService.getUserProfile().subscribe({
-          next: (profile) => {
-            this.user = profile;
-            this.role = profile.role;
-
-            // Filter menu tabs by role
-            this.filteredTabs = this.mainTabs.filter(tab =>
-              tab.roles.includes(this.role ?? '')
-            );
-
-            setTimeout(() => this.checkScroll(), 50);
-          }
-        });
-      } else {
-        this.user = null;
-        this.role = null;
-      }
-    });
-  }
-
-  ngAfterViewInit(): void {
-    setTimeout(() => this.checkScroll(), 200);
-  }
-
-  logout() {
-    this.authService.logout();
-    this.showUserPopup = false;
-    this.router.navigate(['/']);
-    this.user = null;
-  }
+  @ViewChild('tabScroll') tabScroll!: ElementRef;
 
   mainTabs = [
     { name: 'Profile', route: '/profile', roles: ['Admin', 'Manager'] },
@@ -69,17 +36,51 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     { name: 'Templates', route: '/templates', roles: ['Admin', 'Manager'] }
   ];
 
-  showLeftArrow = false;
-  showRightArrow = false;
+  sidebarTabs = [
+    { name: 'Repair Order', route: '/repair-order', roles: ['Admin', 'Manager', 'Supervisor'] },
+    { name: 'Job Cards', route: '/jobcardlist', roles: ['Admin', 'Manager', 'Supervisor'] },
+    { name: 'New JobCard', route: '/newjobcard', roles: ['Admin', 'Manager'] },
+    { name: 'Reports', route: '/reports', roles: ['Admin', 'Manager'] }
+  ];
 
-  @ViewChild('tabScroll') tabScroll!: ElementRef;
+  filteredSidebarTabs: any[] = [];
+
+  constructor(private authService: AuthService, private router: Router) { }
+
+  ngOnInit(): void {
+    this.authService.loggedIn$.subscribe(status => {
+      this.isLoggedIn = status;
+
+      if (status) {
+        this.authService.getUserProfile().subscribe(profile => {
+          this.user = profile;
+          this.role = profile.role;
+          this.filteredTabs = this.mainTabs.filter(tab => tab.roles.includes(this.role ?? ''));
+          this.filteredSidebarTabs = this.sidebarTabs.filter(tab => tab.roles.includes(this.role ?? ''));
+          setTimeout(() => this.checkScroll(), 50);
+        });
+      } else {
+        this.user = null;
+        this.role = null;
+      }
+    });
+
+    // Auto-close sidebar on route change
+   /* this.router.events.pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(() => {
+        this.isSidebarOpen = false;
+      });*/
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.checkScroll(), 200);
+  }
 
   scrollTabs(amount: number) {
     const el = this.tabScroll?.nativeElement;
     if (!el) return;
 
     el.scrollBy({ left: amount, behavior: 'smooth' });
-
     setTimeout(() => this.checkScroll(), 300);
   }
 
@@ -87,25 +88,37 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     const el = this.tabScroll?.nativeElement;
     if (!el) return;
 
-    // Universal 2–3px tolerance (Chrome needs this)
     const tolerance = 3;
-
     this.showLeftArrow = el.scrollLeft > tolerance;
-
-    // Hide right arrow only when REALLY at end
     const atRightEnd = el.scrollLeft + el.clientWidth >= (el.scrollWidth - tolerance);
-
     this.showRightArrow = !atRightEnd;
   }
-  showUserPopup = false;
 
   toggleUserPopup() {
     this.showUserPopup = !this.showUserPopup;
   }
 
-  // FIX – close popup when clicking Login/Signup
   closePopup() {
     this.showUserPopup = false;
   }
 
+  logout() {
+    this.authService.logout();
+    this.closePopup();
+    this.isSidebarOpen = false;
+    this.router.navigate(['/login']);
+    this.user = null;
+  }
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+/*  // Optional: Close sidebar on click outside
+  @HostListener('document:click', ['$event'])
+  onClick(event: any) {
+    if (!event.target.closest('.sidebar') && !event.target.closest('.fixed-menu-btn')) {
+      this.isSidebarOpen = false;
+    }
+  }*/
 }

@@ -6,6 +6,7 @@
 
         // Vehicle
         public string RegistrationNo { get; set; } = string.Empty;
+        public string? JobCardNo { get; set; } = string.Empty;
         public long? OdometerIn { get; set; }
         public long? AvgKmsPerDay { get; set; }
         public string Vin { get; set; } = string.Empty;
@@ -29,8 +30,9 @@
         // Popup (single column)
         public decimal Discount { get; set; }
         public decimal Paid { get; set; }
-        public string ServiceSuggestions { get; set; } = string.Empty;
-        public string Remarks { get; set; } = string.Empty;
+        public string? ServiceSuggestions { get; set; } = string.Empty;
+        public string? Remarks { get; set; } = string.Empty;
+        public string? Status { get; set; } = string.Empty;
 
         // Navigation
         public JobCardAdvancePayment? AdvancePayment { get; set; }

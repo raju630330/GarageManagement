@@ -19,9 +19,9 @@
       <br />
       <div class="mt-2">
 
-        <app-autocomplete placeholder="Search by Reg No / Customer No / Mobile"
+        <app-autocomplete placeholder="Search by Reg No / Customer No / Mobile / Email / VIN / Vehicle / Corporate"
                           [searchFn]="jobcardService.searchRegistration.bind(jobcardService)"
-                          (selected)="onSelectedRegistration($event)">
+                          (selected)="onSelectedRegistration($event)" (clearForm)="resetEntireForm()">
         </app-autocomplete>
         <input type="hidden" formControlName="id" />
         <br />
@@ -49,14 +49,23 @@
       <div class="row g-2 mt-2">
         <div class="col-md-4">
           <label>Registration No</label>
-          <input class="form-control"
+          <input type="text"
+                 class="form-control"
                  formControlName="registrationNo"
-                 placeholder="Enter Registration Number">
-          <div *ngIf="vehicleData.get('registrationNo')?.touched && vehicleData.get('registrationNo')?.invalid"
-               class="text-danger small">
-            Registration No is required.
+                 placeholder="Ex: TS01AB1234"
+                 maxlength="10" />
+
+          <div *ngIf="vehicleData.get('registrationNo')?.invalid && vehicleData.get('registrationNo')?.touched" class="text-danger">
+            <small *ngIf="vehicleData.get('registrationNo')?.errors?.['required']">
+              Registration number is required
+            </small>
+
+            <small *ngIf="vehicleData.get('registrationNo')?.errors?.['pattern']">
+              Invalid format (Ex: TS01AB1234)
+            </small>
           </div>
         </div>
+
 
         <div class="col-md-4">
           <label>Odometer In</label>

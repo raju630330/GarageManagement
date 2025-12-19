@@ -2,6 +2,7 @@
 {
     public class VehicleDataDto
     {
+        public string? JobCardNo { get; set; }
         public string? RegistrationNo { get; set; }
         public long? OdometerIn { get; set; }
         public long? AvgKmsPerDay { get; set; }

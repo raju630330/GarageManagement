@@ -36,7 +36,13 @@ export class NewJobCardComponent implements OnInit {
     this.jobCardForm = this.fb.group({
       id:[0],
       vehicleData: this.fb.group({
-        registrationNo: ['', Validators.required],
+        registrationNo: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(/^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/)
+          ]
+        ],
         odometerIn: ['', [Validators.required, Validators.min(0.1)]],
         avgKmsPerDay: ['', Validators.required],
         vin: ['', Validators.required],
@@ -282,5 +288,54 @@ export class NewJobCardComponent implements OnInit {
       });
     });
   }
+
+  resetEntireForm(): void {
+
+    // 1️⃣ Reset main form with defaults
+    this.jobCardForm.reset({
+      id: 0,
+      vehicleData: {
+        registrationNo: '',
+        odometerIn: '',
+        avgKmsPerDay: '',
+        vin: '',
+        engineNo: '',
+        vehicleColor: '',
+        fuelType: '',
+        serviceType: '',
+        serviceAdvisor: '',
+        technician: '',
+        vendor: ''
+      },
+      customerInfo: {
+        corporate: '',
+        customerName: '',
+        mobile: '',
+        alternateMobile: '',
+        email: '',
+        deliveryDate: '',
+        insuranceCompany: ''
+      },
+      advancePayment: {
+        cash: '',
+        bankName: '',
+        chequeNo: '',
+        amount: '',
+        date: ''
+      }
+    });
+
+    // 2️⃣ Clear FormArray (VERY IMPORTANT)
+    const concernsArray = this.jobCardForm.get('concerns') as FormArray;
+    concernsArray.clear();
+
+    // 3️⃣ Reset standalone control
+    this.newConcern.reset();
+
+    // 4️⃣ Reset form state (optional but recommended)
+    this.jobCardForm.markAsPristine();
+    this.jobCardForm.markAsUntouched();
+  }
+
 
 }

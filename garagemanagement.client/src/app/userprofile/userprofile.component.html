@@ -1,27 +1,27 @@
 <nav class="navbar navbar-dark bg-primary">
   <div class="container-fluid d-flex align-items-center justify-content-between">
-
     <!-- Logo + Brand -->
     <a class="d-flex align-items-center text-white text-decoration-none" href="#">
       <img src="Workshop.jpg" alt="Logo" class="me-2 logo">
-      <span class="fw-bold d-none d-md-inline brand-name">WORKSHOP</span>
+      <span class="fw-bold d-none d-md-inline brand-name">WorkShop</span>
     </a>
 
     <!-- Company Name (Centered) -->
     <div class="text-center flex-grow-1 mx-2">
+      <!-- Optional Company Name -->
+      
       <h6 class="mb-0 text-white text-truncate company-name fw-bold">
-        SRINIVASA ROAD TRANSPORT<br class="mobile-break"> PRIVATE LIMITED
+        SRINIVASA ROAD TRANSPORT<br class="mobile-break">PRIVATE LIMITED
       </h6>
+     
     </div>
 
     <!-- Desktop User Dropdown -->
     <div class="d-none d-md-block">
       <ng-container *ngIf="isLoggedIn && user; else loginSignupDesktop">
         <div class="dropdown">
-          <button class="btn btn-primary btn-sm d-flex align-items-center"
-                  type="button" data-bs-toggle="dropdown">
-            <i class="bi bi-person-circle fs-5 me-1"></i>
-            {{ user?.username }}
+          <button class="btn btn-primary btn-sm d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-5 me-1"></i> {{ user?.username }}
           </button>
           <ul class="dropdown-menu dropdown-menu-end p-3" style="min-width: 220px;">
             <li><strong>{{ user?.username }}</strong></li>
@@ -34,7 +34,6 @@
           </ul>
         </div>
       </ng-container>
-
       <ng-template #loginSignupDesktop>
         <a class="btn btn-success btn-sm me-2" routerLink="/login">Login</a>
         <a class="btn btn-success btn-sm" routerLink="/register">Sign up</a>
@@ -43,57 +42,41 @@
 
     <!-- Mobile Hamburger -->
     <div class="d-md-none position-relative">
-      <button class="btn btn-light btn-sm" type="button" (click)="toggleUserPopup()">
-        &#9776;
-      </button>
-
-      <!-- Mobile Popup -->
-      <div *ngIf="showUserPopup"
-           class="position-absolute end-0 mt-2 bg-white border shadow-sm rounded"
-           style="min-width: 220px; z-index: 1000;">
-
-        <!-- Logged In -->
+      <button class="btn btn-light btn-sm" type="button" (click)="toggleUserPopup()">&#9776;</button>
+      <div *ngIf="showUserPopup" class="position-absolute end-0 mt-2 bg-white border shadow-sm rounded" style="min-width: 220px; z-index: 1000;">
         <ng-container *ngIf="isLoggedIn && user; else loginSignupMobile">
           <div class="p-3">
             <div><strong>{{ user?.username }}</strong></div>
             <div>{{ user?.email }}</div>
             <div class="mt-1"><span class="badge bg-info">{{ role }}</span></div>
             <hr>
-            <button class="btn btn-danger btn-sm w-100" (click)="logout(); closePopup();">
-              Logout
-            </button>
+            <button class="btn btn-danger btn-sm w-100" (click)="logout(); closePopup()">Logout</button>
           </div>
         </ng-container>
-
-        <!-- Login / Signup -->
         <ng-template #loginSignupMobile>
           <div class="p-3 d-flex flex-column gap-2">
-            <a class="btn btn-success btn-sm w-100"
-               routerLink="/login"
-               (click)="closePopup()">
-              Login
-            </a>
-            <a class="btn btn-success btn-sm w-100"
-               routerLink="/register"
-               (click)="closePopup()">
-              Sign up
-            </a>
+            <a class="btn btn-success btn-sm w-100" routerLink="/login" (click)="closePopup()">Login</a>
+            <a class="btn btn-success btn-sm w-100" routerLink="/register" (click)="closePopup()">Sign up</a>
           </div>
         </ng-template>
-
       </div>
     </div>
-
   </div>
 </nav>
 
-<!-- SCROLLABLE MENU -->
+<!-- SCROLLABLE MENU + Sidebar Toggle -->
 <div *ngIf="isLoggedIn" class="tab-container">
+  <!-- Sidebar Toggle Button -->
+  <button class="fixed-menu-btn" (click)="toggleSidebar()">
+    <i class="bi bi-list"></i>
+  </button>
 
+  <!-- Left Scroll -->
   <button *ngIf="showLeftArrow" class="scroll-btn left-btn" (click)="scrollTabs(-200)">
     <i class="bi bi-chevron-left"></i>
   </button>
 
+  <!-- Tabs -->
   <div class="scrollable-tabs" #tabScroll (scroll)="checkScroll()">
     <a *ngFor="let tab of filteredTabs"
        class="nav-link fw-semibold"
@@ -104,10 +87,20 @@
     </a>
   </div>
 
+  <!-- Right Scroll -->
   <button *ngIf="showRightArrow" class="scroll-btn right-btn" (click)="scrollTabs(200)">
     <i class="bi bi-chevron-right"></i>
   </button>
-
 </div>
 
-<router-outlet></router-outlet>
+<!-- Sidebar -->
+<div class="sidebar" [class.open]="isSidebarOpen">
+  <a *ngFor="let tab of filteredSidebarTabs" [routerLink]="tab.route" (click)="toggleSidebar()">
+    {{ tab.name }}
+  </a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <router-outlet></router-outlet>
+</div>
