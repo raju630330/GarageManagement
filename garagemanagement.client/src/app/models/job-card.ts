@@ -58,7 +58,7 @@ export interface JobCardDto {
 }
 
 export interface VehicleDetailsUI {
-  jobCardNumbetForEstimation: string;
+  jobCardNumberForEstimation: string;
   regNo: string;
   jobCardNo: string;
 
@@ -94,6 +94,8 @@ export interface PopupColumnConfig {
   validators?: ValidatorFn[];
   options?: { label: string; value: any }[];
   getOptions?: (row: any) => { label: string; value: string }[];
+  minDate?: string;
+  maxDate?: string;
 }
 
 export interface PopupTabConfig {

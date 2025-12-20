@@ -1,5 +1,7 @@
 using GarageManagement.Server;
 using GarageManagement.Server.Data;
+using GarageManagement.Server.RepoInterfaces;
+using GarageManagement.Server.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -25,7 +27,8 @@ namespace BrilliantMinds.Server
             // Email Service
             builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
             builder.Services.AddTransient<EmailService>(); ;
-
+            builder.Services.AddScoped<IAutoCompleteRepository, AutoCompleteRepository>();
+            builder.Services.AddScoped<INewJobCardRepsoitory, NewJobCardRepository>();
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddCors();

@@ -53,8 +53,12 @@
                 <input *ngSwitchCase="'number'" appTwoDecimalNumbers class="form-control" [formControlName]="col.field">
 
                 <!-- Date Input -->
-                <input *ngSwitchCase="'date'" type="date" class="form-control" [formControlName]="col.field">
-
+                <input *ngSwitchCase="'date'"
+                       type="date"
+                       class="form-control"
+                       [formControlName]="col.field"
+                       [attr.min]="col.minDate || null" [attr.max]="col.maxDate || null">     
+                                                         
                 <!-- Select Input -->
                 <select *ngSwitchCase="'select'" class="form-select" [formControlName]="col.field">
                   <option value="" selected>Select</option>

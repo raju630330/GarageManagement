@@ -39,4 +39,10 @@
     </ProjectReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Reports\Models\" />
+    <Folder Include="Reports\Repositories\" />
+    <Folder Include="Reports\RepoInterfaces\" />
+  </ItemGroup>
+
 </Project>

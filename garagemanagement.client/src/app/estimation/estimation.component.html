@@ -1,7 +1,7 @@
 <div class="jobcard-wrapper position-relative mb-5">
   <div class="jobcard-header border p-3 d-flex justify-content-between align-items-center">
     <div class="d-flex gap-3 align-items-center">
-      <div class="text-primary">Registration No. / Job Card No. </div>{{ vehicleDetails.regNo + ' / ' + vehicleDetails.jobCardNumbetForEstimation }}
+      <div class="text-primary">Registration No. / Job Card No. </div>{{ vehicleDetails.regNo + ' / ' + vehicleDetails.jobCardNumberForEstimation }}
     </div>
 
     <div class="d-flex gap-2 align-items-center">
@@ -225,9 +225,9 @@
 
           <td>
             <select class="form-select form-select-sm" formControlName="approval">
-              <option>Approved</option>
-              <option>Rejected</option>
-              <option>Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+              <option value="Pending">Pending</option>
             </select>
           </td>
           <td *appHasRole="[ROLES.ADMIN]">

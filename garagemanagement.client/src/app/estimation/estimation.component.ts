@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GlobalPopupComponent } from '../global-popup/global-popup.component';
 import { TablePopupComponent } from '../table-popup/table-popup.component';
 import { JobCardDto, PopupTabConfig, VehicleDetailsUI } from '../models/job-card';
+import { getToday } from '../shared/form-utils';
 
 
 
@@ -24,7 +25,7 @@ export class EstimationComponent implements OnInit {
   id!: number;
 
   vehicleDetails: VehicleDetailsUI = {
-    jobCardNumbetForEstimation:'',
+    jobCardNumberForEstimation:'',
     regNo: '',
     jobCardNo: '',
     customerName: '',
@@ -94,22 +95,20 @@ export class EstimationComponent implements OnInit {
     this.jobcardService.getEstimationDetails(id).subscribe({
       next: (res) => {
 
-        // 1️⃣ Vehicle details
         this.vehicleDetails = {
-          jobCardNumbetForEstimation: res.vehicleData.jobCardNumbetForEstimation,
+          jobCardNumberForEstimation: res.vehicleData.jobCardNo,
           regNo: res.vehicleData.registrationNo,
           jobCardNo: id.toString(),
           customerName: res.customerInfo.customerName,
           mobile: res.customerInfo.mobile,
           email: res.customerInfo.email,
           odometer: +res.vehicleData.odometerIn,
-          model: res.vehicleData.serviceType, // or actual model field
+          model: res.vehicleData.serviceType, 
           fuelType: res.vehicleData.fuelType,
           vin: res.vehicleData.vin,
           engineNo: res.vehicleData.engineNo
         };
 
-        // 2️⃣ Estimation Items
         const itemsArray = this.items;
         itemsArray.clear(); // remove old items
         if (res.estimation?.items?.length) {
@@ -120,23 +119,21 @@ export class EstimationComponent implements OnInit {
               partNo: [i.partNo, Validators.required],
               rate: [i.rate, [Validators.required, Validators.min(0)]],
               discount: [i.discount, Validators.min(0)],
-              hSN: [i.hSN],
+              hSN: [i.hsn],
               taxPercent: [i.taxPercent],
               taxAmount: [i.taxAmount],
               total: [i.total],
-              approval: ['Pending'],
+              approval: [i.approval && i.approval.trim() !== '' ? i.approval : 'Pending'],
               reason: ['']
             }));
           });
         }
 
-        // 3️⃣ Patch Estimation Totals
         this.estimationForm.patchValue({
           discountInput: res.estimation?.discountInput ?? 0,
           paidAmount: res.estimation?.paidAmount ?? 0
         });
 
-        // 4️⃣ Patch Popup Data
         this.popupData = {
           tyreBattery: [...(res.popup?.tyreBattery || [])],
           cancelledInvoices: [...(res.popup?.cancelledInvoices || [])],
@@ -145,7 +142,6 @@ export class EstimationComponent implements OnInit {
           remarks: res.popup?.remarks || ''
         };
 
-        // 5️⃣ Recalculate totals
         this.calculateTotals();
 
       },
@@ -241,24 +237,6 @@ export class EstimationComponent implements OnInit {
   /* -----------------------------------------
      Totals Calculation
   ----------------------------------------- */
-  //calculateTotals(): void {
-  //  const items = this.items.controls as FormGroup[];
-
-  //  this.totalDiscountAmount = items.reduce((sum, item) => sum + item.value.discount, 0);
-  //  this.totalTaxAmount = items.reduce((sum, item) => sum + item.value.taxAmount, 0);
-  //  this.grossAmount = items.reduce((sum, item) => sum + item.value.total, 0);
-
-  //  this.estimationForm.get('discountInput')?.setValue(this.totalDiscountAmount);
-  //  const discountInput = this.estimationForm.value.discountInput || 0;
-  //  const paidAmount = this.estimationForm.value.paidAmount || 0;
-
-  //  const afterDiscount = this.grossAmount - discountInput;
-  //  this.roundOffAmount = +(Math.round(afterDiscount) - afterDiscount).toFixed(2);
-
-  //  this.netPayableAmount = afterDiscount + this.roundOffAmount;
-
-  //  this.balanceAmount = this.netPayableAmount - paidAmount;
-  //}
 
   calculateTotals(): void {
     const items = this.items.controls as FormGroup[];
@@ -278,7 +256,6 @@ export class EstimationComponent implements OnInit {
       0
     );
 
-    // ✅ Set value safely without triggering valueChanges loop
     this.estimationForm.get('discountInput')?.setValue(
       this.totalDiscountAmount,
       { emitEvent: false }
@@ -339,7 +316,6 @@ export class EstimationComponent implements OnInit {
     });
   }
 
-  // Define available brands
    tyreBrands = [
     { label: 'MRF', value: 'MRF' },
     { label: 'Apollo', value: 'Apollo' },
@@ -373,18 +349,17 @@ export class EstimationComponent implements OnInit {
           field: 'brand',
           header: 'Brand',
           type: 'select',
-          options: [], // dynamically populated
+          options: [], 
           validators: [Validators.required],
           getOptions: (row: any) => {
-            // row contains the form value for this row
             if (row.type === 'Tyre') return this.tyreBrands;
             if (row.type === 'Battery') return this.batteryBrands;
             return [];
           }
         },
         { field: 'model', header: 'Model', type: 'text', validators: [Validators.required] },
-        { field: 'manufactureDate', header: 'Mfg Date', type: 'date', validators: [Validators.required] },
-        { field: 'expiryDate', header: 'Expiry Date', type: 'date', validators: [Validators.required] },
+        { field: 'manufactureDate', header: 'Mfg Date', type: 'date', validators: [Validators.required], maxDate: getToday() },
+        { field: 'expiryDate', header: 'Expiry Date', type: 'date', validators: [Validators.required], minDate: getToday() },
         {
           field: 'condition',
           header: 'Condition',
@@ -474,10 +449,8 @@ export class EstimationComponent implements OnInit {
 
     ref.afterClosed().subscribe(updatedData => {
       if (updatedData) {
-        // Merge returned data with existing popupData
         this.popupData = { ...this.popupData, ...updatedData };
       }
-      // If updatedData is undefined/null, do nothing → preserves previous data
     });
   }
 
@@ -499,36 +472,69 @@ export class EstimationComponent implements OnInit {
 
     for (const tabKey of Object.keys(requiredFields)) {
       const tabData = this.popupData[tabKey];
+      const tabLabel = this.getTabLabel(tabKey);
 
+      // 🔹 TABLE TABS
       if (Array.isArray(tabData)) {
-        const invalidRow = tabData.find((row: any) =>
-          requiredFields[tabKey].some(field => !row[field] && row[field] !== 0)
-        );
-        if (invalidRow) {
-          this.alert.showError(`Please fill all required fields in ${tabKey}.`);
+
+        // ✅ REQUIRED: At least 1 row
+        if (tabData.length === 0) {
+          this.alert.showError(
+            `${tabLabel} is incomplete.<br><br>
+   • At least one entry is required<br>
+   • Click the bottom menu (☰)<br>
+   • Enter the required details`
+          );
           return;
         }
-      } else {
+
+        for (let i = 0; i < tabData.length; i++) {
+          const row = tabData[i];
+
+          if (!row) {
+            this.alert.showError(`${tabLabel} → Row ${i + 1} is empty`);
+            return;
+          }
+
+          for (const field of requiredFields[tabKey]) {
+            const value = row[field];
+
+            if (
+              value === null ||
+              value === undefined ||
+              value === '' ||
+              (typeof value === 'string' && value.trim() === '')
+            ) {
+              const fieldLabel = this.getFieldLabel(tabKey, field);
+              this.alert.showError(
+                `${tabLabel} → Row ${i + 1}: ${fieldLabel} is required`
+              );
+              return;
+            }
+          }
+        }
+      }
+      // 🔹 TEXTAREA TABS
+      else {
         if (!tabData || tabData.toString().trim() === '') {
-          this.alert.showError(`Please enter ${tabKey}.`);
+          this.alert.showError(`Please enter ${tabLabel}`);
           return;
         }
       }
     }
 
-    // Exclude addItemForm
+
+
     const { addItemForm, ...estimationDetails } = this.estimationForm.value;
 
-    // Include JobCardId in payload
     const payload = {
-      jobCardId: this.id,    // <--- HERE
+      jobCardId: this.id,  
       estimation: estimationDetails,
       popup: this.popupData
     };
 
     console.log(payload);
 
-    // Call API
     this.jobcardService.saveJobCardEstimation(payload).subscribe({
       next: (res) => {
         this.router.navigate(['/jobcardlist']);
@@ -536,9 +542,8 @@ export class EstimationComponent implements OnInit {
       error: (err) => {
         console.error(err);
 
-        // Check if backend returned validation errors
         if (err.status === 400 && err.error?.errors) {
-          // err.error.errors should be a dictionary { fieldName: errorMessage }
+
           Object.keys(err.error.errors).forEach((field) => {
             const control = this.estimationForm.get(field);
             if (control) {
@@ -546,7 +551,6 @@ export class EstimationComponent implements OnInit {
             }
           });
         } else {
-          // Generic error alert
           alert(err.error?.message || 'Something went wrong!');
         }
       }
@@ -557,5 +561,14 @@ export class EstimationComponent implements OnInit {
     this.alert.showInfo("Job Card Cancelled");
     this.router.navigate(['/jobcardlist']);
     return;
+  }
+  getTabLabel(tabKey: string): string {
+    return this.popupTabs.find(t => t.tabKey === tabKey)?.label || tabKey;
+  }
+
+  getFieldLabel(tabKey: string, field: string): string {
+    const tab = this.popupTabs.find(t => t.tabKey === tabKey);
+    const col = tab?.columns?.find(c => c.field === field);
+    return col?.header || field;
   }
 }
