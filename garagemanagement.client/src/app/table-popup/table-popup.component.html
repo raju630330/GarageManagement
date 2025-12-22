@@ -61,7 +61,6 @@
                                                          
                 <!-- Select Input -->
                 <select *ngSwitchCase="'select'" class="form-select" [formControlName]="col.field">
-                  <option value="" selected>Select</option>
                   <option *ngFor="let opt of col.getOptions ? col.getOptions(row.value) : col.options" [value]="opt.value">
                     {{ opt.label }}
                   </option>

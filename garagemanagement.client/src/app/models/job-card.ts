@@ -86,14 +86,18 @@ export interface EstimationItem {
   approval: string;
   reason: string;
 }
+export interface PopupOption {
+  label: string;
+  value: string | null;
+}
 export type ColumnType = 'text' | 'number' | 'date' | 'select';
 export interface PopupColumnConfig {
   field: string;
   header: string;
   type: ColumnType;
   validators?: ValidatorFn[];
-  options?: { label: string; value: any }[];
-  getOptions?: (row: any) => { label: string; value: string }[];
+  options?: PopupOption[];
+  getOptions?: (row: any) => PopupOption[];
   minDate?: string;
   maxDate?: string;
 }

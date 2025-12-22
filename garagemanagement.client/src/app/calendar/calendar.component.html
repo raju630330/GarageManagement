@@ -17,9 +17,9 @@
              style="width: 200px;" />
 
       <select class="form-select form-select-sm w-auto" (change)="changeView($event)">
+        <option selected value="day">Day</option>
         <option value="week">Week</option>
         <option value="month">Month</option>
-        <option value="day">Day</option>
       </select>
 
       <button class="btn btn-primary btn-sm" [routerLink]="['bookappointment']">
@@ -33,61 +33,96 @@
     <table class="table table-bordered align-middle text-center">
       <thead class="table-light">
         <tr>
-          <th style="width: 80px;">Time</th>
+          <th style="width:80px">Time</th>
+
           <th *ngFor="let day of currentWeekDates">
-            <div>{{ day | date: 'EEE' }}</div>
-            <div [ngClass]="{'bg-primary text-white rounded-circle px-2': isToday(day)}">
+            <div class="small fw-semibold">
+              {{ day | date:'EEE' }}
+            </div>
+            <div
+                 [class.bg-primary]="isToday(day)"
+                 [class.text-white]="isToday(day)"
+                 class="fw-semibold rounded-circle d-inline-block px-2">
               {{ day.getDate() }}
             </div>
           </th>
         </tr>
       </thead>
+
       <tbody>
         <tr *ngFor="let hour of hours">
-          <td class="text-end small text-muted">{{ hour }}</td>
-          <td *ngFor="let day of currentWeekDates">
-            <div *ngFor="let appt of getAppointmentsForSlot(day, hour)">
-              <div class="badge bg-primary w-100 mb-1 text-center"
-                   [ngClass]="{ 'py-2': !appt.service }">
-                <div *ngIf="appt.service">{{ appt.service }}</div>
-                <small>{{ appt.customerType }}</small>
+
+          <!-- Time -->
+          <td class="text-end small text-muted fw-semibold">
+            {{ hour }}
+          </td>
+
+          <!-- Days -->
+          <td *ngFor="let day of currentWeekDates" class="p-1 align-top">
+
+            <ng-container *ngIf="getAppointmentsForSlot(day, hour) as appts">
+
+              <div *ngFor="let appt of appts" class="p-2 mb-1 rounded text-center" [ngClass]="isToday(day) ? ((appts?.length ?? 0) > 12 ? 'bg-dark text-white' : 'bg-primary text-white') : ((appts?.length ?? 0) > 12 ? 'bg-danger text-white' : ((appts?.length ?? 0) > 0 ? 'bg-success text-white' : ''))">
+                          
+                <div class="fw-semibold small text-truncate">
+                  {{ appt.service || 'Service' }}
+                </div>
+
+                <div class="small opacity-75 text-truncate">
+                  {{ appt.customerType }}
+                </div>
+
               </div>
-            </div>
+
+            </ng-container>
+
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+
+
 
   <!-- MONTH VIEW -->
   <div class="table-responsive" *ngIf="viewMode === 'month'">
     <table class="table table-bordered text-center">
       <thead class="table-light">
         <tr>
-          <th *ngFor="let d of ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']">{{ d }}</th>
+          <th *ngFor="let d of ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']">
+            {{ d }}
+          </th>
         </tr>
       </thead>
+
       <tbody>
-        <tr *ngFor="let week of [].constructor((currentWeekDates.length / 7)); let row = index">
-          <td *ngFor="let day of currentWeekDates.slice(row*7, row*7+7)" class="month-cell">
+        <tr *ngFor="let row of [].constructor(currentWeekDates.length / 7); let i = index">
 
-            <div class="inner-box"
-                  [ngClass]="{ 'today-box bg-primary text-white rounded-circle px-2': isToday(day), 'booked-box text-white': hasAppointments(day).length > 0 && hasAppointments(day).length <= 12 && !isToday(day), 'heavy-box': hasAppointments(day).length > 12 }">
+          <td *ngFor="let day of currentWeekDates.slice(i*7, i*7+7)"
+              class="month-cell">
 
+            <ng-container *ngIf="hasAppointments(day).length as count">
 
-              <div>{{ day.getDate() }}</div>
+              <div class="p-2 rounded" [ngClass]="isToday(day) ? (count > 12 ? 'bg-dark text-white' : 'bg-primary text-white') : (count > 12 ? 'bg-danger text-white' : (count > 0 ? 'bg-success text-white' : ''))">
+                                 
+                <div class="fw-semibold">
+                  {{ day.getDate() }}
+                </div>
 
-              <span *ngIf="hasAppointments(day).length > 0">
-                {{ hasAppointments(day).length }} Booked
-              </span>
-            </div>
+                <span *ngIf="count > 0"
+                      class="badge bg-light text-dark mt-1">
+                  {{ count }} booked
+                </span>
+
+              </div>
+
+            </ng-container>
 
           </td>
-
-
         </tr>
       </tbody>
     </table>
   </div>
+
 </div>
 <router-outlet></router-outlet>

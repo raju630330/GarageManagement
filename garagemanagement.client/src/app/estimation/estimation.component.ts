@@ -7,7 +7,7 @@ import { JobCardService } from '../services/job-card.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GlobalPopupComponent } from '../global-popup/global-popup.component';
 import { TablePopupComponent } from '../table-popup/table-popup.component';
-import { JobCardDto, PopupTabConfig, VehicleDetailsUI } from '../models/job-card';
+import { JobCardDto, PopupOption, PopupTabConfig, VehicleDetailsUI } from '../models/job-card';
 import { getToday } from '../shared/form-utils';
 
 
@@ -316,13 +316,13 @@ export class EstimationComponent implements OnInit {
     });
   }
 
-   tyreBrands = [
+  tyreBrands: PopupOption[] = [
     { label: 'MRF', value: 'MRF' },
     { label: 'Apollo', value: 'Apollo' },
     { label: 'JK Tyre', value: 'JK Tyre' }
   ];
 
-   batteryBrands = [
+  batteryBrands: PopupOption[] = [
     { label: 'Exide', value: 'Exide' },
     { label: 'Amaron', value: 'Amaron' },
     { label: 'Luminous', value: 'Luminous' }
@@ -340,6 +340,7 @@ export class EstimationComponent implements OnInit {
           header: 'Type',
           type: 'select',
           options: [
+            { label: 'Select Type', value: null }, 
             { label: 'Tyre', value: 'Tyre' },
             { label: 'Battery', value: 'Battery' }
           ],
@@ -349,13 +350,24 @@ export class EstimationComponent implements OnInit {
           field: 'brand',
           header: 'Brand',
           type: 'select',
-          options: [], 
+          options: [{ label: 'Select Brand', value: null }], 
           validators: [Validators.required],
-          getOptions: (row: any) => {
-            if (row.type === 'Tyre') return this.tyreBrands;
-            if (row.type === 'Battery') return this.batteryBrands;
-            return [];
+          getOptions: (row: any): PopupOption[] => {
+            const base: PopupOption[] = [
+              { label: 'Select Brand', value: null }
+            ];
+
+            if (row.type === 'Tyre') {
+              return base.concat(this.tyreBrands);
+            }
+
+            if (row.type === 'Battery') {
+              return base.concat(this.batteryBrands);
+            }
+
+            return base;
           }
+
         },
         { field: 'model', header: 'Model', type: 'text', validators: [Validators.required] },
         { field: 'manufactureDate', header: 'Mfg Date', type: 'date', validators: [Validators.required], maxDate: getToday() },
@@ -365,6 +377,7 @@ export class EstimationComponent implements OnInit {
           header: 'Condition',
           type: 'select',
           options: [
+            { label: 'Select', value: null },
             { label: 'Good', value: 'Good' },
             { label: 'Average', value: 'Average' },
             { label: 'Poor', value: 'Poor' }
@@ -400,6 +413,7 @@ export class EstimationComponent implements OnInit {
           header: 'Payment Type',
           type: 'select',
           options: [
+            { label: 'Select', value: null },
             { label: 'Cash', value: 'Cash' },
             { label: 'Cheque', value: 'Cheque' },
             { label: 'Online', value: 'Online' }
@@ -411,6 +425,7 @@ export class EstimationComponent implements OnInit {
           header: 'Bank',
           type: 'select',
           options: [
+            { label: 'Select', value: null },
             { label: 'HDFC', value: 'HDFC' },
             { label: 'ICICI', value: 'ICICI' },
             { label: 'SBI', value: 'SBI' }
@@ -480,11 +495,11 @@ export class EstimationComponent implements OnInit {
         // ✅ REQUIRED: At least 1 row
         if (tabData.length === 0) {
           this.alert.showError(
-            `${tabLabel} is incomplete.<br><br>
-   • At least one entry is required<br>
-   • Click the bottom menu (☰)<br>
-   • Enter the required details`
-          );
+            `Please enter ${tabLabel} details.<br><br>
+             • At least one entry is required<br>
+             • Click the bottom menu (☰)<br>
+             • Enter the required details`
+                    );
           return;
         }
 

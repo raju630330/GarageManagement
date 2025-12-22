@@ -37,10 +37,8 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
   ];
 
   sidebarTabs = [
-    { name: 'Repair Order', route: '/repair-order', roles: ['Admin', 'Manager', 'Supervisor'] },
-    { name: 'Job Cards', route: '/jobcardlist', roles: ['Admin', 'Manager', 'Supervisor'] },
-    { name: 'New JobCard', route: '/newjobcard', roles: ['Admin', 'Manager'] },
-    { name: 'Reports', route: '/reports', roles: ['Admin', 'Manager'] }
+    { name: 'Repair Order', icon:'bi bi-tools me-2', route: '/repair-order', roles: ['Admin', 'Manager', 'Supervisor'] },
+    { name: 'Job Cards', icon: 'fas fa-pen-to-square', route: '/jobcardlist', roles: ['Admin', 'Manager', 'Supervisor'] },
   ];
 
   filteredSidebarTabs: any[] = [];
@@ -66,10 +64,12 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     });
 
     // Auto-close sidebar on route change
-   /* this.router.events.pipe(filter(e => e instanceof NavigationEnd))
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => {
-        this.isSidebarOpen = false;
-      });*/
+        if (window.innerWidth < 768) {
+          this.isSidebarOpen = false;
+        }
+      });
   }
 
   ngAfterViewInit(): void {

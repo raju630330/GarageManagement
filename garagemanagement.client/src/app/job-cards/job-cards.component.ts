@@ -217,14 +217,14 @@ export class JobCardsComponent implements OnInit {
     this.estimateForm.patchValue({ id: event.id });
 
     // Fetch Job Card details from service
-    this.jobCardService.getJobCardDetails(event.id).subscribe(res => {
+    this.jobCardService.getEstimationDetails(event.id).subscribe(res => {
       // res should contain 4 fields for table display
       this.selectedJobCard = {
         showEstimateButton: true,
         displayDate: new Date(res.customerInfo.deliveryDate).toLocaleDateString(),
         jobCardNo: res.vehicleData.jobCardNo,
         customer: res.customerInfo.customerName,
-        status: res.vehicleData.status
+        status: res.status
 
       };
     });
@@ -238,7 +238,7 @@ export class JobCardsComponent implements OnInit {
       this.showPopupForEstimation = false;
     }
     else {
-      this.alert.showError("Please search Job Card Setails before going to estimation!");
+      this.alert.showError("Please search Job Card details before going to estimation!");
       return;
     }
   }

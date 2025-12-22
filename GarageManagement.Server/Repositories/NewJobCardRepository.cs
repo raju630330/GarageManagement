@@ -287,6 +287,7 @@ namespace GarageManagement.Server.Repositories
                 IsSuccess = true,
                 Message = "Success",
                 JobCardId = jobCardId,
+                Status = jobCard.Status ?? string.Empty,
 
                 VehicleData = new VehicleDataDto
                 {
@@ -367,7 +368,7 @@ namespace GarageManagement.Server.Repositories
                     }).ToList(),
 
                     ServiceSuggestions = jobCard.ServiceSuggestions ?? string.Empty,
-                    Remarks = jobCard.Remarks ?? string.Empty,
+                    Remarks = jobCard.Remarks ?? string.Empty,                  
                 },
             };
         }

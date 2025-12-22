@@ -17,7 +17,8 @@
     }
     public class GetEstimationDto : BaseResultDto
     {
-        public long JobCardId { get; set; } 
+        public long JobCardId { get; set; }
+        public string Status { get; set; } = string.Empty;
         public VehicleDataDto VehicleData { get; set; }  = new VehicleDataDto();
         public CustomerInfoDto CustomerInfo { get; set; } = new CustomerInfoDto();
         public EstimationDto Estimation { get; set; } = new EstimationDto(); 
@@ -55,6 +56,7 @@
         public List<CollectionDto> Collections { get; set; } = new List<CollectionDto>();
         public string ServiceSuggestions { get; set; } = string.Empty;
         public string Remarks { get; set; } = string.Empty;
+
     }
 
     public class TyreBatteryDto

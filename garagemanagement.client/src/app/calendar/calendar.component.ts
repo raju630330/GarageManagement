@@ -15,7 +15,7 @@ import { BookingAppointmentComponent } from '../booking-appointment/booking-appo
 export class CalendarComponent implements OnInit {
   currentWeekDates: Date[] = [];
   hours: string[] = [];
-  viewMode: 'week' | 'month' | 'day' = 'week';
+  viewMode: 'week' | 'month' | 'day' = 'day';
   currentDate: Date = new Date();
   appointments: any[] = [];
   filteredAppointments: any[] = [];
@@ -31,7 +31,7 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit(): void {
     this.generateHours();
-    this.generateWeek(this.currentDate);
+    this.generateDay(this.currentDate);
     this.loadAppointments();
   }
 
@@ -100,6 +100,8 @@ export class CalendarComponent implements OnInit {
   }
 
   changeView(event: Event) {
+    this.loadAppointments();
+    console.log(this.loadAppointments());
     const mode = (event.target as HTMLSelectElement).value as 'week' | 'month' | 'day';
     this.viewMode = mode;
     if (mode === 'week') this.generateWeek(this.currentDate);
