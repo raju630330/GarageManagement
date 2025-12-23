@@ -229,5 +229,13 @@ export class CalendarComponent implements OnInit {
         d.getFullYear() === date.getFullYear();
     });
   }
+  //For week and day
+  getSlotCount(day: Date, hour: string): number {
+    return this.getAppointmentsForSlot(day, hour).length;
+  }
+  //For month 
+  getAppointmentCount(day: Date): number {
+    return this.hasAppointments(day).length;
+  }
 }
 

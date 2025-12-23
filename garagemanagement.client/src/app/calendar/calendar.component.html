@@ -39,8 +39,7 @@
             <div class="small fw-semibold">
               {{ day | date:'EEE' }}
             </div>
-            <div
-                 [class.bg-primary]="isToday(day)"
+            <div [class.bg-primary]="isToday(day)"
                  [class.text-white]="isToday(day)"
                  class="fw-semibold rounded-circle d-inline-block px-2">
               {{ day.getDate() }}
@@ -60,25 +59,20 @@
           <!-- Days -->
           <td *ngFor="let day of currentWeekDates" class="p-1 align-top">
 
-            <ng-container *ngIf="getAppointmentsForSlot(day, hour) as appts">
-
-              <div *ngFor="let appt of appts" class="p-2 mb-1 rounded text-center" [ngClass]="isToday(day) ? ((appts?.length ?? 0) > 12 ? 'bg-dark text-white' : 'bg-primary text-white') : ((appts?.length ?? 0) > 12 ? 'bg-danger text-white' : ((appts?.length ?? 0) > 0 ? 'bg-success text-white' : ''))">
-                          
-                <div class="fw-semibold small text-truncate">
-                  {{ appt.service || 'Service' }}
-                </div>
-
-                <div class="small opacity-75 text-truncate">
-                  {{ appt.customerType }}
-                </div>
-
+            <!-- Appointments -->
+            <div *ngFor="let appt of getAppointmentsForSlot(day, hour)" class="p-2 mb-1 rounded text-center" [ngClass]="getSlotCount(day, hour) > 12 ? (isToday(day) ? 'bg-dark text-white' : 'bg-danger text-white') : (isToday(day) ? 'bg-primary text-white' : 'bg-success text-white')">
+              <div class="fw-semibold small text-truncate">
+                {{ appt.service || 'Service' }}
               </div>
-
-            </ng-container>
+              <div class="small opacity-75 text-truncate">
+                {{ appt.customerType }}
+              </div>
+            </div>
 
           </td>
         </tr>
       </tbody>
+
     </table>
   </div>
 
@@ -101,23 +95,17 @@
           <td *ngFor="let day of currentWeekDates.slice(i*7, i*7+7)"
               class="month-cell">
 
-            <ng-container *ngIf="hasAppointments(day).length as count">
-
-              <div class="p-2 rounded" [ngClass]="isToday(day) ? (count > 12 ? 'bg-dark text-white' : 'bg-primary text-white') : (count > 12 ? 'bg-danger text-white' : (count > 0 ? 'bg-success text-white' : ''))">
-                                 
+            <ng-container>
+              <div class="p-2 rounded" [ngClass]=" isToday(day) ? (getAppointmentCount(day) > 12 ? 'bg-dark text-white' : 'bg-primary text-white') : (getAppointmentCount(day) > 12 ? 'bg-danger text-white'  : (getAppointmentCount(day) > 0 ? 'bg-success text-white' : 'bg-light')) ">                   
                 <div class="fw-semibold">
                   {{ day.getDate() }}
                 </div>
-
-                <span *ngIf="count > 0"
+                <span *ngIf="getAppointmentCount(day) > 0"
                       class="badge bg-light text-dark mt-1">
-                  {{ count }} booked
+                  {{ getAppointmentCount(day) }} booked
                 </span>
-
               </div>
-
             </ng-container>
-
           </td>
         </tr>
       </tbody>
