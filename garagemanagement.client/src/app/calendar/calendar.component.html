@@ -60,7 +60,7 @@
           <td *ngFor="let day of currentWeekDates" class="p-1 align-top">
 
             <!-- Appointments -->
-            <div *ngFor="let appt of getAppointmentsForSlot(day, hour)" class="p-2 mb-1 rounded text-center" [ngClass]="getSlotCount(day, hour) > 12 ? (isToday(day) ? 'bg-dark text-white' : 'bg-danger text-white') : (isToday(day) ? 'bg-primary text-white' : 'bg-success text-white')">
+            <div *ngFor="let appt of getAppointmentsForSlot(day, hour)" class="p-2 mb-1 rounded text-center" [ngClass]="isPast(day) ? 'bg-warning text-white': getSlotCount(day, hour) > 12 ? (isToday(day) ? 'bg-dark text-white' : 'bg-danger text-white') : (isToday(day) ? 'bg-primary text-white' : 'bg-success text-white')">
               <div class="fw-semibold small text-truncate">
                 {{ appt.service || 'Service' }}
               </div>
@@ -96,7 +96,7 @@
               class="month-cell">
 
             <ng-container>
-              <div class="p-2 rounded" [ngClass]=" isToday(day) ? (getAppointmentCount(day) > 12 ? 'bg-dark text-white' : 'bg-primary text-white') : (getAppointmentCount(day) > 12 ? 'bg-danger text-white'  : (getAppointmentCount(day) > 0 ? 'bg-success text-white' : 'bg-light')) ">                   
+              <div class="p-2 rounded" [ngClass]="isPast(day) ? 'bg-warning text-white': isToday(day) ? (getAppointmentCount(day) > 12 ? 'bg-dark text-white' : 'bg-primary text-white') : (getAppointmentCount(day) > 12 ? 'bg-danger text-white'  : (getAppointmentCount(day) > 0 ? 'bg-success text-white' : 'bg-light')) ">                   
                 <div class="fw-semibold">
                   {{ day.getDate() }}
                 </div>

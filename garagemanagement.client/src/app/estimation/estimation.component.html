@@ -336,10 +336,38 @@
         </li>
 
       </ul>
-
-
     </div>
-    <button class="btn btn-light btn-sm"> <i class="bi bi-printer fs-5"></i> </button>
+    <div class="dropdown d-inline ms-2">
+      <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-printer fs-5"></i>
+      </button>
+      <ul class="dropdown-menu">
+        <li>
+          <a class="dropdown-item d-flex align-items-center gap-2"
+             href="#"
+             (click)="$event.preventDefault(); openWorkOrderPdf()">
+            <i class="bi bi-disc text-primary"></i>
+            WORK ORDER
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item d-flex align-items-center gap-2"
+             href="#"
+             (click)="$event.preventDefault()">
+            <i class="bi bi-file-earmark-x text-primary"></i>
+            ESTIMATE
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item d-flex align-items-center gap-2"
+             href="#"
+             (click)="$event.preventDefault()">
+            <i class="bi bi-lightbulb text-primary"></i>
+            GATEPASS
+          </a>
+        </li>
+      </ul>
+    </div>
     <button class="btn btn-light btn-sm"> <i class="bi bi-envelope fs-5"></i> </button>
     <button class="btn btn-light btn-sm"> <i class="bi bi-car-front fs-5"></i> </button>
     <button class="btn btn-light btn-sm"> <i class="bi bi-percent fs-5"></i> </button>

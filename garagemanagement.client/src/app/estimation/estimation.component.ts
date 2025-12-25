@@ -9,6 +9,7 @@ import { GlobalPopupComponent } from '../global-popup/global-popup.component';
 import { TablePopupComponent } from '../table-popup/table-popup.component';
 import { JobCardDto, PopupOption, PopupTabConfig, VehicleDetailsUI } from '../models/job-card';
 import { getToday } from '../shared/form-utils';
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -25,7 +26,7 @@ export class EstimationComponent implements OnInit {
   id!: number;
 
   vehicleDetails: VehicleDetailsUI = {
-    jobCardNumberForEstimation:'',
+    jobCardNumberForEstimation: '',
     regNo: '',
     jobCardNo: '',
     customerName: '',
@@ -53,7 +54,7 @@ export class EstimationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog, private router: Router
+    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog, private router: Router, private http: HttpClient
   ) { }
 
   ngOnInit(): void {
@@ -103,7 +104,7 @@ export class EstimationComponent implements OnInit {
           mobile: res.customerInfo.mobile,
           email: res.customerInfo.email,
           odometer: +res.vehicleData.odometerIn,
-          model: res.vehicleData.serviceType, 
+          model: res.vehicleData.serviceType,
           fuelType: res.vehicleData.fuelType,
           vin: res.vehicleData.vin,
           engineNo: res.vehicleData.engineNo
@@ -340,7 +341,7 @@ export class EstimationComponent implements OnInit {
           header: 'Type',
           type: 'select',
           options: [
-            { label: 'Select Type', value: null }, 
+            { label: 'Select Type', value: null },
             { label: 'Tyre', value: 'Tyre' },
             { label: 'Battery', value: 'Battery' }
           ],
@@ -350,7 +351,7 @@ export class EstimationComponent implements OnInit {
           field: 'brand',
           header: 'Brand',
           type: 'select',
-          options: [{ label: 'Select Brand', value: null }], 
+          options: [{ label: 'Select Brand', value: null }],
           validators: [Validators.required],
           getOptions: (row: any): PopupOption[] => {
             const base: PopupOption[] = [
@@ -499,7 +500,7 @@ export class EstimationComponent implements OnInit {
              • At least one entry is required<br>
              • Click the bottom menu (☰)<br>
              • Enter the required details`
-                    );
+          );
           return;
         }
 
@@ -543,7 +544,7 @@ export class EstimationComponent implements OnInit {
     const { addItemForm, ...estimationDetails } = this.estimationForm.value;
 
     const payload = {
-      jobCardId: this.id,  
+      jobCardId: this.id,
       estimation: estimationDetails,
       popup: this.popupData
     };
@@ -586,4 +587,49 @@ export class EstimationComponent implements OnInit {
     const col = tab?.columns?.find(c => c.field === field);
     return col?.header || field;
   }
+
+  openWorkOrderPdf() {
+    this.http.get(
+      `https://localhost:7086/api/reports/work-order/${this.id}`,
+      { responseType: 'blob' }
+    ).subscribe(pdfBlob => {
+
+      const fileURL = URL.createObjectURL(pdfBlob);
+
+      // Remove old iframe if exists
+      const oldIframe = document.getElementById('pdf-print-iframe') as HTMLIFrameElement;
+      if (oldIframe) oldIframe.remove();
+
+      // Create hidden iframe (Ctrl+P style)
+      const iframe = document.createElement('iframe');
+      iframe.id = 'pdf-print-iframe';
+      iframe.style.position = 'fixed';
+      iframe.style.right = '0';
+      iframe.style.bottom = '0';
+      iframe.style.width = '0';
+      iframe.style.height = '0';
+      iframe.style.border = '0';
+      iframe.src = fileURL;
+
+      document.body.appendChild(iframe);
+
+      iframe.onload = () => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+
+        iframe.contentWindow!.onafterprint = () => {
+          iframe.remove();
+          URL.revokeObjectURL(fileURL);
+        };
+      };
+
+    }, err => console.error(err));
+  }
+
+
+
+
+
+
+
 }

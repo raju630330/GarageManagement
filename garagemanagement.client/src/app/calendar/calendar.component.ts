@@ -237,5 +237,14 @@ export class CalendarComponent implements OnInit {
   getAppointmentCount(day: Date): number {
     return this.hasAppointments(day).length;
   }
+  isPast(day: Date): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const checkDay = new Date(day);
+    checkDay.setHours(0, 0, 0, 0);
+
+    return checkDay < today;
+  }
 }
 
