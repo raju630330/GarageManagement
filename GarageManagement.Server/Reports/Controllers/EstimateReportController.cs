@@ -1,4 +1,5 @@
 ﻿using GarageManagement.Server.Reports.RepoInterfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
 
@@ -6,21 +7,21 @@ namespace GarageManagement.Server.Reports.Controllers
 {
     [ApiController]
     [Route("api/reports")]
-    public class WorkOrderReportController : ControllerBase
+    public class EstimateReportController : ControllerBase
     {
-        private readonly IWorkOrderReportRepository _reportRepo;
+        private readonly IEstimateReportRepository _reportRepo;
 
-        public WorkOrderReportController(IWorkOrderReportRepository reportRepo)
+        public EstimateReportController(IEstimateReportRepository reportRepo)
         {
             _reportRepo = reportRepo;
         }
 
-        [HttpGet("work-order/{jobCardId}")]
-        public async Task<IActionResult> ExportWorkOrder(long jobCardId)
+        [HttpGet("estimate/{jobCardId}")]
+        public async Task<IActionResult> ExportEstimateDetails(long jobCardId)
         {
             try
             {
-                var dataTable = await _reportRepo.GetWorkOrderReportData(jobCardId);
+                var dataTable = await _reportRepo.GetEstimateReportData(jobCardId);
 
                 if (dataTable == null || dataTable.Rows.Count == 0)
                     return NotFound("No data found");
@@ -29,12 +30,12 @@ namespace GarageManagement.Server.Reports.Controllers
 
                 report.ReportPath = Path.Combine(
                     Directory.GetCurrentDirectory(),
-                    "Reports", "RDLC", "WorkOrderReportDesigner.rdlc");
+                    "Reports", "RDLC", "EstimateReportDesigner.rdlc");
 
                 report.EnableExternalImages = true;
 
                 report.DataSources.Add(
-                    new ReportDataSource("WorkOrderDS", dataTable));
+                    new ReportDataSource("EstimateDS", dataTable));
 
                 var pdf = report.Render("PDF");
 
@@ -46,5 +47,5 @@ namespace GarageManagement.Server.Reports.Controllers
                 return StatusCode(500, ex.ToString());
             }
         }
-    }
+    }    
 }
