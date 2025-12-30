@@ -626,7 +626,25 @@ export class EstimationComponent implements OnInit {
       }
     );
   }
+  openGatePassPdf() {
 
+    // Force loader to render immediately
+    setTimeout(() => this.loader.show(), 0);
+
+    this.http.get(
+      `https://localhost:7086/api/reports/gatepass/${this.id}`,
+      { responseType: 'blob' }
+    ).subscribe(
+      pdfBlob => {
+        const fileURL = URL.createObjectURL(pdfBlob);
+        this.printPdfInIframe(fileURL);
+      },
+      error => {
+        this.loader.hide();
+        this.alert.showError('Error loading PDF');
+      }
+    );
+  }
 
   private printPdfInIframe(fileURL: string): void {
     // Remove old iframe if exists

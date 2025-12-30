@@ -33,6 +33,7 @@ namespace BrilliantMinds.Server
             builder.Services.AddScoped<INewJobCardRepsoitory, NewJobCardRepository>();
             builder.Services.AddScoped<IWorkOrderReportRepository, WorkOrderReportRepository>();
             builder.Services.AddScoped<IEstimateReportRepository, EstimateReportRepository>();
+            builder.Services.AddScoped<IGatePassReportRepository, GatePassReportRepository>();
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddCors();
