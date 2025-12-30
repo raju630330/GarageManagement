@@ -28,7 +28,6 @@
                             <TextRun>
                               <Value>Vehicle Details</Value>
                               <Style>
-                                <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -68,10 +67,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>JobCard :</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -100,10 +96,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value> SRT-J003043</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -137,10 +130,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Vehicle :</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -169,10 +159,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>TATA</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -206,10 +193,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Reg No. :</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -238,10 +222,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>TS50GH5665 </Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -275,10 +256,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Odometer In : </Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -307,10 +285,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>55555</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -344,10 +319,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Color :</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -376,10 +348,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>White</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -413,10 +382,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Fuel Type :</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -445,10 +411,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Petrol</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -482,10 +445,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Advisor Name :</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -514,10 +474,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Jane</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -551,10 +508,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Est. Deleivery Date :</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -583,10 +537,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>01-Jan-2026</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -620,10 +571,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Technician :</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -652,10 +600,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Suman</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -689,10 +634,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Vendor :</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -721,10 +663,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Vendor A</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -811,7 +750,6 @@
                             <TextRun>
                               <Value>Customer Voice</Value>
                               <Style>
-                                <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -856,7 +794,6 @@
                             <TextRun>
                               <Value>Customer Voice</Value>
                               <Style>
-                                <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -905,10 +842,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>1. General Chech Up</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -950,10 +884,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>1.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -998,10 +929,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>2. Floor Mat</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1043,10 +971,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>2.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1091,10 +1016,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>3.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1136,10 +1058,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>3.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1184,10 +1103,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>4.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1229,10 +1145,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>4.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1277,10 +1190,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>5.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1322,10 +1232,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>5.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1370,10 +1277,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>6.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1415,10 +1319,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>6.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1463,10 +1364,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>7.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1508,10 +1406,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>7.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1556,10 +1451,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>8.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1601,10 +1493,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>8.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1649,10 +1538,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>9.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1694,10 +1580,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>9.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1742,10 +1625,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>10.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1787,10 +1667,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>10.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1989,10 +1866,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Service booklet</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2058,10 +1932,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Mud Flaps</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2132,10 +2003,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Jack and Handle</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2201,10 +2069,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Type condition</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2275,10 +2140,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Tool kit</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2344,10 +2206,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Battery Make</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2418,10 +2277,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Floor mats</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2487,10 +2343,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Battery No.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2561,10 +2414,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Spare Wheel</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2704,10 +2554,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Stereo</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2847,10 +2694,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Amplifier</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2990,10 +2834,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>DVD Player</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -3133,10 +2974,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>LED TV</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -3276,10 +3114,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Speakers Qty</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -3416,10 +3251,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Cigarette Lighter</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -3642,7 +3474,6 @@
                             <TextRun>
                               <Value>Sl No.</Value>
                               <Style>
-                                <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -3676,7 +3507,6 @@
                             <TextRun>
                               <Value>Parts</Value>
                               <Style>
-                                <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -3710,7 +3540,6 @@
                             <TextRun>
                               <Value>Parts/Servicees</Value>
                               <Style>
-                                <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -3744,7 +3573,6 @@
                             <TextRun>
                               <Value>Quantity</Value>
                               <Style>
-                                <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -3778,7 +3606,6 @@
                             <TextRun>
                               <Value>Category</Value>
                               <Style>
-                                <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -3812,7 +3639,6 @@
                             <TextRun>
                               <Value>Technician</Value>
                               <Style>
-                                <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -3846,7 +3672,6 @@
                             <TextRun>
                               <Value>Service Time</Value>
                               <Style>
-                                <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -3880,7 +3705,6 @@
                             <TextRun>
                               <Value>Done</Value>
                               <Style>
-                                <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
                             </TextRun>
@@ -3918,10 +3742,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>1.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -3949,10 +3770,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Break</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -3980,10 +3798,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Repair</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4011,10 +3826,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>1</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -4044,10 +3856,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value />
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4075,10 +3884,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value />
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4106,10 +3912,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value />
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4137,10 +3940,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value />
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4173,10 +3973,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>2.</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4204,10 +4001,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Head Light</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4235,10 +4029,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Replace</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4266,10 +4057,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>1</Value>
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -4299,10 +4087,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value />
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4330,10 +4115,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value />
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4361,10 +4143,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value />
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4392,10 +4171,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value />
-                              <Style>
-                                <FontFamily>Calibri</FontFamily>
-                                <FontSize>8pt</FontSize>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -4462,8 +4238,7 @@
               <TextRun>
                 <Value>I accept that the vehice condition as indicated in this document true and correct. I ensured and authorized work  described in this document to be carried out using necessary parts and estimation. I accept all the terms and conditions as decribed in ESTIMATION / REAPAIR CONCERN.</Value>
                 <Style>
-                  <FontFamily>Calibri</FontFamily>
-                  <FontSize>7pt</FontSize>
+                  <FontSize>9pt</FontSize>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -4473,7 +4248,7 @@
         <rd:DefaultName>Textbox42</rd:DefaultName>
         <Top>7.41926in</Top>
         <Left>0.21258in</Left>
-        <Height>0.32588in</Height>
+        <Height>0.53416in</Height>
         <Width>6.69293in</Width>
         <ZIndex>5</ZIndex>
         <Style>
@@ -4501,7 +4276,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox49</rd:DefaultName>
-        <Top>7.93954in</Top>
+        <Top>8.17956in</Top>
         <Left>0.21258in</Left>
         <Height>0.24002in</Height>
         <Width>1.62592in</Width>
@@ -4524,10 +4299,7 @@
             <TextRuns>
               <TextRun>
                 <Value>Customer / Designated Person</Value>
-                <Style>
-                  <FontFamily>Calibri</FontFamily>
-                  <FontSize>8pt</FontSize>
-                </Style>
+                <Style />
               </TextRun>
             </TextRuns>
             <Style>
@@ -4536,7 +4308,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox49</rd:DefaultName>
-        <Top>8.17956in</Top>
+        <Top>8.41958in</Top>
         <Left>0.21258in</Left>
         <Height>0.24816in</Height>
         <Width>1.62592in</Width>
@@ -4571,7 +4343,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox49</rd:DefaultName>
-        <Top>7.93953in</Top>
+        <Top>8.17955in</Top>
         <Left>5.29838in</Left>
         <Height>0.24002in</Height>
         <Width>1.60713in</Width>
@@ -4594,17 +4366,14 @@
             <TextRuns>
               <TextRun>
                 <Value>Service Advisor Signature</Value>
-                <Style>
-                  <FontFamily>Calibri</FontFamily>
-                  <FontSize>8pt</FontSize>
-                </Style>
+                <Style />
               </TextRun>
             </TextRuns>
             <Style />
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox49</rd:DefaultName>
-        <Top>8.17956in</Top>
+        <Top>8.41958in</Top>
         <Left>5.29838in</Left>
         <Height>0.24816in</Height>
         <Width>1.60713in</Width>
@@ -4715,7 +4484,6 @@
               <TextRun>
                 <Value>25-12-2025</Value>
                 <Style>
-                  <FontFamily>Calibri</FontFamily>
                   <FontSize>8pt</FontSize>
                   <FontWeight>Bold</FontWeight>
                   <TextDecoration>Underline</TextDecoration>
@@ -4748,7 +4516,6 @@
               <TextRun>
                 <Value>Adv Date : </Value>
                 <Style>
-                  <FontFamily>Calibri</FontFamily>
                   <FontSize>8pt</FontSize>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -4780,7 +4547,6 @@
               <TextRun>
                 <Value>5000</Value>
                 <Style>
-                  <FontFamily>Calibri</FontFamily>
                   <FontSize>8pt</FontSize>
                   <FontWeight>Bold</FontWeight>
                   <TextDecoration>Underline</TextDecoration>
@@ -4813,7 +4579,6 @@
               <TextRun>
                 <Value>Adv Amount : </Value>
                 <Style>
-                  <FontFamily>Calibri</FontFamily>
                   <FontSize>8pt</FontSize>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -4845,7 +4610,6 @@
               <TextRun>
                 <Value>VLN1</Value>
                 <Style>
-                  <FontFamily>Calibri</FontFamily>
                   <FontSize>8pt</FontSize>
                   <FontWeight>Bold</FontWeight>
                   <TextDecoration>Underline</TextDecoration>
@@ -4878,7 +4642,6 @@
               <TextRun>
                 <Value>Vln No. : </Value>
                 <Style>
-                  <FontFamily>Calibri</FontFamily>
                   <FontSize>8pt</FontSize>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -4970,7 +4733,6 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox66</rd:DefaultName>
-          <Top>0cm</Top>
           <Height>0.16567in</Height>
           <Width>3.17893in</Width>
           <Style>
