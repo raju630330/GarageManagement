@@ -10,6 +10,7 @@ import { TablePopupComponent } from '../table-popup/table-popup.component';
 import { JobCardDto, PopupOption, PopupTabConfig, VehicleDetailsUI } from '../models/job-card';
 import { getToday } from '../shared/form-utils';
 import { HttpClient } from '@angular/common/http';
+import { LoaderService } from '../services/loader.service';
 
 
 
@@ -54,7 +55,7 @@ export class EstimationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog, private router: Router, private http: HttpClient
+    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog, private router: Router, private http: HttpClient, private loader: LoaderService
   ) { }
 
   ngOnInit(): void {
@@ -589,47 +590,100 @@ export class EstimationComponent implements OnInit {
   }
 
   openWorkOrderPdf() {
+    // Force loader to render immediately
+    setTimeout(() => this.loader.show(), 0);
+
     this.http.get(
       `https://localhost:7086/api/reports/work-order/${this.id}`,
       { responseType: 'blob' }
-    ).subscribe(pdfBlob => {
+    ).subscribe(
+      pdfBlob => {
+        const fileURL = URL.createObjectURL(pdfBlob);
+        this.printPdfInIframe(fileURL);
+      },
+      error => {
+        this.loader.hide();
+        this.alert.showError('Error loading PDF');
+      }
+    );
+  }
+  openEstimationPdf() {
 
-      const fileURL = URL.createObjectURL(pdfBlob);
+    // Force loader to render immediately
+    setTimeout(() => this.loader.show(), 0);
 
-      // Remove old iframe if exists
-      const oldIframe = document.getElementById('pdf-print-iframe') as HTMLIFrameElement;
-      if (oldIframe) oldIframe.remove();
+    this.http.get(
+      `https://localhost:7086/api/reports/estimate/${this.id}`,
+      { responseType: 'blob' }
+    ).subscribe(
+      pdfBlob => {
+        const fileURL = URL.createObjectURL(pdfBlob);
+        this.printPdfInIframe(fileURL);
+      },
+      error => {
+        this.loader.hide();
+        this.alert.showError('Error loading PDF');
+      }
+    );
+  }
+  openGatePassPdf() {
 
-      // Create hidden iframe (Ctrl+P style)
-      const iframe = document.createElement('iframe');
-      iframe.id = 'pdf-print-iframe';
-      iframe.style.position = 'fixed';
-      iframe.style.right = '0';
-      iframe.style.bottom = '0';
-      iframe.style.width = '0';
-      iframe.style.height = '0';
-      iframe.style.border = '0';
-      iframe.src = fileURL;
+    // Force loader to render immediately
+    setTimeout(() => this.loader.show(), 0);
 
-      document.body.appendChild(iframe);
+    this.http.get(
+      `https://localhost:7086/api/reports/gatepass/${this.id}`,
+      { responseType: 'blob' }
+    ).subscribe(
+      pdfBlob => {
+        const fileURL = URL.createObjectURL(pdfBlob);
+        this.printPdfInIframe(fileURL);
+      },
+      error => {
+        this.loader.hide();
+        this.alert.showError('Error loading PDF');
+      }
+    );
+  }
 
-      iframe.onload = () => {
+  private printPdfInIframe(fileURL: string): void {
+    // Remove old iframe if exists
+    const oldIframe = document.getElementById('pdf-print-iframe') as HTMLIFrameElement;
+    if (oldIframe) {
+      oldIframe.remove();
+    }
+
+    // Create hidden iframe
+    const iframe = document.createElement('iframe');
+    iframe.id = 'pdf-print-iframe';
+    iframe.style.position = 'fixed';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    iframe.src = fileURL;
+
+    document.body.appendChild(iframe);
+
+    const minLoaderTime = 800; // ms
+    const startTime = Date.now();
+
+    iframe.onload = () => {
+      const elapsed = Date.now() - startTime;
+      const remaining = minLoaderTime - elapsed;
+
+      setTimeout(() => {
+        this.loader.hide();
         iframe.contentWindow?.focus();
         iframe.contentWindow?.print();
 
+        // Cleanup after print
         iframe.contentWindow!.onafterprint = () => {
           iframe.remove();
           URL.revokeObjectURL(fileURL);
         };
-      };
-
-    }, err => console.error(err));
+      }, remaining > 0 ? remaining : 0);
+    };
   }
-
-
-
-
-
 
 
 }

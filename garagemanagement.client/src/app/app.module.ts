@@ -106,7 +106,7 @@ import { TablePopupComponent } from './table-popup/table-popup.component';
     MatNativeDateModule,
     MatMenuModule,
     MatDialogModule,
-    OverlayModule
+    OverlayModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true }
