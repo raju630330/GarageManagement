@@ -48,7 +48,7 @@ export class BookingAppointmentComponent {
       if (type === 'Individual') {
         applyValidators(this.appointmentForm, ['regNo'], [
           Validators.required,
-          Validators.pattern(/^[A-Z ]{2}[0-9]{6}$/)
+          Validators.pattern(/^[0-9]{2}[A-Z]{2}[0-9]{4}$/)
         ]);
 
         applyValidators(this.appointmentForm, ['vehicleType', 'serviceAdvisor', 'bay'], [
