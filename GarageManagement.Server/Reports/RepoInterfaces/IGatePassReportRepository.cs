@@ -4,6 +4,6 @@ namespace GarageManagement.Server.Reports.RepoInterfaces
 {
     public interface IGatePassReportRepository
     {
-        Task<DataTable> GetGatePassReportData(long jobCardId);
+        Task<byte[]> GenerateGatePassPdf(long jobCardId);
     }
 }

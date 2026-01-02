@@ -1,6 +1,7 @@
 ﻿using GarageManagement.Server.Reports.RepoInterfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
+using System.Data;
 
 namespace GarageManagement.Server.Reports.Controllers
 {
@@ -20,31 +21,14 @@ namespace GarageManagement.Server.Reports.Controllers
         {
             try
             {
-                var dataTable = await _reportRepo.GetWorkOrderReportData(jobCardId);
-
-                if (dataTable == null || dataTable.Rows.Count == 0)
-                    return NotFound("No data found");
-
-                LocalReport report = new LocalReport();
-
-                report.ReportPath = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "Reports", "RDLC", "WorkOrderReportDesigner.rdlc");
-
-                report.EnableExternalImages = true;
-
-                report.DataSources.Add(
-                    new ReportDataSource("WorkOrderDS", dataTable));
-
-                var pdf = report.Render("PDF");
-
+                var pdf = await _reportRepo.GenerateWorkOrderPdf(jobCardId);
                 return File(pdf, "application/pdf");
             }
             catch (Exception ex)
             {
-                // THIS WILL SHOW REAL ERROR IN ANGULAR
-                return StatusCode(500, ex.ToString());
+                return StatusCode(500, ex.Message);
             }
         }
+
     }
 }

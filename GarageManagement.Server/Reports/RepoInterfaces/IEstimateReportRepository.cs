@@ -4,6 +4,6 @@ namespace GarageManagement.Server.Reports.RepoInterfaces
 {
     public interface IEstimateReportRepository
     {
-        Task<DataTable> GetEstimateReportData(long jobCardId);
+        Task<byte[]> GenerateEstimatePdf(long jobCardId);
     }
 }

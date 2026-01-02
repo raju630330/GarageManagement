@@ -2,6 +2,7 @@
 using GarageManagement.Server.Reports.Models;
 using GarageManagement.Server.Reports.RepoInterfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Reporting.NETCore;
 using System.Data;
 
 namespace GarageManagement.Server.Reports.Repositories
@@ -11,8 +12,9 @@ namespace GarageManagement.Server.Reports.Repositories
         private readonly ApplicationDbContext _dbContext;
         public EstimateReportRepository(ApplicationDbContext dbContext) { _dbContext = dbContext; }
 
-        public async Task<DataTable> GetEstimateReportData(long jobCardId)
+        public async Task<byte[]> GenerateEstimatePdf(long jobCardId)
         {
+            // 1️⃣ Fetch data
             var result = await _dbContext.JobCards
                 .Where(b => b.Id == jobCardId)
                 .Select(a => new EstimateReportModel
@@ -29,7 +31,11 @@ namespace GarageManagement.Server.Reports.Repositories
                 })
                 .FirstOrDefaultAsync();
 
-            DataTable dt = new DataTable("WorkOrderDT");
+            if (result == null)
+                throw new Exception("No Job Card found");
+
+            // 2️⃣ Create DataTable
+            DataTable dt = new DataTable("EstimateDT");
 
             dt.Columns.Add("TicketNo");
             dt.Columns.Add("VehicleNo");
@@ -41,22 +47,51 @@ namespace GarageManagement.Server.Reports.Repositories
             dt.Columns.Add("Vendor");
             dt.Columns.Add("Date");
 
-            if (result != null)
+            dt.Rows.Add(
+                result.TicketNo,
+                result.VehicleNo,
+                result.VINNo,
+                result.EngineNo,
+                result.ServiceType,
+                result.AdvisorName,
+                result.Technician,
+                result.Vendor,
+                result.Date
+            );
+
+            // 3️⃣ Create Report
+            LocalReport report = new LocalReport();
+
+            report.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reports", "RDLC", "EstimateReportDesigner.rdlc");
+
+            report.EnableExternalImages = true;
+
+            // 4️⃣ Add DataSource
+            report.DataSources.Clear();
+            report.DataSources.Add(
+                new ReportDataSource("EstimateDS", dt)
+            );
+
+            // 5️⃣ REPORT PARAMETERS (MUST MATCH RDLC)
+            var parameters = new List<ReportParameter>
             {
-                dt.Rows.Add(
-                    result.TicketNo,
-                    result.VehicleNo,
-                    result.VINNo,
-                    result.EngineNo,
-                    result.ServiceType,
-                    result.AdvisorName,
-                    result.Technician,
-                    result.Vendor
-                );
-            }
+                new ReportParameter("TicketNo", result.TicketNo ?? ""),
+                new ReportParameter("VehicleNo", result.VehicleNo ?? ""),
+                new ReportParameter("VINNo", result.VINNo ?? ""),
+                new ReportParameter("EngineNo", result.EngineNo ?? ""),
+                new ReportParameter("ServiceType", result.ServiceType ?? ""),
+                new ReportParameter("AdvisorName", result.AdvisorName ?? ""),
+                new ReportParameter("Technician", result.Technician ?? ""),
+                new ReportParameter("Vendor", result.Vendor ?? ""),
+                new ReportParameter("Date", result.Date.ToString("dd-MM-yyyy"))
+            };
 
-            return dt;
+            report.SetParameters(parameters);
 
+            // 6️⃣ Render PDF
+            return report.Render("PDF");
         }
     }
 }

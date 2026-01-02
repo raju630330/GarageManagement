@@ -4,6 +4,6 @@ namespace GarageManagement.Server.Reports.RepoInterfaces
 {
     public interface IWorkOrderReportRepository
     {
-        Task<DataTable> GetWorkOrderReportData(long jobCardId);
+        Task<byte[]> GenerateWorkOrderPdf(long jobCardId);
     }
 }
