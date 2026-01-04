@@ -6,7 +6,7 @@ import { ROLES } from '../constants/roles.constants';
   selector: 'app-settings',
   standalone: false,
   templateUrl: './settings.component.html',
-  styleUrl: './settings.component.css'
+  styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent {
   ROLES = ROLES;

@@ -1,19 +1,45 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  AfterViewInit
+} from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { filter } from 'rxjs/operators';
+import { RolePermissionService } from '../services/role-permission.service';
+
+/* ---------- Interfaces (VERY IMPORTANT) ---------- */
+interface MainTab {
+  name: string;
+  route: string;
+  roles: string[];
+}
+
+interface SidebarTab {
+  name: string;
+  icon: string;
+  route: string;
+  module: string;
+  permission: string;
+}
 
 @Component({
   selector: 'app-userprofile',
-  standalone: false,
   templateUrl: './userprofile.component.html',
-  styleUrls: ['./userprofile.component.css']
+  styleUrls: ['./userprofile.component.css'],
+  standalone : false
 })
 export class UserprofileComponent implements OnInit, AfterViewInit {
+
   user: any = null;
   isLoggedIn = false;
   role: string | null = null;
-  filteredTabs: any = [];
+
+  filteredTabs: MainTab[] = [];
+  filteredSidebarTabs: SidebarTab[] = [];
+
   showLeftArrow = false;
   showRightArrow = false;
   showUserPopup = false;
@@ -21,7 +47,8 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
 
   @ViewChild('tabScroll') tabScroll!: ElementRef;
 
-  mainTabs = [
+  /* ---------- TOP TABS (ROLE BASED – KEEP OLD LOGIC) ---------- */
+  mainTabs: MainTab[] = [
     { name: 'Profile', route: '/profile', roles: ['Admin', 'Manager'] },
     { name: 'Workshop', route: '/workshop', roles: ['Admin', 'Manager', 'Supervisor'] },
     { name: 'Users', route: '/users', roles: ['Admin'] },
@@ -36,35 +63,96 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     { name: 'Templates', route: '/templates', roles: ['Admin', 'Manager'] }
   ];
 
-  sidebarTabs = [
-    { name: 'Repair Order', icon:'bi bi-tools me-2', route: '/repair-order', roles: ['Admin', 'Manager', 'Supervisor'] },
-    { name: 'Job Cards', icon: 'fas fa-pen-to-square', route: '/jobcardlist', roles: ['Admin', 'Manager', 'Supervisor'] },
+  /* ---------- SIDEBAR (ROLE + PERMISSION BASED) ---------- */
+  sidebarTabs: SidebarTab[] = [
+    {
+      name: 'Repair Order',
+      icon: 'bi bi-tools me-2',
+      route: '/repair-order',
+      module: 'RepairOrder',
+      permission: 'V'
+    },
+    {
+      name: 'Job Cards',
+      icon: 'fas fa-pen-to-square',
+      route: '/jobcardlist',
+      module: 'JobCard',
+      permission: 'V'
+    },
+    {
+      name: 'Roles',
+      icon: 'fas fa-user-shield',
+      route: '/roles',
+      module: 'Role',
+      permission: 'V'
+    },
+    {
+      name: 'Permissions',
+      icon: 'fas fa-key',
+      route: '/permission',
+      module: 'Permission',
+      permission: 'V'
+    },
+    {
+      name: 'Role Permission',
+      icon: 'fas fa-lock',
+      route: '/rolepermission',
+      module: 'RolePermission',
+      permission: 'V'
+    }
   ];
 
-  filteredSidebarTabs: any[] = [];
-
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private rolePermissionService: RolePermissionService
+  ) { }
 
   ngOnInit(): void {
-    this.authService.loggedIn$.subscribe(status => {
-      this.isLoggedIn = status;
 
-      if (status) {
-        this.authService.getUserProfile().subscribe(profile => {
-          this.user = profile;
-          this.role = profile.role;
-          this.filteredTabs = this.mainTabs.filter(tab => tab.roles.includes(this.role ?? ''));
-          this.filteredSidebarTabs = this.sidebarTabs.filter(tab => tab.roles.includes(this.role ?? ''));
-          setTimeout(() => this.checkScroll(), 50);
-        });
-      } else {
+    this.authService.loggedIn$.subscribe(isLogged => {
+      this.isLoggedIn = isLogged;
+
+      if (!isLogged) {
         this.user = null;
         this.role = null;
+        this.filteredTabs = [];
+        this.filteredSidebarTabs = [];
+        return;
       }
+
+      this.authService.getUserProfile().subscribe(profile => {
+        this.user = profile;
+        this.role = profile.role;
+
+        /* ---------- TOP TAB FILTER (ROLE ONLY) ---------- */
+        this.filteredTabs = this.mainTabs.filter(tab =>
+          tab.roles.includes(this.role ?? '')
+        );
+
+        /* ---------- SIDEBAR FILTER (PERMISSION) ---------- */
+        const roleId = this.authService.getRoleId();
+        console.log(roleId);
+        if (!roleId) return;
+
+        this.filteredSidebarTabs = [];
+
+        this.sidebarTabs.forEach(tab => {
+          this.rolePermissionService
+            .getRoleModulePermissions(roleId, tab.module)
+            .subscribe(perms => {
+              if (perms.includes(tab.permission)) {
+                this.filteredSidebarTabs.push(tab);
+                setTimeout(() => this.checkScroll(), 50);
+              }
+            });
+        });
+      });
     });
 
-    // Auto-close sidebar on route change
-    this.router.events.pipe(filter(e => e instanceof NavigationEnd))
+    /* ---------- AUTO CLOSE SIDEBAR ---------- */
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => {
         if (window.innerWidth < 768) {
           this.isSidebarOpen = false;
@@ -88,10 +176,8 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     const el = this.tabScroll?.nativeElement;
     if (!el) return;
 
-    const tolerance = 3;
-    this.showLeftArrow = el.scrollLeft > tolerance;
-    const atRightEnd = el.scrollLeft + el.clientWidth >= (el.scrollWidth - tolerance);
-    this.showRightArrow = !atRightEnd;
+    this.showLeftArrow = el.scrollLeft > 3;
+    this.showRightArrow = el.scrollLeft + el.clientWidth < el.scrollWidth - 3;
   }
 
   toggleUserPopup() {
@@ -102,6 +188,10 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     this.showUserPopup = false;
   }
 
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
   logout() {
     this.authService.logout();
     this.closePopup();
@@ -109,16 +199,4 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/login']);
     this.user = null;
   }
-
-  toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
-  }
-
-/*  // Optional: Close sidebar on click outside
-  @HostListener('document:click', ['$event'])
-  onClick(event: any) {
-    if (!event.target.closest('.sidebar') && !event.target.closest('.fixed-menu-btn')) {
-      this.isSidebarOpen = false;
-    }
-  }*/
 }

@@ -7,9 +7,7 @@ namespace GarageManagement.Server.Model
     
         public class TechnicianMC
         {
-            [Key]
-            [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-            public int Id { get; set; }
+            public long Id { get; set; }
 
             [MaxLength(500)]
             public string? Remarks { get; set; }
@@ -32,12 +30,10 @@ namespace GarageManagement.Server.Model
 
         public class CheckItemEntity
         {
-            [Key]
-            [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-            public int Id { get; set; }
+            public long Id { get; set; }
 
             [ForeignKey("TechnicianMC")]
-            public int TechnicianMCId { get; set; }
+            public long TechnicianMCId { get; set; }
 
             [MaxLength(150)]
             public string? Label { get; set; }

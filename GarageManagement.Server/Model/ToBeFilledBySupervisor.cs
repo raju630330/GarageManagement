@@ -1,8 +1,10 @@
-﻿namespace GarageManagement.Server.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GarageManagement.Server.Model
 {
     public class ToBeFilledBySupervisor
     {
-        public int Id { get; set; } 
+        public long Id { get; set; } 
         public string DriverVoice { get; set; } = string.Empty;
         public string SupervisorInstructions { get; set; } = string.Empty;
         public string ActionTaken { get; set; } = string.Empty;

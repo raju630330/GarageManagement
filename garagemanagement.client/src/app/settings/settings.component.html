@@ -1,12 +1,9 @@
 <div class="container mt-4">
   <div class="row justify-content-center g-4">
 
-    <!-- Book Appointment -->
+    <!-- Book Appointment (Visible to all logged-in users) -->
     <div class="col-12 col-sm-6 col-md-4">
-      <div class="card shadow p-4 h-100"
-           style="cursor: pointer;"
-           (click)="bookappointment()">
-
+      <div class="card shadow p-4 h-100" style="cursor: pointer;" (click)="bookappointment()">
         <div class="card-body text-center">
           <i class="fas fa-calendar-check fa-5x" style="color: #f39c12;"></i>
           <h4 class="mt-3 text-dark fw-bold">Book Appointment</h4>
@@ -16,11 +13,8 @@
 
     <!-- Repair Order -->
     <div class="col-12 col-sm-6 col-md-4"
-         *appHasRole="[ROLES.ADMIN, ROLES.SUPERVISOR, ROLES.MANAGER]">
-      <div class="card shadow p-4 h-100"
-           style="cursor: pointer;"
-           (click)="repairOrder()">
-
+         *appHasRole [moduleName]="'RepairOrder'" [permission]="'V'">
+      <div class="card shadow p-4 h-100" style="cursor: pointer;" (click)="repairOrder()">
         <div class="card-body text-center">
           <i class="fas fa-clipboard fa-5x" style="color: #f39c12;"></i>
           <h4 class="mt-3 text-dark fw-bold">Repair Order</h4>
@@ -30,13 +24,10 @@
 
     <!-- Job Cards -->
     <div class="col-12 col-sm-6 col-md-4"
-         *appHasRole="[ROLES.ADMIN, ROLES.SUPERVISOR, ROLES.MANAGER]">
-      <div class="card shadow p-4 h-100"
-           style="cursor: pointer;"
-           (click)="jobcard()">
-
+         *appHasRole [moduleName]="'JobCard'" [permission]="'V'">
+      <div class="card shadow p-4 h-100" style="cursor: pointer;" (click)="jobcard()">
         <div class="card-body text-center">
-          <span style="font-size:60px; line-height:1;">📝</span>
+          <span style="font-size:60px;">📝</span>
           <h4 class="mt-4 text-dark fw-bold">Job Cards</h4>
         </div>
       </div>

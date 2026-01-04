@@ -4,7 +4,7 @@ namespace GarageManagement.Server.dtos
 {
     public class ToBeFilledBySupervisorDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Required(ErrorMessage = "DriverVoice is required")]
         public string DriverVoice { get; set; } = string.Empty;

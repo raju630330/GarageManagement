@@ -4,9 +4,8 @@ namespace GarageManagement.Server.Model
 {
     public class InventoryForm
     {
-        [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
-        public ICollection<InventoryAccessories> Accessories { get; set; }
+        public ICollection<InventoryAccessory> Accessories { get; set; }
     }
 }

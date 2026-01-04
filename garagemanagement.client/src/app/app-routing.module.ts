@@ -22,6 +22,9 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { JobCardsComponent } from './job-cards/job-cards.component';
 import { NewJobCardComponent } from './new-jobcard/new-jobcard.component';
 import { EstimationComponent } from './estimation/estimation.component';
+import { RolesComponent } from './roles/roles.component';
+import { PermissionsComponent } from './permissions/permissions.component';
+import { RolepermissionComponent } from './rolepermission/rolepermission.component';
 
 const routes: Routes = [
   {
@@ -53,6 +56,9 @@ const routes: Routes = [
       { path: 'jobcardlist', component: JobCardsComponent, canActivate: [authGuard] },
       { path: 'newjobcard', component: NewJobCardComponent, canActivate: [authGuard] },
       { path: 'estimate', component: EstimationComponent, canActivate: [authGuard] },
+      { path: 'roles', component: RolesComponent, canActivate: [authGuard] },
+      { path: 'permission', component: PermissionsComponent, canActivate: [authGuard] },
+      { path: 'rolepermission', component: RolepermissionComponent, canActivate: [authGuard] },
       { path: 'unauthorized', component: UnauthorizedComponent, data: { public: true } }
     ]
   },

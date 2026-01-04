@@ -5,8 +5,7 @@ namespace GarageManagement.Server.Model
 {
     public class SparePartsIssueDetail
     {
-        [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Required]
         [StringLength(150)]

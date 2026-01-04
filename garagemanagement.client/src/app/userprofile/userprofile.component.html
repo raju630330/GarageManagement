@@ -9,7 +9,7 @@
     <!-- Company Name (Centered) -->
     <div class="text-center flex-grow-1 mx-2">
       <h6 class="mb-0 text-white text-truncate company-name fw-bold">
-      SRINIVASA ROAD TRANSPORT<br class="mobile-break"> PRIVATE LIMITED
+        SRINIVASA ROAD TRANSPORT<br class="mobile-break"> PRIVATE LIMITED
       </h6>
       <!--<h6 class="mb-0 text-white text-truncate company-name fw-bold">
         *********************<br class="mobile-break"> *****************
@@ -50,7 +50,7 @@
               </li>
               <li>
                 <a class="dropdown-item d-flex align-items-center" routerLink="/jobcardlist">
-                  <span class="me-2 text-warning d-flex justify-content-center align-items-center" style="font-size: 1rem; width: 18px;color: #f39c12;">📝</span>                     
+                  <span class="me-2 text-warning d-flex justify-content-center align-items-center" style="font-size: 1rem; width: 18px;color: #f39c12;">📝</span>
                   Job Cards
                 </a>
               </li>
@@ -181,6 +181,7 @@
 <!-- Sidebar -->
 <div class="sidebar bg-light" [class.open]="isSidebarOpen">
   <div class="list-group list-group-flush">
+
     <a *ngFor="let tab of filteredSidebarTabs"
        [routerLink]="tab.route"
        routerLinkActive="active"
@@ -199,6 +200,7 @@
 
       <span>{{ tab.name }}</span>
     </a>
+
   </div>
 </div>
 

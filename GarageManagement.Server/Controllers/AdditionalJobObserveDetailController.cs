@@ -34,7 +34,7 @@ namespace GarageManagement.Server.Controllers
                 EndTime = d.EndTime
             }).ToList();
 
-            await _context.AdditionalJobObserveDetail.AddRangeAsync(entities);
+            await _context.AdditionalJobObserveDetails.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Additional Job Observe Details Saved Successfully" });

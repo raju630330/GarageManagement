@@ -1,4 +1,6 @@
-﻿namespace GarageManagement.Server.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GarageManagement.Server.Model
 {
     public class JobCard
     {

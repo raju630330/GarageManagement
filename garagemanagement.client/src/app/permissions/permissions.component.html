@@ -1,0 +1,11 @@
+<h3>Permissions</h3>
+<input type="text" [(ngModel)]="newPermissionName" placeholder="Permission Name">
+<input type="text" [(ngModel)]="newPermissionDescription" placeholder="Description">
+<button (click)="addPermission()">Add Permission</button>
+
+<ul>
+  <li *ngFor="let perm of permissions">
+    {{ perm.name }} - {{ perm.description }}
+    <button (click)="deletePermission(perm.id)">Delete</button>
+  </li>
+</ul>

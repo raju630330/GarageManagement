@@ -1,0 +1,15 @@
+<h3>Assign Permissions</h3>
+
+<select [(ngModel)]="selectedRoleId" (change)="loadRolePermissions()">
+  <option [ngValue]="null">Select Role</option>
+  <option *ngFor="let role of roles" [ngValue]="role.id">{{ role.roleName }}</option>
+</select>
+
+<input type="text" [(ngModel)]="selectedModule" (change)="loadRolePermissions()" placeholder="Module Name">
+
+<div *ngFor="let perm of permissions">
+  <input type="checkbox"
+         [checked]="hasPermission(perm.name)"
+         (change)="togglePermission(perm.name)">
+  {{ perm.name }}
+</div>

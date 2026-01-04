@@ -4,26 +4,25 @@ namespace GarageManagement.Server.Model
 {
     public class User
     {
-        [Key]  // Primary Key
-        public int Id { get; set; }
+        public long Id { get; set; }
 
-        [Required(ErrorMessage = "Username is required.")]
+        [Required]
         public string Username { get; set; }
 
-
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid Email format.")] 
+        [Required, EmailAddress]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required.")]
-
+        [Required]
         public string PasswordHash { get; set; }
-        public string Role { get; set; } = "Driver";
         public string? ResetTokenHash { get; set; }
         public DateTime? ResetTokenExpiresUtc { get; set; }
 
-        // Navigation: One User → Many Appointments
+        // FK to Role
+        public long RoleId { get; set; }
+        public Role Role { get; set; }
+
+        // Navigation
+        public ICollection<WorkshopUser> WorkshopUsers { get; set; }
         public ICollection<BookAppointment> BookAppointments { get; set; }
     }
-
 }

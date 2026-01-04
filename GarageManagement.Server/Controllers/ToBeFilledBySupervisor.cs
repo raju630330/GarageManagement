@@ -34,7 +34,7 @@ namespace GarageManagement.Api.Controllers
                 EndTime = d.EndTime
             }).ToList();
 
-            await _context.ToBeFilledBySupervisor.AddRangeAsync(entities);
+            await _context.ToBeFilledBySupervisors.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Supervisor section saved successfully" });

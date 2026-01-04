@@ -4,8 +4,7 @@ namespace GarageManagement.Server.Model
 {
     public class RepairOrder
     {
-        [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Required(ErrorMessage = "Registration Number is required")]
         public string? RegistrationNumber { get; set; } 

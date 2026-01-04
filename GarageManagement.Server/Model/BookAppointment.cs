@@ -1,59 +1,33 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GarageManagement.Server.Model;
+using System.ComponentModel.DataAnnotations;
 
-namespace GarageManagement.Server.Model
+public class BookAppointment
 {
-    public class BookAppointment
-    {
-        [Key]
-        [Required]
-        public string search { get; set; }
+    public long Id { get; set; }
 
-        [Required]
-        public DateTime? date { get; set; }
+    [Required]
+    public DateTime AppointmentDate { get; set; }
 
-        [Required]
-        public string time { get; set; }
+    [Required]
+    public string AppointmentTime { get; set; }
 
-        [Required]
-        public string customerType { get; set; }
+    [Required]
+    public string CustomerType { get; set; } // Individual / Corporate
 
-        [Required]
-        public string regPrefix { get; set; }
+    public string Service { get; set; }
+    public string ServiceAdvisor { get; set; }
+    public string Bay { get; set; }
 
+    // Foreign Keys
+    public long CustomerId { get; set; }
+    public Customer Customer { get; set; }
 
-        [ConditionalRequired("customerType", "Individual")]
-        public string regNo { get; set; }
+    public long? VehicleId { get; set; }
+    public Vehicle Vehicle { get; set; }
 
-        [ConditionalRequired("customerType", "Individual")]
-        public string vehicleType { get; set; }
+    public long? UserId { get; set; } // Staff handling
+    public User User { get; set; }
 
-        [ConditionalRequired("customerType", "Individual")]
-        public string mobileNo { get; set; }
-
-        [ConditionalRequired("customerType", "Individual")]
-        public string emailID { get; set; }
-
-        [ConditionalRequired("customerType", "Individual")]
-        public string service { get; set; }
-
-        [ConditionalRequired("customerType", "Individual")]
-        public string serviceAdvisor { get; set; }
-
-        [ConditionalRequired("customerType", "Individual")]
-        public string settings { get; set; }
-
-        [ConditionalRequired("customerType", "Individual")]
-        public string bay { get; set; }
-
-        //// Foreign Keys + Navigation
-        //public int UserId { get; set; }
-        //public User User { get; set; }   // Many-to-One (User → BookAppointments)
-
-        //    public int WorkshopId { get; set; }
-        //    public WorkshopProfile WorkshopProfile { get; set; } // Many-to-One (Workshop → BookAppointments)
-        //}
-    }
+    public long? WorkshopId { get; set; }
+    public WorkshopProfile Workshop { get; set; }
 }
-
-
-        

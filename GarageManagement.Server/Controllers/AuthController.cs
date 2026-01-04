@@ -54,7 +54,7 @@ namespace GarageManagement.Server.Controllers
                 return BadRequest("Invalid role. Allowed: Admin, Driver, Technician.");
             }
 
-            if (dto.Role == "Admin" && await _db.Users.AnyAsync(u => u.Role == "Admin"))
+            if (dto.Role == "Admin" && await _db.Users.AnyAsync(u => u.Role.RoleName == "Admin"))
             {
                 return BadRequest("Only one Admin is allowed.");
             }
@@ -69,7 +69,7 @@ namespace GarageManagement.Server.Controllers
                 Username = dto.Username.Trim(),
                 Email = dto.Email.Trim(),
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = dto.Role
+                Role = new Role { RoleName = dto.Role}
             };
 
             _db.Users.Add(user);
@@ -83,7 +83,7 @@ namespace GarageManagement.Server.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponse>> Login([FromBody]  LoginDto dto)
         {
-            var user = await _db.Users
+            var user = await _db.Users.Include(a=>a.Role)
                 .FirstOrDefaultAsync(u => u.Username == dto.UsernameOrEmail || u.Email == dto.UsernameOrEmail);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
@@ -200,7 +200,8 @@ namespace GarageManagement.Server.Controllers
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
             new(ClaimTypes.Email, user.Email),
-            new(ClaimTypes.Role, user.Role),
+            new(ClaimTypes.Role, user.Role.RoleName),
+            new Claim("RoleId", user.Role.Id.ToString()),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

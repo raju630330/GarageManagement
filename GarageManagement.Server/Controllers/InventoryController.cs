@@ -25,7 +25,7 @@ namespace GarageManagement.Server.Controllers
 
             var form = new InventoryForm
             {
-                Accessories = data.Accessories.Select(x => new InventoryAccessories
+                Accessories = data.Accessories.Select(x => new InventoryAccessory
                 {
                     Label = x.Label,
                     Checked = x.Checked

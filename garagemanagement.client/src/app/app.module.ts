@@ -50,6 +50,9 @@ import { NumbersOnlyDirective } from './directives/appNumbersOnly.directive';
 import { DecimalNumbersDirective } from './directives/appDecimalNumbers.directive';
 import { TwoDecimalNumbersDirective } from './directives/appTwoDecimalNumbers.directive';
 import { TablePopupComponent } from './table-popup/table-popup.component';
+import { RolesComponent } from './roles/roles.component';
+import { PermissionsComponent } from './permissions/permissions.component';
+import { RolepermissionComponent } from './rolepermission/rolepermission.component';
 
 @NgModule({
   declarations: [
@@ -87,7 +90,10 @@ import { TablePopupComponent } from './table-popup/table-popup.component';
     NumbersOnlyDirective,
     DecimalNumbersDirective,
     TwoDecimalNumbersDirective,
-    TablePopupComponent
+    TablePopupComponent,
+    RolesComponent,
+    PermissionsComponent,
+    RolepermissionComponent
   ],
   imports: [
     BrowserModule,

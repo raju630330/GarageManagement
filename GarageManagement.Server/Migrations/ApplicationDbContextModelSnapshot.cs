@@ -22,6 +22,67 @@ namespace GarageManagement.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BookAppointment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("AppointmentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("AppointmentTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Bay")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("CustomerType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Service")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceAdvisor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UserId1")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("VehicleId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
+
+                    b.HasIndex("VehicleId");
+
+                    b.HasIndex("WorkshopId");
+
+                    b.ToTable("BookAppointment", (string)null);
+                });
+
             modelBuilder.Entity("GarageManagement.Server.Model.AdditionalJobObserveDetail", b =>
                 {
                     b.Property<long>("Id")
@@ -52,78 +113,16 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdditionalJobObserveDetail");
-                });
-
-            modelBuilder.Entity("GarageManagement.Server.Model.BookAppointment", b =>
-                {
-                    b.Property<string>("search")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("bay")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("customerType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("emailID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("mobileNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("regNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("regPrefix")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("service")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("serviceAdvisor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("settings")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("time")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("vehicleType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("search");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("BookAppointments");
+                    b.ToTable("AdditionalJobObserveDetail", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.CheckItemEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Control")
                         .HasMaxLength(100)
@@ -137,29 +136,61 @@ namespace GarageManagement.Server.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("TechnicianMCId")
-                        .HasColumnType("int");
+                    b.Property<long>("TechnicianMCId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TechnicianMCId");
 
-                    b.ToTable("CheckItems");
+                    b.ToTable("CheckItem", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagement.Server.Model.InventoryAccessories", b =>
+            modelBuilder.Entity("GarageManagement.Server.Model.Customer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MobileNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customer", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.InventoryAccessory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<bool>("Checked")
                         .HasColumnType("bit");
 
-                    b.Property<int>("InventoryFormId")
-                        .HasColumnType("int");
+                    b.Property<long>("InventoryFormId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Label")
                         .IsRequired()
@@ -169,20 +200,20 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasIndex("InventoryFormId");
 
-                    b.ToTable("InventoryAccessories");
+                    b.ToTable("InventoryAccessory", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.InventoryForm", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.HasKey("Id");
 
-                    b.ToTable("InventoryForms");
+                    b.ToTable("InventoryForm", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCard", b =>
@@ -282,7 +313,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("JobCards");
+                    b.ToTable("JobCard", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardAdvancePayment", b =>
@@ -316,7 +347,7 @@ namespace GarageManagement.Server.Migrations
                     b.HasIndex("JobCardId")
                         .IsUnique();
 
-                    b.ToTable("JobCardAdvancePayments");
+                    b.ToTable("JobCardAdvancePayment", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardCancelledInvoice", b =>
@@ -344,7 +375,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasIndex("JobCardId");
 
-                    b.ToTable("JobCardCancelledInvoices");
+                    b.ToTable("JobCardCancelledInvoice", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardCollection", b =>
@@ -388,7 +419,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasIndex("JobCardId");
 
-                    b.ToTable("JobCardCollections");
+                    b.ToTable("JobCardCollection", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardConcern", b =>
@@ -412,7 +443,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasIndex("JobCardId");
 
-                    b.ToTable("JobCardConcerns");
+                    b.ToTable("JobCardConcern", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardEstimationItem", b =>
@@ -465,7 +496,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasIndex("JobCardId");
 
-                    b.ToTable("JobCardEstimationItems");
+                    b.ToTable("JobCardEstimationItem", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardTyreBattery", b =>
@@ -505,16 +536,16 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasIndex("JobCardId");
 
-                    b.ToTable("JobCardTyreBatteries");
+                    b.ToTable("JobCardTyreBattery", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.LabourDetail", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
@@ -530,16 +561,40 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LabourDetails");
+                    b.ToTable("LabourDetail", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.Permission", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Permission", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.RepairOrder", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AllottedTechnician")
                         .HasColumnType("nvarchar(max)");
@@ -579,16 +634,63 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RepairOrders");
+                    b.ToTable("RepairOrder", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.Role", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleName")
+                        .IsUnique();
+
+                    b.ToTable("Role", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.RolePermission", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ModuleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("PermissionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PermissionId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("RolePermission", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.SparePartsIssueDetail", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -613,16 +715,16 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SparePartsIssueDetails");
+                    b.ToTable("SparePartsIssueDetail", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.TechnicianMC", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AuthSign")
                         .HasMaxLength(100)
@@ -646,16 +748,16 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TechnicianMCForms", (string)null);
+                    b.ToTable("TechnicianMC", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.ToBeFilledBySupervisor", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ActionTaken")
                         .IsRequired()
@@ -679,16 +781,16 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ToBeFilledBySupervisor");
+                    b.ToTable("ToBeFilledBySupervisor", (string)null);
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -704,9 +806,8 @@ namespace GarageManagement.Server.Migrations
                     b.Property<string>("ResetTokenHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -714,16 +815,84 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("User", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagement.Server.Model.WorkshopProfile", b =>
+            modelBuilder.Entity("GarageManagement.Server.Model.Vehicle", b =>
                 {
-                    b.Property<int>("WorkshopId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkshopId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CustomerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("RegNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegPrefix")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VehicleType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Vehicle", (string)null);
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.WorkshopUser", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UserId1")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("WorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("WorkshopProfileId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
+
+                    b.HasIndex("WorkshopId");
+
+                    b.HasIndex("WorkshopProfileId");
+
+                    b.ToTable("WorkshopUser", (string)null);
+                });
+
+            modelBuilder.Entity("WorkshopProfile", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CalendarDate")
                         .HasColumnType("datetime2");
@@ -756,16 +925,43 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("WorkshopId");
+                    b.HasKey("Id");
 
-                    b.ToTable("WorkshopProfiles");
+                    b.ToTable("WorkshopProfile", (string)null);
                 });
 
-            modelBuilder.Entity("GarageManagement.Server.Model.BookAppointment", b =>
+            modelBuilder.Entity("BookAppointment", b =>
                 {
+                    b.HasOne("GarageManagement.Server.Model.Customer", "Customer")
+                        .WithMany("Appointments")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GarageManagement.Server.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.HasOne("GarageManagement.Server.Model.User", null)
                         .WithMany("BookAppointments")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId1");
+
+                    b.HasOne("GarageManagement.Server.Model.Vehicle", "Vehicle")
+                        .WithMany("Appointments")
+                        .HasForeignKey("VehicleId");
+
+                    b.HasOne("WorkshopProfile", "Workshop")
+                        .WithMany("Appointments")
+                        .HasForeignKey("WorkshopId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("User");
+
+                    b.Navigation("Vehicle");
+
+                    b.Navigation("Workshop");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.CheckItemEntity", b =>
@@ -779,7 +975,7 @@ namespace GarageManagement.Server.Migrations
                     b.Navigation("TechnicianMC");
                 });
 
-            modelBuilder.Entity("GarageManagement.Server.Model.InventoryAccessories", b =>
+            modelBuilder.Entity("GarageManagement.Server.Model.InventoryAccessory", b =>
                 {
                     b.HasOne("GarageManagement.Server.Model.InventoryForm", "InventoryForm")
                         .WithMany("Accessories")
@@ -856,6 +1052,81 @@ namespace GarageManagement.Server.Migrations
                     b.Navigation("JobCard");
                 });
 
+            modelBuilder.Entity("GarageManagement.Server.Model.RolePermission", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GarageManagement.Server.Model.Role", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.User", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.Vehicle", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.Customer", "Customer")
+                        .WithMany("Vehicles")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.WorkshopUser", b =>
+                {
+                    b.HasOne("GarageManagement.Server.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GarageManagement.Server.Model.User", null)
+                        .WithMany("WorkshopUsers")
+                        .HasForeignKey("UserId1");
+
+                    b.HasOne("WorkshopProfile", "Workshop")
+                        .WithMany()
+                        .HasForeignKey("WorkshopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WorkshopProfile", null)
+                        .WithMany("WorkshopUsers")
+                        .HasForeignKey("WorkshopProfileId");
+
+                    b.Navigation("User");
+
+                    b.Navigation("Workshop");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.Customer", b =>
+                {
+                    b.Navigation("Appointments");
+
+                    b.Navigation("Vehicles");
+                });
+
             modelBuilder.Entity("GarageManagement.Server.Model.InventoryForm", b =>
                 {
                     b.Navigation("Accessories");
@@ -876,6 +1147,18 @@ namespace GarageManagement.Server.Migrations
                     b.Navigation("TyreBatteries");
                 });
 
+            modelBuilder.Entity("GarageManagement.Server.Model.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.Role", b =>
+                {
+                    b.Navigation("RolePermissions");
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("GarageManagement.Server.Model.TechnicianMC", b =>
                 {
                     b.Navigation("CheckList");
@@ -884,6 +1167,20 @@ namespace GarageManagement.Server.Migrations
             modelBuilder.Entity("GarageManagement.Server.Model.User", b =>
                 {
                     b.Navigation("BookAppointments");
+
+                    b.Navigation("WorkshopUsers");
+                });
+
+            modelBuilder.Entity("GarageManagement.Server.Model.Vehicle", b =>
+                {
+                    b.Navigation("Appointments");
+                });
+
+            modelBuilder.Entity("WorkshopProfile", b =>
+                {
+                    b.Navigation("Appointments");
+
+                    b.Navigation("WorkshopUsers");
                 });
 #pragma warning restore 612, 618
         }

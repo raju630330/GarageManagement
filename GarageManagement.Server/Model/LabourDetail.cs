@@ -4,7 +4,7 @@ namespace GarageManagement.Server.Model
 {
     public class LabourDetail
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string? Description { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]

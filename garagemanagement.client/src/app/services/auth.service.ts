@@ -6,13 +6,14 @@ import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
 interface AuthResponse { token: string; }
-interface Decoded { role?: string; exp?: number; name?: string; email?: string; sub?: string; }
+interface Decoded { role?: string; roleId?: number; exp?: number; name?: string; email?: string; sub?: string; }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private base = environment.apiUrl;
   private _token: string | null = null;
   private _role: string | null = null;
+  private _roleId: number | null = null;
 
   private currentUserSubject = new BehaviorSubject<Decoded | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
@@ -64,6 +65,10 @@ export class AuthService {
     return this._role ?? localStorage.getItem('role');
 
   }
+  getRoleId(): number {
+    const id = this._roleId ?? localStorage.getItem('roleId');
+    return id ? Number(id) : 0;
+  }
 
   isLoggedIn(): boolean {
     const t = localStorage.getItem('token');
@@ -88,6 +93,7 @@ export class AuthService {
     localStorage.removeItem('role');
     this._token = null;
     this._role = null;
+    this._roleId = 0;
     this.currentUserSubject.next(null);
     this.loggedInSubject.next(false);
     this.router.navigate(['/login']);
@@ -99,6 +105,7 @@ export class AuthService {
     try {
       const decoded = jwtDecode<Decoded>(t);
       this._role = decoded.role ?? null;
+      this._roleId = decoded.roleId ?? 0;
       //if (this._role) {
       //  localStorage.setItem('role', this._role);
       //}
@@ -109,6 +116,7 @@ export class AuthService {
 
     } catch {
       this._role = null;
+      this._roleId = 0;
       this.currentUserSubject.next(null);
       this.loggedInSubject.next(false);
     }
@@ -121,8 +129,10 @@ export class AuthService {
       try {
         const decoded = jwtDecode<Decoded>(t);
         this._role = decoded.role ?? null;
+        this._roleId = decoded.roleId ?? 0;
         if (this._role) {
           localStorage.setItem('role', this._role);
+          localStorage.setItem('roleId', this._roleId.toString());
         }
         this.currentUserSubject.next(decoded);
         this.loggedInSubject.next(true);
@@ -134,6 +144,7 @@ export class AuthService {
         });
       } catch {
         this._role = null;
+        this._roleId = 0;
         this.currentUserSubject.next(null);
         this.loggedInSubject.next(false);
       }
