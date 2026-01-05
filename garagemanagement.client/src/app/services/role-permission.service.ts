@@ -14,11 +14,18 @@ export interface Permission {
   description?: string;
 }
 
+export interface PermissionModule {
+  id: number;
+  name: string;
+  description?: string;
+}
+
 export interface RolePermissionDto {
   id?: number;
   roleId: number;
   permissionId: number;
-  moduleName: string;
+  permissionModuleId: number;
+  moduleName?: string; // optional, for convenience
 }
 
 export interface BaseResultDto {
@@ -62,26 +69,61 @@ export class RolePermissionService {
     return this.http.delete<BaseResultDto>(`${this.baseUrl}/Permissions/${id}`);
   }
 
+  /* ===================== MODULES ===================== */
+  getModules(): Observable<PermissionModule[]> {
+    return this.http.get<PermissionModule[]>(`${this.baseUrl}/RolePermissions/modules`);
+  }
+
+  addModule(module: PermissionModule): Observable<BaseResultDto> {
+    return this.http.post<BaseResultDto>(`${this.baseUrl}/RolePermissions/module`, module);
+  }
+
   /* ===================== ROLE – PERMISSION ===================== */
-  getRoleModulePermissions(roleId: number, moduleName: string): Observable<string[]> {
-    return this.http.get<string[]>(
-      `${this.baseUrl}/RolePermissions/${roleId}/${moduleName}`
-    );
+  getRolePermissions(roleId: number): Observable<RolePermissionDto[]> {
+    return this.http.get<RolePermissionDto[]>(`${this.baseUrl}/RolePermissions/role/${roleId}`);
+  }
+
+  getRoleModulePermissions(roleId: number, moduleId: number): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/RolePermissions/role/${roleId}/module/${moduleId}`);
   }
 
   saveRolePermission(dto: RolePermissionDto): Observable<BaseResultDto> {
-    return this.http.post<BaseResultDto>(`${this.baseUrl}/RolePermissions`, dto);
+    return this.http.post<BaseResultDto>(`${this.baseUrl}/RolePermissions/permission`, dto);
   }
 
-  removeRolePermission(roleId: number, permissionId: number, moduleName: string): Observable<BaseResultDto> {
+  removeRolePermission(roleId: number, permissionId: number, moduleId: number): Observable<BaseResultDto> {
     return this.http.delete<BaseResultDto>(
-      `${this.baseUrl}/RolePermissions?roleId=${roleId}&permissionId=${permissionId}&moduleName=${moduleName}`
+      `${this.baseUrl}/RolePermissions/permission?roleId=${roleId}&permissionId=${permissionId}&moduleId=${moduleId}`
     );
   }
 
-  clearRoleModulePermissions(roleId: number, moduleName: string): Observable<BaseResultDto> {
+  clearRoleModulePermissions(roleId: number, moduleId: number): Observable<BaseResultDto> {
     return this.http.delete<BaseResultDto>(
-      `${this.baseUrl}/RolePermissions/clear?roleId=${roleId}&moduleName=${moduleName}`
+      `${this.baseUrl}/RolePermissions/role/${roleId}/module/${moduleId}/clear`
+    );
+  }
+
+  hasPermission(roleId: number, moduleId: number, permissionName: string): Observable<boolean> {
+    return this.http.get<boolean>(
+      `${this.baseUrl}/RolePermissions/check?roleId=${roleId}&moduleId=${moduleId}&permissionName=${permissionName}`
+    );
+  }
+
+  /* ===================== HELPERS ===================== */
+
+  assignDefaultPermission(
+    roleId: number,
+    moduleId: number
+  ): Observable<BaseResultDto> {
+    return this.http.post<BaseResultDto>(
+      `${this.baseUrl}/RolePermissions/assign-default`,
+      { roleId, moduleId }
+    );
+  }
+
+  clearAllRolePermissions(roleId: number): Observable<BaseResultDto> {
+    return this.http.delete<BaseResultDto>(
+      `${this.baseUrl}/RolePermissions/role/${roleId}/clear`
     );
   }
 }

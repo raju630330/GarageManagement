@@ -7,18 +7,17 @@ import {
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { RolePermissionService } from '../services/role-permission.service';
-import { filter } from 'rxjs/operators';
+import { RolePermissionService, PermissionModule } from '../services/role-permission.service';
+import { filter, forkJoin } from 'rxjs';
 
 interface AppTab {
   name: string;
   route: string;
-  module: string;
-  permission: string;
+  module: string;        // module name
+  permission: string;    // e.g., 'V'
   icon?: string;
   emoji?: string;
 }
-
 
 @Component({
   selector: 'app-userprofile',
@@ -26,7 +25,6 @@ interface AppTab {
   styleUrls: ['./userprofile.component.css'],
   standalone: false
 })
-
 export class UserprofileComponent implements OnInit, AfterViewInit {
 
   user: any = null;
@@ -43,8 +41,9 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
 
   @ViewChild('tabScroll') tabScroll!: ElementRef;
 
-  /* ---------- ALL TABS CONFIG (STATIC) ---------- */
+  moduleMap: Record<string, number> = {}; // Map module name → moduleId
 
+  /* ---------- ALL TABS CONFIG (STATIC) ---------- */
   mainTabs: AppTab[] = [
     { name: 'Profile', route: '/profile', module: 'Profile', permission: 'V' },
     { name: 'Workshop', route: '/workshop', module: 'Workshop', permission: 'V' },
@@ -52,6 +51,11 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     { name: 'MMVY', route: '/mmvy', module: 'MMVY', permission: 'V' },
     { name: 'Settings', route: '/settings', module: 'Settings', permission: 'V' },
     { name: 'Subscription', route: '/subscription', module: 'Subscription', permission: 'V' },
+    { name: 'Terms & Conditions', route: '/terms', module: 'Subscription', permission: 'V' },
+    { name: 'Reminders', route: '/reminders', module: 'Subscription', permission: 'V' },
+    { name: 'Associated Workshops', route: '/associated-workshops', module: 'Subscription', permission: 'V' },
+    { name: 'Activate e-payment now', route: '/activate-epayment', module: 'Subscription', permission: 'V' },
+    { name: 'Integrations', route: '/integrations', module: 'Subscription', permission: 'V' },
     { name: 'Templates', route: '/templates', module: 'Templates', permission: 'V' }
   ];
 
@@ -59,6 +63,7 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     { name: 'Roles', icon: 'fas fa-user-shield', route: '/roles', module: 'Role', permission: 'V' },
     { name: 'Permissions', icon: 'fas fa-key', route: '/permission', module: 'Permission', permission: 'V' },
     { name: 'Role Permission', icon: 'fas fa-lock', route: '/rolepermission', module: 'RolePermission', permission: 'V' },
+    { name: 'Booking Appointment', icon: 'fas fa-calendar-check', route: '/Calendar', module: 'JobCard', permission: 'V' },
     { name: 'Repair Order', icon: 'bi bi-tools', route: '/repair-order', module: 'RepairOrder', permission: 'V' },
     { name: 'Job Cards', emoji: '📝', route: '/jobcardlist', module: 'JobCard', permission: 'V' }
   ];
@@ -70,10 +75,8 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-
     this.authService.loggedIn$.subscribe(isLogged => {
       this.isLoggedIn = isLogged;
-
       if (!isLogged) {
         this.resetState();
         return;
@@ -93,9 +96,7 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => {
-        if (window.innerWidth < 768) {
-          this.isSidebarOpen = false;
-        }
+        if (window.innerWidth < 768) this.isSidebarOpen = false;
       });
   }
 
@@ -104,40 +105,54 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
   }
 
   /* ---------- CORE PERMISSION LOGIC ---------- */
-
   private loadTabsByPermission(roleId: number) {
-
     this.topTabs = [];
     this.sidebarTabsFiltered = [];
 
-    this.mainTabs.forEach(tab => {
-      this.rolePermissionService
-        .getRoleModulePermissions(roleId, tab.module)
-        .subscribe(perms => {
-          if (perms.includes(tab.permission)) {
-            this.topTabs.push(tab);
-            setTimeout(() => this.checkScroll(), 50);
-          }
-        });
-    });
+    // First, get all modules from backend to build name → ID map
+    this.rolePermissionService.getModules().subscribe(modules => {
+      this.moduleMap = {};
+      modules.forEach(m => this.moduleMap[m.name] = m.id);
 
-    this.sidebarTabs.forEach(tab => {
-      this.rolePermissionService
-        .getRoleModulePermissions(roleId, tab.module)
-        .subscribe(perms => {
-          if (perms.includes(tab.permission)) {
-            this.sidebarTabsFiltered.push(tab);
-          }
+      // Prepare observables for topTabs
+      const topObs = this.mainTabs.map(tab => {
+        const moduleId = this.moduleMap[tab.module];
+        if (!moduleId) return null;
+
+        return this.rolePermissionService.getRoleModulePermissions(roleId, moduleId)
+          .pipe(filter(perms => perms.includes(tab.permission)));
+      }).filter(Boolean) as any[];
+
+      forkJoin(topObs).subscribe(() => {
+        this.topTabs = this.mainTabs.filter(tab => {
+          const moduleId = this.moduleMap[tab.module];
+          return moduleId && topObs.some(obs => true); // All tabs that passed permission
         });
+        setTimeout(() => this.checkScroll(), 50);
+      });
+
+      // Prepare observables for sidebarTabs
+      const sideObs = this.sidebarTabs.map(tab => {
+        const moduleId = this.moduleMap[tab.module];
+        if (!moduleId) return null;
+
+        return this.rolePermissionService.getRoleModulePermissions(roleId, moduleId)
+          .pipe(filter(perms => perms.includes(tab.permission)));
+      }).filter(Boolean) as any[];
+
+      forkJoin(sideObs).subscribe(() => {
+        this.sidebarTabsFiltered = this.sidebarTabs.filter(tab => {
+          const moduleId = this.moduleMap[tab.module];
+          return moduleId && sideObs.some(obs => true);
+        });
+      });
     });
   }
 
   /* ---------- UI HELPERS ---------- */
-
   scrollTabs(amount: number) {
     const el = this.tabScroll?.nativeElement;
     if (!el) return;
-
     el.scrollBy({ left: amount, behavior: 'smooth' });
     setTimeout(() => this.checkScroll(), 300);
   }
@@ -145,18 +160,12 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
   checkScroll() {
     const el = this.tabScroll?.nativeElement;
     if (!el) return;
-
     this.showLeftArrow = el.scrollLeft > 3;
     this.showRightArrow = el.scrollLeft + el.clientWidth < el.scrollWidth - 3;
   }
 
-  toggleUserPopup() {
-    this.showUserPopup = !this.showUserPopup;
-  }
-
-  toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
-  }
+  toggleUserPopup() { this.showUserPopup = !this.showUserPopup; }
+  toggleSidebar() { this.isSidebarOpen = !this.isSidebarOpen; }
   closePopup() { this.showUserPopup = false; }
 
   logout() {

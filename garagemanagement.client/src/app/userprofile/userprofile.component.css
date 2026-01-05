@@ -52,7 +52,7 @@ html, body {
 .sidebar {
   position: fixed;
   left: 0;
-  width: 180px;
+  width: 220px;
   height: 100%;
   background: #f1f3f5;
   border-right: 1px solid #ddd;
@@ -61,8 +61,8 @@ html, body {
   z-index: 1045;
   overflow-y: auto;
 }
-@media (max-width: 767px) { .sidebar { top: 95px; } }
-@media (min-width: 768px) { .sidebar { top: 125px; } }
+@media (max-width: 767px) { .sidebar { top: 125px; } }
+@media (min-width: 768px) { .sidebar { top: 150px; } }
 .sidebar.open { transform: translateX(0); }
 .sidebar a {
   display: flex; align-items: center; gap: 8px;
@@ -76,7 +76,7 @@ html, body {
 @media (max-width: 767px) { .main-content { margin-top: 120px; margin-left: 0 !important; } }
 @media (min-width: 768px) {
   .main-content { margin-top: 150px; }
-  .sidebar.open ~ .main-content { margin-left: 180px; }
+  .sidebar.open ~ .main-content { margin-left: 220px; }
 }
 
 /* ---------- HOVER MENU DROPDOWN ---------- */

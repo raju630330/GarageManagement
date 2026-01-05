@@ -1,4 +1,10 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, OnInit } from '@angular/core';
+import {
+  Directive,
+  Input,
+  TemplateRef,
+  ViewContainerRef,
+  OnInit
+} from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { RolePermissionService } from '../services/role-permission.service';
 
@@ -8,8 +14,11 @@ import { RolePermissionService } from '../services/role-permission.service';
 })
 export class HasRoleDirective implements OnInit {
 
-  @Input('appHasRole') moduleName!: string;
-  @Input() permission!: string;
+  // Permission name → READ / WRITE / DELETE
+  @Input('appHasRole') permission!: string;
+
+  // 🔥 MODULE ID (NOT NAME)
+  @Input() moduleId!: number;
 
   private userRoleId = 0;
 
@@ -23,7 +32,7 @@ export class HasRoleDirective implements OnInit {
   ngOnInit(): void {
     this.userRoleId = this.auth.getRoleId() ?? 0;
 
-    if (!this.userRoleId) {
+    if (!this.userRoleId || !this.permission || !this.moduleId) {
       this.viewContainer.clear();
       return;
     }
@@ -32,17 +41,12 @@ export class HasRoleDirective implements OnInit {
   }
 
   private checkPermission(): void {
-    if (!this.moduleName || !this.permission) {
-      this.viewContainer.clear();
-      return;
-    }
-
     this.rolePermService
-      .getRoleModulePermissions(this.userRoleId, this.moduleName)
+      .hasPermission(this.userRoleId, this.moduleId, this.permission)
       .subscribe({
-        next: perms => {
+        next: hasAccess => {
           this.viewContainer.clear();
-          if (perms.includes(this.permission)) {
+          if (hasAccess) {
             this.viewContainer.createEmbeddedView(this.templateRef);
           }
         },

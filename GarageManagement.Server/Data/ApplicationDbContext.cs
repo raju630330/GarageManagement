@@ -1,5 +1,7 @@
 ﻿using GarageManagement.Server.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GarageManagement.Server.Data
 {
@@ -34,6 +36,7 @@ namespace GarageManagement.Server.Data
         public DbSet<JobCardTyreBattery> JobCardTyreBatteries { get; set; }
         public DbSet<JobCardCancelledInvoice> JobCardCancelledInvoices { get; set; }
         public DbSet<JobCardCollection> JobCardCollections { get; set; }
+        public DbSet<PermissionModule> PermissionModules { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -65,80 +68,113 @@ namespace GarageManagement.Server.Data
             modelBuilder.Entity<JobCardTyreBattery>().ToTable("JobCardTyreBattery");
             modelBuilder.Entity<JobCardCancelledInvoice>().ToTable("JobCardCancelledInvoice");
             modelBuilder.Entity<JobCardCollection>().ToTable("JobCardCollection");
+            modelBuilder.Entity<PermissionModule>().ToTable("PermissionModule");
 
-            // ------------------- Primary keys -------------------
+            // ------------------- Primary keys and Identity -------------------
+            void SetIdentity<TEntity>() where TEntity : class
+            {
+                modelBuilder.Entity<TEntity>().Property("Id").ValueGeneratedOnAdd();
+            }
+
             modelBuilder.Entity<User>().HasKey(u => u.Id);
+            SetIdentity<User>();
             modelBuilder.Entity<Role>().HasKey(r => r.Id);
-            modelBuilder.Entity<Permission>().HasKey(r => r.Id);
-            modelBuilder.Entity<RolePermission>().HasKey(r => r.Id);
+            SetIdentity<Role>();
+            modelBuilder.Entity<Permission>().HasKey(p => p.Id);
+            SetIdentity<Permission>();
+            modelBuilder.Entity<RolePermission>().HasKey(rp => rp.Id);
+            SetIdentity<RolePermission>();
             modelBuilder.Entity<WorkshopProfile>().HasKey(w => w.Id);
+            SetIdentity<WorkshopProfile>();
             modelBuilder.Entity<WorkshopUser>().HasKey(wu => wu.Id);
+            SetIdentity<WorkshopUser>();
             modelBuilder.Entity<Customer>().HasKey(c => c.Id);
+            SetIdentity<Customer>();
             modelBuilder.Entity<Vehicle>().HasKey(v => v.Id);
+            SetIdentity<Vehicle>();
             modelBuilder.Entity<BookAppointment>().HasKey(b => b.Id);
+            SetIdentity<BookAppointment>();
             modelBuilder.Entity<RepairOrder>().HasKey(r => r.Id);
+            SetIdentity<RepairOrder>();
             modelBuilder.Entity<LabourDetail>().HasKey(l => l.Id);
+            SetIdentity<LabourDetail>();
             modelBuilder.Entity<TechnicianMC>().HasKey(t => t.Id);
+            SetIdentity<TechnicianMC>();
             modelBuilder.Entity<CheckItemEntity>().HasKey(c => c.Id);
+            SetIdentity<CheckItemEntity>();
             modelBuilder.Entity<InventoryForm>().HasKey(i => i.Id);
+            SetIdentity<InventoryForm>();
             modelBuilder.Entity<InventoryAccessory>().HasKey(i => i.Id);
+            SetIdentity<InventoryAccessory>();
             modelBuilder.Entity<SparePartsIssueDetail>().HasKey(s => s.Id);
+            SetIdentity<SparePartsIssueDetail>();
             modelBuilder.Entity<JobCard>().HasKey(j => j.Id);
+            SetIdentity<JobCard>();
             modelBuilder.Entity<JobCardConcern>().HasKey(j => j.Id);
+            SetIdentity<JobCardConcern>();
             modelBuilder.Entity<JobCardAdvancePayment>().HasKey(j => j.Id);
+            SetIdentity<JobCardAdvancePayment>();
             modelBuilder.Entity<AdditionalJobObserveDetail>().HasKey(a => a.Id);
+            SetIdentity<AdditionalJobObserveDetail>();
             modelBuilder.Entity<ToBeFilledBySupervisor>().HasKey(t => t.Id);
+            SetIdentity<ToBeFilledBySupervisor>();
             modelBuilder.Entity<JobCardEstimationItem>().HasKey(j => j.Id);
+            SetIdentity<JobCardEstimationItem>();
             modelBuilder.Entity<JobCardTyreBattery>().HasKey(j => j.Id);
+            SetIdentity<JobCardTyreBattery>();
             modelBuilder.Entity<JobCardCancelledInvoice>().HasKey(j => j.Id);
+            SetIdentity<JobCardCancelledInvoice>();
             modelBuilder.Entity<JobCardCollection>().HasKey(j => j.Id);
+            SetIdentity<JobCardCollection>();
+            modelBuilder.Entity<PermissionModule>().HasKey(j => j.Id);
+            SetIdentity<PermissionModule>();
 
             // ------------------- Relationships -------------------
+
+            // User -> Role
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Role)
                 .WithMany(r => r.Users)
                 .HasForeignKey(u => u.RoleId);
 
+            // WorkshopUser -> User & Workshop
             modelBuilder.Entity<WorkshopUser>()
                 .HasOne(wu => wu.User)
                 .WithMany()
                 .HasForeignKey(wu => wu.UserId);
-
-            // RolePermission: Role -> RolePermissions (one-to-many)
-            modelBuilder.Entity<RolePermission>()
-                .HasOne(rp => rp.Role)
-                .WithMany(r => r.RolePermissions)
-                .HasForeignKey(rp => rp.RoleId)
-                .OnDelete(DeleteBehavior.Cascade); // Delete all RolePermissions if Role is deleted
-
-            // RolePermission: Permission -> RolePermissions (one-to-many)
-            modelBuilder.Entity<RolePermission>()
-                .HasOne(rp => rp.Permission)
-                .WithMany(p => p.RolePermissions)
-                .HasForeignKey(rp => rp.PermissionId)
-                .OnDelete(DeleteBehavior.Cascade); // Delete all RolePermissions if Permission is deleted
-
-            // Optional: Role Name Unique
-            modelBuilder.Entity<Role>()
-                .HasIndex(r => r.RoleName)
-                .IsUnique();
-
-            // Optional: Permission Name Unique
-            modelBuilder.Entity<Permission>()
-                .HasIndex(p => p.Name)
-                .IsUnique();
 
             modelBuilder.Entity<WorkshopUser>()
                 .HasOne(wu => wu.Workshop)
                 .WithMany()
                 .HasForeignKey(wu => wu.WorkshopId);
 
+            // RolePermission
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.Role)
+                .WithMany(r => r.RolePermissions)
+                .HasForeignKey(rp => rp.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.Permission)
+                .WithMany(p => p.RolePermissions)
+                .HasForeignKey(rp => rp.PermissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.PermissionModule)
+                .WithMany(pm => pm.RolePermissions)
+                .HasForeignKey(rp => rp.PermissionModuleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Customer -> Vehicles
             modelBuilder.Entity<Customer>()
                 .HasMany(c => c.Vehicles)
                 .WithOne(v => v.Customer)
                 .HasForeignKey(v => v.CustomerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // BookAppointment -> Customer, Workshop, User
             modelBuilder.Entity<BookAppointment>()
                 .HasOne(b => b.Customer)
                 .WithMany(c => c.Appointments)
@@ -156,12 +192,14 @@ namespace GarageManagement.Server.Data
                 .WithMany()
                 .HasForeignKey(b => b.UserId);
 
+            // TechnicianMC -> CheckItems
             modelBuilder.Entity<TechnicianMC>()
                 .HasMany(t => t.CheckList)
                 .WithOne(c => c.TechnicianMC)
                 .HasForeignKey(c => c.TechnicianMCId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // JobCard -> Concerns, TyreBatteries, CancelledInvoices, Collections, AdvancePayment
             modelBuilder.Entity<JobCard>()
                 .HasMany(j => j.Concerns)
                 .WithOne(c => c.JobCard)
@@ -190,7 +228,16 @@ namespace GarageManagement.Server.Data
                 .WithOne(a => a.JobCard)
                 .HasForeignKey<JobCardAdvancePayment>(a => a.JobCardId);
 
-            // ------------------- Decimal types -------------------
+            // JobCard -> Estimation Items
+            modelBuilder.Entity<JobCard>()
+                .HasMany(j => j.JobCardEstimationItems)
+                .WithOne(e => e.JobCard)
+                .HasForeignKey(e => e.JobCardId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // JobCard -> ToBeFilledBySupervisors
+
+            // ------------------- Decimal columns -------------------
             modelBuilder.Entity<JobCard>(entity =>
             {
                 entity.Property(e => e.Discount).HasColumnType("decimal(18,2)");

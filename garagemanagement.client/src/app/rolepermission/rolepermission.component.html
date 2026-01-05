@@ -1,75 +1,46 @@
 <div class="container mt-4" [formGroup]="form">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
 
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">Assign Permissions</h5>
-        </div>
+  <!-- ADD MODULE -->
+  <div class="card mb-3">
+    <div class="card-header bg-dark text-white">Add Permission Module</div>
+    <div class="card-body d-flex gap-2">
+      <input class="form-control"
+             placeholder="Module name"
+             formControlName="newModule">
+      <button class="btn btn-primary" (click)="addModule()">Add</button>
+    </div>
+  </div>
 
-        <div class="card-body">
+  <!-- ROLE SELECTION -->
+  <div class="card">
+    <div class="card-header bg-primary text-white">Assign Modules</div>
+    <div class="card-body">
 
-          <!-- Role Selection -->
-          <div class="mb-3">
-            <label class="form-label fw-bold">Select Role <span class="text-danger">*</span></label>
-            <select class="form-select" formControlName="roleId">
-              <option [ngValue]="null">-- Select Role --</option>
-              <option *ngFor="let role of roles" [ngValue]="role.id">
-                {{ role.roleName }}
-              </option>
-            </select>
-            <small class="text-danger"
-                   *ngIf="form.get('roleId')?.touched && form.get('roleId')?.invalid">
-              Role is required
-            </small>
-          </div>
+      <div class="mb-3">
+        <label class="fw-bold">Role</label>
+        <select class="form-select" formControlName="roleId">
+          <option [ngValue]="null">-- Select Role --</option>
+          <option *ngFor="let r of roles" [ngValue]="r.id">
+            {{ r.roleName }}
+          </option>
+        </select>
+      </div>
 
-          <!-- Module Name -->
-          <div class="mb-3">
-            <label class="form-label fw-bold">Module Name <span class="text-danger">*</span></label>
-            <input type="text"
-                   class="form-control"
-                   formControlName="moduleName"
-                   placeholder="Enter module name">
-            <small class="text-danger"
-                   *ngIf="form.get('moduleName')?.touched && form.get('moduleName')?.invalid">
-              Module name is required
-            </small>
-          </div>
+      <!-- MODULE CHECKBOXES -->
+      <div formGroupName="modules" class="list-group">
+        <label *ngFor="let m of modules"
+               class="list-group-item d-flex justify-content-between">
+          {{ m.name }}
+          <input type="checkbox" [formControlName]="m.id">
+        </label>
+      </div>
 
-          <!-- Permissions -->
-          <div class="mb-3" formGroupName="permissions">
-            <label class="form-label fw-bold">Permissions</label>
-
-            <!-- Empty -->
-            <div *ngIf="permissions.length === 0" class="text-muted text-center mb-2">
-              No permissions available.
-            </div>
-
-            <!-- Permission List -->
-            <div class="list-group" *ngIf="permissions.length > 0">
-              <label *ngFor="let perm of permissions"
-                     class="list-group-item d-flex justify-content-between align-items-center"
-                     [ngClass]="{
-                       'list-group-item-success':
-                       form.get('permissions')?.get(perm.name)?.value
-                     }">
-                {{ perm.name }}
-                <input type="checkbox" [formControlName]="perm.name">
-              </label>
-            </div>
-          </div>
-
-          <!-- Save -->
-          <div class="text-end">
-            <button class="btn btn-success"
-                    (click)="savePermissions()"
-                    [disabled]="form.invalid">
-              <i class="bi bi-save me-1"></i> Save Permissions
-            </button>
-          </div>
-
-        </div>
+      <div class="text-end mt-3">
+        <button class="btn btn-success"
+                [disabled]="isSaving"
+                (click)="save()">
+          Save Permissions
+        </button>
       </div>
 
     </div>

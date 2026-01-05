@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import {
-  Permission,
   Role,
-  RolePermissionDto,
+  PermissionModule,
   RolePermissionService
 } from '../services/role-permission.service';
 import { AlertService } from '../services/alert.service';
@@ -13,14 +12,14 @@ import { AlertService } from '../services/alert.service';
   selector: 'app-rolepermission',
   templateUrl: './rolepermission.component.html',
   styleUrls: ['./rolepermission.component.css'],
-  standalone : false
+  standalone: false
 })
 export class RolepermissionComponent implements OnInit {
 
   roles: Role[] = [];
-  permissions: Permission[] = [];
-  roleModulePermissions: string[] = [];
+  modules: PermissionModule[] = [];
   form!: FormGroup;
+  isSaving = false;  // Used for save & add module buttons
 
   constructor(
     private fb: FormBuilder,
@@ -28,132 +27,171 @@ export class RolepermissionComponent implements OnInit {
     private alert: AlertService
   ) { }
 
+  // ============================
+  // INIT
+  // ============================
   ngOnInit(): void {
-
     this.form = this.fb.group({
       roleId: [null, Validators.required],
-      moduleName: ['', Validators.required],
-      permissions: this.fb.group({})
+      newModule: ['', Validators.required],  // ✅ Added for Add Module input
+      modules: this.fb.group({})
     });
 
     this.loadInitialData();
 
-    // 🔥 Correct way to react to changes
-    this.form.get('roleId')?.valueChanges.subscribe(() => {
-      this.onRoleOrModuleChange();
-    });
-
-    this.form.get('moduleName')?.valueChanges.subscribe(() => {
-      this.onRoleOrModuleChange();
-    });
-  }
-
-  loadInitialData(): void {
-    this.rbac.getRoles().subscribe(res => this.roles = res);
-
-    this.rbac.getPermissions().subscribe(res => {
-      this.permissions = res;
-      this.buildPermissionControls();
-    });
-  }
-
-  private buildPermissionControls(): void {
-    const permsGroup: any = {};
-    this.permissions.forEach(p => permsGroup[p.name] = [false]);
-    this.form.setControl('permissions', this.fb.group(permsGroup));
-  }
-
-  private onRoleOrModuleChange(): void {
-    this.resetPermissions();
-
-    const roleId = this.form.value.roleId;
-    const moduleName = this.form.value.moduleName?.trim();
-
-    if (!roleId || !moduleName) {
-      return;
-    }
-
-    this.loadRolePermissions();
-  }
-
-  loadRolePermissions(): void {
-    const roleId = this.form.value.roleId;
-    const moduleName = this.form.value.moduleName.trim();
-
-    this.rbac.getRoleModulePermissions(roleId, moduleName).subscribe({
-      next: res => {
-        this.roleModulePermissions = res || [];
-        this.syncCheckboxes();
-      },
-      error: () => {
-        this.alert.showError('Failed to load permissions');
+    this.form.get('roleId')?.valueChanges.subscribe(roleId => {
+      if (roleId) {
+        this.loadRoleModules(roleId);
+      } else {
+        this.resetModules();
       }
     });
   }
 
-  private syncCheckboxes(): void {
-    const permsForm = this.form.get('permissions') as FormGroup;
+  // ============================
+  // LOAD INITIAL DATA
+  // ============================
+  loadInitialData(): void {
+    this.rbac.getRoles().subscribe({
+      next: res => this.roles = res,
+      error: () => this.alert.showError('Failed to load roles')
+    });
 
-    Object.keys(permsForm.controls).forEach(key => {
-      permsForm.get(key)?.setValue(
-        this.roleModulePermissions.includes(key),
-        { emitEvent: false }
-      );
+    this.rbac.getModules().subscribe({
+      next: res => {
+        this.modules = res;
+        this.buildModuleControls();
+      },
+      error: () => this.alert.showError('Failed to load modules')
     });
   }
 
-  private resetPermissions(): void {
-    this.roleModulePermissions = [];
-    const permsForm = this.form.get('permissions') as FormGroup;
+  // ============================
+  // BUILD MODULE CHECKBOXES
+  // ============================
+  private buildModuleControls(): void {
+    const group: any = {};
+    this.modules.forEach(m => group[m.id] = [false]);
+    this.form.setControl('modules', this.fb.group(group));
+  }
 
-    Object.keys(permsForm.controls).forEach(key => {
-      permsForm.get(key)?.setValue(false, { emitEvent: false });
+  // ============================
+  // LOAD ROLE → MODULE ACCESS
+  // ============================
+  loadRoleModules(roleId: number): void {
+    this.resetModules();
+
+    this.rbac.getRolePermissions(roleId).subscribe({
+      next: res => {
+        const fg = this.form.get('modules') as FormGroup;
+
+        const assignedModules = new Set<number>();
+        res.forEach(rp => assignedModules.add(rp.permissionModuleId));
+
+        assignedModules.forEach(moduleId => {
+          fg.get(moduleId.toString())?.setValue(true, { emitEvent: false });
+        });
+      },
+      error: () => this.alert.showError('Failed to load role permissions')
     });
   }
 
-  savePermissions(): void {
+  // ============================
+  // RESET CHECKBOXES
+  // ============================
+  private resetModules(): void {
+    const fg = this.form.get('modules') as FormGroup;
+    Object.keys(fg.controls).forEach(k =>
+      fg.get(k)?.setValue(false, { emitEvent: false })
+    );
+  }
 
+  // ============================
+  // SAVE ROLE MODULE ACCESS
+  // ============================
+  save(): void {
     if (this.form.invalid) {
-      this.alert.showError('Please fill all required fields');
+      this.alert.showError('Please select a role');
       return;
     }
 
-    const { roleId, moduleName, permissions } = this.form.value;
+    const roleId = this.form.value.roleId;
+    this.isSaving = true;
 
-    const selectedPermissions = Object.keys(permissions)
-      .filter(p => permissions[p]);
+    const selectedModuleIds = Object.entries(this.form.value.modules)
+      .filter(([_, checked]) => checked)
+      .map(([id]) => Number(id));
 
-    this.rbac.clearRoleModulePermissions(roleId, moduleName).subscribe({
+    // Clear existing module permissions
+    const clearCalls = this.modules.map(m =>
+      this.rbac.clearRoleModulePermissions(roleId, m.id)
+    );
+
+    forkJoin(clearCalls).subscribe({
       next: () => {
-
-        if (selectedPermissions.length === 0) {
-          this.alert.showSuccess('Permissions cleared successfully');
+        if (selectedModuleIds.length === 0) {
+          this.isSaving = false;
+          this.alert.showSuccess('Permissions updated successfully');
           return;
         }
 
-        const requests = selectedPermissions
-          .map(pName => {
-            const perm = this.permissions.find(p => p.name === pName);
-            if (!perm) return null;
+        const saveCalls = selectedModuleIds.map(moduleId =>
+          this.rbac.assignDefaultPermission(roleId, moduleId)
+        );
 
-            const dto: RolePermissionDto = {
-              roleId,
-              permissionId: perm.id,
-              moduleName
-            };
-
-            return this.rbac.saveRolePermission(dto);
-          })
-          .filter(req => req !== null);
-
-        forkJoin(requests as any).subscribe({
-          next: () => this.alert.showSuccess('Permissions saved successfully'),
-          error: err =>
-            this.alert.showError(err?.error?.message || 'Save failed')
+        forkJoin(saveCalls).subscribe({
+          next: () => {
+            this.isSaving = false;
+            this.alert.showSuccess('Permissions updated successfully');
+          },
+          error: () => {
+            this.isSaving = false;
+            this.alert.showError('Failed to save permissions');
+          }
         });
       },
-      error: err =>
-        this.alert.showError(err?.error?.message || 'Clear failed')
+      error: () => {
+        this.isSaving = false;
+        this.alert.showError('Failed to clear existing permissions');
+      }
     });
   }
+
+  // ============================
+  // ADD NEW MODULE
+  // ============================
+  addModule(): void {
+    const moduleName = this.form.get('newModule')?.value?.trim();
+
+    if (!moduleName) {
+      this.alert.showError('Module name is required');
+      return;
+    }
+
+    this.isSaving = true;
+
+    this.rbac.addModule({
+      id: 0,
+      name: moduleName,
+      description: ''
+    }).subscribe({
+      next: () => {
+        this.alert.showSuccess('Module added successfully');
+        this.form.get('newModule')?.reset();
+
+        // Reload modules so new checkbox appears
+        this.rbac.getModules().subscribe(mods => {
+          this.modules = mods;
+          this.buildModuleControls();
+        });
+
+        this.isSaving = false;
+      },
+      error: () => {
+        this.isSaving = false;
+        this.alert.showError('Failed to add module');
+      }
+    });
+  }
+
 }

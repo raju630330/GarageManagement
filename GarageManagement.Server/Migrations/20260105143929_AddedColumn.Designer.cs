@@ -4,6 +4,7 @@ using GarageManagement.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260105143929_AddedColumn")]
+    partial class AddedColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -578,9 +581,12 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Permission", (string)null);
                 });
@@ -665,9 +671,12 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<string>("RoleName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleName")
+                        .IsUnique();
 
                     b.ToTable("Role", (string)null);
                 });
@@ -1077,8 +1086,7 @@ namespace GarageManagement.Server.Migrations
 
                     b.HasOne("GarageManagement.Server.Model.PermissionModule", "PermissionModule")
                         .WithMany("RolePermissions")
-                        .HasForeignKey("PermissionModuleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("PermissionModuleId");
 
                     b.HasOne("GarageManagement.Server.Model.Role", "Role")
                         .WithMany("RolePermissions")
