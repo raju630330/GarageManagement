@@ -11,7 +11,7 @@
               <th>Action Taken</th>
               <th>Start Time</th>
               <th>End Time</th>
-              <th *appHasRole="[ROLES.ADMIN]">Action</th>
+              <th *appHasRole="'ToBeFilledBySupervisor'; permission: 'D'">Action</th>
             </tr>
           </thead>
 
@@ -48,7 +48,7 @@
                   Enter valid time (e.g., 05:45 PM).
                 </div>
               </td>
-              <td *appHasRole="[ROLES.ADMIN]">
+              <td *appHasRole="'ToBeFilledBySupervisor'; permission: 'D'">
                 <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeRow(i)" title="Delete"><i class="bi bi-trash"></i></button>
               </td>
             </tr>

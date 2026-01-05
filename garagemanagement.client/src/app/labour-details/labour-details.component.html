@@ -10,7 +10,7 @@
               <th>Labour Charges</th>
               <th>Outside Labour</th>
               <th>Total</th>
-              <th *appHasRole="[ROLES.ADMIN]">Action</th>
+              <th *appHasRole="'LabourDetails'; permission: 'D'">Action</th>
             </tr>
           </thead>
 
@@ -41,7 +41,7 @@
           (+row.get('outsideLabour')?.value || 0)
                 }}
               </td>
-              <td *appHasRole="[ROLES.ADMIN]">
+              <td *appHasRole="'LabourDetails'; permission: 'D'">
                 <button type="button"
                         class="btn btn-outline-danger btn-sm"
                         (click)="removeRow(i)"
@@ -56,7 +56,7 @@
             <tr>
               <td colspan="4" class="text-end"><strong>Total</strong></td>
               <td><strong>{{ calculateTotal()  | currency:'INR':'symbol' }}</strong></td>
-              <td *appHasRole="[ROLES.ADMIN]"></td>
+              <td *appHasRole="'LabourDetails'; permission: 'D'"></td>
             </tr>
           </tfoot>
 

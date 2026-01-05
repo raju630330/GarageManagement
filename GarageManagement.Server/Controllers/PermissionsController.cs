@@ -1,4 +1,5 @@
-﻿using GarageManagement.Server.Model;
+﻿using GarageManagement.Server.dtos;
+using GarageManagement.Server.Model;
 using GarageManagement.Server.RepoInterfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,41 +16,33 @@ namespace GarageManagement.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Permission>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var permissions = await _permissionRepo.GetAllPermissionsAsync();
-            return Ok(permissions);
+            return Ok(await _permissionRepo.GetAllPermissionsAsync());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Permission>> Get(long id)
+        public async Task<IActionResult> Get(long id)
         {
-            var permission = await _permissionRepo.GetPermissionByIdAsync(id);
-            if (permission == null) return NotFound();
-            return Ok(permission);
+            var perm = await _permissionRepo.GetPermissionByIdAsync(id);
+            if (perm == null) return NotFound();
+            return Ok(perm);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] Permission permission)
+        public async Task<IActionResult> Save(PermissionDto permission)
         {
-            await _permissionRepo.AddPermissionAsync(permission);
-            return CreatedAtAction(nameof(Get), new { id = permission.Id }, permission);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(long id, [FromBody] Permission permission)
-        {
-            if (id != permission.Id) return BadRequest();
-            await _permissionRepo.UpdatePermissionAsync(permission);
-            return NoContent();
+            var result = await _permissionRepo.SavePermissionAsync(permission);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(long id)
+        public async Task<IActionResult> Delete(long id)
         {
-            await _permissionRepo.DeletePermissionAsync(id);
-            return NoContent();
+            var result = await _permissionRepo.DeletePermissionAsync(id);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+
     }
 }
 

@@ -1,42 +1,89 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Permission, RolePermissionService } from '../services/role-permission.service';
+import { AlertService } from '../services/alert.service';
 
 @Component({
   selector: 'app-permissions',
-  standalone: false,
   templateUrl: './permissions.component.html',
-  styleUrl: './permissions.component.css'
+  standalone: false
 })
-export class PermissionsComponent {
+export class PermissionsComponent implements OnInit {
 
   permissions: Permission[] = [];
-  newPermissionName: string = '';
-  newPermissionDescription: string = '';
+  permissionForm!: FormGroup;
 
-  constructor(private rbac: RolePermissionService) { }
+  currentPermissionId = 0;
 
-  ngOnInit() {
+  constructor(
+    private rbac: RolePermissionService,
+    private fb: FormBuilder,
+    private alert: AlertService
+  ) { }
+
+  ngOnInit(): void {
+    this.permissionForm = this.fb.group({
+      name: ['', Validators.required],
+      description: ['']
+    });
+
     this.loadPermissions();
   }
 
-  loadPermissions() {
+  loadPermissions(): void {
     this.rbac.getPermissions().subscribe(res => this.permissions = res);
   }
 
-  addPermission() {
-    if (!this.newPermissionName) return;
-    this.rbac.createPermission({
-      id: 0,
-      name: this.newPermissionName,
-      description: this.newPermissionDescription
-    }).subscribe(() => {
-      this.newPermissionName = '';
-      this.newPermissionDescription = '';
-      this.loadPermissions();
+  editPermission(permission: Permission): void {
+    this.currentPermissionId = permission.id;
+    this.permissionForm.patchValue(permission);
+  }
+
+  savePermission(): void {
+    if (this.permissionForm.invalid) {
+      this.alert.showError('Please fill all fields correctly before saving.');
+      return;
+    }
+
+    const permission: Permission = {
+      id: this.currentPermissionId,
+      name: this.permissionForm.value.name.trim(),
+      description: this.permissionForm.value.description
+    };
+
+    this.rbac.savePermission(permission).subscribe({
+      next: () => {
+        this.alert.showSuccess(
+          this.currentPermissionId === 0
+            ? 'Permission added successfully'
+            : 'Permission updated successfully'
+        );
+        this.resetForm();
+        this.loadPermissions();
+      },
+      error: (err) => {
+        this.alert.showError(
+          err?.error?.message || 'Unable to save permission'
+        );
+      }
     });
   }
 
-  deletePermission(id: number) {
-    this.rbac.deletePermission(id).subscribe(() => this.loadPermissions());
+  resetForm(): void {
+    this.currentPermissionId = 0;
+    this.permissionForm.reset();
+  }
+
+  deletePermission(id: number): void {
+    this.alert.confirm('Delete this permission?', () => {
+      this.rbac.deletePermission(id).subscribe({
+        next: () => this.loadPermissions(),
+        error: (err) => {
+          this.alert.showError(
+            err?.error?.message || 'Permission cannot be deleted'
+          );
+        }
+      });
+    });
   }
 }

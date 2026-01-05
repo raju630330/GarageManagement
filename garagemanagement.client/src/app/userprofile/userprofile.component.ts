@@ -7,38 +7,34 @@ import {
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { filter } from 'rxjs/operators';
 import { RolePermissionService } from '../services/role-permission.service';
+import { filter } from 'rxjs/operators';
 
-/* ---------- Interfaces (VERY IMPORTANT) ---------- */
-interface MainTab {
+interface AppTab {
   name: string;
-  route: string;
-  roles: string[];
-}
-
-interface SidebarTab {
-  name: string;
-  icon: string;
   route: string;
   module: string;
   permission: string;
+  icon?: string;
+  emoji?: string;
 }
+
 
 @Component({
   selector: 'app-userprofile',
   templateUrl: './userprofile.component.html',
   styleUrls: ['./userprofile.component.css'],
-  standalone : false
+  standalone: false
 })
+
 export class UserprofileComponent implements OnInit, AfterViewInit {
 
   user: any = null;
   isLoggedIn = false;
   role: string | null = null;
 
-  filteredTabs: MainTab[] = [];
-  filteredSidebarTabs: SidebarTab[] = [];
+  topTabs: AppTab[] = [];
+  sidebarTabsFiltered: AppTab[] = [];
 
   showLeftArrow = false;
   showRightArrow = false;
@@ -47,59 +43,24 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
 
   @ViewChild('tabScroll') tabScroll!: ElementRef;
 
-  /* ---------- TOP TABS (ROLE BASED – KEEP OLD LOGIC) ---------- */
-  mainTabs: MainTab[] = [
-    { name: 'Profile', route: '/profile', roles: ['Admin', 'Manager'] },
-    { name: 'Workshop', route: '/workshop', roles: ['Admin', 'Manager', 'Supervisor'] },
-    { name: 'Users', route: '/users', roles: ['Admin'] },
-    { name: 'MMVY', route: '/mmvy', roles: ['Admin', 'Manager', 'Supervisor'] },
-    { name: 'Settings', route: '/settings', roles: ['Admin', 'Manager', 'Supervisor', 'Driver'] },
-    { name: 'Subscription', route: '/subscription', roles: ['Admin', 'Manager'] },
-    { name: 'Terms & Conditions', route: '/terms', roles: ['Admin', 'Driver'] },
-    { name: 'Reminders', route: '/reminders', roles: ['Admin', 'Manager'] },
-    { name: 'Associated Workshops', route: '/associated-workshops', roles: ['Admin'] },
-    { name: 'Activate e-payment now', route: '/activate-epayment', roles: ['Admin', 'Manager'] },
-    { name: 'Integrations', route: '/integrations', roles: ['Admin'] },
-    { name: 'Templates', route: '/templates', roles: ['Admin', 'Manager'] }
+  /* ---------- ALL TABS CONFIG (STATIC) ---------- */
+
+  mainTabs: AppTab[] = [
+    { name: 'Profile', route: '/profile', module: 'Profile', permission: 'V' },
+    { name: 'Workshop', route: '/workshop', module: 'Workshop', permission: 'V' },
+    { name: 'Users', route: '/users', module: 'User', permission: 'V' },
+    { name: 'MMVY', route: '/mmvy', module: 'MMVY', permission: 'V' },
+    { name: 'Settings', route: '/settings', module: 'Settings', permission: 'V' },
+    { name: 'Subscription', route: '/subscription', module: 'Subscription', permission: 'V' },
+    { name: 'Templates', route: '/templates', module: 'Templates', permission: 'V' }
   ];
 
-  /* ---------- SIDEBAR (ROLE + PERMISSION BASED) ---------- */
-  sidebarTabs: SidebarTab[] = [
-    {
-      name: 'Repair Order',
-      icon: 'bi bi-tools me-2',
-      route: '/repair-order',
-      module: 'RepairOrder',
-      permission: 'V'
-    },
-    {
-      name: 'Job Cards',
-      icon: 'fas fa-pen-to-square',
-      route: '/jobcardlist',
-      module: 'JobCard',
-      permission: 'V'
-    },
-    {
-      name: 'Roles',
-      icon: 'fas fa-user-shield',
-      route: '/roles',
-      module: 'Role',
-      permission: 'V'
-    },
-    {
-      name: 'Permissions',
-      icon: 'fas fa-key',
-      route: '/permission',
-      module: 'Permission',
-      permission: 'V'
-    },
-    {
-      name: 'Role Permission',
-      icon: 'fas fa-lock',
-      route: '/rolepermission',
-      module: 'RolePermission',
-      permission: 'V'
-    }
+  sidebarTabs: AppTab[] = [
+    { name: 'Roles', icon: 'fas fa-user-shield', route: '/roles', module: 'Role', permission: 'V' },
+    { name: 'Permissions', icon: 'fas fa-key', route: '/permission', module: 'Permission', permission: 'V' },
+    { name: 'Role Permission', icon: 'fas fa-lock', route: '/rolepermission', module: 'RolePermission', permission: 'V' },
+    { name: 'Repair Order', icon: 'bi bi-tools', route: '/repair-order', module: 'RepairOrder', permission: 'V' },
+    { name: 'Job Cards', emoji: '📝', route: '/jobcardlist', module: 'JobCard', permission: 'V' }
   ];
 
   constructor(
@@ -114,10 +75,7 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
       this.isLoggedIn = isLogged;
 
       if (!isLogged) {
-        this.user = null;
-        this.role = null;
-        this.filteredTabs = [];
-        this.filteredSidebarTabs = [];
+        this.resetState();
         return;
       }
 
@@ -125,32 +83,13 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
         this.user = profile;
         this.role = profile.role;
 
-        /* ---------- TOP TAB FILTER (ROLE ONLY) ---------- */
-        this.filteredTabs = this.mainTabs.filter(tab =>
-          tab.roles.includes(this.role ?? '')
-        );
-
-        /* ---------- SIDEBAR FILTER (PERMISSION) ---------- */
         const roleId = this.authService.getRoleId();
-        console.log(roleId);
         if (!roleId) return;
 
-        this.filteredSidebarTabs = [];
-
-        this.sidebarTabs.forEach(tab => {
-          this.rolePermissionService
-            .getRoleModulePermissions(roleId, tab.module)
-            .subscribe(perms => {
-              if (perms.includes(tab.permission)) {
-                this.filteredSidebarTabs.push(tab);
-                setTimeout(() => this.checkScroll(), 50);
-              }
-            });
-        });
+        this.loadTabsByPermission(roleId);
       });
     });
 
-    /* ---------- AUTO CLOSE SIDEBAR ---------- */
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => {
@@ -163,6 +102,37 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     setTimeout(() => this.checkScroll(), 200);
   }
+
+  /* ---------- CORE PERMISSION LOGIC ---------- */
+
+  private loadTabsByPermission(roleId: number) {
+
+    this.topTabs = [];
+    this.sidebarTabsFiltered = [];
+
+    this.mainTabs.forEach(tab => {
+      this.rolePermissionService
+        .getRoleModulePermissions(roleId, tab.module)
+        .subscribe(perms => {
+          if (perms.includes(tab.permission)) {
+            this.topTabs.push(tab);
+            setTimeout(() => this.checkScroll(), 50);
+          }
+        });
+    });
+
+    this.sidebarTabs.forEach(tab => {
+      this.rolePermissionService
+        .getRoleModulePermissions(roleId, tab.module)
+        .subscribe(perms => {
+          if (perms.includes(tab.permission)) {
+            this.sidebarTabsFiltered.push(tab);
+          }
+        });
+    });
+  }
+
+  /* ---------- UI HELPERS ---------- */
 
   scrollTabs(amount: number) {
     const el = this.tabScroll?.nativeElement;
@@ -184,19 +154,23 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     this.showUserPopup = !this.showUserPopup;
   }
 
-  closePopup() {
-    this.showUserPopup = false;
-  }
-
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
+  closePopup() { this.showUserPopup = false; }
 
   logout() {
     this.authService.logout();
-    this.closePopup();
-    this.isSidebarOpen = false;
+    this.resetState();
     this.router.navigate(['/login']);
+  }
+
+  private resetState() {
     this.user = null;
+    this.role = null;
+    this.topTabs = [];
+    this.sidebarTabsFiltered = [];
+    this.isSidebarOpen = false;
+    this.showUserPopup = false;
   }
 }

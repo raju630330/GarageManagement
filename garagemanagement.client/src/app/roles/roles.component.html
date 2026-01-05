@@ -1,10 +1,89 @@
-<h3>Roles</h3>
-<input type="text" [(ngModel)]="newRoleName" placeholder="Role Name">
-<button (click)="addRole()">Add Role</button>
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
 
-<ul>
-  <li *ngFor="let role of roles">
-    {{ role.roleName }}
-    <button (click)="deleteRole(role.id)">Delete</button>
-  </li>
-</ul>
+      <div class="card shadow-sm">
+
+        <!-- Header -->
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="bi bi-person-badge me-2"></i>
+            Roles
+          </h5>
+
+          <span class="badge bg-light text-primary">
+            {{ roles.length }}
+          </span>
+        </div>
+
+        <div class="card-body">
+
+          <!-- Add / Edit Form -->
+          <form [formGroup]="roleForm" (ngSubmit)="saveRole()" class="mb-3">
+
+            <label class="form-label fw-semibold">
+              {{ currentRoleId === 0 ? 'Add Role' : 'Edit Role' }}
+            </label>
+
+            <div class="input-group">
+              <input type="text"
+                     class="form-control"
+                     formControlName="roleName"
+                     placeholder="Enter role name"
+                     autofocus>
+
+              <button class="btn btn-success" type="submit">
+                <i class="bi"
+                   [ngClass]="currentRoleId === 0 ? 'bi-plus-lg' : 'bi-check-lg'"></i>
+                {{ currentRoleId === 0 ? 'Add' : 'Update' }}
+              </button>
+
+              <button *ngIf="currentRoleId !== 0"
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      (click)="resetForm()">
+                Cancel
+              </button>
+            </div>
+
+          </form>
+
+          <!-- Roles List -->
+          <ul class="list-group">
+
+            <li *ngFor="let role of roles"
+                class="list-group-item d-flex justify-content-between align-items-center">
+
+              <span class="fw-medium">{{ role.roleName }}</span>
+
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary"
+                        title="Edit"
+                        (click)="editRole(role)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+
+                <button class="btn btn-outline-danger"
+                        title="Delete"
+                        (click)="deleteRole(role.id)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+
+            </li>
+
+          </ul>
+
+          <!-- Empty State -->
+          <div *ngIf="roles.length === 0"
+               class="text-center text-muted mt-3">
+            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+            No roles available
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

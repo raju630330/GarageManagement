@@ -163,11 +163,10 @@
 
   <!-- Tabs -->
   <div class="scrollable-tabs" #tabScroll (scroll)="checkScroll()">
-    <a *ngFor="let tab of filteredTabs"
+    <a *ngFor="let tab of topTabs"
        class="nav-link fw-semibold"
        [routerLink]="tab.route"
-       routerLinkActive="active"
-       [routerLinkActiveOptions]="{ exact: true }">
+       routerLinkActive="active">
       {{ tab.name }}
     </a>
   </div>
@@ -182,20 +181,21 @@
 <div class="sidebar bg-light" [class.open]="isSidebarOpen">
   <div class="list-group list-group-flush">
 
-    <a *ngFor="let tab of filteredSidebarTabs"
+    <a *ngFor="let tab of sidebarTabsFiltered"
        [routerLink]="tab.route"
        routerLinkActive="active"
-       [routerLinkActiveOptions]="{ exact: true }"
-       class="list-group-item list-group-item-action d-flex align-items-center border-0 px-3 py-2">
+       class="list-group-item d-flex align-items-center px-3 py-2">
 
-      <!-- Job Cards Icon -->
-      <span *ngIf="tab.name === 'Job Cards'"
-            class="me-2 text-warning d-flex justify-content-center align-items-center"
-            style="font-size: 1rem; width: 18px;">📝</span>
+      <!-- Emoji icon (Job Cards) -->
+      <span *ngIf="tab.emoji"
+            class="me-2 text-warning"
+            style="width: 20px; text-align: center;">
+        {{ tab.emoji }}
+      </span>
 
-      <!-- Other Icons -->
-      <i *ngIf="tab.name !== 'Job Cards'"
-         class="{{tab.icon}} me-2 text-warning"
+      <!-- Font/Icon -->
+      <i *ngIf="tab.icon"
+         class="{{ tab.icon }} me-2 text-warning"
          style="width: 20px; text-align: center;"></i>
 
       <span>{{ tab.name }}</span>
@@ -203,6 +203,7 @@
 
   </div>
 </div>
+
 
 
 

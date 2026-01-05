@@ -13,7 +13,7 @@
               <th>Unit Cost (₹)</th>
               <th>Qty</th>
               <th>Amount (₹)</th>
-              <th *appHasRole="[ROLES.ADMIN]">Action</th>
+              <th *appHasRole="'SparePartsIssueDetails'; permission: 'D'">Action</th>
             </tr>
           </thead>
 
@@ -66,7 +66,7 @@
               <td style="width: 100px;">{{ getAmount(((currentPage - 1) * pageSize) + i) | currency:'INR':'symbol' }}</td>
 
               <!-- Action -->
-              <td *appHasRole="[ROLES.ADMIN]">
+              <td *appHasRole="'SparePartsIssueDetails'; permission: 'D'">
                 <button type="button" class="btn btn-outline-danger btn-sm"
                         title="Delete"
                         (click)="removePart(((currentPage - 1) * pageSize) + i)">
@@ -81,7 +81,7 @@
               <td class="fw-bold">
                 {{ getTotalAmount() | currency:'INR':'symbol' }}
               </td>
-              <td *appHasRole="[ROLES.ADMIN]"></td>
+              <td *appHasRole="'SparePartsIssueDetails'; permission: 'D'"></td>
             </tr>
           </tfoot>
 

@@ -14,63 +14,74 @@ export interface Permission {
   description?: string;
 }
 
-export interface RolePermission {
+export interface RolePermissionDto {
+  id?: number;
   roleId: number;
   permissionId: number;
   moduleName: string;
+}
+
+export interface BaseResultDto {
+  id?: number;
+  isSuccess: boolean;
+  message: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class RolePermissionService {
+
   private baseUrl = environment.apiUrl;
+
   constructor(private http: HttpClient) { }
 
-  // Roles
+  /* ===================== ROLES ===================== */
   getRoles(): Observable<Role[]> {
     return this.http.get<Role[]>(`${this.baseUrl}/Roles`);
   }
 
-  createRole(role: Role): Observable<any> {
-    return this.http.post(`${this.baseUrl}/Roles`, role);
+  saveRole(role: Role): Observable<BaseResultDto> {
+    return this.http.post<BaseResultDto>(`${this.baseUrl}/Roles`, role);
   }
 
-  updateRole(role: Role): Observable<any> {
-    return this.http.put(`${this.baseUrl}/Roles/${role.id}`, role);
+  deleteRole(id: number): Observable<BaseResultDto> {
+    return this.http.delete<BaseResultDto>(`${this.baseUrl}/Roles/${id}`);
   }
 
-  deleteRole(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/Roles/${id}`);
-  }
-
-  // Permissions
+  /* ===================== PERMISSIONS ===================== */
   getPermissions(): Observable<Permission[]> {
     return this.http.get<Permission[]>(`${this.baseUrl}/Permissions`);
   }
 
-  createPermission(permission: Permission): Observable<any> {
-    return this.http.post(`${this.baseUrl}/Permissions`, permission);
+  savePermission(permission: Permission): Observable<BaseResultDto> {
+    return this.http.post<BaseResultDto>(`${this.baseUrl}/Permissions`, permission);
   }
 
-  updatePermission(permission: Permission): Observable<any> {
-    return this.http.put(`${this.baseUrl}/Permissions/${permission.id}`, permission);
+  deletePermission(id: number): Observable<BaseResultDto> {
+    return this.http.delete<BaseResultDto>(`${this.baseUrl}/Permissions/${id}`);
   }
 
-  deletePermission(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/Permissions/${id}`);
-  }
-
-  // Role-Permission
+  /* ===================== ROLE – PERMISSION ===================== */
   getRoleModulePermissions(roleId: number, moduleName: string): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/RolePermissions/${roleId}/${moduleName}`);
+    return this.http.get<string[]>(
+      `${this.baseUrl}/RolePermissions/${roleId}/${moduleName}`
+    );
   }
 
-  addRolePermission(rolePermission: RolePermission): Observable<any> {
-    return this.http.post(`${this.baseUrl}/RolePermissions`, rolePermission);
+  saveRolePermission(dto: RolePermissionDto): Observable<BaseResultDto> {
+    return this.http.post<BaseResultDto>(`${this.baseUrl}/RolePermissions`, dto);
   }
 
-  removeRolePermission(roleId: number, permissionId: number, moduleName: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/RolePermissions?roleId=${roleId}&permissionId=${permissionId}&moduleName=${moduleName}`);
+  removeRolePermission(roleId: number, permissionId: number, moduleName: string): Observable<BaseResultDto> {
+    return this.http.delete<BaseResultDto>(
+      `${this.baseUrl}/RolePermissions?roleId=${roleId}&permissionId=${permissionId}&moduleName=${moduleName}`
+    );
+  }
+
+  clearRoleModulePermissions(roleId: number, moduleName: string): Observable<BaseResultDto> {
+    return this.http.delete<BaseResultDto>(
+      `${this.baseUrl}/RolePermissions/clear?roleId=${roleId}&moduleName=${moduleName}`
+    );
   }
 }

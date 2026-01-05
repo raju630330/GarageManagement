@@ -201,7 +201,7 @@ namespace GarageManagement.Server.Controllers
             new(ClaimTypes.Name, user.Username),
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Role, user.Role.RoleName),
-            new Claim("RoleId", user.Role.Id.ToString()),
+            new Claim("roleId", user.Role.Id.ToString()),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

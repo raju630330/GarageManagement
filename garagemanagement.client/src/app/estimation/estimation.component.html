@@ -230,7 +230,7 @@
               <option value="Pending">Pending</option>
             </select>
           </td>
-          <td *appHasRole="[ROLES.ADMIN]">
+          <td  *appHasRole="'Estimation'; permission: 'D'">
             <button type="button"
                     class="btn btn-outline-danger btn-sm"
                     (click)="removeRow(i)"

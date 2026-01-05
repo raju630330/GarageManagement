@@ -1,4 +1,5 @@
-﻿using GarageManagement.Server.Model;
+﻿using GarageManagement.Server.dtos;
+using GarageManagement.Server.Model;
 using GarageManagement.Server.RepoInterfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,14 +16,14 @@ namespace GarageManagement.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Role>>> GetAll()
+        public async Task<ActionResult<List<RoleModel>>> GetAll()
         {
             var roles = await _roleRepo.GetAllRolesAsync();
             return Ok(roles);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Role>> Get(long id)
+        public async Task<ActionResult<RoleModel>> Get(long id)
         {
             var role = await _roleRepo.GetRoleByIdAsync(id);
             if (role == null) return NotFound();
@@ -30,25 +31,17 @@ namespace GarageManagement.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] Role role)
+        public async Task<IActionResult> Save(RoleModel role)
         {
-            await _roleRepo.AddRoleAsync(role);
-            return CreatedAtAction(nameof(Get), new { id = role.Id }, role);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(long id, [FromBody] Role role)
-        {
-            if (id != role.Id) return BadRequest();
-            await _roleRepo.UpdateRoleAsync(role);
-            return NoContent();
+            var result = await _roleRepo.AddRoleAsync(role);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(long id)
+        public async Task<IActionResult> Delete(long id)
         {
-            await _roleRepo.DeleteRoleAsync(id);
-            return NoContent();
+            var result = await _roleRepo.DeleteRoleAsync(id);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
 }

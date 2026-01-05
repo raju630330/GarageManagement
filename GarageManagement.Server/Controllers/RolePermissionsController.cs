@@ -1,7 +1,8 @@
-﻿using GarageManagement.Server.Model;
+﻿using GarageManagement.Server.dtos;
 using GarageManagement.Server.RepoInterfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GarageManagement.Server.Controllers
 {
@@ -14,28 +15,38 @@ namespace GarageManagement.Server.Controllers
             _rolePermRepo = rolePermRepo;
         }
 
-        // Get permissions for a role and module
         [HttpGet("{roleId}/{moduleName}")]
         public async Task<ActionResult<List<string>>> GetRoleModulePermissions(long roleId, string moduleName)
         {
             var permissions = await _rolePermRepo.GetRoleModulePermissionsAsync(roleId, moduleName);
-            return Ok(permissions); // returns ["A", "V"]
+            return Ok(permissions);
         }
 
-        // Add permission for a role/module
         [HttpPost]
-        public async Task<ActionResult> Add([FromBody] RolePermission rolePermission)
+        public async Task<ActionResult<BaseResultDto>> Save([FromBody] RolePermissionDto dto)
         {
-            await _rolePermRepo.AddRolePermissionAsync(rolePermission);
-            return Ok();
+            var result = await _rolePermRepo.SaveRolePermissionAsync(dto);
+            if (result.IsSuccess)
+                return Ok(result);
+            return BadRequest(result);
         }
 
-        // Remove permission from a role/module
         [HttpDelete]
-        public async Task<ActionResult> Remove(long roleId, long permissionId, string moduleName)
+        public async Task<ActionResult<BaseResultDto>> Remove(long roleId, long permissionId, string moduleName)
         {
-            await _rolePermRepo.RemoveRolePermissionAsync(roleId, permissionId, moduleName);
-            return NoContent();
+            var result = await _rolePermRepo.RemoveRolePermissionAsync(roleId, permissionId, moduleName);
+            if (result.IsSuccess)
+                return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpDelete("clear")]
+        public async Task<ActionResult<BaseResultDto>> ClearRoleModulePermissions(long roleId, string moduleName)
+        {
+            var result = await _rolePermRepo.ClearRoleModulePermissionsAsync(roleId, moduleName);
+            if (result.IsSuccess)
+                return Ok(result);
+            return BadRequest(result);
         }
     }
 }

@@ -4,14 +4,14 @@ import { RolePermissionService } from '../services/role-permission.service';
 
 @Directive({
   selector: '[appHasRole]',
-  standalone: false,
+  standalone: false
 })
 export class HasRoleDirective implements OnInit {
 
-  @Input() moduleName!: string;   // e.g., 'JobCard'
-  @Input() permission!: string;   // e.g., 'V' (View), 'A' (Add), 'D' (Delete), 'E' (Edit)
+  @Input('appHasRole') moduleName!: string;
+  @Input() permission!: string;
 
-  private userRoleId: number = 0;
+  private userRoleId = 0;
 
   constructor(
     private templateRef: TemplateRef<any>,
@@ -20,29 +20,30 @@ export class HasRoleDirective implements OnInit {
     private auth: AuthService
   ) { }
 
-  ngOnInit() {
-    this.userRoleId = this.auth.getRoleId() ?? 0;  // fallback to 0 if null
-    if (!this.userRoleId) {
-      this.viewContainer.clear(); // no role, clear the view
-      return;
-    }
-    this.checkPermission();
-  }
+  ngOnInit(): void {
+    this.userRoleId = this.auth.getRoleId() ?? 0;
 
-  private checkPermission() {
-    if (!this.moduleName || !this.permission) {
-      console.warn('appHasRole directive requires moduleName and permission');
+    if (!this.userRoleId) {
       this.viewContainer.clear();
       return;
     }
 
-    this.rolePermService.getRoleModulePermissions(this.userRoleId, this.moduleName)
+    this.checkPermission();
+  }
+
+  private checkPermission(): void {
+    if (!this.moduleName || !this.permission) {
+      this.viewContainer.clear();
+      return;
+    }
+
+    this.rolePermService
+      .getRoleModulePermissions(this.userRoleId, this.moduleName)
       .subscribe({
         next: perms => {
+          this.viewContainer.clear();
           if (perms.includes(this.permission)) {
             this.viewContainer.createEmbeddedView(this.templateRef);
-          } else {
-            this.viewContainer.clear();
           }
         },
         error: () => this.viewContainer.clear()

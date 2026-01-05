@@ -1,11 +1,89 @@
-<h3>Permissions</h3>
-<input type="text" [(ngModel)]="newPermissionName" placeholder="Permission Name">
-<input type="text" [(ngModel)]="newPermissionDescription" placeholder="Description">
-<button (click)="addPermission()">Add Permission</button>
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
 
-<ul>
-  <li *ngFor="let perm of permissions">
-    {{ perm.name }} - {{ perm.description }}
-    <button (click)="deletePermission(perm.id)">Delete</button>
-  </li>
-</ul>
+      <div class="card shadow-sm">
+
+        <div class="card-header bg-secondary text-white d-flex justify-content-between">
+          <h5 class="mb-0">
+            <i class="bi bi-shield-lock me-2"></i>
+            Permissions
+          </h5>
+          <span class="badge bg-light text-secondary">{{ permissions.length }}</span>
+        </div>
+
+        <div class="card-body">
+
+          <!-- Add / Edit -->
+          <form [formGroup]="permissionForm" (ngSubmit)="savePermission()" class="mb-3">
+
+            <label class="form-label fw-semibold">
+              {{ currentPermissionId === 0 ? 'Add Permission' : 'Edit Permission' }}
+            </label>
+
+            <div class="row g-2">
+              <div class="col-md-5">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Permission Name"
+                       formControlName="name">
+              </div>
+
+              <div class="col-md-5">
+                <input type="text"
+                       class="form-control"
+                       placeholder="Description"
+                       formControlName="description">
+              </div>
+
+              <div class="col-md-2 d-grid">
+                <button class="btn btn-success" type="submit">
+                  {{ currentPermissionId === 0 ? 'Add' : 'Update' }}
+                </button>
+              </div>
+            </div>
+
+            <button *ngIf="currentPermissionId !== 0"
+                    type="button"
+                    class="btn btn-link text-secondary mt-2"
+                    (click)="resetForm()">
+              Cancel edit
+            </button>
+
+          </form>
+
+          <!-- List -->
+          <ul class="list-group">
+            <li *ngFor="let perm of permissions"
+                class="list-group-item d-flex justify-content-between align-items-center">
+
+              <span>
+                <strong>{{ perm.name }}</strong>
+                <small class="text-muted">- {{ perm.description }}</small>
+              </span>
+
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary"
+                        (click)="editPermission(perm)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-outline-danger"
+                        (click)="deletePermission(perm.id)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+
+            </li>
+          </ul>
+
+          <div *ngIf="permissions.length === 0"
+               class="text-center text-muted mt-3">
+            No permissions available
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

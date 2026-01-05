@@ -72,7 +72,7 @@
                 {{ getErrorMessage(row.get(col.field), col) }}
               </div>
             </td>
-            <td *appHasRole="[ROLES.ADMIN]"  class="text-center">
+            <td *appHasRole="'TablePopup'; permission: 'D'"  class="text-center">
               <button type="button"
                       class="btn btn-outline-danger btn-sm"
                       (click)="removeRow(activeTab, i)"

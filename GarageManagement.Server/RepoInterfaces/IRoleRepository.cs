@@ -1,13 +1,13 @@
-﻿using GarageManagement.Server.Model;
+﻿using GarageManagement.Server.dtos;
+using GarageManagement.Server.Model;
 
 namespace GarageManagement.Server.RepoInterfaces
 {
     public interface IRoleRepository
     {
-        Task<List<Role>> GetAllRolesAsync();
-        Task<Role> GetRoleByIdAsync(long id);
-        Task AddRoleAsync(Role role);
-        Task UpdateRoleAsync(Role role);
-        Task DeleteRoleAsync(long id);
+        Task<List<RoleModel>> GetAllRolesAsync();
+        Task<RoleModel> GetRoleByIdAsync(long id);
+        Task<BaseResultDto> AddRoleAsync(RoleModel role);
+        Task<BaseResultDto> DeleteRoleAsync(long id);
     }
 }
