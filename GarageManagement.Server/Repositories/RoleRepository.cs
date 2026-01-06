@@ -11,21 +11,21 @@ namespace GarageManagement.Server.Repositories
         private readonly ApplicationDbContext _context;
         public RoleRepository(ApplicationDbContext context) => _context = context;
 
-        public async Task<List<RoleModel>> GetAllRolesAsync() =>
+        public async Task<List<RoleDto>> GetAllRolesAsync() =>
             await _context.Roles.Select(a => new
-             RoleModel()
+             RoleDto()
             {
                 Id = a.Id,
                 RoleName = a.RoleName,
             }).ToListAsync();
 
-        public async Task<RoleModel> GetRoleByIdAsync(long id) =>
-            await _context.Roles.Where(a => a.Id == id).Select(a => new RoleModel(){
+        public async Task<RoleDto> GetRoleByIdAsync(long id) =>
+            await _context.Roles.Where(a => a.Id == id).Select(a => new RoleDto(){
                 Id = a.Id,
                 RoleName = a.RoleName
             }).FirstOrDefaultAsync();
 
-        public async Task<BaseResultDto> AddRoleAsync(RoleModel role)
+        public async Task<BaseResultDto> AddRoleAsync(RoleDto role)
         {
             // 🔴 DUPLICATE ROLE CHECK (CASE INSENSITIVE)
             var exists = await _context.Roles

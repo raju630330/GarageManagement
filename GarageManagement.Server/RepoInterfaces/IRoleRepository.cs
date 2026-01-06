@@ -5,9 +5,9 @@ namespace GarageManagement.Server.RepoInterfaces
 {
     public interface IRoleRepository
     {
-        Task<List<RoleModel>> GetAllRolesAsync();
-        Task<RoleModel> GetRoleByIdAsync(long id);
-        Task<BaseResultDto> AddRoleAsync(RoleModel role);
+        Task<List<RoleDto>> GetAllRolesAsync();
+        Task<RoleDto> GetRoleByIdAsync(long id);
+        Task<BaseResultDto> AddRoleAsync(RoleDto role);
         Task<BaseResultDto> DeleteRoleAsync(long id);
     }
 }

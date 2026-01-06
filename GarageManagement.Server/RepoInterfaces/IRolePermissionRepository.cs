@@ -5,16 +5,17 @@ namespace GarageManagement.Server.RepoInterfaces
 {
     public interface IRolePermissionRepository
     {
-        // Role-Permission management
-        Task<List<RolePermissionDto>> GetRolePermissionsAsync(long roleId);
-        Task<List<string>> GetRoleModulePermissionsAsync(long roleId, string moduleName);
-        Task<BaseResultDto> SaveRolePermissionAsync(RolePermissionDto dto);
-        Task<BaseResultDto> RemoveRolePermissionAsync(long roleId, long permissionId, long moduleId);
-        Task<BaseResultDto> ClearRoleModulePermissionsAsync(long roleId, long moduleId);
-        Task<bool> HasPermissionAsync(long roleId, string moduleName, string permissionName);
+        /* ===================== ROLES ===================== */
+        Task<List<RoleDto>> GetAllRolesAsync();
 
-        // Module management
-        Task<BaseResultDto> AddModuleAsync(string moduleName, string description = null);
+        /* ===================== MODULES ===================== */
         Task<List<PermissionModule>> GetAllModulesAsync();
+        Task<BaseResultDto> AddModuleAsync(string moduleName);
+
+        /* ===================== ROLE ↔ MODULE ↔ PERMISSION ===================== */
+        Task<List<RolePermissionDto>> GetRolePermissionsAsync(long roleId); // returns Role + Module + permission(s)
+        Task<BaseResultDto> SaveRolePermissionsAsync(
+    List<RolePermissionDto> permissions);
+
     }
 }

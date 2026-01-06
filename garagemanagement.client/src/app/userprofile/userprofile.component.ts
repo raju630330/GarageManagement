@@ -109,44 +109,32 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     this.topTabs = [];
     this.sidebarTabsFiltered = [];
 
-    // First, get all modules from backend to build name → ID map
-    this.rolePermissionService.getModules().subscribe(modules => {
-      this.moduleMap = {};
-      modules.forEach(m => this.moduleMap[m.name] = m.id);
+    // Get all permissions for the role once
+    this.rolePermissionService.getRolePermissions(roleId).subscribe((permissions) => {
 
-      // Prepare observables for topTabs
-      const topObs = this.mainTabs.map(tab => {
-        const moduleId = this.moduleMap[tab.module];
-        if (!moduleId) return null;
+      const hasPermission = (moduleName: string, permissionCode: string): boolean => {
+        return permissions.some(p =>
+          p.moduleName === moduleName &&
+          this.mapPermissionIdToCode(p.permissionId) === permissionCode
+        );
+      };
 
-        return this.rolePermissionService.getRoleModulePermissions(roleId, moduleId)
-          .pipe(filter(perms => perms.includes(tab.permission)));
-      }).filter(Boolean) as any[];
+      this.topTabs = this.mainTabs.filter(tab => hasPermission(tab.module, tab.permission));
+      this.sidebarTabsFiltered = this.sidebarTabs.filter(tab => hasPermission(tab.module, tab.permission));
 
-      forkJoin(topObs).subscribe(() => {
-        this.topTabs = this.mainTabs.filter(tab => {
-          const moduleId = this.moduleMap[tab.module];
-          return moduleId && topObs.some(obs => true); // All tabs that passed permission
-        });
-        setTimeout(() => this.checkScroll(), 50);
-      });
-
-      // Prepare observables for sidebarTabs
-      const sideObs = this.sidebarTabs.map(tab => {
-        const moduleId = this.moduleMap[tab.module];
-        if (!moduleId) return null;
-
-        return this.rolePermissionService.getRoleModulePermissions(roleId, moduleId)
-          .pipe(filter(perms => perms.includes(tab.permission)));
-      }).filter(Boolean) as any[];
-
-      forkJoin(sideObs).subscribe(() => {
-        this.sidebarTabsFiltered = this.sidebarTabs.filter(tab => {
-          const moduleId = this.moduleMap[tab.module];
-          return moduleId && sideObs.some(obs => true);
-        });
-      });
+      setTimeout(() => this.checkScroll(), 50);
     });
+  }
+
+  /** Map numeric permissionId to 'V', 'A', 'E', 'D' */
+  private mapPermissionIdToCode(permissionId?: number): string {
+    switch (permissionId) {
+      case 1: return 'V';
+      case 2: return 'A';
+      case 3: return 'E';
+      case 4: return 'D';
+      default: return '';
+    }
   }
 
   /* ---------- UI HELPERS ---------- */

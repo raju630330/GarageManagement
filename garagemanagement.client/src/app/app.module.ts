@@ -27,7 +27,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { ComponentNameComponent } from './component-name/component-name.component';
 import { TotalRepairCostComponent } from './total-repair-cost/total-repair-cost.component';
 import { TechnicianMCComponent } from './TechnicianMC/TechnicianMC.component';
-import { HasRoleDirective } from './directives/has-role.directive';
+import { HasPermissionDirective } from './directives/has-permission.directive';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { GlobalAlertComponent } from './global-alert/global-alert.component';
 import { LoaderComponent } from './loader/loader.component';
@@ -77,7 +77,7 @@ import { RolepermissionComponent } from './rolepermission/rolepermission.compone
     ComponentNameComponent,
     TotalRepairCostComponent,
     TechnicianMCComponent,
-    HasRoleDirective,
+    HasPermissionDirective,
     UnauthorizedComponent,
     GlobalAlertComponent,
     LoaderComponent,

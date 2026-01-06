@@ -16,14 +16,14 @@ namespace GarageManagement.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<RoleModel>>> GetAll()
+        public async Task<ActionResult<List<RoleDto>>> GetAll()
         {
             var roles = await _roleRepo.GetAllRolesAsync();
             return Ok(roles);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<RoleModel>> Get(long id)
+        public async Task<ActionResult<RoleDto>> Get(long id)
         {
             var role = await _roleRepo.GetRoleByIdAsync(id);
             if (role == null) return NotFound();
@@ -31,7 +31,7 @@ namespace GarageManagement.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Save(RoleModel role)
+        public async Task<IActionResult> Save(RoleDto role)
         {
             var result = await _roleRepo.AddRoleAsync(role);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
