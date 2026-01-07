@@ -54,5 +54,28 @@ namespace GarageManagement.Server.Repositories
                                      }).ToListAsync();
             return registrations;
         }
+
+        public async Task<IList<IdNameDto>> SearchBookingCustomer(string query)
+        {
+            return await _context.Customers
+                .Include(c => c.Vehicles)
+                .Where(c =>
+                    EF.Functions.Like(c.CustomerName, $"%{query}%") ||
+                    EF.Functions.Like(c.MobileNo, $"%{query}%") ||
+                    EF.Functions.Like(c.Email, $"%{query}%") ||
+                    c.Vehicles.Any(v =>
+                        EF.Functions.Like(v.RegNo, $"%{query}%"))
+                )
+                .Select(c => new IdNameDto
+                {
+                    Id = c.Id,
+                    Name =
+                        c.CustomerName +
+                        " | " + c.MobileNo +
+                        " | " + (c.Vehicles.FirstOrDefault().RegPrefix ?? "") +
+                        (c.Vehicles.FirstOrDefault().RegNo ?? "")
+                })
+                .ToListAsync();
+        }
     }
 }

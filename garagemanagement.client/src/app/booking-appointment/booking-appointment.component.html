@@ -14,18 +14,24 @@
         <form [formGroup]="appointmentForm" (ngSubmit)="onbookSubmit()" class="text-start">
 
           <label>Search</label>
-          <div class="input-group mb-3">
-            <input type="text"
-                   class="form-control form-control-md"
-                   formControlName="search"
-                   placeholder="Search using Name / Mobile / Email / Reg No. / VIN" />
-            <span class="input-group-text bg-white">
-              <i class="bi bi-search"></i>
-            </span>
-          </div>
-          <div *ngIf="f['search'].touched && f['search'].invalid" class="text-danger">
-            Search is required.
-          </div>
+
+          <app-autocomplete placeholder="Search by Reg No / Customer / Mobile / Email / VIN"
+                            [searchFn]="service.searchBookingCustomer.bind(service)"
+                            (selected)="onCustomerSelected($event)"
+                            (clearForm)="resetAppointmentForm()">
+          </app-autocomplete>
+          <!-- <div class="input-group mb-3">
+     <input type="text"
+            class="form-control form-control-md"
+            formControlName="search"
+            placeholder="Search using Name / Mobile / Email / Reg No. / VIN" />
+     <span class="input-group-text bg-white">
+       <i class="bi bi-search"></i>
+     </span>
+   </div>
+   <div *ngIf="f['search'].touched && f['search'].invalid" class="text-danger">
+     Search is required.
+   </div>-->
 
           <label>Select Date & Time</label>
           <div class="form-group d-flex mb-3 align-items-start">
@@ -42,7 +48,7 @@
               </app-popup-time-picker>
               <div *ngIf="f['time'].touched && f['time'].invalid" class="text-danger"> Time is required. </div>
             </div>
-          </div>                          
+          </div>
           <label>Customer Type</label>
           <div class="form-group d-flex mb-3">
             <div class="form-check me-3">

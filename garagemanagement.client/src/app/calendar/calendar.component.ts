@@ -175,16 +175,21 @@ export class CalendarComponent implements OnInit {
 
   loadAppointments() {
     this.appointmentService.getAllAppointments().subscribe({
-      next: (data) => {
+      next: (data: any[]) => {
         this.appointments = data.map(a => ({
           ...a,
-          start: new Date(a.date.substring(0, 10) + 'T' + a.time)
+          start: new Date(
+            a.appointmentDate.substring(0, 10) + 'T' + a.appointmentTime
+          ),
+          regNo: a.vehicleRegNo || ''   // needed for search
         }));
+
         this.filteredAppointments = [...this.appointments];
       },
       error: (err) => console.error('Failed to load appointments:', err)
     });
   }
+
 
   filterAppointments() {
     if (!this.searchTerm.trim()) {

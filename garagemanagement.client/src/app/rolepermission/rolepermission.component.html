@@ -42,7 +42,7 @@
               </thead>
               <tbody>
                 <tr *ngFor="let m of modules">
-                  <td class="fw-semibold">{{ m.name }}</td>
+                  <td class="fw-semibold text-start">{{ m.name }}</td>
                   <td *ngFor="let p of permissionCodes" class="text-center">
                     <input type="checkbox"
                            [checked]="isChecked(role.id, m.id, p)"

@@ -11,7 +11,7 @@
               <th>Action Taken</th>
               <th>Start Time</th>
               <th>End Time</th>
-              <th *appHasRole="'RepairOrder'; permission: 'D'">Action</th>
+              <th *appHasPermission="'D'" module="RepairOrder">Action</th>
             </tr>
           </thead>
 
@@ -54,7 +54,7 @@
                 </div>
               </td>
 
-              <td *appHasRole="'AdditionalJobObserveDetails'; permission: 'D'">
+              <td *appHasPermission="'D'" module="RepairOrder">
                 <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeRow(i)" title="Delete"><i class="bi bi-trash"></i></button>
               </td>
             </tr>

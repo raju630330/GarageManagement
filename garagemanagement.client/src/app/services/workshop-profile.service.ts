@@ -22,15 +22,27 @@ export class WorkshopProfileService {
   //}
 
   saveBookAppointment(bookingAppointmentdata: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/bookingAppointment/saveBookAppointment`, bookingAppointmentdata).pipe(
+    return this.http.post(`${this.baseUrl}/BookingAppointment/saveBookAppointment`, bookingAppointmentdata).pipe(
       tap(() => this.refreshNeeded.next()));
   }
 
   getAllAppointments(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/bookingAppointment/getAllAppointments`);
+    return this.http.get<any[]>(`${this.baseUrl}/BookingAppointment/getAllAppointments`);
   }
 
   DeleteAppointment(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.baseUrl}/bookingAppointment/deleteAppointment/${id}`);
+    return this.http.delete<any>(`${this.baseUrl}/BookingAppointment/deleteAppointment/${id}`);
   }
+
+  searchBookingCustomer(query: string) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/BookingAppointment/search-booking-customer?query=${query}`
+    );
+  }
+  getCustomerDetails(customerId: number) {
+    return this.http.get<any>(
+      `${this.baseUrl}/BookingAppointment/getCustomerDetails/${customerId}`
+    );
+  }
+
 }
