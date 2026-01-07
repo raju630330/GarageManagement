@@ -106,9 +106,14 @@ export class RolepermissionComponent implements OnInit {
     this.rbac.saveAllRolePermissions(this.rolePermissions).subscribe({
       next: (res: BaseResultDto) => {
         this.isSaving = false;
-        res.isSuccess
-          ? this.alert.showSuccess('Permissions saved successfully')
-          : this.alert.showError(res.message);
+
+        if (res.isSuccess) {
+          this.alert.showInfo('Permissions saved successfully', () => {
+            window.location.reload();
+          });
+        } else {
+          this.alert.showError(res.message);
+        }
       },
       error: () => {
         this.isSaving = false;
@@ -116,6 +121,8 @@ export class RolepermissionComponent implements OnInit {
       }
     });
   }
+
+
 
   /** Add a new module */
   addModule(): void {
@@ -142,6 +149,19 @@ export class RolepermissionComponent implements OnInit {
       case 'D': return 4;
       default: return 0;
     }
+  }
+  getRoleColor(index: number): string {
+    const colors = [
+      '#0d6efd', // blue
+      '#198754', // green
+      '#fd7e14', // orange
+      '#6f42c1', // purple
+      '#dc3545', // red
+      '#0dcaf0', // cyan
+      '#ffc107', // yellow
+      '#6610f2', // dark purple
+    ];
+    return colors[index % colors.length];
   }
 
 }

@@ -1,40 +1,69 @@
 <div class="container mt-4">
 
-  <!-- Add Module -->
-  <div class="card mb-4">
-    <div class="card-header bg-dark text-white">Add Module</div>
-    <div class="card-body d-flex gap-2">
-      <input class="form-control" placeholder="Module name" [(ngModel)]="newModuleName">
-      <button class="btn btn-primary" (click)="addModule()">Add</button>
-    </div>
+  <!-- Heading -->
+  <div class="mb-4 text-center">
+    <h2 class="fw-bold text-dark">Role Permissions Management</h2>
+    <p class="text-muted">Manage module access for each role</p>
   </div>
 
-  <!-- Roles Permissions -->
-  <div *ngFor="let role of roles" class="card mb-3">
-    <div class="card-header bg-primary text-white">{{ role.roleName }}</div>
-    <div class="card-body">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Module</th>
-            <th *ngFor="let p of permissionCodes">{{ p }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let m of modules">
-            <td>{{ m.name }}</td>
-            <td *ngFor="let p of permissionCodes" class="text-center">
-              <input type="checkbox"
-                     [checked]="isChecked(role.id, m.id, p)"
-                     (change)="toggle(role.id, m.id, p)">
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="accordion" id="rolesAccordion">
+
+    <!-- Each Role -->
+    <div class="accordion-item mb-2" *ngFor="let role of roles; let i = index">
+
+      <!-- Role Header -->
+      <h2 class="accordion-header" [id]="'heading' + i">
+        <button class="accordion-button collapsed text-white"
+                type="button"
+                data-bs-toggle="collapse"
+                [attr.data-bs-target]="'#collapse' + i"
+                aria-expanded="false"
+                [attr.aria-controls]="'collapse' + i"
+                [ngStyle]="{'background-color': getRoleColor(i)}">
+          <span class="me-2">
+            <i class="bi bi-shield-lock-fill"></i>
+          </span>
+          {{ role.roleName }}
+        </button>
+      </h2>
+
+      <!-- Role Permissions Table -->
+      <div [id]="'collapse' + i" class="accordion-collapse collapse"
+           [attr.aria-labelledby]="'heading' + i"
+           data-bs-parent="#rolesAccordion">
+        <div class="accordion-body p-3">
+          <div class="table-responsive">
+            <table class="table table-bordered mb-0">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th>Module</th>
+                  <th *ngFor="let p of permissionCodes" class="text-center">{{ p }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let m of modules">
+                  <td class="fw-semibold">{{ m.name }}</td>
+                  <td *ngFor="let p of permissionCodes" class="text-center">
+                    <input type="checkbox"
+                           [checked]="isChecked(role.id, m.id, p)"
+                           (change)="toggle(role.id, m.id, p)">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </div>
+
   </div>
 
-  <div class="text-end mt-3">
-    <button class="btn btn-success" [disabled]="isSaving" (click)="save()">Save Permissions</button>
+  <!-- Save Button -->
+  <div class="text-end mt-4">
+    <button class="btn btn-success btn-lg" [disabled]="isSaving" (click)="save()">
+      Save Permissions
+    </button>
   </div>
+
 </div>
