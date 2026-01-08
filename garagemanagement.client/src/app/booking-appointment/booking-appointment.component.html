@@ -15,7 +15,7 @@
 
           <label>Search</label>
 
-          <app-autocomplete placeholder="Search by Reg No / Customer / Mobile / Email / VIN"
+          <app-autocomplete placeholder="Search by Customer / Mobile / Email"
                             [searchFn]="service.searchBookingCustomer.bind(service)"
                             (selected)="onCustomerSelected($event)"
                             (clearForm)="resetAppointmentForm()">

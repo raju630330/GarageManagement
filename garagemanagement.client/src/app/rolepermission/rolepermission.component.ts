@@ -42,7 +42,9 @@ export class RolepermissionComponent implements OnInit {
       this.rbac.getModules()
     ]).subscribe(([roles, modules]) => {
       this.roles = roles;
-      this.modules = modules;
+      this.modules = modules.sort((a, b) =>
+        a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      );
 
       // Load permissions for all roles
       const calls = roles.map(r => this.rbac.getRolePermissions(r.id));

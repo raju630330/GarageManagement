@@ -5,6 +5,7 @@ import { AlertService } from '../services/alert.service';
 import { WorkshopProfileService } from '../services/workshop-profile.service';
 import { applyValidators, clearValidators } from '../shared/form-utils';
 import { Observable } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-booking-appointment',
@@ -30,7 +31,8 @@ export class BookingAppointmentComponent {
     public service: WorkshopProfileService,
     private router: Router,
     private route: ActivatedRoute,
-    private alert: AlertService
+    private alert: AlertService,
+    private auth: AuthService
   ) { }
 
   ngOnInit() {
@@ -122,7 +124,7 @@ export class BookingAppointmentComponent {
       Service: this.appointmentForm.value.service,
       ServiceAdvisor: this.appointmentForm.value.serviceAdvisor,
       Bay: this.appointmentForm.value.bay,
-      UserId: 2,          // as discussed
+      UserId: this.auth.getRoleId(),          // as discussed
       WorkshopId: 1       // fixed / from login later
     };
 

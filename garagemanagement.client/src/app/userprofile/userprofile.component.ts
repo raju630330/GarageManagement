@@ -62,7 +62,7 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
   sidebarTabs: AppTab[] = [
     { name: 'Roles', icon: 'fas fa-user-shield', route: '/roles', module: 'Role', permission: 'V' },
     { name: 'Role Permission', icon: 'fas fa-lock', route: '/rolepermission', module: 'RolePermission', permission: 'V' },
-    { name: 'Booking Appointment', icon: 'fas fa-calendar-check', route: '/Calendar', module: 'BookingAppointment', permission: 'V' },
+    { name: 'Booking Appointment', icon: 'fas fa-calendar-check', route: '/Calendar', module: 'BookAppointment', permission: 'V' },
     { name: 'Repair Order', icon: 'bi bi-tools', route: '/repair-order', module: 'RepairOrder', permission: 'V' },
     { name: 'Job Cards', emoji: '📝', route: '/jobcardlist', module: 'JobCard', permission: 'V' }
   ];

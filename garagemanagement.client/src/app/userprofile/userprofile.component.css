@@ -61,8 +61,8 @@ html, body {
   z-index: 1045;
   overflow-y: auto;
 }
-@media (max-width: 767px) { .sidebar { top: 125px; } }
-@media (min-width: 768px) { .sidebar { top: 150px; } }
+@media (max-width: 767px) { .sidebar { top: 120px; } }
+@media (min-width: 768px) { .sidebar { top: 145px; } }
 .sidebar.open { transform: translateX(0); }
 .sidebar a {
   display: flex; align-items: center; gap: 8px;
