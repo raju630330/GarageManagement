@@ -25,6 +25,10 @@ import { EstimationComponent } from './estimation/estimation.component';
 import { RolesComponent } from './roles/roles.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { RolepermissionComponent } from './rolepermission/rolepermission.component';
+import { StockComponent } from './stock/stock.component';
+import { IssueComponent } from './issue/issue.component';
+import { OrderComponent } from './order/order.component';
+import { InwardComponent } from './inward/inward.component';
 
 const routes: Routes = [
   {
@@ -59,6 +63,10 @@ const routes: Routes = [
       { path: 'roles', component: RolesComponent, canActivate: [authGuard] },
       { path: 'permission', component: PermissionsComponent, canActivate: [authGuard] },
       { path: 'rolepermission', component: RolepermissionComponent, canActivate: [authGuard] },
+      { path: 'stock', component: StockComponent, canActivate: [authGuard] },
+      { path: 'issue', component: IssueComponent, canActivate: [authGuard] },
+      { path: 'inward', component: InwardComponent, canActivate: [authGuard] },
+      { path: 'order', component: OrderComponent, canActivate: [authGuard] },
       { path: 'unauthorized', component: UnauthorizedComponent, data: { public: true } }
     ]
   },

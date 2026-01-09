@@ -1,0 +1,105 @@
+<div class="container-fluid mt-3">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Issue Management</h3>
+  </div>
+
+  <!-- Sub Tabs for Issue -->
+  <ul class="nav nav-tabs nav-fill mb-3 w-100">
+    <li class="nav-item" *ngFor="let tab of issueTabs">
+      <a class="nav-link px-4"
+         [class.active]="activeIssueTab === tab"
+         (click)="setActiveIssueTab(tab)"
+         style="cursor:pointer">
+        {{ tab | titlecase }}
+      </a>
+    </li>
+  </ul>
+
+  <!-- Search & Quantity Filter -->
+  <div class="mb-3 w-100" *ngIf="activeIssueTab==='pending'">
+    <div class="row g-2 align-items-center">
+
+      <div class="col-md-6">
+        <input type="text"
+               class="form-control"
+               placeholder="Search Part Name / Part No / Barcode"
+               [formControl]="searchControl">
+      </div>
+
+      <div class="col-md-3">
+        <input type="number"
+               class="form-control"
+               placeholder="Quantity"
+               [formControl]="qtyControl">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Issue Table -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-light">
+        <tr>
+          <th *ngIf="activeIssueTab==='pending'"><input type="checkbox"></th>
+          <th>#</th>
+          <th *ngIf="activeIssueTab==='pending'">In Stock</th>
+          <th>Part Name</th>
+          <th>Part No.</th>
+          <th>Brand</th>
+          <th>Qty on Hand</th>
+          <th>Requested Qty</th>
+          <th *ngIf="activeIssueTab==='pending'">Issue Qty</th>
+          <th *ngIf="activeIssueTab==='pending'">Pending Qty</th>
+          <th>Selling Price ₹</th>
+          <th>Issued To</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredIssueItems; index as i">
+          <td *ngIf="activeIssueTab==='pending'"><input type="checkbox"></td>
+          <td>{{ i+1 }}</td>
+          <td>{{ item.inStock ? 'Yes' : 'No' }}</td>
+          <td>{{ item.partName }}</td>
+          <td>{{ item.partNo }}</td>
+          <td>{{ item.brand }}</td>
+          <td>{{ item.qtyOnHand }}</td>
+          <td *ngIf="activeIssueTab==='pending'">{{ item.requestedQty }}</td>
+          <td *ngIf="activeIssueTab==='pending'">{{ item.issueQty || '-' }}</td>
+          <td *ngIf="activeIssueTab==='pending'">{{ item.pendingQty || item.requestedQty }}</td>
+          <td>{{ item.sellingPrice }}</td>
+          <td>{{ item.issuedTo || '-' }}</td>
+        </tr>
+        <tr *ngIf="filteredIssueItems.length === 0">
+          <td [attr.colspan]="activeIssueTab==='pending'?11:9" class="text-center text-muted">
+            No items found.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Action Buttons (only for Pending Issue) -->
+  <div class="fixed-bottom d-flex flex-wrap align-items-center px-3 py-2 bg-white border-top shadow" style="z-index: 9999999;">
+
+    <!-- Left-aligned buttons -->
+    <div class="d-flex flex-wrap gap-2">
+      <button class="btn btn-secondary btn-sm">Back</button>
+      <button *ngIf="activeIssueTab==='pending'" class="btn btn-success btn-sm">Issue</button>
+      <button *ngIf="activeIssueTab==='pending'" class="btn btn-primary btn-sm">Order</button>
+      <button *ngIf="activeIssueTab==='issued'" class="btn btn-primary btn-sm">Return</button>
+      <div *ngIf="activeIssueTab==='issued'">---------------</div>
+      <div *ngIf="activeIssueTab==='issued'" class="fs-2 d-flex align-items-center gap-1">
+        <i class="bi bi-printer"></i>
+      </div>
+    </div>
+
+    <!-- Spacer for pushing the last button right -->
+    <div class="flex-grow-1"></div>
+
+    <!-- Right-aligned button -->
+    <button class="btn btn-primary btn-sm mt-2 mt-lg-0"><i class="bi bi-gear"></i>  Order Parts</button>
+  </div>
+</div>

@@ -11,6 +11,10 @@ import { JobCardDto, PopupOption, PopupTabConfig, VehicleDetailsUI } from '../mo
 import { getToday } from '../shared/form-utils';
 import { HttpClient } from '@angular/common/http';
 import { LoaderService } from '../services/loader.service';
+import { StockComponent } from '../stock/stock.component';
+import { IssueComponent } from '../issue/issue.component';
+import { InwardComponent } from '../inward/inward.component';
+import { OrderComponent } from '../order/order.component';
 
 
 
@@ -684,6 +688,5 @@ export class EstimationComponent implements OnInit {
       }, remaining > 0 ? remaining : 0);
     };
   }
-
 
 }

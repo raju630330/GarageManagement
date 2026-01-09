@@ -1,0 +1,151 @@
+<div class="container-fluid mt-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <!-- Left Side: Inward Heading -->
+    <h3 class="mb-0">Inward</h3>
+
+    <!-- Right Side: Vendor + + Button + Date -->
+    <div class="d-flex align-items-center gap-3">
+      <span class="fw-bold">Vendor:______________________</span>
+      <button class="btn btn-sm btn-primary">
+        <i class="bi bi-plus"></i>
+      </button>
+      <span class="fw-bold">Date : {{ today | date:'dd MMM yyyy' }}</span>
+    </div>
+
+  </div>
+
+
+  <!-- Data Section -->
+  <!--<div class="row mb-3 g-2">
+    <div class="col-md-3">
+      <input type="text" class="form-control" placeholder="Delivery Receipt #" />
+    </div>
+    <div class="col-md-3">
+      <input type="text" class="form-control" placeholder="Bill No." />
+    </div>
+    <div class="col-md-2">
+      <input type="date" class="form-control" placeholder="Bill Date" />
+    </div>
+    <div class="col-md-2">
+      <select class="form-select">
+        <option>GST</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <input type="text" class="form-control" placeholder="Vendor" />
+    </div>
+    <div class="col-md-2">
+      <input type="text" class="form-control" [value]="today | date:'shortDate'" readonly />
+    </div>
+  </div>-->
+  <!-- Search & Add Parts -->
+  <div class="row mb-3 g-2 align-items-center">
+    <div class="col-md-6">
+      <input type="text" class="form-control" placeholder="Search Part Name / Part No / Barcode" />
+    </div>
+    <div class="col-md-2">
+      <select class="form-select">
+        <option>IN WORKS</option>
+        <option>AVAILABLE</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <input type="text" class="form-control" placeholder="Qty / Part Price" />
+    </div>
+    <div class="col-md-2">
+      <input type="text" class="form-control" placeholder="Service / Labour" />
+    </div>
+    <div class="col-md-1">
+      <button class="btn btn-success btn-sm">+</button>
+    </div>
+  </div>
+
+  <!-- Parts Table -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-light text-center">
+        <tr>
+          <th><input type="checkbox" /></th>
+          <th>#</th>
+          <th>Part Name</th>
+          <th>Part No.</th>
+          <th>Brand</th>
+          <th>Requested Qty</th>
+          <th>Rack No.</th>
+          <th>Inward Qty / Unit Price ₹</th>
+          <th>Discount</th>
+          <th>HSN / Tax %</th>
+          <th>Total Purchase Price ₹</th>
+          <th>Selling Price ₹</th>
+          <th>Margin</th>
+          <th>Remarks</th>
+          <th>Barcode</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of inwardItems; let i = index" class="text-center">
+          <td><input type="checkbox" /></td>
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.partName }}</td>
+          <td>{{ item.partNo }}</td>
+          <td>{{ item.brand }}</td>
+          <td>{{ item.requestedQty }}</td>
+          <td>{{ item.rackNo }}</td>
+          <td>{{ item.inwardQty }} / {{ item.unitPrice | number:'1.2-2' }}</td>
+          <td>{{ item.discount | number:'1.2-2' }}</td>
+          <td>{{ item.hsn }} / {{ item.taxPercent }}%</td>
+          <td>{{ item.totalPurchase | number:'1.2-2' }}</td>
+          <td>{{ item.sellingPrice | number:'1.2-2' }}</td>
+          <td>{{ item.margin | number:'1.2-2' }}</td>
+          <td>{{ item.remarks }}</td>
+          <td>{{ item.barcode }}</td>
+        </tr>
+        <tr *ngIf="inwardItems.length === 0">
+          <td colspan="15" class="text-center text-muted">No parts added yet.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Summary Section -->
+  <div class="row mt-3 g-2 justify-content-end">
+    <div class="col-md-3">
+      <div class="d-flex justify-content-between">
+        <span>Total:</span>
+        <span>{{ summary.total | number:'1.2-2' }}</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>Freight / Delivery / Other:</span>
+        <span>{{ summary.freight | number:'1.2-2' }}</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>TCS:</span>
+        <span>{{ summary.tcs | number:'1.2-2' }}</span>
+      </div>
+      <div class="d-flex justify-content-between fw-bold border-top pt-1">
+        <span>Grand Total:</span>
+        <span>{{ summary.grandTotal | number:'1.2-2' }}</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>Paid (-):</span>
+        <span>{{ summary.paid | number:'1.2-2' }}</span>
+      </div>
+      <div class="d-flex justify-content-between fw-bold border-top pt-1">
+        <span>Balance:</span>
+        <span>{{ summary.balance | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="d-flex justify-content-between mt-3">
+    <button class="btn btn-secondary btn-sm">Back</button>
+    <div class="ms-auto">
+      <button class="btn btn-success btn-sm me-2">Inward</button>
+      <button class="btn btn-primary btn-sm">Order Parts</button>
+    </div>
+  </div>
+
+</div>

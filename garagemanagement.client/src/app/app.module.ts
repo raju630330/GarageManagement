@@ -53,6 +53,10 @@ import { TablePopupComponent } from './table-popup/table-popup.component';
 import { RolesComponent } from './roles/roles.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { RolepermissionComponent } from './rolepermission/rolepermission.component';
+import { StockComponent } from './stock/stock.component';
+import { IssueComponent } from './issue/issue.component';
+import { InwardComponent } from './inward/inward.component';
+import { OrderComponent } from './order/order.component';
 
 @NgModule({
   declarations: [
@@ -93,7 +97,11 @@ import { RolepermissionComponent } from './rolepermission/rolepermission.compone
     TablePopupComponent,
     RolesComponent,
     PermissionsComponent,
-    RolepermissionComponent
+    RolepermissionComponent,
+    StockComponent,
+    IssueComponent,
+    InwardComponent,
+    OrderComponent
   ],
   imports: [
     BrowserModule,

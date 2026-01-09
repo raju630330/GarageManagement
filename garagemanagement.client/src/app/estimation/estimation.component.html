@@ -370,7 +370,45 @@
     </div>
     <button class="btn btn-light btn-sm"> <i class="bi bi-envelope fs-5"></i> </button>
     <button class="btn btn-light btn-sm"> <i class="bi bi-car-front fs-5"></i> </button>
-    <button class="btn btn-light btn-sm"> <i class="bi bi-percent fs-5"></i> </button>
+    <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown">
+      <i class="bi bi-disc fs-5"></i>
+    </button>
+
+    <ul class="dropdown-menu">
+      <li>
+        <a class="dropdown-item d-flex align-items-center gap-2"
+           routerLink="/stock">
+          <i class="bi bi-disc text-primary"></i>
+          STOCK
+        </a>
+      </li>
+
+      <li>
+        <a class="dropdown-item d-flex align-items-center gap-2"
+           routerLink="/issue">
+          <i class="bi bi-file-earmark-x text-primary"></i>
+          ISSUE
+        </a>
+      </li>
+
+      <li>
+        <a class="dropdown-item d-flex align-items-center gap-2"
+           routerLink="/inward">
+          <i class="bi bi-lightbulb text-primary"></i>
+          INWARD
+        </a>
+      </li>
+
+      <li>
+        <a class="dropdown-item d-flex align-items-center gap-2"
+           routerLink="/order">
+          <i class="bi bi-cart text-primary"></i>
+          ORDER
+        </a>
+      </li>
+    </ul>
+
+
     <div>
       <button *ngIf="estimationForm.get('items')?.value.length > 0; else cancelBtn"
               class="btn btn-success btn-sm"
