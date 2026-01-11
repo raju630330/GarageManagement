@@ -26,7 +26,7 @@ submit() {
   if (this.loginForm.invalid) { this.error = 'Enter credentials'; return; }
 
   this.authService.login(this.loginForm.value).subscribe({
-    next: () => this.router.navigate(['//settings']),
+    next: () => this.router.navigate(['/']),
     error: () => this.error = 'Invalid username/email or password'
   });
   

@@ -44,5 +44,9 @@ export class WorkshopProfileService {
       `${this.baseUrl}/BookingAppointment/getCustomerDetails/${customerId}`
     );
   }
+  getBookingById(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/BookingAppointment/getBooking/${id}`);
+  }
+
 
 }

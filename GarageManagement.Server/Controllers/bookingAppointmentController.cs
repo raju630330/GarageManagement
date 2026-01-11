@@ -151,5 +151,38 @@ namespace GarageManagement.Server.Controllers
             return Ok(customer);
         }
 
+        [HttpGet("getBooking/{id}")]
+        public IActionResult GetBookingById(int id)
+        {
+            var booking = _context.BookAppointments
+                .Where(x => x.Id == id)
+                .Select(x => new 
+                {
+                    Id = x.Id,
+                    CustomerId = x.CustomerId,
+                    VehicleId = x.VehicleId,
+                    AppointmentDate = x.AppointmentDate,
+                    AppointmentTime = x.AppointmentTime,
+                    CustomerType = x.CustomerType,
+                    RegNo = x.Vehicle.RegNo,
+                    CustomerName = x.Customer.CustomerName,
+                    MobileNo = x.Customer.MobileNo,
+                    EmailID = x.Customer.Email,
+                    VehicleType = x.Vehicle.VehicleType,
+                    RegPrefix = x.Vehicle.RegPrefix,
+                    Service = x.Service,
+                    ServiceAdvisor = x.ServiceAdvisor,
+                    Bay = x.Bay,
+                    WorkshopId = x.WorkshopId,
+                    UserId = x.UserId
+                })
+                .FirstOrDefault();
+
+            if (booking == null)
+                return NotFound(new { message = "Booking not found" });
+
+            return Ok(booking);
+        }
+
     }
 }

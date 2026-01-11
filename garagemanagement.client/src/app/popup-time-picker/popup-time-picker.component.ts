@@ -11,6 +11,7 @@ export class PopupTimePickerComponent {
 
   selectedDateTime: string = '';
   @Input() selectedDate: string = "";
+  @Input() selectedTime: string | null = null;
   @Input() interval: number = 5;
   @Output() timeChange = new EventEmitter<string>();
 
@@ -25,6 +26,9 @@ export class PopupTimePickerComponent {
 
   ngOnChanges() {
     this.filterSlots();
+    if (this.selectedTime) {
+      this.selectedDateTime = this.selectedTime;
+    }
   }
 
   togglePopup() {

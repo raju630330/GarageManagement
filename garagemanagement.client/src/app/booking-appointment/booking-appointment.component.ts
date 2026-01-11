@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../services/alert.service';
@@ -26,6 +26,13 @@ export class BookingAppointmentComponent {
   selectedCustomerId!: number;
   selectedVehicleId: number | null = null;
 
+
+  //Edit
+  @Input() selectedDate: string | null = null;
+  @Input() selectedTime: string | null = null;
+
+  bookingId: number | null = null;
+  isEditMode = false;
   constructor(
     private fb: FormBuilder,
     public service: WorkshopProfileService,
@@ -37,6 +44,7 @@ export class BookingAppointmentComponent {
 
   ngOnInit() {
     this.appointmentForm = this.fb.group({
+      bookingId: [null],
       date: ['', Validators.required],
       time: ['', Validators.required],
       customerType: ['', Validators.required],
@@ -68,6 +76,16 @@ export class BookingAppointmentComponent {
           'regNo', 'vehicleType', 'customerName',
           'mobileNo', 'emailID', 'service','serviceAdvisor', 'bay'
         ]);
+      }
+    });
+
+
+    // 🔥 READ ROUTE PARAM
+    this.route.queryParams.subscribe(params => {
+      if (params['id']) {
+        this.bookingId = +params['id'];
+        this.isEditMode = true;
+        this.loadBooking(this.bookingId);
       }
     });
   }
@@ -147,4 +165,36 @@ export class BookingAppointmentComponent {
   get f() {
     return this.appointmentForm.controls;
   }
+
+  loadBooking(bookingId: number) {
+    this.service.getBookingById(bookingId).subscribe(res => {
+      this.selectedCustomerId = res.customerId,
+        this.selectedVehicleId = res.vehicleId,
+      this.appointmentForm.patchValue({
+        bookingId: res.Id,
+        date: res.appointmentDate
+          ? new Date(res.appointmentDate).toISOString().substring(0, 10)
+          : null,     
+        customerType: res.customerType,
+        regPrefix: res.regPrefix,
+        regNo: res.regNo,
+        vehicleType: res.vehicleType,
+        customerName: res.customerName,
+        mobileNo: res.mobileNo,
+        emailID: res.emailID,
+        service: res.service,
+        serviceAdvisor: res.serviceAdvisor,
+        settings: res.settings,
+        bay: res.bay
+      });
+      // Patch time separately after change detection
+      setTimeout(() => {
+        this.appointmentForm.patchValue({
+          time: res.appointmentTime ? res.appointmentTime.substring(0, 5) : ''
+        });
+      }, 0);  // <-- just this line fixes NG0100
+   
+    });
+  }
+
 }

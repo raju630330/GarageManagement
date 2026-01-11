@@ -6,7 +6,6 @@
       <button class="btn btn-outline-primary btn-sm" (click)="previousWeek()">&lt;</button>
       <button class="btn btn-outline-primary btn-sm" (click)="nextWeek()">&gt;</button>
       <h2 class="mb-0 ms-2">{{ currentDate | date: 'MMMM y' }}</h2>
-      <h3><a routerLink="/repair-order" class="mb-0 ms-2 "> Repair<br /> Order From</a></h3>
     </div>
 
     <div class="d-flex align-items-center gap-2 mt-2 mt-md-0 flex-wrap">
@@ -93,25 +92,85 @@
       <tbody>
         <tr *ngFor="let row of [].constructor(currentWeekDates.length / 7); let i = index">
 
-          <td *ngFor="let day of currentWeekDates.slice(i*7, i*7+7)"
-              class="month-cell">
+          <td *ngFor="let day of currentWeekDates.slice(i*7, i*7+7)" class="month-cell p-1">
+            <div class="position-relative text-center rounded overflow-hidden
+              {{ isPast(day) ? 'bg-warning text-dark'
+                 : isToday(day) ? (getAppointmentCount(day) > 12 ? 'bg-dark text-white' : 'bg-primary text-white')
+                 : getAppointmentCount(day) > 12 ? 'bg-danger text-white'
+                 : getAppointmentCount(day) > 0 ? 'bg-success text-white'
+                 : 'bg-light text-dark' }}"
+                 style="min-height: 55px; font-size: 0.75rem; cursor: pointer;"
+                 [title]="day | date:'fullDate'"
+                 (click)="openDayPopup(day)">
 
-            <ng-container>
-              <div class="p-2 rounded" [ngClass]="isPast(day) ? 'bg-warning text-white': isToday(day) ? (getAppointmentCount(day) > 12 ? 'bg-dark text-white' : 'bg-primary text-white') : (getAppointmentCount(day) > 12 ? 'bg-danger text-white'  : (getAppointmentCount(day) > 0 ? 'bg-success text-white' : 'bg-light')) ">                   
-                <div class="fw-semibold">
-                  {{ day.getDate() }}
+              <!-- Top container for day number and booked count -->
+              <div class="d-flex flex-column align-items-center justify-content-center py-1">
+                <div class="fw-bold">{{ day.getDate() }}</div>
+                <div *ngIf="getAppointmentCount(day) > 0" class="small mt-1">
+                  <span class="badge bg-light text-dark px-2">
+                    Booked: {{ getAppointmentCount(day) }}
+                  </span>
                 </div>
-                <span *ngIf="getAppointmentCount(day) > 0"
-                      class="badge bg-light text-dark mt-1">
-                  {{ getAppointmentCount(day) }} booked
-                </span>
               </div>
-            </ng-container>
+
+            </div>
           </td>
+
+
         </tr>
       </tbody>
     </table>
   </div>
 
 </div>
-<router-outlet></router-outlet>
+<!-- POPUP -->
+<!-- CENTERED POPUP -->
+<div *ngIf="popupVisible" class="modal-backdrop fade show"></div> <!-- semi-transparent background -->
+<!-- Popup for Day Bookings -->
+<!-- Popup for Day Bookings -->
+<div *ngIf="popupVisible"
+     class="card shadow-lg position-fixed p-3"
+     style="width: 500px; max-height: auto; overflow-y: auto; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1050;">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <button type="button" class="btn-close btn-close-sm" aria-label="Close" (click)="closePopup()"></button>
+  </div>
+
+  <!-- Booking List Table -->
+  <div *ngIf="selectedDayAppointments.length > 0; else noBooking">
+    <div class="table-responsive">
+      <table class="table table-sm table-hover mb-0 text-nowrap">
+        <thead class="table-light">
+          <tr>
+            <th>Customer</th>
+            <th>Vehicle</th>
+            <th>Service</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let appt of selectedDayAppointments">
+            <td class="fw-semibold small text-truncate" [title]="appt.customerName">{{ appt.customerName }}</td>
+            <td class="small text-truncate" [title]="appt.vehicleRegNo">{{ appt.vehicleRegNo }}</td>
+            <td class="small text-truncate" [title]="appt.service">{{ appt.service }}</td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-primary me-1 mb-1" title="Edit" 
+                      (click)="editAppointment(appt.id)">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button class="btn btn-sm btn-success mb-1" title="Repair Order"
+                      (click)="convertToRepairOrder(appt.id)">
+                <i class="bi bi-tools"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <ng-template #noBooking>
+    <div class="text-center text-muted small py-3">No bookings for this day</div>
+  </ng-template>
+</div><router-outlet></router-outlet>

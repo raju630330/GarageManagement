@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WorkshopProfileService } from '../services/workshop-profile.service';
 import { BookingAppointmentComponent } from '../booking-appointment/booking-appointment.component';
@@ -251,5 +251,38 @@ export class CalendarComponent implements OnInit {
 
     return checkDay < today;
   }
+  popupVisible = false;
+  selectedDayAppointments: any[] = [];
+  selectedDay: Date | null = null;
+
+  openDayPopup(day: Date) {
+    this.selectedDayAppointments = this.hasAppointments(day); // All bookings for that day
+    this.selectedDay = day;
+    this.popupVisible = this.selectedDayAppointments.length > 0; // show only if bookings exist
+  }
+
+
+  closePopup() {
+    this.popupVisible = false;
+  }
+
+  // Edit / Repair
+  editAppointment(bookingId: number) {
+    this.router.navigate(['/Calendar/bookappointment'], { queryParams: { id: bookingId } });
+    this.popupVisible = false;
+  }
+
+  convertToRepairOrder(bookingId: number) {
+    this.router.navigate(['/repair-order'], { queryParams: { bookingId } });
+    this.popupVisible = false;
+  }
+
+  // Optional: Close popup on ESC key
+  @HostListener('document:keydown.escape', ['$event'])
+  onEsc() {
+    this.popupVisible = false;
+  }
+
+
 }
 

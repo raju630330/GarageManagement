@@ -4,6 +4,7 @@ namespace GarageManagement.Server.dtos
 {
     public class BookingAppointmentDto
     {
+        public long Id { get; set; }
         [Required]
         public DateTime AppointmentDate { get; set; }
 

@@ -44,6 +44,7 @@
             </div>
             <div style="width: 35%;">
               <app-popup-time-picker [selectedDate]="appointmentForm?.get('date')?.value"
+                                     [selectedTime]="appointmentForm.get('time')?.value"
                                      (timeChange)="appointmentForm?.get('time')?.setValue($event)">
               </app-popup-time-picker>
               <div *ngIf="f['time'].touched && f['time'].invalid" class="text-danger"> Time is required. </div>

@@ -43,33 +43,37 @@
     <table class="table table-bordered table-hover">
       <thead class="table-light">
         <tr>
-          <th *ngIf="activeIssueTab==='pending'"><input type="checkbox"></th>
+          <th *ngIf="activeIssueTab==='pending' || activeIssueTab==='issued'"><input type="checkbox"></th>
           <th>#</th>
           <th *ngIf="activeIssueTab==='pending'">In Stock</th>
           <th>Part Name</th>
           <th>Part No.</th>
           <th>Brand</th>
-          <th>Qty on Hand</th>
+          <th *ngIf="activeIssueTab==='pending'">Qty on Hand</th>
           <th>Requested Qty</th>
-          <th *ngIf="activeIssueTab==='pending'">Issue Qty</th>
+
+          <th *ngIf="activeIssueTab==='pending' || activeIssueTab==='issued'">Issue Qty</th>
+          <th>Return Qty</th>
+          <th>Unit Price</th>
           <th *ngIf="activeIssueTab==='pending'">Pending Qty</th>
-          <th>Selling Price ₹</th>
+
+          <th *ngIf="activeIssueTab==='pending'">Selling Price ₹</th>
           <th>Issued To</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let item of filteredIssueItems; index as i">
-          <td *ngIf="activeIssueTab==='pending'"><input type="checkbox"></td>
+          <td *ngIf="activeIssueTab==='pending' || activeIssueTab==='issued'"><input type="checkbox"></td>
           <td>{{ i+1 }}</td>
           <td>{{ item.inStock ? 'Yes' : 'No' }}</td>
           <td>{{ item.partName }}</td>
           <td>{{ item.partNo }}</td>
           <td>{{ item.brand }}</td>
-          <td>{{ item.qtyOnHand }}</td>
+          <td *ngIf="activeIssueTab==='pending'">{{ item.qtyOnHand }}</td>
           <td *ngIf="activeIssueTab==='pending'">{{ item.requestedQty }}</td>
           <td *ngIf="activeIssueTab==='pending'">{{ item.issueQty || '-' }}</td>
           <td *ngIf="activeIssueTab==='pending'">{{ item.pendingQty || item.requestedQty }}</td>
-          <td>{{ item.sellingPrice }}</td>
+          <td *ngIf="activeIssueTab==='pending'">{{ item.sellingPrice }}</td>
           <td>{{ item.issuedTo || '-' }}</td>
         </tr>
         <tr *ngIf="filteredIssueItems.length === 0">
