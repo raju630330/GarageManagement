@@ -26,7 +26,9 @@ namespace GarageManagement.Server.Model
 
             // Navigation property
             public ICollection<CheckItemEntity>? CheckList { get; set; }
-        }
+            public long? RepairOrderId { get; set; }
+            public RepairOrder RepairOrder { get; set; }
+    }
 
         public class CheckItemEntity
         {

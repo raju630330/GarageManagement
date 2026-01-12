@@ -15,10 +15,10 @@
 
           <label>Search</label>
 
-          <app-autocomplete placeholder="Search by Customer / Mobile / Email"
+          <app-autocomplete formControlName="search" placeholder="Search by Customer / Mobile / Email"
                             [searchFn]="service.searchBookingCustomer.bind(service)"
                             (selected)="onCustomerSelected($event)"
-                            (clearForm)="resetAppointmentForm()">
+                            (clearForm)="resetAppointmentForm()" >
           </app-autocomplete>
           <!-- <div class="input-group mb-3">
      <input type="text"
@@ -73,14 +73,14 @@
                 <option value="TS">TS</option>
                 <option value="AP">AP</option>
               </select>
-              <input type="text" formControlName="regNo" class="form-control form-control-md" maxlength="8" placeholder="reg. Nu. format should be eg.12UK3456">
+              <input [readonly]="isEditMode" type="text" formControlName="regNo" class="form-control form-control-md" maxlength="8" placeholder="reg. Nu. format should be eg.12UK3456">
             </div>
             <div *ngIf="f['regNo'].touched && f['regNo'].invalid" class="text-danger">
               Registration No. must be 2 letters + 6 digits.
             </div>
 
             <label>Vehicle Type</label>
-            <select formControlName="vehicleType" class="form-select form-select-md mb-3">
+            <select [disabled]="isEditMode" formControlName="vehicleType" class="form-select form-select-md mb-3">
               <option value="">--Select Type--</option>
               <option *ngFor="let v of vehicleTypes" [value]="v">{{ v }}</option>
             </select>
@@ -89,7 +89,7 @@
             </div>
 
             <label>Customer Name</label>
-            <input type="text" formControlName="customerName" class="form-control form-control-md mb-3">
+            <input [readonly]="isEditMode" type="text" formControlName="customerName" class="form-control form-control-md mb-3">
             <div *ngIf="f['customerName'].touched && f['customerName'].errors" class="text-danger">
               <div *ngIf="f['customerName'].errors['required']">customerName name is required.</div>
               <div *ngIf="f['customerName'].errors['minlength']">Minimum 2 characters required.</div>
@@ -98,13 +98,13 @@
             </div>
 
             <label>Mobile Number</label>
-            <input type="text" formControlName="mobileNo" class="form-control form-control-md mb-3">
+            <input [readonly]="isEditMode" type="text" formControlName="mobileNo" class="form-control form-control-md mb-3">
             <div *ngIf="f['mobileNo'].touched && f['mobileNo'].invalid" class="text-danger">
               Enter valid +91 and 10-digit mobile number.
             </div>
 
             <label>Email</label>
-            <input type="email" formControlName="emailID" class="form-control form-control-md mb-3">
+            <input [readonly]="isEditMode" type="email" formControlName="emailID" class="form-control form-control-md mb-3">
             <div *ngIf="f['emailID'].touched && f['emailID'].invalid" class="text-danger">
               Enter a valid email.
             </div>

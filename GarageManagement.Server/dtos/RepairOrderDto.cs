@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GarageManagement.Server.Model
+namespace GarageManagement.Server.dtos
 {
-    public class RepairOrder
+    public class RepairOrderDto
     {
         public long Id { get; set; }
 
         [Required(ErrorMessage = "Registration Number is required")]
-        public string? RegistrationNumber { get; set; } 
+        public string? RegistrationNumber { get; set; }
 
         [Required(ErrorMessage = "VIN Number is required")]
         public string? VinNumber { get; set; }
@@ -32,14 +32,6 @@ namespace GarageManagement.Server.Model
         public DateTime? ExpectedDateTime { get; set; }
 
         public string? AllottedTechnician { get; set; }
-        public long? BookingAppointmentId { get; set; }
-        public BookAppointment BookAppointment { get; set; }
-
-        public ICollection<InventoryAccessory> InventoryAccessories { get; set; } = new HashSet<InventoryAccessory>();  
-        public ICollection<ToBeFilledBySupervisor> ToBeFilledBySupervisors { get; set; }  = new HashSet<ToBeFilledBySupervisor>();  
-        public ICollection<AdditionalJobObserveDetail> AdditionalJobObserveDetails { get; set; } = new HashSet<AdditionalJobObserveDetail>();
-        public ICollection<SparePartsIssueDetail> SparePartsIssueDetails { get; set; } = new HashSet<SparePartsIssueDetail>();  
-        public ICollection<LabourDetail> LabourDetails { get; set; } = new HashSet<LabourDetail>();
-        public TechnicianMC TechnicianMC { get; set; }   
+        public long BookingAppointmentId { get; set; }
     }
 }

@@ -170,4 +170,17 @@ export class AuthService {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
+
+  getUserId(): number {
+    const token = localStorage.getItem('token');
+    if (!token) return 0;
+
+    try {
+      const decoded = jwtDecode<Decoded>(token);
+      return decoded.sub ? Number(decoded.sub) : 0;
+    } catch {
+      return 0;
+    }
+  }
+
 }

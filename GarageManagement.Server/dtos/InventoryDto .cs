@@ -3,6 +3,7 @@
     public class InventoryDto
     {
         public List<AccessoryDto> Accessories { get; set; }
+        public long RepairOrderId { get; set; }
 
     }
     public class AccessoryDto

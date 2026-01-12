@@ -729,7 +729,7 @@ namespace GarageManagement.Server.Migrations
     IF NOT EXISTS (SELECT 1 FROM [Role])
     BEGIN
         INSERT INTO [Role] (RoleName)
-        VALUES ('Default');
+        VALUES ('Admin');
     END
 ");
             migrationBuilder.Sql(@"
@@ -737,7 +737,7 @@ namespace GarageManagement.Server.Migrations
 
     SELECT @DefaultRoleId = Id
     FROM [Role]
-    WHERE RoleName = 'Default';
+    WHERE RoleName = 'Admin';
 
     UPDATE u
     SET RoleId = @DefaultRoleId

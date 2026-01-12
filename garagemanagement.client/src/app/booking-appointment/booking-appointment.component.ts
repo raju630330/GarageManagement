@@ -44,6 +44,7 @@ export class BookingAppointmentComponent {
 
   ngOnInit() {
     this.appointmentForm = this.fb.group({
+      search : [''],
       bookingId: [null],
       date: ['', Validators.required],
       time: ['', Validators.required],
@@ -127,6 +128,7 @@ export class BookingAppointmentComponent {
   // SAVE
   // =============================
   onbookSubmit() {
+    console.log(this.auth.getRoleId());
     if (this.appointmentForm.invalid || !this.selectedCustomerId) {
       this.appointmentForm.markAllAsTouched();
       this.alert.showError('Please complete all required fields');
@@ -142,7 +144,7 @@ export class BookingAppointmentComponent {
       Service: this.appointmentForm.value.service,
       ServiceAdvisor: this.appointmentForm.value.serviceAdvisor,
       Bay: this.appointmentForm.value.bay,
-      UserId: this.auth.getRoleId(),          // as discussed
+      UserId: this.auth.getUserId(),          // as discussed
       WorkshopId: 1       // fixed / from login later
     };
 
@@ -170,11 +172,10 @@ export class BookingAppointmentComponent {
     this.service.getBookingById(bookingId).subscribe(res => {
       this.selectedCustomerId = res.customerId,
         this.selectedVehicleId = res.vehicleId,
-      this.appointmentForm.patchValue({
+        this.appointmentForm.patchValue({
+        search: `${res.customerName} | +91 ${res.mobileNo} | ${res.regPrefix}${res.regNo}`,
         bookingId: res.Id,
-        date: res.appointmentDate
-          ? new Date(res.appointmentDate).toISOString().substring(0, 10)
-          : null,     
+        date: res.appointmentDate ? res.appointmentDate.split('T')[0] : null,    
         customerType: res.customerType,
         regPrefix: res.regPrefix,
         regNo: res.regNo,
@@ -195,6 +196,11 @@ export class BookingAppointmentComponent {
       }, 0);  // <-- just this line fixes NG0100
    
     });
+    this.appointmentForm.get('search')?.disable();
+    this.appointmentForm.get('regPrefix')?.disable(); 
+    this.appointmentForm.get('vehicleType')?.disable();
+    this.isEditMode = true;
+
   }
 
 }

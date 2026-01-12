@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { RepairOrderService } from '../services/repair-order.service';
 
 @Component({
   selector: 'app-inventory',
@@ -9,10 +10,19 @@ import { HttpClient } from '@angular/common/http';
 })
 export class InventoryComponent {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private repairOrderService: RepairOrderService) { }
 
   formSubmitted = false;
   showSuccess = false;
+
+  repairOrderId: number | null = null;
+
+  ngOnInit(): void {
+    // 🔥 Get current repair order id
+    this.repairOrderService.repairOrderId$.subscribe(id => {
+      this.repairOrderId = id;
+    });
+  }
 
   accessories = [
     { label: 'Service booklet', checked: false },
@@ -39,26 +49,30 @@ export class InventoryComponent {
   saveInventory() {
     this.formSubmitted = true;
 
-    const allSelected = this.accessories.every(x => x.checked);
-
-    if (!allSelected) {
-      return; 
+    if (!this.repairOrderId) {
+      alert('⚠️ Please save Repair Order first');
+      return;
     }
 
+    const allSelected = this.accessories.every(x => x.checked);
+    if (!allSelected) {
+      return;
+    }
 
-    const payload = { accessories: this.accessories };
+    // ✅ Append repairOrderId here
+    const payload = {
+      repairOrderId: this.repairOrderId,
+      accessories: this.accessories
+    };
 
     this.http.post("https://localhost:7086/api/Inventory/save", payload)
       .subscribe({
         next: () => {
           this.showSuccess = true;
-          setTimeout(() => {
-            this.showSuccess = false;
-          }, 2000);
-
+          setTimeout(() => this.showSuccess = false, 2000);
         },
         error: () => {
-          alert("Error saving inventory");
+          alert("❌ Error saving inventory");
         }
       });
   }

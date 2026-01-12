@@ -25,5 +25,7 @@ namespace GarageManagement.Server.Model
 
         [Required]
         public int Quantity { get; set; }
+        public long? RepairOrderId { get; set; }
+        public RepairOrder RepairOrder { get; set; }
     }
 }

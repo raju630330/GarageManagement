@@ -28,7 +28,8 @@ namespace GarageManagement.Server.Controllers
                 Accessories = data.Accessories.Select(x => new InventoryAccessory
                 {
                     Label = x.Label,
-                    Checked = x.Checked
+                    Checked = x.Checked,
+                    RepairOrderId = data.RepairOrderId
                 }).ToList()
             };
 

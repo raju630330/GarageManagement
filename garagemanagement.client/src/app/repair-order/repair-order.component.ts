@@ -1,6 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ROLES } from '../constants/roles.constants';
+import { RepairOrderService } from '../services/repair-order.service';
+import { AlertService } from '../services/alert.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-repair-order',
@@ -14,7 +17,7 @@ export class RepairOrderComponent implements OnInit {
   readonly panelOpenState = signal(false);
   repairForm!: FormGroup;
   minDateTime!: string;
-
+  bookingAppointmentId!: number;
   makeList: string[] = [
     'Tata Motors',
     'Ashok Leyland',
@@ -51,7 +54,7 @@ export class RepairOrderComponent implements OnInit {
 
 
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private repairOrderService: RepairOrderService, private alert: AlertService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     // --- Set current min date-time ---
@@ -124,6 +127,12 @@ export class RepairOrderComponent implements OnInit {
 
     });
 
+    // 🔹 Read bookingId from query params
+    this.route.queryParams.subscribe((params : any) => {
+      if (params['bookingId']) {
+        this.bookingAppointmentId = +params['bookingId'];
+      }
+    });
 
   }
 
@@ -140,12 +149,45 @@ export class RepairOrderComponent implements OnInit {
   // --- Form Submit ---
   onSubmit() {
     if (this.repairForm.valid) {
-      console.log(this.repairForm.value);
-      alert('✅ Form submitted successfully!');
+      const f = this.repairForm.value;
+
+
+      const orderData = {
+        id: 0,
+        registrationNumber: f.registrationNumber,
+        vinNumber: f.vinNumber,
+        mkls: f.kms ? f.kms.toString() : null,   // ✅ FIXED
+        date: f.vehicleInDateTime,
+        make: f.make,
+        phone: f.mobileNumber,
+        vehicleSite: f.vehicleFromSite,
+        siteInchargeName: f.siteInchargeName,
+        underWarranty: f.warranty === 'Yes',
+        expectedDateTime: f.expectedDateTime,
+        allottedTechnician: f.allottedTechnician,
+        bookingAppointmentId: this.bookingAppointmentId
+      };
+
+      // Call the service to create repair order
+      this.repairOrderService.createRepairOrder(orderData).subscribe({
+        next: (res: any) => {
+          // Get the generated RepairOrderId from backend
+          const repairOrderId = res.order.id;
+
+          // Store it in the service for child components
+          this.repairOrderService.setRepairOrderId(repairOrderId);
+
+        },
+        error: (err) => {
+          console.error('Error saving repair order', err);
+          this.alert.showError('⚠️ Failed to save repair order. Please try again.');
+        }
+      });
     } else {
-      alert('⚠️ Please fix validation errors before submitting!');
+      this.alert.showError('⚠️ Please fix validation errors before submitting!');
     }
   }
+
 
   // --- Repair Cost Input Restriction ---
   onRepairCostInput(event: any) {

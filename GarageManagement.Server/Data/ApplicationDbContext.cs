@@ -237,6 +237,42 @@ namespace GarageManagement.Server.Data
 
             // JobCard -> ToBeFilledBySupervisors
 
+
+                modelBuilder.Entity<InventoryAccessory>()
+            .HasOne(x => x.RepairOrder)
+            .WithMany(x => x.InventoryAccessories)
+            .HasForeignKey(x => x.RepairOrderId);
+
+            modelBuilder.Entity<ToBeFilledBySupervisor>()
+                .HasOne(x => x.RepairOrder)
+                .WithMany(x => x.ToBeFilledBySupervisors)
+                .HasForeignKey(x => x.RepairOrderId);
+
+            modelBuilder.Entity<AdditionalJobObserveDetail>()
+                .HasOne(x => x.RepairOrder)
+                .WithMany(x => x.AdditionalJobObserveDetails)
+                .HasForeignKey(x => x.RepairOrderId);
+
+            modelBuilder.Entity<SparePartsIssueDetail>()
+                .HasOne(x => x.RepairOrder)
+                .WithMany(x => x.SparePartsIssueDetails)
+                .HasForeignKey(x => x.RepairOrderId);
+
+            modelBuilder.Entity<LabourDetail>()
+                .HasOne(x => x.RepairOrder)
+                .WithMany(x => x.LabourDetails)
+                .HasForeignKey(x => x.RepairOrderId);
+
+            modelBuilder.Entity<TechnicianMC>()
+                .HasOne(x => x.RepairOrder)
+                .WithOne(x => x.TechnicianMC)
+                .HasForeignKey<TechnicianMC>(x => x.RepairOrderId);
+
+            modelBuilder.Entity<RepairOrder>()
+               .HasOne(r => r.BookAppointment)
+               .WithMany()
+               .HasForeignKey(r => r.BookingAppointmentId)
+               .OnDelete(DeleteBehavior.Restrict);
             // ------------------- Decimal columns -------------------
             modelBuilder.Entity<JobCard>(entity =>
             {

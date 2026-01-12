@@ -10,6 +10,8 @@ namespace GarageManagement.Server.Model
         public string ActionTaken { get; set; } = string.Empty;
         public string StartTime { get; set; } = string.Empty;
         public string EndTime { get; set; } = string.Empty;
+        public long? RepairOrderId { get; set; }
+        public RepairOrder RepairOrder { get; set; } = new RepairOrder();   
     }
 
 }

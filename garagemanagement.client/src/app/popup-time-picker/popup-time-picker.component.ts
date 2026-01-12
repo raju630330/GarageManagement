@@ -1,5 +1,12 @@
-import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  HostListener,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
 
 @Component({
   selector: 'app-popup-time-picker',
@@ -7,15 +14,17 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./popup-time-picker.component.css'],
   templateUrl: './popup-time-picker.component.html'
 })
-export class PopupTimePickerComponent {
+export class PopupTimePickerComponent implements OnChanges {
 
-  selectedDateTime: string = '';
-  @Input() selectedDate: string = "";
+  @Input() selectedDate: string = '';
   @Input() selectedTime: string | null = null;
   @Input() interval: number = 5;
+
   @Output() timeChange = new EventEmitter<string>();
 
   showPopup = false;
+
+  selectedDateTime: string = '';
 
   allSlots: string[] = [];
   filteredSlots: string[] = [];
@@ -24,10 +33,15 @@ export class PopupTimePickerComponent {
     this.allSlots = this.buildAllSlots();
   }
 
-  ngOnChanges() {
-    this.filterSlots();
-    if (this.selectedTime) {
-      this.selectedDateTime = this.selectedTime;
+  // 🔥 React properly to date / time changes
+  ngOnChanges(changes: SimpleChanges) {
+
+    if (changes['selectedDate']) {
+      this.filterSlots(); // only filter slots
+    }
+
+    if (changes['selectedTime'] && this.selectedTime) {
+      this.selectedDateTime = this.selectedTime; // just display
     }
   }
 
@@ -39,43 +53,58 @@ export class PopupTimePickerComponent {
     this.showPopup = false;
   }
 
-  buildAllSlots() {
+  buildAllSlots(): string[] {
     const arr: string[] = [];
     for (let h = 0; h < 24; h++) {
       for (let m = 0; m < 60; m += this.interval) {
-        arr.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+        arr.push(
+          `${h.toString().padStart(2, '0')}:${m
+            .toString()
+            .padStart(2, '0')}`
+        );
       }
     }
     return arr;
   }
 
+  // ✅ ONLY filters time slots — does NOT reset or emit
   filterSlots() {
-
-    this.selectedDateTime = "";
-    this.timeChange.emit("");
-
     const today = new Date().toISOString().slice(0, 10);
 
-    if (this.selectedDate === today) {
-      const now = new Date();
-      const current = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-      this.filteredSlots = this.allSlots.filter(t => t >= current);
-    } else {
+    // Future date → allow all slots
+    if (this.selectedDate !== today) {
       this.filteredSlots = this.allSlots;
+      return;
     }
+
+    // Today → restrict past slots
+    const now = new Date();
+    const currentTime =
+      `${now.getHours().toString().padStart(2, '0')}:` +
+      `${now.getMinutes().toString().padStart(2, '0')}`;
+
+    this.filteredSlots = this.allSlots.filter(t =>
+      t >= currentTime || t === this.selectedTime
+    );
   }
 
+
+  // ✅ User action only
   selectTime(t: string) {
-    this.selectedDateTime = t;  // update UI
-    this.timeChange.emit(t);    // send to parent form
+    this.selectedDateTime = t;
+    this.timeChange.emit(t);
     this.closePopup();
   }
 
-  // Close popup if clicked outside
+  // Close popup when clicking outside
   @HostListener('document:click', ['$event'])
   clickOutside(event: Event) {
     const target = event.target as HTMLElement;
-    if (!target.closest('.time-popup') && !target.closest('.time-input') && !target.closest('.time-input-group')) {
+    if (
+      !target.closest('.time-popup') &&
+      !target.closest('.time-input') &&
+      !target.closest('.time-input-group')
+    ) {
       this.showPopup = false;
     }
   }
