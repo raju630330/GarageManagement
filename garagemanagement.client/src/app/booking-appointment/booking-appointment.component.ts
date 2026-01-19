@@ -31,7 +31,7 @@ export class BookingAppointmentComponent {
   @Input() selectedDate: string | null = null;
   @Input() selectedTime: string | null = null;
 
-  bookingId: number | null = null;
+  bookingId: number = 0;
   isEditMode = false;
   constructor(
     private fb: FormBuilder,
@@ -45,7 +45,7 @@ export class BookingAppointmentComponent {
   ngOnInit() {
     this.appointmentForm = this.fb.group({
       search : [''],
-      bookingId: [null],
+      bookingId: [0],
       date: ['', Validators.required],
       time: ['', Validators.required],
       customerType: ['', Validators.required],
@@ -136,6 +136,7 @@ export class BookingAppointmentComponent {
     }
 
     const payload = {
+      Id: this.bookingId,
       CustomerId: this.selectedCustomerId,
       VehicleId: this.selectedVehicleId,
       AppointmentDate: this.appointmentForm.value.date,

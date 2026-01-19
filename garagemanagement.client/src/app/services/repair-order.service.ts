@@ -33,4 +33,10 @@ export class RepairOrderService {
   getOrders(): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}`);
   }
+  getRepairOrderByBooking(bookingId: number) {
+    return this.http.get<any>(
+      `${this.baseUrl}/RepairOrders/by-booking/${bookingId}`
+    );
+  }
+
 }

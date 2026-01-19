@@ -33,5 +33,11 @@ namespace GarageManagement.Server.dtos
 
         public string? AllottedTechnician { get; set; }
         public long BookingAppointmentId { get; set; }
+        public string? Model { get; set; }
+        public string? DriverName { get; set; }
+        public decimal? RepairEstimationCost { get; set; }
+        public bool? DriverPermanetToThisVehicle { get; set; }
+        public string? TypeOfService { get; set; }
+        public bool? RoadTestAlongWithDriver { get; set; }
     }
 }

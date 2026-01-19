@@ -1,9 +1,11 @@
-﻿using GarageManagement.Server.Data;
+﻿using Castle.Core.Resource;
+using GarageManagement.Server.Data;
 using GarageManagement.Server.dtos;
 using GarageManagement.Server.Model;
 using GarageManagement.Server.RepoInterfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 
 namespace GarageManagement.Server.Controllers
 {
@@ -42,25 +44,39 @@ namespace GarageManagement.Server.Controllers
                     return BadRequest(new { message = "Vehicle not found" });
             }
 
-            // Map DTO to entity
-            var bookingAppointment = new BookAppointment
-            {
-                AppointmentDate = dto.AppointmentDate,
-                AppointmentTime = dto.AppointmentTime,
-                Bay = dto.Bay,
-                CustomerId = dto.CustomerId,
-                CustomerType = dto.CustomerType,
-                Service = dto.Service,
-                ServiceAdvisor = dto.ServiceAdvisor,
-                UserId = dto.UserId,
-                VehicleId = dto.VehicleId,
-                WorkshopId = dto.WorkshopId
-            };
+            var result = await _context.BookAppointments.Where(a => a.Id == dto.Id).FirstOrDefaultAsync();
 
-            _context.BookAppointments.Add(bookingAppointment);
+            if (result == null)
+            {
+                result = new BookAppointment();
+            }
+
+            result.AppointmentDate = dto.AppointmentDate;
+            result.AppointmentTime = dto.AppointmentTime;
+                result.Bay = dto.Bay;
+            result.CustomerId = dto.CustomerId;
+            result.CustomerType = dto.CustomerType;
+                result.Service = dto.Service;
+            result.ServiceAdvisor = dto.ServiceAdvisor;
+            result.UserId = dto.UserId;
+            result.VehicleId = dto.VehicleId;
+            result.WorkshopId = dto.WorkshopId;
+
+            if (dto.Id == 0)
+            {
+                await _context.BookAppointments.AddAsync(result);
+            }
+            else
+            {
+                _context.BookAppointments.Update(result);
+            }
+
+
+            // Map DTO to entity
+            
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Booking Appointment saved successfully", bookingAppointment.Id });
+            return Ok(new { message = "Booking Appointment saved successfully", result.Id });
         }
 
         // ================================

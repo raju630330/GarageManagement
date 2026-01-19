@@ -3,6 +3,9 @@ using GarageManagement.Server.Data;
 using GarageManagement.Server.dtos;
 using GarageManagement.Server.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Numerics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GarageManagement.Api.Controllers
 {
@@ -21,34 +24,47 @@ namespace GarageManagement.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var repairOrder = new RepairOrder
-            {
-                RegistrationNumber = dto.RegistrationNumber,
-                VinNumber = dto.VinNumber,
-                Mkls = dto.Mkls,
-                Date = dto.Date,
-                
-                Make = dto.Make,
-                Phone = dto.Phone,
-                VehicleSite = dto.VehicleSite,
-                SiteInchargeName = dto.SiteInchargeName,
-                UnderWarranty = dto.UnderWarranty,
-                ExpectedDateTime = dto.ExpectedDateTime,
-                AllottedTechnician = dto.AllottedTechnician,
-                BookingAppointmentId = dto.BookingAppointmentId
-            };
+            var repairorder = await _context.RepairOrders.Where(a => a.Id == dto.Id).FirstOrDefaultAsync();
 
-            await _context.RepairOrders.AddAsync(repairOrder);
+            if (repairorder == null) { repairorder = new RepairOrder(); }
+
+                repairorder.RegistrationNumber = dto.RegistrationNumber;
+                repairorder.VinNumber = dto.VinNumber;
+                repairorder.Mkls = dto.Mkls;
+                repairorder.Date = dto.Date;                
+                repairorder.Make = dto.Make;
+                repairorder.Phone = dto.Phone;
+                repairorder.VehicleSite = dto.VehicleSite;
+                repairorder.SiteInchargeName = dto.SiteInchargeName;
+                repairorder.UnderWarranty = dto.UnderWarranty;
+                repairorder.ExpectedDateTime = dto.ExpectedDateTime;
+                repairorder.AllottedTechnician = dto.AllottedTechnician;
+                repairorder.Model = dto.Model;
+                repairorder.DriverName = dto.DriverName;
+                repairorder.RepairEstimationCost = dto.RepairEstimationCost;
+                repairorder.DriverPermanetToThisVehicle = dto.DriverPermanetToThisVehicle;
+                repairorder.TypeOfService = dto.TypeOfService;
+                repairorder.RoadTestAlongWithDriver = dto.RoadTestAlongWithDriver;
+                repairorder.BookingAppointmentId = dto.BookingAppointmentId;
+
+            if (dto.Id == 0)
+            {
+                await _context.RepairOrders.AddAsync(repairorder);
+            }
+            else
+            {
+                _context.RepairOrders.Update(repairorder);
+            }
             await _context.SaveChangesAsync();
 
             var response = new
             {
-                Id = repairOrder.Id,
-                RegistrationNumber = repairOrder.RegistrationNumber,
-                VinNumber = repairOrder.VinNumber,
-                Date = repairOrder.Date,
-                Phone = repairOrder.Phone,
-                BookingAppointmentId = repairOrder.BookingAppointmentId
+                Id = repairorder.Id,
+                RegistrationNumber = repairorder.RegistrationNumber,
+                VinNumber = repairorder.VinNumber,
+                Date = repairorder.Date,
+                Phone = repairorder.Phone,
+                BookingAppointmentId = repairorder.BookingAppointmentId
             };
 
             return Ok(new
@@ -64,5 +80,38 @@ namespace GarageManagement.Api.Controllers
         {
             return Ok(_context.RepairOrders.ToList());
         }
+
+        [HttpGet("by-booking/{bookingId}")]
+        public async Task<IActionResult> GetByBooking(int bookingId)
+        {
+            var order = await _context.RepairOrders
+                .Where(x => x.BookingAppointmentId == bookingId)
+                .OrderByDescending(x => x.Id)
+                .FirstOrDefaultAsync();
+
+            if (order == null)
+                return Ok(new { exists = false });
+
+            return Ok(new
+            {
+                exists = true,
+                repairOrderId = order.Id,
+                data = new
+                {
+                    registrationNumber = order.RegistrationNumber,
+                    vinNumber = order.VinNumber,
+                    mkls = order.Mkls,
+                    date = order.Date,
+                    make = order.Make,
+                    phone = order.Phone,
+                    vehicleSite = order.VehicleSite,
+                    siteInchargeName = order.SiteInchargeName,
+                    underWarranty = order.UnderWarranty,
+                    expectedDateTime = order.ExpectedDateTime,
+                    allottedTechnician = order.AllottedTechnician
+                }
+            });
+        }
+
     }
 }

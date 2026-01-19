@@ -35,6 +35,12 @@ namespace GarageManagement.Server.Model
         public long? BookingAppointmentId { get; set; }
         public BookAppointment BookAppointment { get; set; }
 
+        public string? Model { get; set; }
+        public string? DriverName { get; set; }
+        public decimal? RepairEstimationCost { get; set; }
+        public bool? DriverPermanetToThisVehicle { get; set; }
+        public string? TypeOfService { get; set; }
+        public bool? RoadTestAlongWithDriver { get; set; }
         public ICollection<InventoryAccessory> InventoryAccessories { get; set; } = new HashSet<InventoryAccessory>();  
         public ICollection<ToBeFilledBySupervisor> ToBeFilledBySupervisors { get; set; }  = new HashSet<ToBeFilledBySupervisor>();  
         public ICollection<AdditionalJobObserveDetail> AdditionalJobObserveDetails { get; set; } = new HashSet<AdditionalJobObserveDetail>();

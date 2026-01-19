@@ -30,4 +30,5 @@ public class BookAppointment
 
     public long? WorkshopId { get; set; }
     public WorkshopProfile Workshop { get; set; }
+
 }

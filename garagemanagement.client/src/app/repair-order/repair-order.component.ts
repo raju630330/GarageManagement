@@ -128,9 +128,45 @@ export class RepairOrderComponent implements OnInit {
     });
 
     // 🔹 Read bookingId from query params
-    this.route.queryParams.subscribe((params : any) => {
+    this.route.queryParams.subscribe(params => {
       if (params['bookingId']) {
         this.bookingAppointmentId = +params['bookingId'];
+
+        this.repairOrderService
+          .getRepairOrderByBooking(this.bookingAppointmentId)
+          .subscribe(res => {
+
+            if (res.exists) {
+              // ✅ Store repairOrderId globally
+              this.repairOrderService.setRepairOrderId(res.repairOrderId);
+
+              // ✅ Append (patch) data to form
+              this.repairForm.patchValue({
+                registrationNumber: res.data.registrationNumber,
+                vinNumber: res.data.vinNumber,
+                kms: res.data.mkls,
+                vehicleInDateTime: res.data.date,
+                make: res.data.make,
+                mobileNumber: res.data.phone,
+                vehicleFromSite: res.data.vehicleSite,
+                siteInchargeName: res.data.siteInchargeName,
+                warranty: res.data.underWarranty ? 'Yes' : 'No',
+                expectedDateTime: res.data.expectedDateTime,
+                allottedTechnician: res.data.allottedTechnician,
+                model: res.data.model,
+                driverName: res.data.driverName,
+                repairCost: res.data.repairEstimationCost,
+                driverPermanent: res.data.driverPermanetToThisVehicle,
+                serviceType: res.data.typeOfService,
+                roadTest: res.data.roadTestAlongWithDriver,
+              });
+
+            } else {
+              // ❗ No repair order exists → new entry
+              console.log('New Repair Order');
+            }
+
+          });
       }
     });
 
@@ -165,6 +201,12 @@ export class RepairOrderComponent implements OnInit {
         underWarranty: f.warranty === 'Yes',
         expectedDateTime: f.expectedDateTime,
         allottedTechnician: f.allottedTechnician,
+        model: f.model,
+        driverName: f.driverName,
+        repairCost: f.repairEstimationCost,
+        driverPermanent: f.driverPermanetToThisVehicle,
+        serviceType: f.typeOfService,
+        roadTest: f.roadTestAlongWithDriver,
         bookingAppointmentId: this.bookingAppointmentId
       };
 
@@ -176,6 +218,7 @@ export class RepairOrderComponent implements OnInit {
 
           // Store it in the service for child components
           this.repairOrderService.setRepairOrderId(repairOrderId);
+          this.alert.showSuccess("Saved Sucessfully!");
 
         },
         error: (err) => {
