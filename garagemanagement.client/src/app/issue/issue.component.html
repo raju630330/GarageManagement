@@ -52,13 +52,17 @@
           <th *ngIf="activeIssueTab==='pending'">Qty on Hand</th>
           <th>Requested Qty</th>
 
-          <th *ngIf="activeIssueTab==='pending' || activeIssueTab==='issued'">Issue Qty</th>
-          <th>Return Qty</th>
-          <th>Unit Price</th>
+          <th>Issue Qty</th>
+          <th *ngIf="activeIssueTab!=='pending'">Return Qty</th>
+          <th *ngIf="activeIssueTab!=='pending'">Unit Price</th>
           <th *ngIf="activeIssueTab==='pending'">Pending Qty</th>
 
           <th *ngIf="activeIssueTab==='pending'">Selling Price ₹</th>
+          <th *ngIf="activeIssueTab!=='pending'">Issued Date</th>
+          <th *ngIf="activeIssueTab==='returned'">Return Date</th>
           <th>Issued To</th>
+          <th *ngIf="activeIssueTab==='issued'">Issued Id</th>
+
         </tr>
       </thead>
       <tbody>
@@ -70,11 +74,15 @@
           <td>{{ item.partNo }}</td>
           <td>{{ item.brand }}</td>
           <td *ngIf="activeIssueTab==='pending'">{{ item.qtyOnHand }}</td>
-          <td *ngIf="activeIssueTab==='pending'">{{ item.requestedQty }}</td>
-          <td *ngIf="activeIssueTab==='pending'">{{ item.issueQty || '-' }}</td>
-          <td *ngIf="activeIssueTab==='pending'">{{ item.pendingQty || item.requestedQty }}</td>
+          <td *ngIf="activeIssueTab==='pending' || activeIssueTab==='issued'">{{ item.requestedQty }}</td>
+          <td>{{ item.issueQty || '-' }}</td>
+          <td *ngIf="activeIssueTab==='pending' || activeIssueTab==='issued'">{{ item.pendingQty || item.requestedQty }}</td>
           <td *ngIf="activeIssueTab==='pending'">{{ item.sellingPrice }}</td>
+          <td *ngIf="activeIssueTab==='issued'">NOV 26 2025</td>
+          <td *ngIf="activeIssueTab==='returned'">Return Date</td>
           <td>{{ item.issuedTo || '-' }}</td>
+          <td *ngIf="activeIssueTab==='issued'">SRT ISO3309</td>
+
         </tr>
         <tr *ngIf="filteredIssueItems.length === 0">
           <td [attr.colspan]="activeIssueTab==='pending'?11:9" class="text-center text-muted">
