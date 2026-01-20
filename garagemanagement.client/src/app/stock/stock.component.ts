@@ -1,21 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
-
-interface StockItem {
-  partNo: string;
-  partName: string;
-  brand: string;
-  category: string;
-  qtyOnHand: number;
-  avgPurchasePrice: number;
-  avgSellingPrice: number;
-  taxType: string;
-  taxPercent: number;
-  taxAmount: number;
-  rackNo: string;
-  ageing: string;
-  barcode: string;
-}
+import { Subject, debounceTime, takeUntil } from 'rxjs';
+import { StockService, StockItem, StockStats } from '../services/stock.service';
 
 @Component({
   selector: 'app-stock',
@@ -23,158 +9,106 @@ interface StockItem {
   styleUrls: ['./stock.component.css'],
   standalone: false
 })
-export class StockComponent implements OnInit {
+export class StockComponent implements OnInit, OnDestroy {
 
-  stockStats = {
-    uniquePartNos: 1202,
-    totalStockItems: 31640.51,
-    stockValue: 3165219.06
-  };
+  // 🔹 Stats & Stock Data
+  stockStats!: StockStats;
+  filteredItems: StockItem[] = [];
 
+  // 🔹 UI State
+  isLoading = false;
+  hasError = false;
+
+  // 🔹 Tabs
   tabs = ['stock', 'order', 'inward', 'issued', 'purchaseReturn', 'stockAlert'];
   activeTab = 'stock';
 
+  // 🔹 Filter Form
   searchForm!: FormGroup;
 
-  stockItems: StockItem[] = []; // API or dummy data
-  filteredItems: StockItem[] = [];
+  // 🔹 Unsubscribe
+  private destroy$ = new Subject<void>();
 
-  constructor(private fb: FormBuilder) { }
+  constructor(
+    private fb: FormBuilder,
+    private stockService: StockService
+  ) { }
 
   ngOnInit(): void {
+    this.initForm();
+    this.loadStockStats();
+    this.listenToFilters();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // 🔹 Initialize Filter Form
+  private initForm(): void {
     this.searchForm = this.fb.group({
-      status: ['In Stock'],
+      stockType: ['IN'],   // default In Stock
       search: ['']
     });
 
-    // Dummy data for demonstration
-    this.stockItems = [
-      {
-        partNo: 'FOG/LAMP/Y',
-        partName: 'Yellow Fog Lamp',
-        brand: 'ABC',
-        category: 'Lighting',
-        qtyOnHand: 3,
-        avgPurchasePrice: 250,
-        avgSellingPrice: 400,
-        taxType: 'GST',
-        taxPercent: 18,
-        taxAmount: 72,
-        rackNo: 'R1',
-        ageing: '10 days',
-        barcode: '123456789012'
-      },
-      {
-        partNo: '3MM WIRE',
-        partName: '3mm Copper Wire',
-        brand: 'XYZ',
-        category: 'Electrical',
-        qtyOnHand: 15,
-        avgPurchasePrice: 50,
-        avgSellingPrice: 80,
-        taxType: 'GST',
-        taxPercent: 18,
-        taxAmount: 5,
-        rackNo: 'R2',
-        ageing: '5 days',
-        barcode: '987654321098'
-      },
-      {
-        partNo: '3MM WIRE',
-        partName: '3mm Copper Wire',
-        brand: 'XYZ',
-        category: 'Electrical',
-        qtyOnHand: 15,
-        avgPurchasePrice: 50,
-        avgSellingPrice: 80,
-        taxType: 'GST',
-        taxPercent: 18,
-        taxAmount: 5,
-        rackNo: 'R2',
-        ageing: '5 days',
-        barcode: '987654321098'
-      },
-      {
-        partNo: '3MM WIRE',
-        partName: '3mm Copper Wire',
-        brand: 'XYZ',
-        category: 'Electrical',
-        qtyOnHand: 15,
-        avgPurchasePrice: 50,
-        avgSellingPrice: 80,
-        taxType: 'GST',
-        taxPercent: 18,
-        taxAmount: 5,
-        rackNo: 'R2',
-        ageing: '5 days',
-        barcode: '987654321098'
-      },
-      {
-        partNo: '3MM WIRE',
-        partName: '3mm Copper Wire',
-        brand: 'XYZ',
-        category: 'Electrical',
-        qtyOnHand: 15,
-        avgPurchasePrice: 50,
-        avgSellingPrice: 80,
-        taxType: 'GST',
-        taxPercent: 18,
-        taxAmount: 5,
-        rackNo: 'R2',
-        ageing: '5 days',
-        barcode: '987654321098'
-      },
-      {
-        partNo: '3MM WIRE',
-        partName: '3mm Copper Wire',
-        brand: 'XYZ',
-        category: 'Electrical',
-        qtyOnHand: 15,
-        avgPurchasePrice: 50,
-        avgSellingPrice: 80,
-        taxType: 'GST',
-        taxPercent: 18,
-        taxAmount: 5,
-        rackNo: 'R2',
-        ageing: '5 days',
-        barcode: '987654321098'
-      }
-
-    ];
-
-    this.filteredItems = [...this.stockItems];
-
-    // React to search form changes
-    this.searchForm.valueChanges.subscribe(() => this.applyFilters());
+    this.loadStockList();
   }
-
-  // Getters for proper typing
-  get statusControl(): FormControl {
-    return this.searchForm.get('status') as FormControl;
+  // 🔹 Form Getters
+  get stockTypeControl(): FormControl {
+    return this.searchForm.get('stockType') as FormControl;
   }
 
   get searchControl(): FormControl {
     return this.searchForm.get('search') as FormControl;
   }
 
-  applyFilters(): void {
-    const { status, search } = this.searchForm.value;
-    this.filteredItems = this.stockItems.filter(item => {
-      const matchesStatus = status === 'In Stock' ? item.qtyOnHand > 0 : true;
-      const matchesSearch = !search ||
-        item.partName.toLowerCase().includes(search.toLowerCase()) ||
-        item.partNo.toLowerCase().includes(search.toLowerCase()) ||
-        item.brand.toLowerCase().includes(search.toLowerCase());
-      return matchesStatus && matchesSearch;
-    });
+  // 🔹 Listen to Filter Changes
+  private listenToFilters(): void {
+    this.searchForm.valueChanges
+      .pipe(debounceTime(300), takeUntil(this.destroy$))
+      .subscribe(() => this.loadStockList());
   }
 
-  setActiveTab(tab: string) {
+  // 🔹 Load Stock List from API
+  private loadStockList(): void {
+    const { stockType, search } = this.searchForm.value;
+
+    this.isLoading = true;
+    this.hasError = false;
+
+    this.stockService.getStockList(stockType, search)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.filteredItems = data;
+          this.isLoading = false;
+        },
+        error: () => {
+          this.isLoading = false;
+          this.hasError = true;
+        }
+      });
+  }
+
+
+  // 🔹 Load Stock Statistics
+  private loadStockStats(): void {
+    this.stockService.getStockStats()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: stats => this.stockStats = stats,
+        error: () => { /* optionally handle error */ }
+      });
+  }
+
+  // 🔹 Tab Navigation
+  setActiveTab(tab: string): void {
     this.activeTab = tab;
   }
 
-  exportStock() {
-    alert('Export functionality not implemented yet!');
+  // 🔹 Export Feature (Placeholder)
+  exportStock(): void {
+    alert('Export will be implemented (Excel / PDF)');
   }
-
 }

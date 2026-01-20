@@ -230,7 +230,7 @@
               <option value="Pending">Pending</option>
             </select>
           </td>
-          <td  *appHasRole="'Estimation'; permission: 'D'">
+          <td *appHasPermission="'D'" module="Estimation">
             <button type="button"
                     class="btn btn-outline-danger btn-sm"
                     (click)="removeRow(i)"

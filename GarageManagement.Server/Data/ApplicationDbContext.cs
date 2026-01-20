@@ -37,7 +37,8 @@ namespace GarageManagement.Server.Data
         public DbSet<JobCardCancelledInvoice> JobCardCancelledInvoices { get; set; }
         public DbSet<JobCardCollection> JobCardCollections { get; set; }
         public DbSet<PermissionModule> PermissionModules { get; set; }
-
+        public DbSet<Part> Parts { get; set; }
+        public DbSet<StockMovement> StockMovements { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -69,6 +70,8 @@ namespace GarageManagement.Server.Data
             modelBuilder.Entity<JobCardCancelledInvoice>().ToTable("JobCardCancelledInvoice");
             modelBuilder.Entity<JobCardCollection>().ToTable("JobCardCollection");
             modelBuilder.Entity<PermissionModule>().ToTable("PermissionModule");
+            modelBuilder.Entity<Part>().ToTable("Part");
+            modelBuilder.Entity<StockMovement>().ToTable("StockMovement");
 
             // ------------------- Primary keys and Identity -------------------
             void SetIdentity<TEntity>() where TEntity : class
@@ -128,7 +131,10 @@ namespace GarageManagement.Server.Data
             SetIdentity<JobCardCollection>();
             modelBuilder.Entity<PermissionModule>().HasKey(j => j.Id);
             SetIdentity<PermissionModule>();
-
+            modelBuilder.Entity<Part>().HasKey(j => j.Id);
+            SetIdentity<Part>();
+            modelBuilder.Entity<StockMovement>().HasKey(j => j.Id);
+            SetIdentity<StockMovement>();
             // ------------------- Relationships -------------------
 
             // User -> Role
@@ -304,6 +310,14 @@ namespace GarageManagement.Server.Data
             {
                 entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
             });
+            modelBuilder.Entity<Part>()
+                   .HasIndex(x => x.PartNo)
+                   .IsUnique();
+
+            modelBuilder.Entity<StockMovement>()
+                .HasOne(x => x.Part)
+                .WithMany(x => x.StockMovements)
+                .HasForeignKey(x => x.PartId);
         }
     }
 }

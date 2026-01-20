@@ -5,41 +5,26 @@
     <h3 class="text-primary">Stock List</h3>
     <button class="btn btn-primary btn-sm" (click)="exportStock()">Export</button>
   </div>
-  <div class="row mb-3">
+
+  <!-- Statistics -->
+  <div class="row mb-3" *ngIf="stockStats">
     <div class="col-12">
-      <div class="card shadow-sm">
-        <div class="card-body d-flex justify-content-center align-items-center gap-3">
-
-          <!-- Unique Part Nos -->
-          <div class="stat-item">
-            <span class="label">Unique Part Nos: </span>
-            <span class="fw-bold fs-4">{{ stockStats.uniquePartNos }}</span>
-          </div>
-
-          <span class="separator">│</span>
-
-          <!-- Total Stock Items -->
-          <div class="stat-item">
-            <span class="label">Total Stock Items: </span>
-            <span class="fw-bold fs-4">{{ stockStats.totalStockItems | number }}</span>
-          </div>
-
-          <span class="separator">│</span>
-
-          <!-- Stock Value -->
-          <div class="stat-item">
-            <span class="label">Stock Value ₹: </span>
-            <span class="fw-bold fs-4">{{ stockStats.stockValue | number }}</span>
-          </div>
-
+      <div class="card shadow-sm p-2 d-flex justify-content-center align-items-center gap-3 flex-wrap">
+        <div class="stat-item">
+          <span class="label">Unique Part Nos: </span>
+          <span class="fw-bold fs-5">{{ stockStats.uniquePartNos }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="label">Total Stock Items: </span>
+          <span class="fw-bold fs-5">{{ stockStats.totalStockItems | number }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="label">Stock Value ₹: </span>
+          <span class="fw-bold fs-5">{{ stockStats.stockValue | number:'1.2-2' }}</span>
         </div>
       </div>
     </div>
   </div>
-
-
-
-
 
   <!-- Sub Tabs -->
   <ul class="nav nav-tabs mb-3 nav-fill w-100">
@@ -53,30 +38,37 @@
     </li>
   </ul>
 
-
-  <!-- Search & Filter (Only for Stock Tab) -->
+  <!-- Search & Filter -->
   <div *ngIf="activeTab === 'stock'" class="mb-3 w-100">
     <div class="row g-2 align-items-center">
-
       <div class="col-md-3">
-        <select class="form-select" [formControl]="statusControl">
-          <option value="In Stock">In Stock</option>
-          <option value="Out of Stock">Out of Stock</option>
+        <select class="form-select" [formControl]="stockTypeControl">
+          <option value="IN">In Stock</option>
+          <option value="OUT">Out of Stock</option>
+          <option value="ALL">All</option>
         </select>
       </div>
-
       <div class="col-md-9">
         <input type="text"
                class="form-control"
                placeholder="Search Part"
                [formControl]="searchControl" />
       </div>
-
     </div>
   </div>
 
+  <!-- Loader -->
+  <div *ngIf="isLoading" class="text-center py-4">
+    Loading stock...
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="hasError" class="alert alert-danger">
+    Failed to load stock data.
+  </div>
+
   <!-- Stock Table -->
-  <div *ngIf="activeTab==='stock'" class="table-responsive">
+  <div *ngIf="!isLoading && !hasError && activeTab==='stock'" class="table-responsive">
     <table class="table table-bordered table-hover">
       <thead class="table-light">
         <tr>
@@ -86,8 +78,8 @@
           <th>Brand</th>
           <th>Category</th>
           <th>Qty on Hand</th>
-          <th>Avg Purchase Price ₹</th>
-          <th>Avg Selling Price ₹</th>
+          <th>Avg Purchase ₹</th>
+          <th>Avg Selling ₹</th>
           <th>Tax Type</th>
           <th>Tax %</th>
           <th>Tax Amount ₹</th>
@@ -104,8 +96,8 @@
           <td>{{ item.brand }}</td>
           <td>{{ item.category }}</td>
           <td>{{ item.qtyOnHand }}</td>
-          <td>{{ item.avgPurchasePrice }}</td>
-          <td>{{ item.avgSellingPrice }}</td>
+          <td>{{ item.avgPurchasePrice | number:'1.2-2' }}</td>
+          <td>{{ item.avgSellingPrice | number:'1.2-2' }}</td>
           <td>{{ item.taxType }}</td>
           <td>{{ item.taxPercent }}%</td>
           <td>{{ item.taxAmount | number:'1.2-2' }}</td>
@@ -120,7 +112,7 @@
     </table>
   </div>
 
-  <!-- Placeholder for other sub-tabs -->
+  <!-- Placeholder for other tabs -->
   <div *ngIf="activeTab!=='stock'" class="p-3 border rounded">
     <p class="text-muted">Content for "{{ activeTab | titlecase }}" will appear here.</p>
   </div>
