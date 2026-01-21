@@ -29,6 +29,12 @@ export class StockComponent implements OnInit, OnDestroy {
   // 🔹 Unsubscribe
   private destroy$ = new Subject<void>();
 
+  currentPage = 1;
+  pageSize = 10;
+  totalRecords = 0;
+
+  pageSizes = [10, 25, 50];
+
   constructor(
     private fb: FormBuilder,
     private stockService: StockService
@@ -75,13 +81,14 @@ export class StockComponent implements OnInit, OnDestroy {
     const { stockType, search } = this.searchForm.value;
 
     this.isLoading = true;
-    this.hasError = false;
 
-    this.stockService.getStockList(stockType, search)
+    this.stockService
+      .getStockList(stockType, search, this.currentPage, this.pageSize)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => {
-          this.filteredItems = data;
+        next: res => {
+          this.filteredItems = res.items;
+          this.totalRecords = res.totalRecords;
           this.isLoading = false;
         },
         error: () => {
@@ -110,5 +117,22 @@ export class StockComponent implements OnInit, OnDestroy {
   // 🔹 Export Feature (Placeholder)
   exportStock(): void {
     alert('Export will be implemented (Excel / PDF)');
+  }
+  get totalPages(): number {
+    return Math.ceil(this.totalRecords / this.pageSize);
+  }
+  get pages(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  changePage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.loadStockList();
+  }
+  changePageSize(size: number): void {
+    this.pageSize = Number(size);
+    this.currentPage = 1; 
+    this.loadStockList();
   }
 }

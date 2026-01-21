@@ -25,6 +25,13 @@ export interface StockStats {
   stockValue: number;
 }
 
+export interface PagedResult<T> {
+  totalRecords: number;
+  page: number;
+  pageSize: number;
+  items: T[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -37,15 +44,19 @@ export class StockService {
   // 🔹 Get stock list with filter & search
   // stockType: ALL | IN | OUT
   getStockList(
-    stockType: 'ALL' | 'IN' | 'OUT' = 'ALL',
-    search: string = ''
-  ): Observable<StockItem[]> {
+    stockType: 'ALL' | 'IN' | 'OUT',
+    search: string,
+    page: number,
+    pageSize: number
+  ): Observable<PagedResult<StockItem>> {
 
     let params = new HttpParams()
       .set('stockType', stockType)
-      .set('search', search);
+      .set('search', search)
+      .set('page', page)
+      .set('pageSize', pageSize);
 
-    return this.http.get<StockItem[]>(
+    return this.http.get<PagedResult<StockItem>>(
       `${this.baseUrl}/stock/list`,
       { params }
     );

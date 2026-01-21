@@ -19,7 +19,11 @@ namespace GarageManagement.Server.Controllers
         // 🔹 STOCK LIST
         // =========================================================
         [HttpGet("list")]
-        public async Task<IActionResult> GetStockList(string stockType = "IN", string search = "")
+        public async Task<IActionResult> GetStockList(
+    string stockType = "IN",
+    string search = "",
+    int page = 1,
+    int pageSize = 10)
         {
             // Load parts with their stock movements into memory
             var parts = await _context.Parts
@@ -65,12 +69,28 @@ namespace GarageManagement.Server.Controllers
             })
             .Where(x =>
                 stockType == "IN" ? x.QtyOnHand > 0 :
-                stockType == "OUT" ? x.QtyOnHand <= 0 : true)
+                stockType == "OUT" ? x.QtyOnHand <= 0 :
+                true)
             .OrderBy(x => x.PartName)
             .ToList();
 
-            return Ok(stockList);
+            // 🔹 PAGINATION (NEW)
+            var totalRecords = stockList.Count;
+
+            var pagedData = stockList
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return Ok(new
+            {
+                totalRecords,
+                page,
+                pageSize,
+                items = pagedData
+            });
         }
+
 
         // =========================================================
         // 🔹 STOCK SUMMARY (STATS)
