@@ -77,5 +77,36 @@ namespace GarageManagement.Server.Repositories
                 })
                 .ToListAsync();
         }
+
+        public async Task<IList<IdNameDto>> SearchBookingAppointment(string query)
+        {
+            return await _context.BookAppointments
+                .Include(b => b.Customer)
+                .Include(b => b.Vehicle)
+                .Where(b =>
+                    EF.Functions.Like(b.Customer.CustomerName, $"%{query}%") ||
+                    EF.Functions.Like(b.Customer.MobileNo, $"%{query}%") ||
+                    EF.Functions.Like(b.Vehicle.RegNo, $"%{query}%")
+                )
+                .Select(b => new IdNameDto
+                {
+                    Id = b.Id,   // 👈 booking id (separate)
+
+                    Name =
+                            b.AppointmentDate.ToString("dd-MMM-yyyy") + " " +
+                            DateTime.Parse(b.AppointmentTime).ToString("hh:mm tt") +
+                            " | " + b.Customer.CustomerName +
+                            " | " + b.Customer.MobileNo +
+                            " | " +
+                            (b.Vehicle.RegPrefix ?? "") +
+                            (b.Vehicle.RegNo ?? "")
+
+
+                })
+                .OrderByDescending(b => b.Id)
+                .Take(20)
+                .ToListAsync();
+        }
+
     }
 }

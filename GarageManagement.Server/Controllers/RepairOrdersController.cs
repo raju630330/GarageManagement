@@ -2,6 +2,7 @@
 using GarageManagement.Server.Data;
 using GarageManagement.Server.dtos;
 using GarageManagement.Server.Model;
+using GarageManagement.Server.RepoInterfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
@@ -12,10 +13,12 @@ namespace GarageManagement.Api.Controllers
     public class RepairOrdersController : BaseAuthorizationController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAutoCompleteRepository _autoCompleteRepository;
 
-        public RepairOrdersController(ApplicationDbContext context)
+        public RepairOrdersController(ApplicationDbContext context,IAutoCompleteRepository autoCompleteRepository)
         {
             _context = context;
+            _autoCompleteRepository = autoCompleteRepository;   
         }
 
         [HttpPost("createRepairOrder")]
@@ -106,11 +109,26 @@ namespace GarageManagement.Api.Controllers
                     phone = order.Phone,
                     vehicleSite = order.VehicleSite,
                     siteInchargeName = order.SiteInchargeName,
+
                     underWarranty = order.UnderWarranty,
                     expectedDateTime = order.ExpectedDateTime,
-                    allottedTechnician = order.AllottedTechnician
+                    allottedTechnician = order.AllottedTechnician,
+
+                    model = order.Model,
+                    driverName = order.DriverName,
+                    repairEstimationCost = order.RepairEstimationCost,
+
+                    driverPermanetToThisVehicle = order.DriverPermanetToThisVehicle,
+                    typeOfService = order.TypeOfService,
+                    roadTestAlongWithDriver = order.RoadTestAlongWithDriver
                 }
             });
+        }
+
+        [HttpGet("search-booking-appointment")]
+        public async Task<IActionResult> SearchBookingAppointment(string query)
+        {
+            return Ok(await _autoCompleteRepository.SearchBookingAppointment(query));
         }
 
     }

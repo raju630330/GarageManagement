@@ -4,6 +4,7 @@ import { ROLES } from '../constants/roles.constants';
 import { RepairOrderService } from '../services/repair-order.service';
 import { AlertService } from '../services/alert.service';
 import { ActivatedRoute } from '@angular/router';
+import { WorkshopProfileService } from '../services/workshop-profile.service';
 
 @Component({
   selector: 'app-repair-order',
@@ -12,6 +13,12 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./repair-order.component.css'],
 })
 export class RepairOrderComponent implements OnInit {
+
+  showBookingSearch = true;
+  repairOrderLoaded = false;
+  selectedCustomerId!: number;
+  bookings: any[] = [];
+
   ROLES = ROLES;
   openPanel: string | null = null;
   readonly panelOpenState = signal(false);
@@ -54,7 +61,7 @@ export class RepairOrderComponent implements OnInit {
 
 
 
-  constructor(private fb: FormBuilder, private repairOrderService: RepairOrderService, private alert: AlertService, private route: ActivatedRoute) { }
+  constructor(public bookingservice: WorkshopProfileService, private fb: FormBuilder, public repairOrderService: RepairOrderService, private alert: AlertService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     // --- Set current min date-time ---
@@ -68,6 +75,8 @@ export class RepairOrderComponent implements OnInit {
 
     // --- Main Repair Form ---
     this.repairForm = this.fb.group({
+      search: [''], // 🔹 ONLY for autocomplete
+      id:[0],
       registrationNumber: [
         '',
         [Validators.required, Validators.pattern(/^[A-Z]{4}[0-9]{6}$/)],
@@ -127,47 +136,21 @@ export class RepairOrderComponent implements OnInit {
 
     });
 
-    // 🔹 Read bookingId from query params
     this.route.queryParams.subscribe(params => {
+
       if (params['bookingId']) {
+        // 🔒 Booking already selected
         this.bookingAppointmentId = +params['bookingId'];
+        this.showBookingSearch = false;
 
-        this.repairOrderService
-          .getRepairOrderByBooking(this.bookingAppointmentId)
-          .subscribe(res => {
+        this.loadRepairOrder(this.bookingAppointmentId);
 
-            if (res.exists) {
-              // ✅ Store repairOrderId globally
-              this.repairOrderService.setRepairOrderId(res.repairOrderId);
-
-              // ✅ Append (patch) data to form
-              this.repairForm.patchValue({
-                registrationNumber: res.data.registrationNumber,
-                vinNumber: res.data.vinNumber,
-                kms: res.data.mkls,
-                vehicleInDateTime: res.data.date,
-                make: res.data.make,
-                mobileNumber: res.data.phone,
-                vehicleFromSite: res.data.vehicleSite,
-                siteInchargeName: res.data.siteInchargeName,
-                warranty: res.data.underWarranty ? 'Yes' : 'No',
-                expectedDateTime: res.data.expectedDateTime,
-                allottedTechnician: res.data.allottedTechnician,
-                model: res.data.model,
-                driverName: res.data.driverName,
-                repairCost: res.data.repairEstimationCost,
-                driverPermanent: res.data.driverPermanetToThisVehicle,
-                serviceType: res.data.typeOfService,
-                roadTest: res.data.roadTestAlongWithDriver,
-              });
-
-            } else {
-              // ❗ No repair order exists → new entry
-              console.log('New Repair Order');
-            }
-
-          });
+      } else {
+        // 🔍 No booking → show search
+        this.showBookingSearch = true;
+        this.repairOrderLoaded = false;
       }
+
     });
 
   }
@@ -186,10 +169,10 @@ export class RepairOrderComponent implements OnInit {
   onSubmit() {
     if (this.repairForm.valid) {
       const f = this.repairForm.value;
-
+      
 
       const orderData = {
-        id: 0,
+        id: f.id,
         registrationNumber: f.registrationNumber,
         vinNumber: f.vinNumber,
         mkls: f.kms ? f.kms.toString() : null,   // ✅ FIXED
@@ -203,10 +186,10 @@ export class RepairOrderComponent implements OnInit {
         allottedTechnician: f.allottedTechnician,
         model: f.model,
         driverName: f.driverName,
-        repairCost: f.repairEstimationCost,
-        driverPermanent: f.driverPermanetToThisVehicle,
-        serviceType: f.typeOfService,
-        roadTest: f.roadTestAlongWithDriver,
+        repairEstimationCost: f.repairCost,
+        driverPermanetToThisVehicle: f.driverPermanent === 'Yes',
+        typeOfService: f.serviceType,
+        roadTestAlongWithDriver: f.roadTest === 'Yes',
         bookingAppointmentId: this.bookingAppointmentId
       };
 
@@ -314,5 +297,64 @@ export class RepairOrderComponent implements OnInit {
   get model() {
     return this.repairForm.get('model')!;
   }
+
+
+  onBookingSelected(booking: any) {
+    if (!booking) return;
+    this.bookingAppointmentId = booking.id;
+    this.loadRepairOrder(booking.id);
+  }
+
+
+
+  private loadRepairOrder(bookingId: number) {
+
+    this.repairOrderService
+      .getRepairOrderByBooking(bookingId)
+      .subscribe(res => {
+
+        if (res.exists) {
+
+          this.repairOrderService.setRepairOrderId(res.repairOrderId);
+
+          this.repairForm.patchValue({
+            id: res.repairOrderId,
+            registrationNumber: res.data.registrationNumber,
+            vinNumber: res.data.vinNumber,
+            kms: res.data.mkls,
+            vehicleInDateTime: res.data.date,
+            make: res.data.make,
+            mobileNumber: res.data.phone,
+            vehicleFromSite: res.data.vehicleSite,
+            siteInchargeName: res.data.siteInchargeName,
+            warranty: res.data.underWarranty ? 'Yes' : 'No',
+            expectedDateTime: res.data.expectedDateTime,
+            allottedTechnician: res.data.allottedTechnician,
+            model: res.data.model,
+            driverName: res.data.driverName,
+            repairCost: res.data.repairEstimationCost,
+            driverPermanent: res.data.driverPermanetToThisVehicle,
+            serviceType: res.data.typeOfService,
+            roadTest: res.data.roadTestAlongWithDriver,
+          });
+
+        }
+
+        this.repairOrderLoaded = true;
+      });
+  }
+
+  resetAppointmentForm() {
+    this.repairForm.get('search')?.reset();
+
+    this.showBookingSearch = true;
+    this.bookingAppointmentId = 0;
+    this.repairOrderLoaded = false;
+
+    this.repairOrderService.setRepairOrderId(0);
+    this.repairForm.reset({ search: '' });
+  }
+
+
 }
 
