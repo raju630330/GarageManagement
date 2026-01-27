@@ -32,7 +32,7 @@ namespace GarageManagement.Server.dtos
         public DateTime? ExpectedDateTime { get; set; }
 
         public string? AllottedTechnician { get; set; }
-        public long BookingAppointmentId { get; set; }
+        public long? BookingAppointmentId { get; set; }
         public string? Model { get; set; }
         public string? DriverName { get; set; }
         public decimal? RepairEstimationCost { get; set; }
