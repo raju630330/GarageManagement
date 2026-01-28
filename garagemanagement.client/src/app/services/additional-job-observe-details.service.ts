@@ -21,4 +21,9 @@ export class AdditionalJobObserveDetailsService {
   createAdditionalJobObserveDetails(details: Jobobservationdetail[]): Observable<any> {
     return this.http.post(`${this.baseUrl}/AdditionalJobObserveDetail/additionaljobobservedetails`, details);
   }
+  getAdditionalJobObserveDetails(repairOrderId: number) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/AdditionalJobObserveDetail/getadditionaljobobservedetails/${repairOrderId}`
+    );
+  }
 }

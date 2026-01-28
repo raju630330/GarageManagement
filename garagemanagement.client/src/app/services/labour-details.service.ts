@@ -23,8 +23,10 @@ export class LabourDetailsService {
   outsideLabourTotal$ = this.outsideLabourTotalSubject.asObservable();
   constructor(private http: HttpClient) { }
 
-  getLabourDetails(): Observable<LabourDetail[]> {
-    return this.http.get<LabourDetail[]>(this.baseUrl);
+  getLabourDetails(repairOrderId: number): Observable<LabourDetail[]> {
+    return this.http.get<LabourDetail[]>(
+      `${this.baseUrl}/LabourDetails/GetByRepairOrder/${repairOrderId}`
+    );
   }
 
   addLabourDetails(details: LabourDetail[]): Observable<any> {

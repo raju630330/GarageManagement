@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RepairOrderService } from '../services/repair-order.service';
+import { InventoryService } from '../services/inventory.service';
+import { Subscription } from 'rxjs';
+import { AlertService } from '../services/alert.service';
 
 @Component({
   selector: 'app-inventory',
@@ -8,72 +11,139 @@ import { RepairOrderService } from '../services/repair-order.service';
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.css']
 })
-export class InventoryComponent {
+export class InventoryComponent implements OnInit, OnDestroy {
 
-  constructor(private http: HttpClient, private repairOrderService: RepairOrderService) { }
+  constructor(
+    private fb: FormBuilder,
+    private repairOrderService: RepairOrderService,
+    private inventoryService: InventoryService,
+    private alert: AlertService
+  ) { }
 
-  formSubmitted = false;
+  private sub!: Subscription;
+
+  inventoryForm!: FormGroup;
   showSuccess = false;
 
   repairOrderId: number | null = null;
+  inventoryId = 0;
+
+  accessoryMaster = [
+    'Service booklet',
+    'Jack and Handle',
+    'Tool kit',
+    'Floor mats',
+    'Spare Wheel',
+    'Wheel caps',
+    'Stereo',
+    'Amplifier',
+    'DVD Player',
+    'LED TV',
+    'Speakers Qty',
+    'Cigarette Lighter',
+    'Mud Flaps',
+    'Type condition',
+    'Battery Make',
+    'Battery No.'
+  ];
 
   ngOnInit(): void {
-    // 🔥 Get current repair order id
-    this.repairOrderService.repairOrderId$.subscribe(id => {
+    this.createForm();
+
+    this.sub = this.repairOrderService.repairOrderId$.subscribe(id => {
+      if (!id || id === this.repairOrderId) return;
+
       this.repairOrderId = id;
+      this.loadInventory(id);
     });
   }
 
-  accessories = [
-    { label: 'Service booklet', checked: false },
-    { label: 'Jack and Handle', checked: false },
-    { label: 'Tool kit', checked: false },
-    { label: 'Floor mats', checked: false },
-    { label: 'Spare Wheel', checked: false },
-    { label: 'Wheel caps', checked: false },
-    { label: 'Stereo', checked: false },
-    { label: 'Amplifier', checked: false },
-    { label: 'DVD Player', checked: false },
-    { label: 'LED TV', checked: false },
-    { label: 'Speakers Qty', checked: false },
-    { label: 'Cigarette Lighter', checked: false },
-    { label: 'Mud Flaps', checked: false },
-    { label: 'Type condition', checked: false },
-    { label: 'Battery Make', checked: false },
-    { label: 'Battery No.', checked: false }
-  ];
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+  }
 
-  accessoriesLeft = this.accessories.slice(0, 8);
-  accessoriesRight = this.accessories.slice(8, 16);
+  // 🔹 Create Reactive Form
+  createForm() {
+    this.inventoryForm = this.fb.group({
+      accessories: this.fb.array([])
+    });
 
+    this.accessoryMaster.forEach(label => {
+      this.accessories.push(
+        this.fb.group({
+          label: [label],
+          checked: [false]
+        })
+      );
+    });
+  }
+
+  // 🔹 FormArray getter
+  get accessories(): FormArray {
+    return this.inventoryForm.get('accessories') as FormArray;
+  }
+
+  // 🔹 Left / Right columns
+  get accessoriesLeft(): FormGroup[] {
+    return this.accessories.controls.slice(0, 8) as FormGroup[];
+  }
+
+  get accessoriesRight(): FormGroup[] {
+    return this.accessories.controls.slice(8, 16) as FormGroup[];
+  }
+
+  // 🔹 Load inventory
+  loadInventory(repairOrderId: number) {
+    this.inventoryService.getInventoryByRepairOrderId(repairOrderId)
+      .subscribe({
+        next: res => {
+          if (!res?.accessories) return;
+          this.inventoryId = res.id;
+          this.accessories.controls.forEach(ctrl => {
+            const saved = res.accessories.find(
+              x => x.label === ctrl.value.label
+            );
+            if (saved) {             
+              ctrl.patchValue({ checked: saved.checked });
+            }
+          });
+        },
+        error: () => {
+          console.info('Inventory not created yet');
+        }
+      });
+  }
+
+  // 🔹 Save inventory
   saveInventory() {
-    this.formSubmitted = true;
-
     if (!this.repairOrderId) {
       alert('⚠️ Please save Repair Order first');
       return;
     }
 
-    const allSelected = this.accessories.every(x => x.checked);
-    if (!allSelected) {
+    const hasChecked = this.accessories.controls.some(
+      ctrl => ctrl.get('checked')?.value === true
+    );
+
+    if (!hasChecked) {
+      alert('⚠️ Please select at least one accessory');
       return;
     }
 
-    // ✅ Append repairOrderId here
     const payload = {
+      id: this.inventoryId,
       repairOrderId: this.repairOrderId,
-      accessories: this.accessories
+      accessories: this.inventoryForm.value.accessories
     };
 
-    this.http.post("https://localhost:7086/api/Inventory/save", payload)
-      .subscribe({
-        next: () => {
-          this.showSuccess = true;
-          setTimeout(() => this.showSuccess = false, 2000);
-        },
-        error: () => {
-          alert("❌ Error saving inventory");
-        }
-      });
+    this.inventoryService.saveInventory(payload).subscribe({
+      next: (res : any) => {
+        this.showSuccess = true;
+        this.inventoryId = res.id;
+        this.alert.showSuccess("Saved Suceesfully");
+      },
+      error: () => alert('❌ Error saving inventory')
+    });
   }
+
 }

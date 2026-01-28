@@ -32,4 +32,9 @@ export class SparePartsIssueDetailsService {
   createSpareParts(parts: SparePart[]): Observable<any> {
     return this.http.post(`${this.baseUrl}/SparePartsIssueDetails/CreateSpareParts` , parts);
   }
+  getSpareParts(repairOrderId: number) {
+    return this.http.get<any>(
+      `${this.baseUrl}/SparePartsIssueDetails/${repairOrderId}`
+    );
+  }
 }

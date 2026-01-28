@@ -198,7 +198,7 @@ export class RepairOrderComponent implements OnInit {
         next: (res: any) => {
           // Get the generated RepairOrderId from backend
           const repairOrderId = res.order.id;
-
+          this.repairForm.patchValue({ id: repairOrderId });
           // Store it in the service for child components
           this.repairOrderService.setRepairOrderId(repairOrderId);
           this.alert.showSuccess("Saved Sucessfully!");
@@ -333,9 +333,9 @@ export class RepairOrderComponent implements OnInit {
             model: res.data.model,
             driverName: res.data.driverName,
             repairCost: res.data.repairEstimationCost,
-            driverPermanent: res.data.driverPermanetToThisVehicle,
+            driverPermanent: res.data.driverPermanetToThisVehicle ? 'Yes' : 'No',
             serviceType: res.data.typeOfService,
-            roadTest: res.data.roadTestAlongWithDriver,
+            roadTest: res.data.roadTestAlongWithDriver ? 'Yes' : 'No',
           });
 
         }

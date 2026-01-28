@@ -244,11 +244,6 @@ namespace GarageManagement.Server.Data
             // JobCard -> ToBeFilledBySupervisors
 
 
-                modelBuilder.Entity<InventoryAccessory>()
-            .HasOne(x => x.RepairOrder)
-            .WithMany(x => x.InventoryAccessories)
-            .HasForeignKey(x => x.RepairOrderId);
-
             modelBuilder.Entity<ToBeFilledBySupervisor>()
                 .HasOne(x => x.RepairOrder)
                 .WithMany(x => x.ToBeFilledBySupervisors)

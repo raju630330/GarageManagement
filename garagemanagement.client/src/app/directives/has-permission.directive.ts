@@ -1,22 +1,15 @@
-import {
-  Directive,
-  Input,
-  TemplateRef,
-  ViewContainerRef,
-  OnInit
-} from '@angular/core';
+import { Directive, Input, TemplateRef, ViewContainerRef, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { RolePermissionService, RolePermissionDto } from '../services/role-permission.service';
-import { map } from 'rxjs/operators';
 
 @Directive({
   selector: '[appHasPermission]',
-  standalone: false
+  standalone:false
 })
 export class HasPermissionDirective implements OnInit {
 
-  @Input('appHasPermission') permission!: string; // V / A / E / D
-  @Input() module!: string;
+  @Input('appHasPermission') permission!: string; // 'V' | 'A' | 'E' | 'D'
+  @Input('appHasPermissionModule') module!: string;
 
   private roleId = 0;
 
@@ -35,23 +28,27 @@ export class HasPermissionDirective implements OnInit {
       return;
     }
 
-    // fetch all permissions for this role
-    this.rbac.getRolePermissions(this.roleId)
-      .pipe(
-        map((permissions: RolePermissionDto[]) =>
-          permissions.some(p =>
-            p.moduleName === this.module && p.permissionId?.toString() === this.permission
-          )
-        )
-      )
-      .subscribe({
-        next: (allowed : any) => {
-          this.view.clear();
-          if (allowed) {
-            this.view.createEmbeddedView(this.template);
-          }
-        },
-        error: () => this.view.clear()
-      });
+    // Fetch permissions once per user (or get from service cache)
+    this.rbac.getRolePermissions(this.roleId).subscribe((permissions) => {
+
+      const allowed = permissions.some(p =>
+        p.moduleName === this.module &&
+        this.mapPermissionIdToCode(p.permissionId) === this.permission
+      );
+
+      this.view.clear();
+      if (allowed) this.view.createEmbeddedView(this.template);
+    });
+  }
+
+  /** Map numeric permissionId to 'V', 'A', 'E', 'D' */
+  private mapPermissionIdToCode(permissionId?: number): string {
+    switch (permissionId) {
+      case 1: return 'V';
+      case 2: return 'A';
+      case 3: return 'E';
+      case 4: return 'D';
+      default: return '';
+    }
   }
 }

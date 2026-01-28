@@ -1,54 +1,54 @@
-<div class="container mt-5 position-relative">
+<form [formGroup]="inventoryForm" (ngSubmit)="saveInventory()">
 
-  <div *ngIf="showSuccess" class="success-overlay d-flex justify-content-center align-items-center">
-    <div class="alert alert-success text-center p-4 fs-5 shadow rounded">
-      ✅ Inventory Saved Successfully!
-    </div>
-  </div>
   <div class="table-responsive">
-    <table class="table table-bordered text-center align-middle">
-      <thead>
-        <tr>
-          <th colspan="2">INVENTORY OF ACCESSORIES</th>
-        </tr>
-      </thead>
+    <table class="table table-bordered align-middle text-center inventory-table">
       <tbody>
-        <tr *ngFor="let i of accessoriesLeft; let idx = index">
+        <tr *ngFor="let i of [0,1,2,3,4,5,6,7]">
+
+          <!-- LEFT ITEM -->
           <td class="text-start">
-            <div class="form-check d-flex gap-5" *ngIf="accessoriesLeft[idx]">
+            <div *ngIf="accessoriesLeft[i]"
+                 [formGroup]="accessoriesLeft[i]"
+                 class="form-check">
+
               <input type="checkbox"
-                     [(ngModel)]="accessoriesLeft[idx].checked"
-                     class="form-check-input" />
-              <label class="form-check-label">
-                {{ accessoriesLeft[idx].label }}
+                     class="form-check-input"
+                     formControlName="checked"
+                     id="left{{i}}">
+
+              <label class="form-check-label ms-2" for="left{{i}}">
+                {{ accessoriesLeft[i].value.label }}
               </label>
-            </div>
-            <div *ngIf="formSubmitted && !accessoriesLeft[idx].checked" class="text-danger small ms-4">
-              * This item is required
             </div>
           </td>
 
+          <!-- RIGHT ITEM -->
           <td class="text-start">
-            <div class="form-check d-flex gap-5" *ngIf="accessoriesRight[idx]">
+            <div *ngIf="accessoriesRight[i]"
+                 [formGroup]="accessoriesRight[i]"
+                 class="form-check">
+
               <input type="checkbox"
-                     [(ngModel)]="accessoriesRight[idx].checked"
-                     class="form-check-input" />
-              <label class="form-check-label">
-                {{ accessoriesRight[idx].label }}
+                     class="form-check-input"
+                     formControlName="checked"
+                     id="right{{i}}">
+
+              <label class="form-check-label ms-2" for="right{{i}}">
+                {{ accessoriesRight[i].value.label }}
               </label>
             </div>
-            <div *ngIf="formSubmitted && !accessoriesRight[idx].checked" class="text-danger small ms-4">
-              * This item is required
-            </div>
           </td>
+
         </tr>
       </tbody>
     </table>
   </div>
-  
-  <div class="text-center mt-3">
-    <button class="btn btn-primary px-4" (click)="saveInventory()">Submit</button>
+
+  <!-- SAVE BUTTON CENTER -->
+  <div class="text-center mt-4">
+    <button class="btn btn-primary px-5" type="submit">
+      Save
+    </button>
   </div>
-</div>
 
-
+</form>

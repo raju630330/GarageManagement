@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LabourDetailsService } from '../services/labour-details.service';
 import { ROLES } from '../constants/roles.constants';
 import { AlertService } from '../services/alert.service';
+import { RepairOrderService } from '../services/repair-order.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-labour-details',
@@ -10,31 +12,53 @@ import { AlertService } from '../services/alert.service';
   templateUrl: './labour-details.component.html',
   styleUrls: ['./labour-details.component.css']
 })
-export class LabourDetailsComponent implements OnInit {
+export class LabourDetailsComponent implements OnInit, OnDestroy {
 
   ROLES = ROLES;
   labourForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private labourDetailsService: LabourDetailsService, private alert: AlertService) { }
+  // 🔥 ADDED
+  repairOrderId: number | null = null;
+  private sub!: Subscription;
+
+  constructor(
+    private fb: FormBuilder,
+    private labourDetailsService: LabourDetailsService,
+    private repairOrderService: RepairOrderService, // 🔥 ADDED
+    private alert: AlertService
+  ) { }
 
   ngOnInit(): void {
     this.labourForm = this.fb.group({
       labourDetails: this.fb.array([this.createRow()])
     });
+
     this.labourDetails.valueChanges.subscribe(() => {
       this.updateTotals();
     });
+
+    // 🔥 ADDED – SAME FLOW AS SPARE PARTS
+    this.sub = this.repairOrderService.repairOrderId$.subscribe(id => {
+      if (!id || id === this.repairOrderId) return;
+
+      this.repairOrderId = id;
+      this.loadLabourDetails(id);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
   }
 
   get labourDetails(): FormArray {
     return this.labourForm.get('labourDetails') as FormArray;
   }
 
-  createRow(): FormGroup {
+  createRow(data?: any): FormGroup {
     return this.fb.group({
-      description: ['', [Validators.required, Validators.maxLength(50)]],
-      labourCharges: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
-      outsideLabour: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      description: [data?.description || '', [Validators.required, Validators.maxLength(50)]],
+      labourCharges: [data?.labourCharges || '', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      outsideLabour: [data?.outsideLabour || '', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
     });
   }
 
@@ -53,22 +77,46 @@ export class LabourDetailsComponent implements OnInit {
     });
   }
 
+  loadLabourDetails(repairOrderId: number) {
+    this.labourDetailsService.getLabourDetails(repairOrderId).subscribe({
+      next: (res: any[]) => {
+        this.labourDetails.clear();
+
+        if (res && res.length > 0) {
+          res.forEach(row => this.labourDetails.push(this.createRow(row)));
+        } else {
+          this.addRow();
+        }
+
+        this.updateTotals();
+      },
+      error: () => {
+        this.labourDetails.clear();
+        this.addRow();
+      }
+    });
+  }
+
   submit(): void {
+
+    // 🔥 ADDED
+    if (!this.repairOrderId) {
+      this.alert.showError('⚠️ Please select Repair Order first!');
+      return;
+    }
+
     if (this.labourForm.valid) {
 
       const labourArray = this.labourForm.value.labourDetails.map((row: any) => ({
+        repairOrderId: this.repairOrderId, // 🔥 ADDED
         description: row.description,
         labourCharges: parseFloat(row.labourCharges),
-        outsideLabour: parseFloat(row.outsideLabour),
-        amount: parseFloat(row.labourCharges) + parseFloat(row.outsideLabour)
+        outsideLabour: parseFloat(row.outsideLabour)
       }));
 
       this.labourDetailsService.addLabourDetails(labourArray).subscribe({
         next: (res: any) => {
-          this.alert.showInfo(res.message || 'Labour details submitted successfully!', () => {
-            this.labourDetails.clear();
-            this.addRow();
-          });
+          this.alert.showInfo(res.message || 'Labour details submitted successfully!');
         },
         error: (err: any) => {
           this.alert.showError(err?.error || 'Something went wrong');
@@ -89,6 +137,7 @@ export class LabourDetailsComponent implements OnInit {
       return sum + labour + outside;
     }, 0);
   }
+
   updateTotals() {
     let labourTotal = 0;
     let outsideTotal = 0;
@@ -98,7 +147,6 @@ export class LabourDetailsComponent implements OnInit {
       outsideTotal += parseFloat(ctrl.get('outsideLabour')?.value || '0');
     });
 
-    // Round to 2 decimals
     labourTotal = parseFloat(labourTotal.toFixed(2));
     outsideTotal = parseFloat(outsideTotal.toFixed(2));
 
@@ -110,33 +158,19 @@ export class LabourDetailsComponent implements OnInit {
     const control = this.labourDetails.at(index).get(field);
     let value = control?.value ?? "";
 
-    // Remove invalid characters – allow only digits and one dot
     value = value.replace(/[^0-9.]/g, "");
-
-    // Ensure only one decimal point
     const parts = value.split('.');
-    if (parts.length > 2) {
-      parts.splice(2);
-    }
+    if (parts.length > 2) parts.splice(2);
+    if (parts[1]) parts[1] = parts[1].substring(0, 2);
 
-    // Limit decimals to 2 digits
-    if (parts[1]) {
-      parts[1] = parts[1].substring(0, 2);
-    }
-
-    value = parts.join('.');
-
-    control?.setValue(value, { emitEvent: false });
+    control?.setValue(parts.join('.'), { emitEvent: false });
   }
 
   forceNumbersOnly(index: number, field: string) {
     const control = this.labourDetails.at(index).get(field);
     let value = control?.value ?? "";
 
-    // Remove everything except digits
     value = value.replace(/[^0-9]/g, "");
-
     control?.setValue(value, { emitEvent: false });
   }
-
 }

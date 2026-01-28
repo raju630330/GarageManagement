@@ -26,4 +26,8 @@ export class ToBeFilledBySupervisorService {
     return this.http.post(`${this.baseUrl}/ToBeFilledBySupervisor/savedetails`, data);
   }
 
+  getSupervisorByRepairOrderId(repairOrderId: number): Observable<TobeFilledBySupervisor[]> {
+    return this.http.get<TobeFilledBySupervisor[]>(`${this.baseUrl}/ToBeFilledBySupervisor/get/${repairOrderId}`);
+  }
+
 }

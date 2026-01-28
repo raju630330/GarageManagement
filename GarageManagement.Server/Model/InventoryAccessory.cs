@@ -10,7 +10,5 @@ namespace GarageManagement.Server.Model
 
         public long InventoryFormId { get; set; }
         public InventoryForm InventoryForm { get; set; }
-        public long? RepairOrderId { get; set; }
-        public RepairOrder RepairOrder { get; set; }
     }
 }

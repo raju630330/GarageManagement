@@ -4,6 +4,7 @@ using GarageManagement.Server.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GarageManagement.Server.Controllers
 {
@@ -17,16 +18,30 @@ namespace GarageManagement.Server.Controllers
         }
 
         [HttpPost("additionaljobobservedetails")]
-        public async Task<ActionResult> CreateAdditionalJobObserveDetails([FromBody] List<AdditionalJobObserveDetailDto> details)
+        public async Task<ActionResult> CreateAdditionalJobObserveDetails(
+            [FromBody] List<AdditionalJobObserveDetailDto> details)
         {
             if (details == null || !details.Any())
             {
                 return BadRequest("No Additional Job Observe Details Found");
             }
 
-            // Map DTO to Entity
+            var repairOrderId = details.First().RepairOrderId;
+
+            // 🔥 DELETE existing records for this RepairOrder
+            var existingRecords = await _context.AdditionalJobObserveDetails
+                .Where(x => x.RepairOrderId == repairOrderId)
+                .ToListAsync();
+
+            if (existingRecords.Any())
+            {
+                _context.AdditionalJobObserveDetails.RemoveRange(existingRecords);
+            }
+
+            // 🔥 INSERT new records
             var entities = details.Select(d => new AdditionalJobObserveDetail
             {
+                RepairOrderId = d.RepairOrderId,
                 TechnicianVoice = d.TechnicianVoice,
                 SupervisorInstructions = d.SupervisorInstructions,
                 ActionTaken = d.ActionTaken,
@@ -40,5 +55,32 @@ namespace GarageManagement.Server.Controllers
             return Ok(new { message = "Additional Job Observe Details Saved Successfully" });
         }
 
+
+    [HttpGet("getadditionaljobobservedetails/{repairOrderId}")]
+    public async Task<ActionResult> GetAdditionalJobObserveDetails(int repairOrderId)
+    {
+        var details = await _context.AdditionalJobObserveDetails
+            .Where(x => x.RepairOrderId == repairOrderId)
+            .OrderBy(x => x.Id)
+            .Select(x => new AdditionalJobObserveDetailDto
+            {
+                RepairOrderId = x.RepairOrderId,
+                TechnicianVoice = x.TechnicianVoice,
+                SupervisorInstructions = x.SupervisorInstructions,
+                ActionTaken = x.ActionTaken,
+                StartTime = x.StartTime,
+                EndTime = x.EndTime
+            })
+            .ToListAsync();
+
+        if (!details.Any())
+        {
+            return Ok(new List<AdditionalJobObserveDetailDto>()); // return empty array
+        }
+
+        return Ok(details);
     }
+
+
+}
 }

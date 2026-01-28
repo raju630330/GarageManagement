@@ -41,7 +41,7 @@ namespace GarageManagement.Server.Model
         public bool? DriverPermanetToThisVehicle { get; set; }
         public string? TypeOfService { get; set; }
         public bool? RoadTestAlongWithDriver { get; set; }
-        public ICollection<InventoryAccessory> InventoryAccessories { get; set; } = new HashSet<InventoryAccessory>();  
+        public InventoryForm InventoryForm { get; set; }
         public ICollection<ToBeFilledBySupervisor> ToBeFilledBySupervisors { get; set; }  = new HashSet<ToBeFilledBySupervisor>();  
         public ICollection<AdditionalJobObserveDetail> AdditionalJobObserveDetails { get; set; } = new HashSet<AdditionalJobObserveDetail>();
         public ICollection<SparePartsIssueDetail> SparePartsIssueDetails { get; set; } = new HashSet<SparePartsIssueDetail>();  
