@@ -93,14 +93,14 @@ namespace GarageManagement.Server.Repositories
                     Id = b.Id,   // 👈 booking id (separate)
 
                     Name =
-                            b.AppointmentDate.ToString("dd-MMM-yyyy") + " " +
-                            DateTime.Parse(b.AppointmentTime).ToString("hh:mm tt") +
-                            " | " + b.Customer.CustomerName +
+                            
+                            b.Customer.CustomerName +
                             " | " + b.Customer.MobileNo +
                             " | " +
                             (b.Vehicle.RegPrefix ?? "") +
-                            (b.Vehicle.RegNo ?? "")
-
+                            (b.Vehicle.RegNo ?? "")+ " | " +
+                            b.AppointmentDate.ToString("dd-MMM-yyyy") + " " +
+                            DateTime.Parse(b.AppointmentTime).ToString("hh:mm tt") 
 
                 })
                 .OrderByDescending(b => b.Id)
