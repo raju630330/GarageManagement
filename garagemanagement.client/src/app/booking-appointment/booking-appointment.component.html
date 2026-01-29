@@ -51,7 +51,7 @@
             </div>
           </div>
           <label>Customer Type</label>
-          <div class="form-group d-flex mb-3">
+          <div class="form-group d-flex mb-3"  [ngClass]="{ 'opacity-50 pe-none': isEditMode }">
             <div class="form-check me-3">
               <input class="form-check-input" type="radio" formControlName="customerType" value="Individual">
               <label class="form-check-label">Individual</label>

@@ -26,58 +26,124 @@ namespace GarageManagement.Server.Controllers
         // POST: api/BookingAppointment/saveBookAppointment
         // ================================
         [HttpPost("saveBookAppointment")]
+
+
         public async Task<IActionResult> SaveBookAppointment([FromBody] BookingAppointmentDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Validate CustomerId exists
-            var customerExists = await _context.Customers.AnyAsync(c => c.Id == dto.CustomerId);
-            if (!customerExists)
-                return BadRequest(new { message = "Customer not found" });
+            // Resolve Customer
+            Customer customer = dto.CustomerId > 0
+                ? await _context.Customers.FindAsync(dto.CustomerId)
+                : new Customer
+                {
+                    CustomerName = dto.CustomerName,
+                    MobileNo = dto.MobileNo,
+                    Email = dto.Email,
+                    CustomerType = dto.CustomerType
+                };
 
-            // Validate VehicleId if provided
-            if (dto.VehicleId != null)
-            {
-                var vehicleExists = await _context.Vehicles.AnyAsync(v => v.Id == dto.VehicleId);
-                if (!vehicleExists)
-                    return BadRequest(new { message = "Vehicle not found" });
-            }
+            if (customer == null)
+                return BadRequest("Customer not found");
 
-            var result = await _context.BookAppointments.Where(a => a.Id == dto.Id).FirstOrDefaultAsync();
+            // Resolve Vehicle
+            Vehicle? vehicle = dto.VehicleId > 0
+                ? await _context.Vehicles.FindAsync(dto.VehicleId)
+                : string.IsNullOrWhiteSpace(dto.RegNo)
+                    ? null
+                    : new Vehicle
+                    {
+                        RegPrefix = dto.RegPrefix,
+                        RegNo = dto.RegNo,
+                        VehicleType = dto.VehicleType,
+                        Customer = customer
+                    };
 
-            if (result == null)
-            {
-                result = new BookAppointment();
-            }
+            if (dto.VehicleId > 0 && vehicle == null)
+                return BadRequest("Vehicle not found");
 
-            result.AppointmentDate = dto.AppointmentDate;
-            result.AppointmentTime = dto.AppointmentTime;
-                result.Bay = dto.Bay;
-            result.CustomerId = dto.CustomerId;
-            result.CustomerType = dto.CustomerType;
-                result.Service = dto.Service;
-            result.ServiceAdvisor = dto.ServiceAdvisor;
-            result.UserId = dto.UserId;
-            result.VehicleId = dto.VehicleId;
-            result.WorkshopId = dto.WorkshopId;
+            // Resolve Booking
+            var booking = await _context.BookAppointments
+                .FirstOrDefaultAsync(x => x.Id == dto.Id) ?? new BookAppointment();
+
+            booking.AppointmentDate = dto.AppointmentDate;
+            booking.AppointmentTime = dto.AppointmentTime;
+            booking.Bay = dto.Bay;
+            booking.Customer = customer;
+            booking.Vehicle = vehicle;
+            booking.CustomerType = dto.CustomerType;
+            booking.Service = dto.Service;
+            booking.ServiceAdvisor = dto.ServiceAdvisor;
+            booking.UserId = dto.UserId;
+            booking.WorkshopId = dto.WorkshopId;
 
             if (dto.Id == 0)
-            {
-                await _context.BookAppointments.AddAsync(result);
-            }
-            else
-            {
-                _context.BookAppointments.Update(result);
-            }
+                _context.BookAppointments.Add(booking);
 
-
-            // Map DTO to entity
-            
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Booking Appointment saved successfully", result.Id });
+            return Ok(new
+            {
+                message = "Saved successfully",
+                booking.Id,
+                CustomerId = customer.Id,
+                VehicleId = vehicle?.Id
+            });
         }
+
+        /* public async Task<IActionResult> SaveBookAppointment([FromBody] BookingAppointmentDto dto)
+         {
+             if (!ModelState.IsValid)
+                 return BadRequest(ModelState);
+
+             // Validate CustomerId exists
+             var customerExists = await _context.Customers.AnyAsync(c => c.Id == dto.CustomerId);
+             if (!customerExists)
+                 return BadRequest(new { message = "Customer not found" });
+
+             // Validate VehicleId if provided
+             if (dto.VehicleId != null)
+             {
+                 var vehicleExists = await _context.Vehicles.AnyAsync(v => v.Id == dto.VehicleId);
+                 if (!vehicleExists)
+                     return BadRequest(new { message = "Vehicle not found" });
+             }
+
+             var result = await _context.BookAppointments.Where(a => a.Id == dto.Id).FirstOrDefaultAsync();
+
+             if (result == null)
+             {
+                 result = new BookAppointment();
+             }
+
+             result.AppointmentDate = dto.AppointmentDate;
+             result.AppointmentTime = dto.AppointmentTime;
+                 result.Bay = dto.Bay;
+             result.CustomerId = dto.CustomerId;
+             result.CustomerType = dto.CustomerType;
+                 result.Service = dto.Service;
+             result.ServiceAdvisor = dto.ServiceAdvisor;
+             result.UserId = dto.UserId;
+             result.VehicleId = dto.VehicleId;
+             result.WorkshopId = dto.WorkshopId;
+
+             if (dto.Id == 0)
+             {
+                 await _context.BookAppointments.AddAsync(result);
+             }
+             else
+             {
+                 _context.BookAppointments.Update(result);
+             }
+
+
+             // Map DTO to entity
+
+             await _context.SaveChangesAsync();
+
+             return Ok(new { message = "Booking Appointment saved successfully", result.Id });
+         }*/
 
         // ================================
         // GET: api/BookingAppointment/getAllAppointments

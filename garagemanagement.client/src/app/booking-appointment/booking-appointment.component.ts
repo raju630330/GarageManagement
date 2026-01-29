@@ -129,24 +129,42 @@ export class BookingAppointmentComponent {
   // =============================
   onbookSubmit() {
     console.log(this.auth.getRoleId());
-    if (this.appointmentForm.invalid || !this.selectedCustomerId) {
+    /*if (this.appointmentForm.invalid || !this.selectedCustomerId) {
+      this.appointmentForm.markAllAsTouched();
+      this.alert.showError('Please complete all required fields');
+      return;
+    }*/
+    if (this.appointmentForm.invalid) {
       this.appointmentForm.markAllAsTouched();
       this.alert.showError('Please complete all required fields');
       return;
     }
-
     const payload = {
-      Id: this.bookingId,
-      CustomerId: this.selectedCustomerId,
-      VehicleId: this.selectedVehicleId,
+      Id: this.bookingId ?? 0,
+
       AppointmentDate: this.appointmentForm.value.date,
-      AppointmentTime: this.appointmentForm.value.time,
-      CustomerType: this.appointmentForm.value.customerType,
-      Service: this.appointmentForm.value.service,
-      ServiceAdvisor: this.appointmentForm.value.serviceAdvisor,
-      Bay: this.appointmentForm.value.bay,
-      UserId: this.auth.getUserId(),          // as discussed
-      WorkshopId: 1       // fixed / from login later
+      AppointmentTime: this.appointmentForm.value.time,   // "HH:mm"
+
+      Bay: this.appointmentForm.value.bay ?? '',
+
+      CustomerId: this.selectedCustomerId ?? 0,
+      CustomerType: this.appointmentForm.value.customerType ?? '',
+
+      Service: this.appointmentForm.value.service ?? '',
+      ServiceAdvisor: this.appointmentForm.value.serviceAdvisor ?? '',
+
+      UserId: this.auth.getUserId(),
+      WorkshopId: 1, // TODO: get from login/session later
+
+      VehicleId: this.selectedVehicleId ?? null,
+
+      RegPrefix: this.appointmentForm.value.regPrefix ?? '',
+      RegNo: this.appointmentForm.value.regNo ?? '',
+      VehicleType: this.appointmentForm.value.vehicleType ?? '',
+
+      CustomerName: this.appointmentForm.value.customerName ?? '',
+      MobileNo: this.appointmentForm.value.mobileNo ?? '',
+      Email: this.appointmentForm.value.emailID ?? ''
     };
 
     this.service.saveBookAppointment(payload).subscribe({
@@ -174,7 +192,7 @@ export class BookingAppointmentComponent {
       this.selectedCustomerId = res.customerId,
         this.selectedVehicleId = res.vehicleId,
         this.appointmentForm.patchValue({
-        search: `${res.customerName} | +91 ${res.mobileNo} | ${res.regPrefix}${res.regNo}`,
+          search: res.customerType == "Corporate" ? "" : `${res.customerName} | +91 ${res.mobileNo} | ${res.regPrefix}${res.regNo}`,
         bookingId: res.Id,
         date: res.appointmentDate ? res.appointmentDate.split('T')[0] : null,    
         customerType: res.customerType,
