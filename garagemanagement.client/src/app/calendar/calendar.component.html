@@ -130,7 +130,7 @@
 <!-- Popup for Day Bookings -->
 <div *ngIf="popupVisible"
      class="card shadow-lg position-fixed p-3"
-     style="width: 500px; max-height: auto; overflow-y: auto; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1050;">
+     style="width: 650px; max-height: auto; overflow-y: auto; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1050;">
 
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-2">
@@ -153,8 +153,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let appt of selectedDayAppointments">
-            <td class="small text-truncate" [title]="appt.customerName">{{ appt.customerName }}</td>
-            <td class="small text-truncate" [title]="appt.customerName">{{ appt.customerName }}</td>
+            <td class="small text-truncate" [title]="appt.customerName">{{ appt.customerType }}</td>
+            <td class="small text-truncate" [title]="appt.customerName">
+              {{ (appt.appointmentDate.split('T')[0] + 'T' + appt.appointmentTime) | date:'dd-MMM-yyyy hh:mm a' }}
+            </td>
             <td class="small text-truncate" [title]="appt.customerName">{{ appt.customerName }}</td>
             <td class="small text-truncate" [title]="appt.vehicleRegNo">{{ appt.vehicleRegNo }}</td>
             <td class="small text-truncate" [title]="appt.service">{{ appt.service }}</td>
