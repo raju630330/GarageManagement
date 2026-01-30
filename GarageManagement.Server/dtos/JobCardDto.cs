@@ -1,7 +1,10 @@
-﻿namespace GarageManagement.Server.dtos
+﻿using GarageManagement.Server.Model;
+
+namespace GarageManagement.Server.dtos
 {
     public class JobCardDto:BaseResultDto
-    {    
+    {
+        public long? RepairOrderId { get; set; }
         public VehicleDataDto VehicleData { get; set; } = new VehicleDataDto();
         public List<ConcernDto> Concerns { get; set; } = new List<ConcernDto>();
         public CustomerInfoDto CustomerInfo { get; set; } = new CustomerInfoDto();

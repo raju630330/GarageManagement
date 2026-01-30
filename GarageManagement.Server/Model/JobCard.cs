@@ -5,7 +5,8 @@ namespace GarageManagement.Server.Model
     public class JobCard
     {
         public long Id { get; set; }
-
+        public long? RepairOrderId { get; set; }
+        public RepairOrder? RepairOrder { get; set; }
         // Vehicle
         public string RegistrationNo { get; set; } = string.Empty;
         public string? JobCardNo { get; set; } = string.Empty;

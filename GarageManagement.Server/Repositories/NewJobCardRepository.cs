@@ -50,7 +50,7 @@ namespace GarageManagement.Server.Repositories
                    .Include(x => x.Concerns)
                    .Include(x => x.AdvancePayment)
                    .FirstOrDefaultAsync(x => x.Id == dto.Id);
-
+            job.RepairOrderId = dto.RepairOrderId;  
             job.RegistrationNo = dto.VehicleData.RegistrationNo;
             job.OdometerIn = dto.VehicleData.OdometerIn;
             job.AvgKmsPerDay = dto.VehicleData.AvgKmsPerDay;

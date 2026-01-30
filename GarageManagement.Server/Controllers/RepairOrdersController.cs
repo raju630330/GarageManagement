@@ -124,11 +124,56 @@ namespace GarageManagement.Api.Controllers
                 }
             });
         }
+        [HttpGet("by-repairOrderId/{repairOrderId}")]
+        public async Task<IActionResult?> GetRepairOrderForJobCard(long repairOrderId)
+        {
+            var ro = await _context.RepairOrders
+                .Include(r => r.BookAppointment)
+                    .ThenInclude(b => b.Customer)
+                .Include(r => r.BookAppointment)
+                    .ThenInclude(b => b.Vehicle)
+                .FirstOrDefaultAsync(r => r.Id == repairOrderId);
+
+            if (ro == null)
+                return null;
+
+            return Ok(new
+            {
+                RepairOrderId = ro.Id,
+
+                VehicleData = new
+                {
+                    RegistrationNo =
+                        (ro.BookAppointment.Vehicle.RegPrefix ?? "") +
+                        (ro.BookAppointment.Vehicle.RegNo ?? ""),
+                    Vin = ro.VinNumber ?? "",
+                    FuelType = ro.BookAppointment.Vehicle.VehicleType ?? "",
+                    ServiceType = ro.TypeOfService ?? "",
+                    ServiceAdvisor = ro.BookAppointment.ServiceAdvisor ?? "",
+                    Technician = ro.AllottedTechnician ?? ""
+                },
+
+                CustomerInfo = new
+                {
+                    Corporate = ro.BookAppointment.Customer.CustomerType ?? "",
+                    CustomerName = ro.BookAppointment.Customer.CustomerName ?? "",
+                    Mobile = ro.BookAppointment.Customer.MobileNo ?? "",
+                    Email = ro.BookAppointment.Customer.Email ?? "",
+                    DeliveryDate = ro.ExpectedDateTime
+                }
+            });
+        }
+
 
         [HttpGet("search-booking-appointment")]
         public async Task<IActionResult> SearchBookingAppointment(string query)
         {
             return Ok(await _autoCompleteRepository.SearchBookingAppointment(query));
+        }
+        [HttpGet("search-repair-order")]
+        public async Task<IActionResult> SearchRepairOrder(string query)
+        {
+            return Ok(await _autoCompleteRepository.SearchRepairOrder(query));
         }
 
     }

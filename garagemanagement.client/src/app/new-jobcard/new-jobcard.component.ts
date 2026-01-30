@@ -13,6 +13,7 @@ import { JobCardService } from '../services/job-card.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GlobalPopupComponent } from '../global-popup/global-popup.component';
 import { AlertService } from '../services/alert.service';
+import { RepairOrderService } from '../services/repair-order.service';
 
 @Component({
   selector: 'app-new-jobcard',
@@ -25,7 +26,9 @@ export class NewJobCardComponent implements OnInit {
   jobCardForm!: FormGroup;
   newConcern!: FormControl;
   today: string = '';
-  constructor(private fb: FormBuilder, private router: Router, public jobcardService: JobCardService, private dialog: MatDialog, private alert: AlertService) { }
+  showAccordion = false;
+  repairOrderId = 0;
+  constructor(private fb: FormBuilder, private router: Router, public jobcardService: JobCardService, private dialog: MatDialog, private alert: AlertService, public repairorderservice: RepairOrderService) { }
 
   ngOnInit(): void {
     const now = new Date();
@@ -34,7 +37,8 @@ export class NewJobCardComponent implements OnInit {
     this.newConcern = this.fb.control('', Validators.required);
 
     this.jobCardForm = this.fb.group({
-      id:[0],
+      id: [0],
+      repairOrderId : [0],
       vehicleData: this.fb.group({
         registrationNo: [
           '',
@@ -259,11 +263,45 @@ export class NewJobCardComponent implements OnInit {
     });
   }
 
+
+  fillJobCardFromRepairOrder(item: any) {
+
+    this.jobCardForm.patchValue({
+      id: 0 
+    });
+    this.repairorderservice.getRepairOrderByRepairId(item.id).subscribe(res => {
+      this.repairOrderId = res.repairOrderId;
+      this.showAccordion = true;
+      this.jobCardForm.patchValue({
+        id: 0,
+        repairOrderId: this.repairOrderId
+      });
+      // Vehicle Data
+      this.jobCardForm.get('vehicleData')?.patchValue({
+        registrationNo: res.vehicleData.registrationNo,
+        vin: res.vehicleData.vin,
+        serviceType: res.vehicleData.serviceType,
+        serviceAdvisor: res.vehicleData.serviceAdvisor,
+        technician: res.vehicleData.technician
+      });
+
+      // Customer Info
+      this.jobCardForm.get('customerInfo')?.patchValue({
+        customerName: res.customerInfo.customerName,
+        mobile: res.customerInfo.mobile,
+        email: res.customerInfo.email,
+        deliveryDate: res.customerInfo.deliveryDate
+      });
+    });
+
+  }
+
   // To fetch data after select option in autocomplete
   onSelectedRegistration(item: any) {
     if (!item || !item.id) { // validate
       return;
     }
+    this.showAccordion = true;
     this.jobcardService.getJobCardDetails(item.id).subscribe(res => {
       this.jobCardForm.get('id')!.patchValue(res.id);
       this.expandAll = true;

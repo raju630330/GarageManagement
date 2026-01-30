@@ -43,5 +43,14 @@ export class RepairOrderService {
       `${this.baseUrl}/RepairOrders/search-booking-appointment?query=${query}`
     );
   }
-
+  searchRepairOrder(query: string) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/RepairOrders/search-repair-order?query=${query}`
+    );
+  }
+  getRepairOrderByRepairId(repairOrderId: number) {
+    return this.http.get<any>(
+      `${this.baseUrl}/RepairOrders/by-repairOrderId/${repairOrderId}`
+    );
+  }
 }

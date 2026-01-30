@@ -6,27 +6,17 @@
          style="padding: 16px; font-size: 18px; font-weight: 600;">
       📝 New Job Card
     </div>
-  </div>
-
-  <mat-accordion multi>
-
-    <!-- SECTION 1: Search Options & Vehicle Info -->
-    <mat-expansion-panel [expanded]="expandAll">
-      <mat-expansion-panel-header style="background-color: #3f51b5; color: white;" class="mt-4">
-        <mat-panel-title style="color: white;">Search Options & Vehicle Info</mat-panel-title>
-      </mat-expansion-panel-header>
-
-      <br />
+    <div class="card-body">
       <div class="mt-2">
 
         <app-autocomplete placeholder="Search by Reg No / Customer No / Mobile / Email / VIN / Vehicle / Corporate"
-                          [searchFn]="jobcardService.searchRegistration.bind(jobcardService)"
-                          (selected)="onSelectedRegistration($event)" (clearForm)="resetEntireForm()">
+                          [searchFn]="repairorderservice.searchRepairOrder.bind(repairorderservice)"
+                          (selected)="fillJobCardFromRepairOrder($event)" (clearForm)="resetEntireForm()">
         </app-autocomplete>
         <input type="hidden" formControlName="id" />
         <br />
         <br />
-        <div style="display: flex; gap: 10px; overflow-x: auto; padding: 5px;">
+        <div style="display: flex; gap: 10px; overflow-x: auto; padding: 5px;" *ngIf="showAccordion">
           <div class="simple-icon-box" (click)="openPopup('Service Package')">Service Package</div>
           <div class="simple-icon-box" (click)="openPopup('Service History')">Service History</div>
           <div class="simple-icon-box" (click)="openPopup('Feedback')">Feedback</div>
@@ -35,10 +25,10 @@
           <div class="simple-icon-box" (click)="openPopup('Battery/Tyre')">Battery/Tyre</div>
         </div>
       </div>
-      
-      <br />
-      <br />
-    </mat-expansion-panel>
+    </div>
+  </div>
+
+  <mat-accordion multi *ngIf="showAccordion">
 
     <!-- SECTION 2: Vehicle Data -->
     <mat-expansion-panel formGroupName="vehicleData" [expanded]="expandAll">
@@ -148,11 +138,14 @@
           <label>Service Type</label>
           <select class="form-select" formControlName="serviceType">
             <option value="" disabled selected>Select Service</option>
-            <option>Periodic Service</option>
-            <option>Running Repairs</option>
-            <option>Accidental Repair</option>
-            <option>Major Service</option>
-            <option>Inspection</option>
+            <option value="Oil Change">Oil Change</option>
+            <option value="Engine Repair">Engine Repair</option>
+            <option value="Brake Service">Brake Service</option>
+            <option value="Tire Replacement">Tire Replacement</option>
+            <option value="Battery Check">Battery Check</option>
+            <option value="Full Service">Full Service</option>
+            <option value="PMS service">PMS service</option>
+            <option value="Electric check">Electric check</option>
           </select>
           <div *ngIf="vehicleData.get('serviceType')?.touched && vehicleData.get('serviceType')?.invalid"
                class="text-danger small">
@@ -164,9 +157,10 @@
           <label>Service Advisor</label>
           <select class="form-select" formControlName="serviceAdvisor">
             <option value="" disabled selected>Select Advisor</option>
-            <option>John</option>
-            <option>Jane</option>
-            <option>Robert</option>
+            <option value="Ram">Ram</option>
+            <option value="Krishna">Krishna</option>
+            <option value="Madhav">Madhav</option>
+            <option value="Govind">Govind</option>
           </select>
           <div *ngIf="vehicleData.get('serviceAdvisor')?.touched && vehicleData.get('serviceAdvisor')?.invalid"
                class="text-danger small">
@@ -178,9 +172,12 @@
           <label>Technician</label>
           <select class="form-select" formControlName="technician">
             <option value="" disabled selected>Select Technician</option>
-            <option>Mike</option>
-            <option>Sarah</option>
-            <option>David</option>
+            <option value="Abhilash">Abhilash</option>
+            <option value="Technician A">Technician A</option>
+            <option value="Technician B">Technician B</option>
+            <option value="Technician C">Technician C</option>
+            <option value="Technician D">Technician D</option>
+            <option value="Technician E">Technician E</option>
           </select>
           <div *ngIf="vehicleData.get('technician')?.touched && vehicleData.get('technician')?.invalid"
                class="text-danger small">
@@ -379,7 +376,7 @@
   </mat-accordion>
 
   <!-- ACTION BUTTONS -->
-  <div class="d-flex gap-2 mt-3">
+  <div class="d-flex gap-2 mt-3" *ngIf="showAccordion">
     <button class="btn btn-warning" type="button" (click)="onGiveEstimationLater()">Give Estimation Later</button>
 
     <!-- Submit disabled until form valid -->

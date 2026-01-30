@@ -108,5 +108,35 @@ namespace GarageManagement.Server.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IList<IdNameDto>> SearchRepairOrder(string query)
+        {
+            return await _context.RepairOrders
+                .Include(r => r.BookAppointment)
+                    .ThenInclude(b => b.Customer)
+                .Include(r => r.BookAppointment)
+                    .ThenInclude(b => b.Vehicle)
+                .Where(r =>
+                    EF.Functions.Like(r.BookAppointment.Customer.CustomerName, $"%{query}%") ||
+                    EF.Functions.Like(r.BookAppointment.Customer.MobileNo, $"%{query}%") ||
+                    EF.Functions.Like(r.BookAppointment.Vehicle.RegNo, $"%{query}%") ||
+                    EF.Functions.Like(r.VinNumber, $"%{query}%")
+                )
+                .Select(r => new IdNameDto
+                {
+                    Id = r.Id,  
+
+                    Name =
+                        r.BookAppointment.Customer.CustomerName +
+                        " | " + r.BookAppointment.Customer.MobileNo +
+                        " | " +
+                        (r.BookAppointment.Vehicle.RegPrefix ?? "") +
+                        (r.BookAppointment.Vehicle.RegNo ?? "")
+                })
+                .OrderByDescending(r => r.Id)
+                .Take(20)
+                .ToListAsync();
+        }
+
+
     }
 }
