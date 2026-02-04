@@ -33,7 +33,7 @@ export class IssueComponent implements OnInit {
   issueItems: IssueItem[] = [];
   filteredIssueItems: IssueItem[] = [];
 
-  jobCardId = 57; // 🔥 get from route later
+  jobCardId = 53; // 🔥 get from route later
 
   constructor(private issueService: IssueService) { }
 

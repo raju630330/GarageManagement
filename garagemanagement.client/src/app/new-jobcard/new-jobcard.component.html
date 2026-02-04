@@ -9,7 +9,7 @@
     <div class="card-body">
       <div class="mt-2">
 
-        <app-autocomplete placeholder="Search by Reg No / Customer No / Mobile / Email / VIN / Vehicle / Corporate"
+        <app-autocomplete placeholder="Search by Reg No / Customer Name / Mobile / Email / VIN / Vehicle / Corporate"
                           [searchFn]="repairorderservice.searchRepairOrder.bind(repairorderservice)"
                           (selected)="fillJobCardFromRepairOrder($event)" (clearForm)="resetEntireForm()">
         </app-autocomplete>
