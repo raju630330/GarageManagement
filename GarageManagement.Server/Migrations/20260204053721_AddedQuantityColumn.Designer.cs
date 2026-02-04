@@ -4,6 +4,7 @@ using GarageManagement.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260204053721_AddedQuantityColumn")]
+    partial class AddedQuantityColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -488,8 +491,13 @@ namespace GarageManagement.Server.Migrations
                     b.Property<long>("JobCardId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("PartId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PartNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
@@ -513,8 +521,6 @@ namespace GarageManagement.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("JobCardId");
-
-                    b.HasIndex("PartId");
 
                     b.ToTable("JobCardEstimationItem", (string)null);
                 });
@@ -1230,13 +1236,7 @@ namespace GarageManagement.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GarageManagement.Server.Model.Part", "Part")
-                        .WithMany()
-                        .HasForeignKey("PartId");
-
                     b.Navigation("JobCard");
-
-                    b.Navigation("Part");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardTyreBattery", b =>

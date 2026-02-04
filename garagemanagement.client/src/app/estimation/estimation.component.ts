@@ -15,6 +15,7 @@ import { StockComponent } from '../stock/stock.component';
 import { IssueComponent } from '../issue/issue.component';
 import { InwardComponent } from '../inward/inward.component';
 import { OrderComponent } from '../order/order.component';
+import { StockService } from '../services/stock.service';
 
 
 
@@ -25,8 +26,6 @@ import { OrderComponent } from '../order/order.component';
   styleUrl: './estimation.component.css',
 })
 export class EstimationComponent implements OnInit {
-
-  ROLES = ROLES;
 
   id!: number;
 
@@ -59,7 +58,7 @@ export class EstimationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog, private router: Router, private http: HttpClient, private loader: LoaderService
+    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog, private router: Router, private http: HttpClient, private loader: LoaderService, public stockservice: StockService
   ) { }
 
   ngOnInit(): void {
@@ -86,6 +85,43 @@ export class EstimationComponent implements OnInit {
         this.loadEstimationData(this.id);
         this.loadPreviousJobCards(this.id);
       }
+    });
+  }
+
+
+
+  //autocomplete
+
+  selectedPart: any; // Part selected from autocomplete
+
+  onSelectedPart(part: any) {
+    // part.id comes from autocomplete
+    this.stockservice.getPartById(part.id).subscribe({
+      next: (data : any) => {
+        this.selectedPart = data;
+        // Fill form fields
+        this.addItemForm.patchValue({
+          search: part.name,       // display only
+          unitPrice: data.sellingPrice,
+          quantity: 0                  // default, user can change
+        });
+      },
+      error: (err) => {
+        console.error('Failed to load part details', err);
+      }
+    });
+  }
+
+  resetEntireForm() {
+    // Clear selected part
+    this.selectedPart = null;
+
+    // Reset the add item form
+    this.addItemForm.reset({
+      search: '',          // clear search box
+      unitPrice: 0,
+      quantity: 0,         // default quantity
+      serviceType: 'Part', // default service type
     });
   }
 
@@ -191,26 +227,38 @@ export class EstimationComponent implements OnInit {
      Add Item (Reactive)
   ----------------------------------------- */
   addItem(): void {
+    if (!this.selectedPart) {
+      this.alert.showError('Please select a Part before adding.');
+      return;
+    }
+
     if (this.addItemForm.invalid) {
       this.addItemForm.markAllAsTouched();
       this.alert.showError('Please fill all required fields before adding the item.');
       return;
     }
 
-    const { search, quantity, unitPrice, serviceType } = this.addItemForm.value;
+    const { quantity, serviceType } = this.addItemForm.value;
+
+    // Use selected part values
+    const part = this.selectedPart;
 
     const taxPercent = 18;
-    const baseAmount = quantity * unitPrice;
+    const baseAmount = quantity * part.sellingPrice;  // Use part selling price
     const taxAmount = (baseAmount * taxPercent) / 100;
     const total = baseAmount + taxAmount;
 
     const item = this.fb.group({
-      name: [search],
+      jobCardId: this.id,
+      partId: [part.id],         // save partId instead of name/free text
+      name: [part.partName],
       type: [serviceType],
-      partNo: [`PN-${Math.floor(Math.random() * 1000)}`],
-      rate: [unitPrice],
+      partNo: [part.partNo],
+      brand: [part.brand],
+      quantity: [quantity],
+      rate: [part.sellingPrice],
       discount: [0],
-      hSN: ['9987'],
+      hSN: [part.hsn ?? '9987'], // use part HSN if exists
       taxPercent: [taxPercent],
       taxAmount: [taxAmount],
       total: [total],
@@ -218,9 +266,16 @@ export class EstimationComponent implements OnInit {
       reason: ['']
     });
 
-    this.items.push(item);
-    this.calculateTotals();
-    this.addItemForm.reset({ workshopState: 'In Workshop', serviceType: 'Part' });
+    this.jobcardService.saveJobCardEstimation(item.value).subscribe({
+      next: (res) => {
+        this.items.push(item);
+        this.calculateTotals();
+        this.resetEntireForm();
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
   }
 
   /* -----------------------------------------
@@ -478,104 +533,7 @@ export class EstimationComponent implements OnInit {
 
 
   markJobAsDone() {
-    if (!this.popupData) {
-      this.alert.showError('Please fill the Job Card popup details before saving.');
-      return;
-    }
-
-    const requiredFields: Record<string, string[]> = {
-      tyreBattery: ['type', 'brand', 'model', 'manufactureDate', 'expiryDate', 'condition'],
-      cancelledInvoices: ['invoiceNo', 'date', 'amount'],
-      collections: ['type', 'bank', 'chequeNo', 'amount', 'date', 'invoiceNo', 'remarks'],
-      serviceSuggestions: ['serviceSuggestions'],
-      remarks: ['remarks']
-    };
-
-    for (const tabKey of Object.keys(requiredFields)) {
-      const tabData = this.popupData[tabKey];
-      const tabLabel = this.getTabLabel(tabKey);
-
-      // 🔹 TABLE TABS
-      if (Array.isArray(tabData)) {
-
-        // ✅ REQUIRED: At least 1 row
-        if (tabData.length === 0) {
-          this.alert.showError(
-            `Please enter ${tabLabel} details.<br><br>
-             • At least one entry is required<br>
-             • Click the bottom menu (☰)<br>
-             • Enter the required details`
-          );
-          return;
-        }
-
-        for (let i = 0; i < tabData.length; i++) {
-          const row = tabData[i];
-
-          if (!row) {
-            this.alert.showError(`${tabLabel} → Row ${i + 1} is empty`);
-            return;
-          }
-
-          for (const field of requiredFields[tabKey]) {
-            const value = row[field];
-
-            if (
-              value === null ||
-              value === undefined ||
-              value === '' ||
-              (typeof value === 'string' && value.trim() === '')
-            ) {
-              const fieldLabel = this.getFieldLabel(tabKey, field);
-              this.alert.showError(
-                `${tabLabel} → Row ${i + 1}: ${fieldLabel} is required`
-              );
-              return;
-            }
-          }
-        }
-      }
-      // 🔹 TEXTAREA TABS
-      else {
-        if (!tabData || tabData.toString().trim() === '') {
-          this.alert.showError(`Please enter ${tabLabel}`);
-          return;
-        }
-      }
-    }
-
-
-
-    const { addItemForm, ...estimationDetails } = this.estimationForm.value;
-
-    const payload = {
-      jobCardId: this.id,
-      estimation: estimationDetails,
-      popup: this.popupData
-    };
-
-    console.log(payload);
-
-    this.jobcardService.saveJobCardEstimation(payload).subscribe({
-      next: (res) => {
-        this.router.navigate(['/jobcardlist']);
-      },
-      error: (err) => {
-        console.error(err);
-
-        if (err.status === 400 && err.error?.errors) {
-
-          Object.keys(err.error.errors).forEach((field) => {
-            const control = this.estimationForm.get(field);
-            if (control) {
-              control.setErrors({ backend: err.error.errors[field] });
-            }
-          });
-        } else {
-          alert(err.error?.message || 'Something went wrong!');
-        }
-      }
-    });
+    this.alert.showInfo("Job Card Saved Sucessfully");
   }
 
   cancelJobCard() {

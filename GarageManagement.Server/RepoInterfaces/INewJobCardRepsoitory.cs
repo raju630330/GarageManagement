@@ -7,8 +7,8 @@ namespace GarageManagement.Server.RepoInterfaces
     {
         Task<List<JobCardListDto>> GetJobCards();
         Task<BaseResultDto> SaveJobCard(JobCardDto dto);
-        Task<BaseResultDto> SaveEstimationDetails(EstimationSaveDto model);
         Task<JobCardDto> GetJobCard(long id);
         Task<GetEstimationDto> GetEstimationDetails(long jobCardId);
+        Task<BaseResultDto> SaveEstimationDetails(EstimationItemsSaveDto estimationItem);
     }
 }

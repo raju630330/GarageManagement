@@ -83,9 +83,13 @@
 
       <!-- Search -->
       <div class="col-md-3">
-        <input type="text" class="form-control"
-               placeholder="Search Part Name / Number"
-               formControlName="search">
+        <!--<input type="text" class="form-control"
+         placeholder="Search Part Name / Number"
+         formControlName="search">-->
+        <app-autocomplete placeholder="Search by Part Name / Part No"
+                          [searchFn]="stockservice.searchstock.bind(stockservice)"
+                          (selected)="onSelectedPart($event)" (clearForm)="resetEntireForm()">
+        </app-autocomplete>
         <div class="text-danger"
              *ngIf="
              estimationForm.get('addItemForm.search')?.invalid &&

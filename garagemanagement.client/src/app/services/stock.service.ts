@@ -68,4 +68,11 @@ export class StockService {
       `${this.baseUrl}/stock/stats`
     );
   }
+
+  searchstock(query: string) {
+    return this.http.get<any[]>(`${this.baseUrl}/Stock/search?query=${query}`);
+  }
+  getPartById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/Stock/get/${id}`);
+  }
 }

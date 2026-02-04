@@ -64,7 +64,8 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     { name: 'Role Permission', icon: 'fas fa-lock', route: '/rolepermission', module: 'RolePermission', permission: 'V' },
     { name: 'Booking Appointment', icon: 'fas fa-calendar-check', route: '/Calendar', module: 'BookAppointment', permission: 'V' },
     { name: 'Repair Order', icon: 'bi bi-tools', route: '/repair-order', module: 'RepairOrder', permission: 'V' },
-    { name: 'Job Cards', emoji: '📝', route: '/jobcardlist', module: 'JobCard', permission: 'V' }
+    { name: 'Job Cards', emoji: '📝', route: '/jobcardlist', module: 'JobCard', permission: 'V' },
+    { name: 'New JobCard', emoji: '📝', route: '/newjobcard', module: 'JobCard', permission: 'V' },
   ];
 
   constructor(

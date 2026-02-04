@@ -103,88 +103,6 @@ namespace GarageManagement.Server.Repositories
             return new BaseResultDto() {Id = job.Id ,IsSuccess = true,Message="Job Card Saved Sucessfully"};
         }
 
-        public async Task<BaseResultDto> SaveEstimationDetails(EstimationSaveDto model)
-        {
-            var jobCard = await _context.JobCards
-                .Include(j => j.JobCardEstimationItems)
-                .Include(j => j.Collections)
-                .Include(j => j.TyreBatteries)
-                .Include(j => j.CancelledInvoices)
-                .FirstOrDefaultAsync(j => j.Id == model.JobCardId);
-
-            if (jobCard == null)
-                return new BaseResultDto() { IsSuccess = false, Message = "JobCard not found." };
-
-            jobCard.JobCardEstimationItems.Clear();
-            foreach (var item in model.Estimation.Items)
-            {
-                jobCard.JobCardEstimationItems.Add(new JobCardEstimationItem
-                {
-                    Name = item.Name,
-                    Type = item.Type,
-                    PartNo = item.PartNo,
-                    Rate = item.Rate,
-                    Discount = item.Discount,
-                    HSN = item.HSN,
-                    TaxPercent = item.TaxPercent,
-                    TaxAmount = item.TaxAmount,
-                    Total = item.Total,
-                    ApprovalStatus = item.Approval
-                });
-            }
-
-            jobCard.TyreBatteries.Clear();
-            foreach (var tb in model.Popup.TyreBattery)
-            {
-                jobCard.TyreBatteries.Add(new JobCardTyreBattery
-                {
-                    Type = tb.Type,
-                    Brand = tb.Brand,
-                    Model = tb.Model,
-                    ManufactureDate = tb.ManufactureDate,
-                    ExpiryDate = tb.ExpiryDate,
-                    Condition = tb.Condition
-                });
-            }
-
-            jobCard.CancelledInvoices.Clear();
-            foreach (var ci in model.Popup.CancelledInvoices)
-            {
-                jobCard.CancelledInvoices.Add(new JobCardCancelledInvoice
-                {
-                    InvoiceNo = ci.InvoiceNo,
-                    Date = ci.Date,
-                    Amount = ci.Amount
-                });
-            }
-
-            jobCard.Collections.Clear();
-            foreach (var c in model.Popup.Collections)
-            {
-                jobCard.Collections.Add(new JobCardCollection
-                {
-                    Type = c.Type,
-                    Bank = c.Bank,
-                    ChequeNo = c.ChequeNo,
-                    Amount = c.Amount,
-                    Date = c.Date,
-                    InvoiceNo = c.InvoiceNo,
-                    Remarks = c.Remarks
-                });
-            }
-
-            jobCard.Discount = model.Estimation.DiscountInput;
-            jobCard.Paid = model.Estimation.PaidAmount;
-            jobCard.ServiceSuggestions = model.Popup.ServiceSuggestions;
-            jobCard.Remarks = model.Popup.Remarks;
-            jobCard.Status = "Estimation Completed";
-
-            _context.JobCards.Update(jobCard);
-            await _context.SaveChangesAsync();
-
-            return new BaseResultDto() { Id = jobCard.Id, IsSuccess = true, Message = "Estimation Deatils Saved Sucessfully" };
-        }
-
         public async Task<JobCardDto> GetJobCard(long id)
         {
             var job = await _context.JobCards
@@ -255,7 +173,7 @@ namespace GarageManagement.Server.Repositories
                     Message = "JobCard not found"
                 };
 
-            var estimationItems = await _context.JobCardEstimationItems
+            var estimationItems = await _context.JobCardEstimationItems.Include(a=> a.Part)
                 .AsNoTracking()
                 .Where(e => e.JobCardId == jobCardId)
                 .ToListAsync();
@@ -324,9 +242,9 @@ namespace GarageManagement.Server.Repositories
 
                     Items = estimationItems.Select(i => new EstimationItemDto
                     {
-                        Name = i.Name,
+                        Name = i.Part?.PartName,
                         Type = i.Type,
-                        PartNo = i.PartNo,
+                        PartNo = i.Part?.PartNo,
                         Rate = i.Rate,
                         Discount = i.Discount,
                         HSN = i.HSN,
@@ -371,6 +289,39 @@ namespace GarageManagement.Server.Repositories
                     Remarks = jobCard.Remarks ?? string.Empty,                  
                 },
             };
+        }
+
+        public async Task<BaseResultDto> SaveEstimationDetails(EstimationItemsSaveDto estimationItem)
+        {
+            var result = await _context.JobCardEstimationItems.Where(a => a.Id == estimationItem.Id).FirstOrDefaultAsync();
+            if (result == null) { result = new JobCardEstimationItem(); };
+
+            result.Id = estimationItem.Id;
+            result.JobCardId = estimationItem.JobCardId;
+            result.PartId = estimationItem.PartId;
+            result.Type = estimationItem.Type;
+            result.Quantity = estimationItem.Quantity; 
+            result.Rate = estimationItem.Rate;
+            result.Discount = estimationItem.Discount;
+            result.HSN = estimationItem.HSN;
+            result.TaxPercent = estimationItem.TaxPercent;
+            result.TaxAmount = estimationItem.TaxAmount;
+            result.Total = estimationItem.Total;
+            result.ApprovalStatus = estimationItem.Approval;
+
+            if (estimationItem.Id == 0)
+            {
+                result.IssuedQty = 0;
+                await _context.JobCardEstimationItems.AddAsync(result);
+
+            }
+            else
+            {
+                _context.JobCardEstimationItems.Update(result);
+            }
+            await _context.SaveChangesAsync();
+
+            return new BaseResultDto() { IsSuccess = true, Message = "SavedSuceesfully"};
         }
     }
 }

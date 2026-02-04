@@ -6,4 +6,8 @@
         public bool IsSuccess { get; set; }
         public string Message { get; set; } = string.Empty;
     }
+    public class BaseResultDto<T> : BaseResultDto
+    {
+        public T? Data { get; set; }
+    }
 }

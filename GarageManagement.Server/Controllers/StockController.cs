@@ -1,5 +1,7 @@
 ﻿using GarageManagement.Server.Data;
 using GarageManagement.Server.dtos;
+using GarageManagement.Server.RepoInterfaces;
+using GarageManagement.Server.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +11,11 @@ namespace GarageManagement.Server.Controllers
     public class StockController : BaseAuthorizationController
     {
         private readonly ApplicationDbContext _context;
-
-        public StockController(ApplicationDbContext context)
+        private readonly IAutoCompleteRepository _autoCompleteRepository;
+        public StockController(ApplicationDbContext context, IAutoCompleteRepository autoCompleteRepository)
         {
             _context = context;
+            _autoCompleteRepository = autoCompleteRepository;
         }
 
         // =========================================================
@@ -118,5 +121,45 @@ namespace GarageManagement.Server.Controllers
 
             return Ok(stats);
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchParts([FromQuery] string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return Ok(new List<IdNameDto>());
+
+            var parts = await _autoCompleteRepository.SearchParts(query);
+            return Ok(parts);
+        }
+        [HttpGet("get/{id}")]
+        public async Task<ActionResult<PartDto>> GetPartById(long id)
+        {
+            var part = await _context.Parts
+                .Where(p => p.Id == id)
+                .Select(p => new PartDto
+                {
+                    Id = p.Id,
+                    PartNo = p.PartNo,
+                    PartName = p.PartName,
+                    Brand = p.Brand,
+                    SellingPrice = p.StockMovements.Sum(sm => sm.Quantity > 0 ? sm.SellingPrice : 0), // or latest price
+                    QtyOnHand = p.StockMovements.Sum(sm => sm.Quantity)
+                })
+                .FirstOrDefaultAsync();
+
+            if (part == null) return NotFound();
+            return Ok(part);
+        }
+
+        public class PartDto
+        {
+            public long Id { get; set; }
+            public string PartNo { get; set; } = string.Empty;
+            public string PartName { get; set; } = string.Empty;
+            public string Brand { get; set; } = string.Empty;
+            public decimal SellingPrice { get; set; }
+            public decimal QtyOnHand { get; set; }
+        }
+
     }
 }

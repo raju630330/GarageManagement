@@ -137,6 +137,29 @@ namespace GarageManagement.Server.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IList<IdNameDto>> SearchParts(string query)
+        {
+            query = query?.Trim() ?? "";
+
+            if (string.IsNullOrWhiteSpace(query))
+                return new List<IdNameDto>();
+
+            return await _context.Parts
+                .Where(p =>
+                    EF.Functions.Like(p.PartName, $"%{query}%") ||
+                    EF.Functions.Like(p.PartNo, $"%{query}%") 
+                )
+                .Select(p => new IdNameDto
+                {
+                    Id = p.Id,
+                    Name = p.PartName + " | " + p.PartNo +
+                           " | Qty: " + p.StockMovements.Sum(sm => sm.Quantity)
+                })
+                .OrderBy(p => p.Name)
+                .Take(20)
+                .ToListAsync();
+        }
+
 
     }
 }

@@ -107,5 +107,43 @@ namespace GarageManagement.Server.dtos
         public DateTime? EstDeliveryDate { get; set; }
         public DateTime AccidentDate { get; set; }
     }
+    public class EstimationItemsSaveDto 
+    {
+        public long Id { get; set; }
+        public long JobCardId { get; set; }
+        public long? PartId { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public decimal Quantity { get; set; }
+        public decimal Rate { get; set; }
+        public decimal Discount { get; set; }
+        public string HSN { get; set; } = string.Empty;
+        public decimal TaxPercent { get; set; }
+        public decimal TaxAmount { get; set; }
+        public decimal Total { get; set; }
+        public string Approval { get; set; } = string.Empty;
+
+    }
+    public class PendingIssueItemDto
+    {
+        public long EstimationItemId { get; set; }
+
+        public string PartNo { get; set; } = string.Empty;
+        public string PartName { get; set; } = string.Empty;
+        public string Brand { get; set; } = string.Empty;
+
+        public decimal QtyOnHand { get; set; }      // Total stock available
+        public decimal RequestedQty { get; set; }   // From estimation
+        public decimal IssuedQty { get; set; }      // Already issued
+        public decimal PendingQty { get; set; }     // Requested - Issued
+        public decimal SellingPrice { get; set; }
+
+        public bool InStock { get; set; }           // true if QtyOnHand > 0
+
+        // Optional: These can be filled later when issued
+        public decimal IssueQty { get; set; }       // Qty being issued now
+        public string IssuedTo { get; set; } = string.Empty;
+    }
+
+
 
 }

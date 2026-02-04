@@ -1,16 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { IssueService, PendingIssueItem } from '../services/issue.service';
 
 interface IssueItem {
-  inStock: boolean;
+  inStock?: boolean;
   partName: string;
   partNo: string;
-  brand: string;
-  qtyOnHand: number;
+  brand?: string;
+  qtyOnHand?: number;
   requestedQty?: number;
-  issueQty?: number;
+  issuedQty?: number;
   pendingQty?: number;
   sellingPrice: number;
+  issueQty?: number;
   issuedTo?: string;
 }
 
@@ -31,38 +33,88 @@ export class IssueComponent implements OnInit {
   issueItems: IssueItem[] = [];
   filteredIssueItems: IssueItem[] = [];
 
+  jobCardId = 57; // 🔥 get from route later
+
+  constructor(private issueService: IssueService) { }
+
   ngOnInit(): void {
-    // Dummy Data for Frontend
-    this.issueItems = [
-      { inStock: true, partName: 'Yellow Fog Lamp', partNo: 'FOG/LAMP/Y', brand: 'ABC', qtyOnHand: 3, requestedQty: 2, sellingPrice: 400 },
-      { inStock: false, partName: '3mm Copper Wire', partNo: '3MM WIRE', brand: 'XYZ', qtyOnHand: 0, requestedQty: 5, sellingPrice: 80 }
-    ];
+    this.loadDataByTab();
 
-    this.filteredIssueItems = [...this.issueItems];
-
-    // Filter on search or quantity input
     this.searchControl.valueChanges.subscribe(() => this.applyFilters());
     this.qtyControl.valueChanges.subscribe(() => this.applyFilters());
   }
 
   setActiveIssueTab(tab: string) {
     this.activeIssueTab = tab;
-    this.applyFilters();
+    this.loadDataByTab();
+  }
+
+  // 🔥 CORE LOGIC
+  loadDataByTab() {
+    if (this.activeIssueTab === 'pending') {
+      this.loadPendingIssues();
+    } else if (this.activeIssueTab === 'issued') {
+      this.loadIssuedIssues();
+    } else if (this.activeIssueTab === 'returned') {
+      this.loadReturnedIssues();
+    }
+  }
+
+  loadPendingIssues() {
+    this.issueService.getPendingIssues(this.jobCardId).subscribe(res => {
+      if (res.isSuccess) {
+        this.issueItems = res.data.map((x: PendingIssueItem) => ({
+          partName: x.partName,
+          partNo: x.partNo,
+          brand: x.brand,
+          qtyOnHand: x.qtyOnHand,
+          inStock: x.inStock,
+          requestedQty: x.requestedQty,
+          issuedQty: x.issuedQty,
+          pendingQty: x.pendingQty,
+          sellingPrice: x.sellingPrice,
+          issueQty: x.issueQty ?? 0,     // default 0 if null
+          issuedTo: x.issuedTo ?? ''     // default empty if null
+        }));
+
+        this.filteredIssueItems = [...this.issueItems];
+      }
+    });
+  }
+
+
+  loadIssuedIssues() {
+    this.issueService.getIssuedIssues(this.jobCardId).subscribe(res => {
+      if (res.isSuccess) {
+        this.issueItems = res.data;
+        this.filteredIssueItems = [...this.issueItems];
+      }
+    });
+  }
+
+  loadReturnedIssues() {
+    this.issueService.getReturnedIssues(this.jobCardId).subscribe(res => {
+      if (res.isSuccess) {
+        this.issueItems = res.data;
+        this.filteredIssueItems = [...this.issueItems];
+      }
+    });
   }
 
   applyFilters() {
     const search = this.searchControl.value?.toLowerCase() || '';
-    const qty = Number(this.qtyControl.value);  // <-- convert to number
+    const qty = Number(this.qtyControl.value);
 
     this.filteredIssueItems = this.issueItems.filter(item => {
       const matchesSearch =
         item.partName.toLowerCase().includes(search) ||
         item.partNo.toLowerCase().includes(search);
 
-      const matchesQty = !isNaN(qty) ? item.qtyOnHand >= qty : true; // check if valid number
+      const matchesQty = !isNaN(qty)
+        ? (item.pendingQty ?? 0) >= qty
+        : true;
 
       return matchesSearch && matchesQty;
     });
   }
-
 }
