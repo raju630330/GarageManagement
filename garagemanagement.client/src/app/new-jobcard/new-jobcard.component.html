@@ -1,32 +1,39 @@
 <div [formGroup]="jobCardForm">
 
   <!-- MAIN TITLE -->
-  <div class="card mb-2">
-    <div class="card-header bg-light d-flex justify-content-center align-items-center border-0"
-         style="padding: 16px; font-size: 18px; font-weight: 600;">
-      📝 New Job Card
-    </div>
+  <div class="card">
     <div class="card-body">
-      <div class="mt-2">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <label class="fw-bold text-dark mb-0">
+          Search Repair Order Details
+        </label>
 
-        <app-autocomplete placeholder="Search by Reg No / Customer Name / Mobile / Email / VIN / Vehicle / Corporate"
-                          [searchFn]="repairorderservice.searchRepairOrder.bind(repairorderservice)"
-                          (selected)="fillJobCardFromRepairOrder($event)" (clearForm)="resetEntireForm()">
-        </app-autocomplete>
-        <input type="hidden" formControlName="id" />
-        <br />
-        <br />
-        <div style="display: flex; gap: 10px; overflow-x: auto; padding: 5px;" *ngIf="showAccordion">
-          <div class="simple-icon-box" (click)="openPopup('Service Package')">Service Package</div>
-          <div class="simple-icon-box" (click)="openPopup('Service History')">Service History</div>
-          <div class="simple-icon-box" (click)="openPopup('Feedback')">Feedback</div>
-          <div class="simple-icon-box" (click)="openPopup('Due Amount')">Due Amount</div>
-          <div class="simple-icon-box" (click)="openPopup('Reminders')">Reminders</div>
-          <div class="simple-icon-box" (click)="openPopup('Battery/Tyre')">Battery/Tyre</div>
+        <div class="flex-grow-1">
+          <app-autocomplete placeholder="Search by Reg No / Customer Name / Mobile"
+                            [searchFn]="repairorderservice.searchRepairOrder.bind(repairorderservice)"
+                            (selected)="fillJobCardFromRepairOrder($event)"
+                            (clearForm)="resetEntireForm()">
+          </app-autocomplete>
         </div>
+      </div>
+
+      <input type="hidden" formControlName="id" />
+
+      <br />
+
+      <div class="d-flex gap-2 overflow-auto py-2"
+           *ngIf="showAccordion">
+        <div class="simple-icon-box" (click)="openPopup('Service Package')">Service Package</div>
+        <div class="simple-icon-box" (click)="openPopup('Service History')">Service History</div>
+        <div class="simple-icon-box" (click)="openPopup('Feedback')">Feedback</div>
+        <div class="simple-icon-box" (click)="openPopup('Due Amount')">Due Amount</div>
+        <div class="simple-icon-box" (click)="openPopup('Reminders')">Reminders</div>
+        <div class="simple-icon-box" (click)="openPopup('Battery/Tyre')">Battery/Tyre</div>
       </div>
     </div>
   </div>
+  
+
 
   <mat-accordion multi *ngIf="showAccordion">
 
@@ -223,8 +230,8 @@
                class="d-flex align-items-center me-2 mb-2">
 
             <!-- Concern text -->
-      
-            <span (click)="toggleConcern(i)" class="me-2 px-3 py-2 rounded-pill border text-white"  style="cursor: pointer;  width: 200px; white-space: normal; word-break: break-word;text-align: left;" [ngClass]="{  'bg-success': c.value.active,'bg-secondary': !c.value.active }">                                      
+
+            <span (click)="toggleConcern(i)" class="me-2 px-3 py-2 rounded-pill border text-white" style="cursor: pointer;  width: 200px; white-space: normal; word-break: break-word;text-align: left;" [ngClass]="{  'bg-success': c.value.active,'bg-secondary': !c.value.active }">
               {{ c.value.text }}
             </span>
 

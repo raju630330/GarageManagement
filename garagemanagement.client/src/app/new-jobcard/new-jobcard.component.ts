@@ -269,31 +269,72 @@ export class NewJobCardComponent implements OnInit {
     this.jobCardForm.patchValue({
       id: 0 
     });
-    this.repairorderservice.getRepairOrderByRepairId(item.id).subscribe(res => {
-      this.repairOrderId = res.repairOrderId;
+    this.jobcardService.getJobCardDetails(item.id).subscribe(res => {
+      this.repairOrderId = Number(item.id);
       this.showAccordion = true;
-      this.jobCardForm.patchValue({
-        id: 0,
-        repairOrderId: this.repairOrderId
-      });
-      // Vehicle Data
-      this.jobCardForm.get('vehicleData')?.patchValue({
-        registrationNo: res.vehicleData.registrationNo,
-        vin: res.vehicleData.vin,
-        serviceType: res.vehicleData.serviceType,
-        serviceAdvisor: res.vehicleData.serviceAdvisor,
-        technician: res.vehicleData.technician
-      });
+      if (res.isSuccess) {
 
-      // Customer Info
-      this.jobCardForm.get('customerInfo')?.patchValue({
-        customerName: res.customerInfo.customerName,
-        mobile: res.customerInfo.mobile,
-        email: res.customerInfo.email,
-        deliveryDate: res.customerInfo.deliveryDate
-      });
+        // Root level
+        this.jobCardForm.patchValue({
+          id: res.id,
+          repairOrderId: this.repairOrderId
+        });
+
+        // 🚗 Vehicle Data
+        this.jobCardForm.get('vehicleData')?.patchValue({
+          registrationNo: res.vehicleData.registrationNo,
+          odometerIn: res.vehicleData.odometerIn,
+          avgKmsPerDay: res.vehicleData.avgKmsPerDay,
+          vin: res.vehicleData.vin,
+          engineNo: res.vehicleData.engineNo,
+          vehicleColor: res.vehicleData.vehicleColor,
+          fuelType: res.vehicleData.fuelType,
+          serviceType: res.vehicleData.serviceType,
+          serviceAdvisor: res.vehicleData.serviceAdvisor,
+          technician: res.vehicleData.technician,
+          vendor: res.vehicleData.vendor,
+          jobCardNo: res.vehicleData.jobCardNo
+        });
+
+        // 👤 Customer Info
+        this.jobCardForm.get('customerInfo')?.patchValue({
+          corporate: res.customerInfo.corporate,
+          customerName: res.customerInfo.customerName,
+          mobile: res.customerInfo.mobile,
+          alternateMobile: res.customerInfo.alternateMobile,
+          email: res.customerInfo.email,
+          deliveryDate: res.customerInfo.deliveryDate.split('T')[0],
+          insuranceCompany: res.customerInfo.insuranceCompany
+        });
+
+        // ⚠️ Concerns (FormArray)
+        if (res.concerns && res.concerns.length) {
+          const concernsArray = this.jobCardForm.get('concerns') as FormArray;
+          concernsArray.clear();
+
+          res.concerns.forEach((c: any) => {
+            concernsArray.push(
+              this.fb.group({
+                text: [c.text],
+                active: [c.active]
+              })
+            );
+          });
+        }
+
+        // 💰 Advance Payment (optional object)
+        if (res.advancePayment) {
+          this.jobCardForm.get('advancePayment')?.patchValue({
+            cash: res.advancePayment.cash,
+            bankName: res.advancePayment.bankName,
+            chequeNo: res.advancePayment.chequeNo,
+            amount: res.advancePayment.amount,
+            date: res.advancePayment.date.split('T')[0]
+          });
+        }
+      }
+    
     });
-
   }
 
   // To fetch data after select option in autocomplete

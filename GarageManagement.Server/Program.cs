@@ -1,5 +1,6 @@
 using GarageManagement.Server;
 using GarageManagement.Server.Data;
+using GarageManagement.Server.Helpers;
 using GarageManagement.Server.RepoInterfaces;
 using GarageManagement.Server.Reports.RepoInterfaces;
 using GarageManagement.Server.Reports.Repositories;
@@ -27,6 +28,8 @@ namespace BrilliantMinds.Server
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Email Service
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IJwtUserContext, JwtUserContext>();
             builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
             builder.Services.AddTransient<EmailService>(); ;
             builder.Services.AddScoped<IAutoCompleteRepository, AutoCompleteRepository>();

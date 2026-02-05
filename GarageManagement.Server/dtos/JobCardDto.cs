@@ -144,6 +144,30 @@ namespace GarageManagement.Server.dtos
         public string IssuedTo { get; set; } = string.Empty;
     }
 
+    public class IssuePartsRequestDto
+    {
+        public long JobCardId { get; set; }
+        public List<IssuePartItemDto> Items { get; set; } = new();
+    }
 
+    public class IssuePartItemDto
+    {
+        public long EstimationId { get; set; }
+        public int IssueQty { get; set; }
+    }
 
+    public class IssuedItemDto
+    {
+        public long EstimationItemId { get; set; }
+        public string PartNo { get; set; } = string.Empty;
+        public string PartName { get; set; } = string.Empty;
+        public string Brand { get; set; } = string.Empty;
+        public decimal RequestedQty { get; set; }
+        public decimal IssueQty { get; set; }
+        public decimal ReturnQty { get; set; } = 0; 
+        public decimal UnitPrice { get; set; }
+        public DateTime? IssuedDate { get; set; }
+        public string? IssuedTo { get; set; }
+        public string IssuedId { get; set; } = string.Empty;
+    }
 }

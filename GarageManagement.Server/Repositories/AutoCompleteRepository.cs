@@ -37,15 +37,12 @@ namespace GarageManagement.Server.Repositories
         public async Task<IList<IdNameDto>> SearchJobCradsForEstimation(string query)
         {
             var registrations = await _context.JobCards
-                                     .Where(j =>
-                                         !j.JobCardEstimationItems.Any() &&
-                                         (
+                                     .Where(j =>                                       
                                              EF.Functions.Like(j.RegistrationNo, $"%{query}%") ||
                                              EF.Functions.Like(j.JobCardNo, $"%{query}%") ||
                                              EF.Functions.Like(j.CustomerName, $"%{query}%") ||
                                              EF.Functions.Like(j.Mobile, $"%{query}%") ||
-                                             EF.Functions.Like(j.Vin, $"%{query}%")
-                                         )
+                                             EF.Functions.Like(j.Vin, $"%{query}%")                                         
                                      )
                                      .Select(j => new IdNameDto
                                      {

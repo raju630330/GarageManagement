@@ -66,10 +66,10 @@ export class EstimationComponent implements OnInit {
     this.estimationForm = this.fb.group({
       addItemForm: this.fb.group({
         search: ['', Validators.required],
-        workshopState: ['In Workshop', Validators.required],
+        workshopState: ['', Validators.required],
         quantity: [null, Validators.required],
         unitPrice: [null, Validators.required],
-        serviceType: ['Part', Validators.required]
+        serviceType: ['', Validators.required]
       }),
 
       discountInput: [0],
@@ -101,9 +101,10 @@ export class EstimationComponent implements OnInit {
         this.selectedPart = data;
         // Fill form fields
         this.addItemForm.patchValue({
-          search: part.name,       // display only
+          search: part.name,
+          workshopState: '',
           unitPrice: data.sellingPrice,
-          quantity: 0                  // default, user can change
+          quantity: 0                  
         });
       },
       error: (err) => {
@@ -118,10 +119,11 @@ export class EstimationComponent implements OnInit {
 
     // Reset the add item form
     this.addItemForm.reset({
-      search: '',          // clear search box
+      search: '',
+      workshopState: '',
       unitPrice: 0,
-      quantity: 0,         // default quantity
-      serviceType: 'Part', // default service type
+      quantity: 0,      
+      serviceType: '', 
     });
   }
 
@@ -227,14 +229,14 @@ export class EstimationComponent implements OnInit {
      Add Item (Reactive)
   ----------------------------------------- */
   addItem(): void {
-    if (!this.selectedPart) {
-      this.alert.showError('Please select a Part before adding.');
-      return;
-    }
 
     if (this.addItemForm.invalid) {
       this.addItemForm.markAllAsTouched();
       this.alert.showError('Please fill all required fields before adding the item.');
+      return;
+    }
+    if (!this.selectedPart) {
+      this.alert.showError('Please select a Part before adding.');
       return;
     }
 

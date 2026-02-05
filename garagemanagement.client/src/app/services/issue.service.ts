@@ -16,7 +16,34 @@ export interface PendingIssueItem {
   issueQty?: number;
   issuedTo?: string;
 }
+export interface IssuedItem {
+  estimationItemId: number;
+  partNo: string;
+  partName: string;
+  brand: string;
+  requestedQty: number;
+  issueQty: number;
+  returnQty: number;
+  unitPrice: number;
+  issuedDate?: string;
+  issuedTo?: string;
+  issuedId: string;
+}
 
+export interface IssueItemDto {
+  estimationId: number;
+  issueQty: number;
+}
+
+export interface IssuePartsRequestDto {
+  jobCardId: number;
+  items: IssueItemDto[];
+}
+
+export interface BaseResultDto {
+  isSuccess: boolean;
+  message: string;
+}
 @Injectable({ providedIn: 'root' })
 export class IssueService {
 
@@ -29,10 +56,16 @@ export class IssueService {
   }
 
   getIssuedIssues(jobCardId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/issued-items/${jobCardId}`);
+    return this.http.get(`${this.baseUrl}/Issue/issued-items/${jobCardId}`);
   }
 
   getReturnedIssues(jobCardId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/returned-items/${jobCardId}`);
+  }
+  issueParts(request: IssuePartsRequestDto): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUrl}/Issue/issue-parts`,
+      request
+    );
   }
 }

@@ -106,9 +106,12 @@ namespace GarageManagement.Server.Repositories
         public async Task<JobCardDto> GetJobCard(long id)
         {
             var job = await _context.JobCards
+                .Include(a=> a.RepairOrder)
                 .Include(j => j.Concerns)
                 .Include(j => j.AdvancePayment)
-                .FirstOrDefaultAsync(j => j.Id == id);
+                .Where(a=> a.RepairOrderId == id)
+                .FirstOrDefaultAsync();
+
 
             if (job == null)
                 return new JobCardDto() { IsSuccess= false,Message="Not Found"};
@@ -300,7 +303,7 @@ namespace GarageManagement.Server.Repositories
             result.JobCardId = estimationItem.JobCardId;
             result.PartId = estimationItem.PartId;
             result.Type = estimationItem.Type;
-            result.Quantity = estimationItem.Quantity; 
+            result.RequestedQuantity = estimationItem.Quantity; 
             result.Rate = estimationItem.Rate;
             result.Discount = estimationItem.Discount;
             result.HSN = estimationItem.HSN;

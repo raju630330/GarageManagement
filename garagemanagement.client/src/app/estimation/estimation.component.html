@@ -86,7 +86,7 @@
         <!--<input type="text" class="form-control"
          placeholder="Search Part Name / Number"
          formControlName="search">-->
-        <app-autocomplete placeholder="Search by Part Name / Part No"
+        <app-autocomplete placeholder="Search by Part Name / Part No" formControlName="search" 
                           [searchFn]="stockservice.searchstock.bind(stockservice)"
                           (selected)="onSelectedPart($event)" (clearForm)="resetEntireForm()">
         </app-autocomplete>
@@ -389,7 +389,7 @@
 
       <li>
         <a class="dropdown-item d-flex align-items-center gap-2"
-           routerLink="/issue">
+           [routerLink]="['/issue']" [queryParams]="{ jobCardId: id }">
           <i class="bi bi-file-earmark-x text-primary"></i>
           ISSUE
         </a>
