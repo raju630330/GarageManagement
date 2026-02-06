@@ -59,7 +59,7 @@ const routes: Routes = [
       { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
       { path: 'jobcardlist', component: JobCardsComponent, canActivate: [authGuard] },
       { path: 'newjobcard', component: NewJobCardComponent, canActivate: [authGuard] },
-      { path: 'estimate', component: EstimationComponent, canActivate: [authGuard] },
+      { path: 'estimate/:id', component: EstimationComponent, canActivate: [authGuard] },
       { path: 'roles', component: RolesComponent, canActivate: [authGuard] },
       { path: 'permission', component: PermissionsComponent, canActivate: [authGuard] },
       { path: 'rolepermission', component: RolepermissionComponent, canActivate: [authGuard] },

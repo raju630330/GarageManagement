@@ -234,7 +234,7 @@ export class JobCardsComponent implements OnInit {
     let jobCardId = this.estimateForm.get('id')?.value
 
     if (this.selectedJobCard && jobCardId != null) {
-      this.router.navigate(['/estimate'], { queryParams: { id: jobCardId } });
+      this.router.navigate(['/estimate', jobCardId]);
       this.showPopupForEstimation = false;
     }
     else {

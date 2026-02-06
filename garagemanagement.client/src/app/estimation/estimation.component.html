@@ -229,9 +229,10 @@
 
           <td>
             <select class="form-select form-select-sm" formControlName="approval">
-              <option value="Approved">Approved</option>
+              <option value="Issued">Issued</option>
               <option value="Rejected">Rejected</option>
               <option value="Pending">Pending</option>
+              <option value="Returned">Returned</option>
             </select>
           </td>
           <td *appHasPermission="'D'" module="Estimation">

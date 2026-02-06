@@ -152,7 +152,7 @@ namespace GarageManagement.Server.dtos
 
     public class IssuePartItemDto
     {
-        public long EstimationId { get; set; }
+        public long EstimationItemId { get; set; }
         public int IssueQty { get; set; }
     }
 
@@ -163,11 +163,45 @@ namespace GarageManagement.Server.dtos
         public string PartName { get; set; } = string.Empty;
         public string Brand { get; set; } = string.Empty;
         public decimal RequestedQty { get; set; }
-        public decimal IssueQty { get; set; }
+        public decimal IssuedQty { get; set; }
         public decimal ReturnQty { get; set; } = 0; 
         public decimal UnitPrice { get; set; }
         public DateTime? IssuedDate { get; set; }
         public string? IssuedTo { get; set; }
         public string IssuedId { get; set; } = string.Empty;
     }
+
+    public class ReturnPartsRequestDto
+    {
+        public long JobCardId { get; set; }
+        public List<ReturnPartItemDto> Items { get; set; } = new();
+    }
+    public class ReturnPartItemDto
+    {
+        public long EstimationItemId { get; set; }
+        public int ReturnQty { get; set; }
+    }
+
+    public class ReturnItemDto
+    {
+        public long EstimationItemId { get; set; }
+
+        public long? PartId { get; set; }
+        public string PartName { get; set; } = string.Empty;
+        public string PartNo { get; set; } = string.Empty;
+        public string Brand { get; set; } = string.Empty;
+
+        public decimal RequestedQty { get; set; }
+        public decimal IssuedQty { get; set; }
+        public decimal ReturnQty { get; set; }
+
+        public decimal UnitPrice { get; set; }
+
+        public DateTime? IssuedDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
+
+        public string IssuedTo { get; set; } = string.Empty;
+    }
+
+
 }

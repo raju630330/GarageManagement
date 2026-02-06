@@ -6,7 +6,8 @@
 
         public long PartId { get; set; }
         public Part Part { get; set; } = null!;
-
+        public long? EstimationItemId { get; set; }   // 🔑 key relation
+        public JobCardEstimationItem EstimationItem { get; set; } = null!;
         public decimal Quantity { get; set; }  // +ve Inward, -ve Outward
 
         public decimal PurchasePrice { get; set; }

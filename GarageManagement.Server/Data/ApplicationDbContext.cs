@@ -313,6 +313,18 @@ namespace GarageManagement.Server.Data
                 .HasOne(x => x.Part)
                 .WithMany(x => x.StockMovements)
                 .HasForeignKey(x => x.PartId);
+
+            modelBuilder.Entity<StockMovement>()
+                .HasOne(sm => sm.EstimationItem)
+                .WithMany(e => e.StockMovements)
+                .HasForeignKey(sm => sm.EstimationItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StockMovement>()
+                .HasOne(sm => sm.Part)
+                .WithMany(p => p.StockMovements)
+                .HasForeignKey(sm => sm.PartId);
+
         }
     }
 }

@@ -1,24 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { IssuedItem, IssueService, PendingIssueItem } from '../services/issue.service';
+import { IssueService } from '../services/issue.service';
 import { AlertService } from '../services/alert.service';
-
-interface IssueItem {
-  estimationId: number; 
-  inStock?: boolean;
-  partName: string;
-  partNo: string;
-  brand?: string;
-  qtyOnHand?: number;
-  requestedQty?: number;
-  issuedQty?: number;
-  pendingQty?: number;
-  sellingPrice: number;
-  issueQty?: number;
-  issuedTo?: string;
-  unitPrice: number;
-  issuedId: string;
+import { Router } from '@angular/router';
+interface IssueItemDto {
+  estimationItemId: number;
+  issueQty: number;
+}
+interface ReturnItemDto {
+  estimationItemId: number;
+  returnQty: number;
 }
 
 @Component({
@@ -27,6 +19,7 @@ interface IssueItem {
   styleUrls: ['./issue.component.css'],
   standalone: false
 })
+
 export class IssueComponent implements OnInit {
 
   issueTabs = ['pending', 'issued', 'returned'];
@@ -36,18 +29,17 @@ export class IssueComponent implements OnInit {
   qtyControl = new FormControl('');
 
   issueForm!: FormGroup;
-
-  issueItems: IssueItem[] = [];
-  issuedItems: IssuedItem[] = [];
   filteredIssueItems: any[] = [];
+  issueItems: any[] = [];
 
   jobCardId!: number;
 
   constructor(
+    private fb: FormBuilder,
     private issueService: IssueService,
     private route: ActivatedRoute,
     private alert: AlertService,
-    private fb: FormBuilder
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -56,10 +48,10 @@ export class IssueComponent implements OnInit {
       items: this.fb.array([])
     });
 
-    this.route.queryParamMap.subscribe(params => {
-      const jobCardId = params.get('jobCardId');
-      if (jobCardId) {
-        this.jobCardId = Number(jobCardId);
+    this.route.queryParamMap.subscribe(p => {
+      const id = p.get('jobCardId');
+      if (id) {
+        this.jobCardId = +id;
         this.loadDataByTab();
       }
     });
@@ -78,35 +70,18 @@ export class IssueComponent implements OnInit {
   }
 
   loadDataByTab() {
-    if (this.activeIssueTab === 'pending') {
-      this.loadPendingIssues();
-    } else if (this.activeIssueTab === 'issued') {
-      this.loadIssuedIssues();
-    } else {
-      this.loadReturnedIssues();
-    }
+    if (this.activeIssueTab === 'pending') this.loadPendingIssues();
+    else if (this.activeIssueTab === 'issued') this.loadIssuedIssues();
+    else this.loadReturnedIssues();
   }
 
   loadPendingIssues() {
     this.issueService.getPendingIssues(this.jobCardId).subscribe(res => {
       if (res.isSuccess) {
-        this.issueItems = res.data.map((x: PendingIssueItem) => ({
-          estimationId: x.estimationItemId, 
-          partName: x.partName,
-          partNo: x.partNo,
-          brand: x.brand,
-          qtyOnHand: x.qtyOnHand,
-          inStock: x.inStock,
-          requestedQty: x.requestedQty,
-          issuedQty: x.issuedQty,
-          pendingQty: x.pendingQty,
-          sellingPrice: x.sellingPrice,
-          issueQty: x.issueQty ?? 0,
-          issuedTo: x.issuedTo ?? ''
-        }));
-
+        this.issueItems = res.data;
         this.filteredIssueItems = [...this.issueItems];
-        this.buildCheckboxes();
+        console.log(this.filteredIssueItems);
+        this.buildForm();
       }
     });
   }
@@ -114,10 +89,9 @@ export class IssueComponent implements OnInit {
   loadIssuedIssues() {
     this.issueService.getIssuedIssues(this.jobCardId).subscribe(res => {
       if (res.isSuccess) {
-        this.activeIssueTab = 'issued';
-        this.issuedItems = res.data;
-        this.filteredIssueItems = this.issuedItems;
-        this.buildCheckboxes();
+        this.issueItems = res.data;
+        this.filteredIssueItems = [...this.issueItems];
+        this.buildForm();
       }
     });
   }
@@ -125,14 +99,15 @@ export class IssueComponent implements OnInit {
   loadReturnedIssues() {
     this.issueService.getReturnedIssues(this.jobCardId).subscribe(res => {
       if (res.isSuccess) {
+        this.activeIssueTab === 'returned'
         this.issueItems = res.data;
         this.filteredIssueItems = [...this.issueItems];
-        this.buildCheckboxes();
+        this.buildForm();
       }
     });
   }
 
-  buildCheckboxes() {
+  buildForm() {
     this.itemsFormArray.clear();
     this.issueForm.get('selectAll')?.setValue(false);
 
@@ -140,14 +115,13 @@ export class IssueComponent implements OnInit {
       this.itemsFormArray.push(
         this.fb.group({
           checked: [false],
-          issueQty: [item.issueQty ?? 0],
-          returnQty: [item.returnQty ?? 0],
-          estimationId: [item.estimationId]   
+          issueQty: [item.issueQty || 0],
+          returnQty: [0],
+          estimationItemId: [item.estimationItemId]
         })
       );
     });
   }
-
 
   toggleSelectAll() {
     const checked = this.issueForm.get('selectAll')?.value;
@@ -157,47 +131,40 @@ export class IssueComponent implements OnInit {
   }
 
   isAnyChecked(): boolean {
-    return this.itemsFormArray.controls.some(
-      c => c.get('checked')?.value
-    );
+    return this.itemsFormArray.controls.some(c => c.get('checked')?.value);
   }
 
   applyFilters() {
-    const search = this.searchControl.value?.toLowerCase() || '';
+    const search = (this.searchControl.value || '').toLowerCase();
     const qty = Number(this.qtyControl.value);
 
-    this.filteredIssueItems = this.issueItems.filter(item => {
-      const matchesSearch =
-        item.partName.toLowerCase().includes(search) ||
-        item.partNo.toLowerCase().includes(search);
+    this.filteredIssueItems = this.issueItems.filter(i =>
+      (i.partName.toLowerCase().includes(search) ||
+        i.partNo.toLowerCase().includes(search)) &&
+      (!qty || (i.pendingQty ?? 0) >= qty)
+    );
 
-      const matchesQty = !isNaN(qty)
-        ? (item.pendingQty ?? 0) >= qty
-        : true;
-
-      return matchesSearch && matchesQty;
-    });
-
-    this.buildCheckboxes();
+    this.buildForm();
   }
 
   issueParts() {
-    const selectedRows = this.itemsFormArray.controls
+    const selectedRows: IssueItemDto[] = this.itemsFormArray.controls
+      .filter(ctrl => ctrl.get('checked')?.value)
       .map(ctrl => {
-        if (!ctrl.get('checked')?.value) return null;
+        const estimationItemId = ctrl.get('estimationItemId')?.value;
+        const issueQty = Number(ctrl.get('issueQty')?.value);
+
+        if (!estimationItemId || issueQty <= 0) return null;
 
         return {
-          estimationId: ctrl.get('estimationId')!.value,
-          issueQty: Number(ctrl.get('issueQty')!.value)
+          estimationItemId,
+          issueQty
         };
       })
-      .filter(
-        (x): x is { estimationId: number; issueQty: number } =>
-          x !== null && x.issueQty > 0
-      );
+      .filter((x): x is IssueItemDto => x !== null);
 
     if (selectedRows.length === 0) {
-      this.alert.showError('Please select items and enter Issue Qty(>1)');
+      this.alert.showError('Please select items and enter Issue Qty (> 0)');
       return;
     }
 
@@ -205,28 +172,60 @@ export class IssueComponent implements OnInit {
       jobCardId: this.jobCardId,
       items: selectedRows
     }).subscribe({
-      next: (res) => {
+      next: res => {
+        this.activeIssueTab = 'issued'
         this.alert.showSuccess(res.message || 'Items issued successfully');
-        this.loadIssuedIssues();   // refresh issued tab
+        this.loadIssuedIssues();
       },
-      error: (err) => {
-        console.error(err);
-
-        // Backend sent meaningful message
-        if (err.error?.message) {
-          this.alert.showError(err.error.message);
-        }
-        // Validation / string error
-        else if (typeof err.error === 'string') {
-          this.alert.showError(err.error);
-        }
-        // Fallback
-        else {
-          this.alert.showError('Failed to issue parts. Please try again.');
-        }
+      error: err => {
+        this.alert.showError(err.error?.message || 'Failed to issue parts');
       }
     });
+  }
 
+  returnParts() {
+
+    const selectedRows: ReturnItemDto[] = this.itemsFormArray.controls
+      .filter(ctrl => ctrl.get('checked')?.value)
+      .map(ctrl => {
+        const estimationItemId = ctrl.get('estimationItemId')?.value;
+        const returnQty = Number(ctrl.get('returnQty')?.value);
+
+        if (!estimationItemId || returnQty <= 0) return null;
+
+        return {
+          estimationItemId,
+          returnQty
+        };
+      })
+      .filter((x): x is ReturnItemDto => x !== null);
+
+    if (selectedRows.length === 0) {
+      this.alert.showError('Please select items and enter Return Qty (> 0)');
+      return;
+    }
+    this.issueService.returnParts({
+      jobCardId: this.jobCardId,
+      items : selectedRows
+    }).subscribe({
+      next: res => {
+        this.activeIssueTab = 'returned'
+        this.alert.showSuccess(res.message || 'Items returned successfully');
+        this.loadReturnedIssues();
+      },
+      error: err => {
+        this.alert.showError(err.error?.message || 'Failed to return parts');
+      }
+    });
+  }
+
+  goBack() {
+    if (!this.jobCardId) {
+      this.alert.showError('Job Card Id missing');
+      return;
+    }
+
+    this.router.navigate(['/estimate', this.jobCardId]);
   }
 
 }

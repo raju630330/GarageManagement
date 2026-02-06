@@ -36,6 +36,25 @@ namespace GarageManagement.Server.Controllers
 
             return Ok(result);
         }
+        [HttpGet("returned-items/{jobCardId}")]
+        public async Task<IActionResult> GetReturnedItems(long jobCardId)
+        {
+            var result = await _issueRepository.GetReturnItems(jobCardId);
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+        [HttpPost("return-parts")]
+        public async Task<IActionResult> ReturnParts([FromBody] ReturnPartsRequestDto request)
+        {
+            var result = await _issueRepository.ReturnIssuedParts(request);
+            if (result.IsSuccess == false)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
 
     }
 }

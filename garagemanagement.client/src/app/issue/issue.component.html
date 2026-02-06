@@ -6,10 +6,10 @@
       <h2 class="fw-bold">Issue Management</h2>
     </div>
 
-    <!-- Sub Tabs -->
-    <ul class="nav nav-tabs nav-fill mb-3 w-100">
+    <!-- Tabs -->
+    <ul class="nav nav-tabs nav-fill mb-3">
       <li class="nav-item" *ngFor="let tab of issueTabs">
-        <a class="nav-link px-4"
+        <a class="nav-link"
            [class.active]="activeIssueTab === tab"
            (click)="setActiveIssueTab(tab)"
            style="cursor:pointer">
@@ -18,21 +18,18 @@
       </li>
     </ul>
 
-    <!-- Search & Quantity Filter -->
-    <div class="mb-3 w-100" *ngIf="activeIssueTab==='pending'">
-      <div class="row g-2 align-items-center">
-        <div class="col-md-6">
-          <input type="text"
-                 class="form-control"
-                 placeholder="Search Part Name / Part No"
-                 [formControl]="searchControl">
-        </div>
-        <div class="col-md-3">
-          <input type="number"
-                 class="form-control"
-                 placeholder="Quantity"
-                 [formControl]="qtyControl">
-        </div>
+    <!-- Search -->
+    <div class="row g-2 mb-3" *ngIf="activeIssueTab==='pending'">
+      <div class="col-md-6">
+        <input class="form-control"
+               placeholder="Search Part Name / Part No"
+               [formControl]="searchControl">
+      </div>
+      <div class="col-md-3">
+        <input type="number"
+               class="form-control"
+               placeholder="Min Pending Qty"
+               [formControl]="qtyControl">
       </div>
     </div>
 
@@ -41,116 +38,142 @@
       <table class="table table-bordered table-hover">
         <thead class="table-light">
           <tr>
-            <th *ngIf="activeIssueTab==='pending' || activeIssueTab==='issued'">
+            <th *ngIf="activeIssueTab!=='returned'">
               <input type="checkbox"
                      formControlName="selectAll"
                      (change)="toggleSelectAll()">
             </th>
+
             <th>#</th>
+
             <th *ngIf="activeIssueTab==='pending'">In Stock</th>
             <th>Part Name</th>
-            <th>Part No.</th>
+            <th>Part No</th>
             <th>Brand</th>
+
             <th *ngIf="activeIssueTab==='pending'">Qty on Hand</th>
             <th>Requested Qty</th>
             <th>Issue Qty</th>
+
             <th *ngIf="activeIssueTab!=='pending'">Return Qty</th>
             <th *ngIf="activeIssueTab!=='pending'">Unit Price</th>
+
             <th *ngIf="activeIssueTab==='pending'">Pending Qty</th>
-            <th *ngIf="activeIssueTab==='pending'">Selling Price ₹</th>
+            <th *ngIf="activeIssueTab==='pending'">Selling Price</th>
+
             <th *ngIf="activeIssueTab!=='pending'">Issued Date</th>
             <th *ngIf="activeIssueTab==='returned'">Return Date</th>
+
             <th>Issued To</th>
             <th *ngIf="activeIssueTab==='issued'">Issued Id</th>
           </tr>
         </thead>
 
         <tbody formArrayName="items">
-          <tr *ngFor="let item of filteredIssueItems; index as i"
+          <tr *ngFor="let item of filteredIssueItems; let i=index"
               [formGroupName]="i">
 
-            <td *ngIf="activeIssueTab==='pending' || activeIssueTab==='issued'">
+            <!-- Checkbox -->
+            <td *ngIf="activeIssueTab!=='returned'">
               <input type="checkbox" formControlName="checked">
             </td>
-
             <td>{{ i + 1 }}</td>
-            <td *ngIf="activeIssueTab==='pending'">{{ item.inStock ? 'Yes' : 'No' }}</td>
+
+            <td *ngIf="activeIssueTab==='pending'">
+              {{ item.inStock ? 'Yes' : 'No' }}
+            </td>
+
             <td>{{ item.partName }}</td>
             <td>{{ item.partNo }}</td>
             <td>{{ item.brand }}</td>
-            <td *ngIf="activeIssueTab==='pending'">{{ item.qtyOnHand }}</td>
-            <td *ngIf="activeIssueTab==='pending' || activeIssueTab==='issued'">
-              {{ item.requestedQty }}
+
+            <td *ngIf="activeIssueTab==='pending'">
+              {{ item.qtyOnHand }}
             </td>
-            <td *ngIf="activeIssueTab==='issued'">{{ item.issueQty || '-' }}</td>
+
+            <td>{{ item.requestedQty }}</td>
+
+            <!-- Issue Qty -->
             <td *ngIf="activeIssueTab==='pending'">
               <input type="number"
                      class="form-control form-control-sm"
                      formControlName="issueQty"
-                     min="0"
-                     [readonly]="activeIssueTab !== 'pending'">
+                     min="0">
             </td>
-            <td *ngIf="activeIssueTab==='pending'">
-              {{ item.pendingQty || item.requestedQty }}
+            <td *ngIf="activeIssueTab!=='pending'">
+              {{ item.issuedQty }}
             </td>
+
+            <!-- Return Qty -->
             <td *ngIf="activeIssueTab==='issued'">
               <input type="number"
                      class="form-control form-control-sm"
                      formControlName="returnQty"
-                     min="0">
+                     min="0"
+                     [max]="item.issuedQty - item.returnedQty">
             </td>
-            <td *ngIf="activeIssueTab==='pending'">{{ item.sellingPrice }}</td>
-            <td *ngIf="activeIssueTab!=='pending'">{{ item.unitPrice }}</td>
-            <td *ngIf="activeIssueTab==='issued'">{{ item.issuedDate }}</td>
-            <td *ngIf="activeIssueTab==='returned'">Return Date</td>
+
+            <td *ngIf="activeIssueTab==='returned'">
+              {{ item.returnQty }}
+            </td>
+
+            <td *ngIf="activeIssueTab!=='pending'">
+              {{ item.unitPrice }}
+            </td>
+
+            <td *ngIf="activeIssueTab==='pending'">
+              {{ item.pendingQty }}
+            </td>
+
+            <td *ngIf="activeIssueTab==='pending'">
+              {{ item.sellingPrice }}
+            </td>
+
+            <td *ngIf="activeIssueTab!=='pending'">
+              {{ item.issuedDate | date:'short' }}
+            </td>
+
+            <td *ngIf="activeIssueTab==='returned'">
+              {{ item.returnDate | date:'short' }}
+            </td>
+
             <td>{{ item.issuedTo || '-' }}</td>
-            <td *ngIf="activeIssueTab==='issued'">{{ item.issuedId }}</td>
+
+            <td *ngIf="activeIssueTab==='issued'">
+              {{ item.issuedId }}
+            </td>
           </tr>
 
           <tr *ngIf="filteredIssueItems.length === 0">
-            <td [attr.colspan]="activeIssueTab==='pending'?11:9"
-                class="text-center text-muted">
-              No items found.
+            <td colspan="16" class="text-center text-muted">
+              No items found
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Footer Buttons -->
-    <div class="fixed-bottom d-flex align-items-center px-3 py-2 bg-white border-top shadow">
+    <!-- Footer -->
+    <div class="fixed-bottom bg-white border-top p-2 d-flex gap-2">
 
-      <div class="d-flex gap-2">
-        <button class="btn btn-secondary btn-sm"
-                [routerLink]="['/estimate']"
-                [queryParams]="{ id: jobCardId }">
-          Back
-        </button>
+      <button class="btn btn-secondary btn-sm" (click)="goBack()">
+        Back
+      </button>
 
-        <button *ngIf="activeIssueTab==='pending'"
-                class="btn btn-success btn-sm"
-                [disabled]="!isAnyChecked()"
-                (click)="issueParts()">
-          Issue
-        </button>
+      <button *ngIf="activeIssueTab==='pending'"
+              class="btn btn-success btn-sm"
+              [disabled]="!isAnyChecked()"
+              (click)="issueParts()">
+        Issue
+      </button>
 
-        <button *ngIf="activeIssueTab==='pending'"
-                class="btn btn-primary btn-sm">
-          Order
-        </button>
-
-        <button *ngIf="activeIssueTab==='issued'"
-                class="btn btn-primary btn-sm"
-                [disabled]="!isAnyChecked()">
-          Return
-        </button>
-      </div>
-
-      <div class="flex-grow-1"></div>
-
-      <button class="btn btn-primary btn-sm">
-        <i class="bi bi-gear"></i> Order Parts
+      <button *ngIf="activeIssueTab==='issued'"
+              class="btn btn-primary btn-sm"
+              [disabled]="!isAnyChecked()"
+              (click)="returnParts()">
+        Return
       </button>
     </div>
+
   </div>
 </form>

@@ -7,5 +7,7 @@ namespace GarageManagement.Server.RepoInterfaces
         Task<BaseResultDto<List<PendingIssueItemDto>>> GetEstimationPendingItems(long jobCardId);
         Task<BaseResultDto> IssueParts(IssuePartsRequestDto request);
         Task<BaseResultDto<List<IssuedItemDto>>> GetIssuedItems(long jobCardId);
+        Task<BaseResultDto> ReturnIssuedParts(ReturnPartsRequestDto request);
+        Task<BaseResultDto<List<ReturnItemDto>>> GetReturnItems(long jobCardId);
     }
 }

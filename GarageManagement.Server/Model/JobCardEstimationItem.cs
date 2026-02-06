@@ -22,5 +22,7 @@
         public DateTime? IssuedDate { get; set; }
         public string? IssuedBy { get; set; }  
         public string? IssuedId { get; set; }
+        public ICollection<StockMovement> StockMovements { get; set; }
+        = new List<StockMovement>();
     }
 }

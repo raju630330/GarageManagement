@@ -78,7 +78,7 @@ export class EstimationComponent implements OnInit {
       items: this.fb.array([])
     });
 
-    this.route.queryParamMap.subscribe(params => {
+    this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
       if (idParam) {
         this.id = Number(idParam);
@@ -86,6 +86,7 @@ export class EstimationComponent implements OnInit {
         this.loadPreviousJobCards(this.id);
       }
     });
+
   }
 
 

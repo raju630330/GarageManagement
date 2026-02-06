@@ -60,11 +60,17 @@ export class IssueService {
   }
 
   getReturnedIssues(jobCardId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/returned-items/${jobCardId}`);
+    return this.http.get(`${this.baseUrl}/Issue/returned-items/${jobCardId}`);
   }
-  issueParts(request: IssuePartsRequestDto): Observable<any> {
+  issueParts(request: any): Observable<any> {
     return this.http.post<any>(
       `${this.baseUrl}/Issue/issue-parts`,
+      request
+    );
+  }
+  returnParts(request: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUrl}/Issue/return-parts`,
       request
     );
   }
