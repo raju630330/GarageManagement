@@ -57,6 +57,7 @@ import { StockComponent } from './stock/stock.component';
 import { IssueComponent } from './issue/issue.component';
 import { InwardComponent } from './inward/inward.component';
 import { OrderComponent } from './order/order.component';
+import { AssignUserToWorkshopComponent } from './assign-user-to-workshop/assign-user-to-workshop.component';
 
 @NgModule({
   declarations: [
@@ -101,7 +102,8 @@ import { OrderComponent } from './order/order.component';
     StockComponent,
     IssueComponent,
     InwardComponent,
-    OrderComponent
+    OrderComponent,
+    AssignUserToWorkshopComponent
   ],
   imports: [
     BrowserModule,

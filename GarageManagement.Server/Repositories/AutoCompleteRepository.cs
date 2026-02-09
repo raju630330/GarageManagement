@@ -157,6 +157,34 @@ namespace GarageManagement.Server.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IList<IdNameDto>> SearchWorkshops(string query)
+        {
+            var registrations = await _context.WorkshopProfiles
+                                     .Where(j =>
+                                             EF.Functions.Like(j.WorkshopName, $"%{query}%") ||
+                                             EF.Functions.Like(j.OwnerMobileNo, $"%{query}%") 
+                                     )
+                                     .Select(j => new IdNameDto
+                                     {
+                                         Id = j.Id,
+                                         Name = $"{j.WorkshopName} ({j.OwnerMobileNo})"
+                                     }).ToListAsync();
+            return registrations;
+        }
 
+        public async Task<IList<IdNameDto>> SearchUsers(string query)
+        {
+            var registrations = await _context.Users
+                                     .Where(j =>
+                                             EF.Functions.Like(j.Username, $"%{query}%") ||
+                                             EF.Functions.Like(j.Email, $"%{query}%")
+                                     )
+                                     .Select(j => new IdNameDto
+                                     {
+                                         Id = j.Id,
+                                         Name = $"{j.Username} ({j.Email})"
+                                     }).ToListAsync();
+            return registrations;
+        }
     }
 }

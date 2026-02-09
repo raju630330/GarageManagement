@@ -48,5 +48,14 @@ export class WorkshopProfileService {
     return this.http.get(`${this.baseUrl}/BookingAppointment/getBooking/${id}`);
   }
 
-
+  searchWorkshops(query: string) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/WorkshopProfile/searchWorshops?query=${query}`
+    );
+  }
+  searchUsers(query: string) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/WorkshopProfile/searchUsers?query=${query}`
+    );
+  }
 }

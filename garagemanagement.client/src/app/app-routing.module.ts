@@ -67,6 +67,7 @@ const routes: Routes = [
       { path: 'issue', component: IssueComponent, canActivate: [authGuard] },
       { path: 'inward', component: InwardComponent, canActivate: [authGuard] },
       { path: 'order', component: OrderComponent, canActivate: [authGuard] },
+      { path: 'workshop', component: WorkshopComponent, canActivate: [authGuard] },
       { path: 'unauthorized', component: UnauthorizedComponent, data: { public: true } }
     ]
   },
