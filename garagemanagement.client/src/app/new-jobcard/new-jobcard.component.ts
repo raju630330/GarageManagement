@@ -157,9 +157,8 @@ export class NewJobCardComponent implements OnInit {
 
     this.jobcardService.saveJobCard(dto).subscribe({
       next: (res) => {
-        this.router.navigate(['/estimate'], {
-          queryParams: { id: res.id }
-        });
+        this.router.navigate(['/estimate', res.id]);
+
       },
       error: (err) => {
         console.error(err);
@@ -265,13 +264,16 @@ export class NewJobCardComponent implements OnInit {
 
 
   fillJobCardFromRepairOrder(item: any) {
+    this.repairOrderId = Number(item.id);
+    this.showAccordion = true;
 
     this.jobCardForm.patchValue({
-      id: 0 
+      repairOrderId: this.repairOrderId
     });
+
+
     this.jobcardService.getJobCardDetails(item.id).subscribe(res => {
-      this.repairOrderId = Number(item.id);
-      this.showAccordion = true;
+      
       if (res.isSuccess) {
 
         // Root level

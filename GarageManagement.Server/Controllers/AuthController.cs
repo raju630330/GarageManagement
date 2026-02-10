@@ -38,45 +38,27 @@ namespace GarageManagement.Server.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterDto dto)
         {
-            var validRoles = new[] { "Admin", "Driver", "Technician", "Cashier", "Manager", "Supervisor" };
 
-            if (string.IsNullOrWhiteSpace(dto.Username) ||
-                string.IsNullOrWhiteSpace(dto.Email) ||
-                string.IsNullOrWhiteSpace(dto.Password))
-            {
-                return BadRequest("Username, Email and Password cannot be empty.");
-            }
-
-            dto.Role = char.ToUpper(dto.Role[0]) + dto.Role.Substring(1).ToLower();
-
-            if (!validRoles.Contains(dto.Role))
-            {
-                return BadRequest("Invalid role. Allowed: Admin, Driver, Technician.");
-            }
-
-            if (dto.Role == "Admin" && await _db.Users.AnyAsync(u => u.Role.RoleName == "Admin"))
-            {
+            // Only one Admin allowed
+            if (dto.RoleId == 1 && await _db.Users.AnyAsync(u => u.RoleId == 1))
                 return BadRequest("Only one Admin is allowed.");
-            }
 
+            // Check for existing username/email
             if (await _db.Users.AnyAsync(u => u.Username == dto.Username || u.Email == dto.Email))
-            {
                 return BadRequest("Username or Email already exists.");
-            }
 
+            // Create user using RoleId
             var user = new User
             {
                 Username = dto.Username.Trim(),
                 Email = dto.Email.Trim(),
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = new Role { RoleName = dto.Role}
+                RoleId = dto.RoleId
             };
 
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
 
-            //var token = GenerateJwt(user);
-            //return Ok(new AuthResponse { Token = token, message = "Registered successfully. Please login." });
             return Ok(new AuthResponse { message = "Registered successfully. Please login." });
         }
 

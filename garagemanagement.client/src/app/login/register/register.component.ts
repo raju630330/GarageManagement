@@ -13,7 +13,8 @@ import { AlertService } from '../../services/alert.service';
 export class RegisterComponent {
   registerForm!: FormGroup;
   error = "";
-  role = ['Driver', 'Admin', 'Technician', 'Cashier', 'Manager', 'Supervisor'];
+
+
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private alert: AlertService) { }
 
   ngOnInit(): void {
@@ -26,7 +27,7 @@ export class RegisterComponent {
         Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/)
       ]
       ],
-      role: ['', [Validators.required]]
+      roleId: ['', [Validators.required]]
     });
   }
 

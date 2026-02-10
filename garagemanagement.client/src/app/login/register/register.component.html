@@ -26,9 +26,13 @@
       </div>
       <div class="mb-3">
         <label class="form-label">Role</label>
-        <select class="form-select form-control" formControlName="role">
-          <option value="">-- Select Role --</option>
-          <option *ngFor="let r of role" [value]="r">{{ r }}</option>
+        <select class="form-select form-control" formControlName="roleId">
+          <option value="">Select Role</option>
+          <option value="1">Admin</option>
+          <option value="3">Manager</option>
+          <option value="4">Supervisor</option>
+          <option value="5">Technician</option>
+          <option value="6">Driver</option>
         </select>
         <div *ngIf="registerForm.get('role')?.touched && registerForm.get('role')?.invalid" class="text-danger">
           Role is required
