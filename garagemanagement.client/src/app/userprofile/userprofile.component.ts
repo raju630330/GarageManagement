@@ -12,11 +12,13 @@ import { filter, forkJoin } from 'rxjs';
 
 interface AppTab {
   name: string;
-  route: string;
-  module: string;        // module name
-  permission: string;    // e.g., 'V'
   icon?: string;
   emoji?: string;
+  route?: string;     // Make optional with ?
+  module?: string;    // Make optional with ?
+  permission: string;
+  children?: AppTab[];
+  expanded?: boolean;
 }
 
 @Component({
@@ -60,13 +62,25 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
   ];
 
   sidebarTabs: AppTab[] = [
-    { name: 'Roles', icon: 'fas fa-user-shield', route: '/roles', module: 'Role', permission: 'V' },
-    { name: 'Role Permission', icon: 'fas fa-lock', route: '/rolepermission', module: 'RolePermission', permission: 'V' },
+    {
+      name: 'Admin', icon: 'fas fa-cog', module : 'Admin', permission: 'V', children: [
+        { name: 'Roles', icon: 'fas fa-user-shield', route: '/roles', module: 'Role', permission: 'V' },
+        { name: 'Role Permission', icon: 'fas fa-lock', route: '/rolepermission', module: 'RolePermission', permission: 'V' },
+        { name: 'Workshop', icon: 'fas fa-tools', route: '/workshop', module: 'RolePermission', permission: 'V' },
+        { name: 'Assign User', icon: 'fas fa-user-plus', route: '/assignuser', module: 'RolePermission', permission: 'V' },
+      ]
+    },
+    {
+      name: 'Jobcards', icon: 'fas fa-briefcase', module: 'Jobcards', permission: 'V', children: [
+        { name: 'Add', emoji: '📝', route: '/newjobcard', module: 'JobCardAdd', permission: 'V' },
+        { name: 'List', emoji: '📝', route: '/jobcardlist', module: 'JobCardList', permission: 'V' }
+      ]
+    },
     { name: 'Booking Appointment', icon: 'fas fa-calendar-check', route: '/Calendar', module: 'BookAppointment', permission: 'V' },
-    { name: 'Repair Order', icon: 'bi bi-tools', route: '/repair-order', module: 'RepairOrder', permission: 'V' },
-    { name: 'Job Cards', emoji: '📝', route: '/jobcardlist', module: 'JobCard', permission: 'V' },
-    { name: 'New JobCard', emoji: '📝', route: '/newjobcard', module: 'JobCard', permission: 'V' },
+    { name: 'Repair Order', icon: 'bi bi-tools', route: '/repair-order', module: 'RepairOrder', permission: 'V' }, //assignuser
+
   ];
+
 
   constructor(
     private authService: AuthService,
@@ -109,22 +123,26 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     this.topTabs = [];
     this.sidebarTabsFiltered = [];
 
-    // Get all permissions for the role once
     this.rolePermissionService.getRolePermissions(roleId).subscribe((permissions) => {
 
-      const hasPermission = (moduleName: string, permissionCode: string): boolean => {
+      const hasPermission = (permissionCode: string, moduleName?: string): boolean => {
+        // Parent tabs without module = no permission (hidden)
+        if (!moduleName) return false;
+
         return permissions.some(p =>
           p.moduleName === moduleName &&
           this.mapPermissionIdToCode(p.permissionId) === permissionCode
         );
       };
 
-      this.topTabs = this.mainTabs.filter(tab => hasPermission(tab.module, tab.permission));
-      this.sidebarTabsFiltered = this.sidebarTabs.filter(tab => hasPermission(tab.module, tab.permission));
+      // Swap order in filter calls too
+      this.topTabs = this.mainTabs.filter(tab => hasPermission(tab.permission, tab.module));
+      this.sidebarTabsFiltered = this.sidebarTabs.filter(tab => hasPermission(tab.permission, tab.module));
 
       setTimeout(() => this.checkScroll(), 50);
     });
   }
+
 
   /** Map numeric permissionId to 'V', 'A', 'E', 'D' */
   private mapPermissionIdToCode(permissionId?: number): string {
@@ -155,6 +173,9 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
   toggleUserPopup() { this.showUserPopup = !this.showUserPopup; }
   toggleSidebar() { this.isSidebarOpen = !this.isSidebarOpen; }
   closePopup() { this.showUserPopup = false; }
+  toggleTab(tab: AppTab) {
+    tab.expanded = !tab.expanded;
+  }
 
   logout() {
     this.authService.logout();

@@ -1,0 +1,46 @@
+
+<div class="card">
+  <div class="card-header bg-primary text-white p-4 text-center">
+    <h4 class="mb-0 d-inline-flex align-items-center justify-content-center">
+      <i class="fas fa-user-plus me-2"></i>
+      Assign User To Workshop
+    </h4>
+  </div>
+
+  <div class="card-body">
+    <form [formGroup]="assignuser" (ngSubmit)="submit()">
+      <div class="col-md-12">
+        <div class="row m-2">
+          <div class="col-md-3 text-end">
+            <label>Search Workshops :</label>
+          </div>
+          <div class="col-md-5">
+            <app-autocomplete placeholder="Search by Workshop Name / Owner Mobile No" formControlName="workshopSearch" 
+                              [searchFn]="workshopservice.searchWorkshops.bind(workshopservice)"
+                              (selected)="getworkshopdetails($event)"
+                              (clearForm)="resetEntireForm()">
+            </app-autocomplete>
+            <span class="text-danger" *ngIf="assignuser.get('workshopId')?.hasError('required') && assignuser.get('workshopId')?.invalid && assignuser.get('workshopId')?.touched">Please search and select Workshop</span>
+          </div>
+        </div>
+        <div class="row m-2">
+          <div class="col-md-3 text-end">
+            <label>Search Users :</label>
+          </div>
+          <div class="col-md-5">
+            <app-autocomplete placeholder="Search by User Name / Email" formControlName="userSearch"
+                              [searchFn]="workshopservice.searchUsers.bind(workshopservice)"
+                              (selected)="getuserdetails($event)"
+                              (clearForm)="resetEntireForm()">
+            </app-autocomplete>
+          </div>
+        </div>
+        <div class="row justify-content-center align-items-center">
+          <div class="col-md-2">
+            <input type="submit" class="btn btn-primary" />
+          </div>         
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

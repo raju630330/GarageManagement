@@ -39,6 +39,20 @@ namespace GarageManagement.Server.Data
         public DbSet<PermissionModule> PermissionModules { get; set; }
         public DbSet<Part> Parts { get; set; }
         public DbSet<StockMovement> StockMovements { get; set; }
+        public DbSet<WorkshopAddress> WorkshopAddresses { get; set; }
+        public DbSet<WorkshopTiming> WorkshopTimings { get; set; }
+
+        public DbSet<Service> Services { get; set; }
+        public DbSet<WorkshopService> WorkshopServices { get; set; }
+
+        public DbSet<WorkshopWorkingDay> WorkshopWorkingDays { get; set; }
+
+        public DbSet<WorkshopBusinessConfig> WorkshopBusinessConfigs { get; set; }
+
+        public DbSet<PaymentMode> PaymentModes { get; set; }
+        public DbSet<WorkshopPaymentMode> WorkshopPaymentModes { get; set; }
+
+        public DbSet<WorkshopMedia> WorkshopMedias { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -72,6 +86,23 @@ namespace GarageManagement.Server.Data
             modelBuilder.Entity<PermissionModule>().ToTable("PermissionModule");
             modelBuilder.Entity<Part>().ToTable("Part");
             modelBuilder.Entity<StockMovement>().ToTable("StockMovement");
+            modelBuilder.Entity<WorkshopProfile>().ToTable("WorkshopProfile");
+            modelBuilder.Entity<WorkshopAddress>().ToTable("WorkshopAddress");
+            modelBuilder.Entity<WorkshopTiming>().ToTable("WorkshopTiming");
+
+            modelBuilder.Entity<Service>().ToTable("Service");
+            modelBuilder.Entity<WorkshopService>().ToTable("WorkshopService");
+
+            modelBuilder.Entity<WorkshopWorkingDay>().ToTable("WorkshopWorkingDay");
+
+            modelBuilder.Entity<WorkshopBusinessConfig>().ToTable("WorkshopBusinessConfig");
+
+            modelBuilder.Entity<PaymentMode>().ToTable("PaymentMode");
+            modelBuilder.Entity<WorkshopPaymentMode>().ToTable("WorkshopPaymentMode");
+
+            modelBuilder.Entity<WorkshopMedia>().ToTable("WorkshopMedia");
+
+            modelBuilder.Entity<WorkshopUser>().ToTable("WorkshopUser");
 
             // ------------------- Primary keys and Identity -------------------
             void SetIdentity<TEntity>() where TEntity : class
@@ -324,6 +355,109 @@ namespace GarageManagement.Server.Data
                 .HasOne(sm => sm.Part)
                 .WithMany(p => p.StockMovements)
                 .HasForeignKey(sm => sm.PartId);
+
+            // ===============================
+            // WorkshopProfile
+            // ===============================
+            modelBuilder.Entity<WorkshopProfile>()
+                .HasKey(w => w.Id);
+
+            modelBuilder.Entity<WorkshopProfile>()
+                .HasMany(w => w.WorkshopUsers)
+                .WithOne(wu => wu.Workshop)
+                .HasForeignKey(wu => wu.WorkshopId);
+
+            modelBuilder.Entity<WorkshopProfile>()
+                .HasMany(w => w.Appointments)
+                .WithOne(a => a.Workshop)
+                .HasForeignKey(a => a.WorkshopId);
+
+            // ===============================
+            // WorkshopAddress (1 : 1)
+            // ===============================
+            modelBuilder.Entity<WorkshopAddress>()
+                .HasKey(a => a.Id);
+
+            modelBuilder.Entity<WorkshopProfile>()
+                .HasOne(w => w.Address)
+                .WithOne(a => a.Workshop)
+                .HasForeignKey<WorkshopAddress>(a => a.WorkshopId);
+
+            // ===============================
+            // WorkshopTiming (1 : 1)
+            // ===============================
+            modelBuilder.Entity<WorkshopTiming>()
+                .HasKey(t => t.Id);
+
+            modelBuilder.Entity<WorkshopProfile>()
+                .HasOne(w => w.Timing)
+                .WithOne(t => t.Workshop)
+                .HasForeignKey<WorkshopTiming>(t => t.WorkshopId);
+
+            // ===============================
+            // WorkshopService (M : M)
+            // ===============================
+            modelBuilder.Entity<WorkshopService>()
+                .HasKey(ws => new { ws.WorkshopId, ws.ServiceId });
+
+            modelBuilder.Entity<WorkshopService>()
+                .HasOne(ws => ws.Workshop)
+                .WithMany(w => w.Services)
+                .HasForeignKey(ws => ws.WorkshopId);
+
+            modelBuilder.Entity<WorkshopService>()
+                .HasOne(ws => ws.Service)
+                .WithMany()
+                .HasForeignKey(ws => ws.ServiceId);
+
+            // ===============================
+            // WorkshopWorkingDay (1 : M)
+            // ===============================
+            modelBuilder.Entity<WorkshopWorkingDay>()
+                .HasKey(wd => wd.Id);
+
+            modelBuilder.Entity<WorkshopWorkingDay>()
+                .HasOne(wd => wd.Workshop)
+                .WithMany(w => w.WorkingDays)
+                .HasForeignKey(wd => wd.WorkshopId);
+
+            // ===============================
+            // WorkshopBusinessConfig (1 : 1)
+            // ===============================
+            modelBuilder.Entity<WorkshopBusinessConfig>()
+                .HasKey(b => b.Id);
+
+            modelBuilder.Entity<WorkshopBusinessConfig>()
+                .HasOne(b => b.Workshop)
+                .WithOne()
+                .HasForeignKey<WorkshopBusinessConfig>(b => b.WorkshopId);
+
+            // ===============================
+            // WorkshopPaymentMode (M : M)
+            // ===============================
+            modelBuilder.Entity<WorkshopPaymentMode>()
+                .HasKey(wp => new { wp.WorkshopId, wp.PaymentModeId });
+
+            modelBuilder.Entity<WorkshopPaymentMode>()
+                .HasOne(wp => wp.Workshop)
+                .WithMany()
+                .HasForeignKey(wp => wp.WorkshopId);
+
+            modelBuilder.Entity<WorkshopPaymentMode>()
+                .HasOne(wp => wp.PaymentMode)
+                .WithMany()
+                .HasForeignKey(wp => wp.PaymentModeId);
+
+            // ===============================
+            // WorkshopMedia (1 : M)
+            // ===============================
+            modelBuilder.Entity<WorkshopMedia>()
+                .HasKey(m => m.Id);
+
+            modelBuilder.Entity<WorkshopMedia>()
+                .HasOne(m => m.Workshop)
+                .WithMany()
+                .HasForeignKey(m => m.WorkshopId);
 
         }
     }

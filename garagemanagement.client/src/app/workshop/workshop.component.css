@@ -1,9 +1,25 @@
-.nav-tabs .nav-link {
-  color: #000;
+
+.accordion-button {
+  font-size: 1.1rem;
+  padding: 1.25rem 1.5rem;
 }
 
-  .nav-tabs .nav-link.active {
-    background-color: #fff;
-    border-color: #dee2e6 #dee2e6 #fff;
-    font-weight: 500;
+  .accordion-button:not(.collapsed) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
   }
+
+  .accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,.125);
+  }
+
+.accordion-item {
+  border: none;
+  border-bottom: 1px solid #e9ecef !important;
+}
+
+  .accordion-item:last-of-type {
+    border-bottom: none !important;
+  }
+

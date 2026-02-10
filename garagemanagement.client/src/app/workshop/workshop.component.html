@@ -1,16 +1,275 @@
-<!--<div>
-  <ul class="nav nav-tabs flex-nowrap mb-0">
-    <li class="nav-item" *ngFor="let item of mainTabs">
-      <a class="nav-link px-3 fw-semibold" [routerLink]="item.route" routerLinkActive="active">
-        {{ item.name }}
-      </a>
-    <!--</li>
-  </ul>
-</div>-->
-<!--<div *ngIf="isAdmin" class="d-flex flex-wrap gap-3 p-2 bg-light border-bottom">
-  <a class="text-decoration-none" href="#">Associated Workshops</a>
-  <a class="text-decoration-none" href="#">Activate e-payment now</a>
-  <a class="text-decoration-none" href="#">Integrations</a>
-  <a class="text-decoration-none" href="#">Templates</a>
-</div>-->
-<!--<router-outlet></router-outlet>-->
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
+      <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white p-4">
+          <h4 class="mb-0 d-flex align-items-center justify-content-center">
+            <i class="fas fa-tools me-2"></i>
+            Workshop Registration
+          </h4>
+        </div>
+        <div class="card-body p-0">
+          <form [formGroup]="workshopForm" (ngSubmit)="submit()">
+
+            <!-- Basic Info Section - Collapsible -->
+            <div class="accordion" id="workshopAccordion">
+
+              <!-- Basic Information -->
+              <div class="accordion-item border-0">
+                <h2 class="accordion-header" id="headingBasic">
+                  <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseBasic" aria-expanded="true" aria-controls="collapseBasic">
+                    <i class="fas fa-info-circle me-2 text-primary"></i>
+                    Basic Information <span class="text-danger ms-1">*</span>
+                  </button>
+                </h2>
+                <div id="collapseBasic" class="accordion-collapse collapse show" aria-labelledby="headingBasic"
+                     data-bs-parent="#workshopAccordion">
+                  <div class="accordion-body p-4">
+                    <div class="row g-4">
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Workshop Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" formControlName="workshopName"
+                               [class.is-invalid]="workshopForm.get('workshopName')?.invalid && workshopForm.get('workshopName')?.touched">
+                        <div class="invalid-feedback">Workshop name is required</div>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Owner Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" formControlName="ownerName"
+                               [class.is-invalid]="workshopForm.get('ownerName')?.invalid && workshopForm.get('ownerName')?.touched">
+                        <div class="invalid-feedback">Owner name is required</div>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Mobile No. <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" formControlName="ownerMobileNo"
+                               [class.is-invalid]="workshopForm.get('ownerMobileNo')?.invalid && workshopForm.get('ownerMobileNo')?.touched">
+                        <div class="invalid-feedback">Mobile number is required</div>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" class="form-control" formControlName="emailID"
+                               [class.is-invalid]="workshopForm.get('emailID')?.invalid && workshopForm.get('emailID')?.touched">
+                        <div class="invalid-feedback">Please enter a valid email</div>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Contact Person</label>
+                        <input type="text" class="form-control" formControlName="contactPerson">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Contact No.</label>
+                        <input type="tel" class="form-control" formControlName="contactNo">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Landline</label>
+                        <input type="tel" class="form-control" formControlName="landline">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Address Section -->
+              <div class="accordion-item border-0">
+                <h2 class="accordion-header" id="headingAddress">
+                  <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseAddress" aria-expanded="false" aria-controls="collapseAddress">
+                    <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                    Address Details <span class="badge bg-danger ms-2">Required</span>
+                  </button>
+                </h2>
+                <div id="collapseAddress" class="accordion-collapse collapse" aria-labelledby="headingAddress"
+                     data-bs-parent="#workshopAccordion">
+                  <div class="accordion-body p-4" formGroupName="address">
+                    <div class="row g-3">
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Flat/Door No.</label>
+                        <input type="text" class="form-control" formControlName="flatNo">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Street</label>
+                        <input type="text" class="form-control" formControlName="street">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Location/Area</label>
+                        <input type="text" class="form-control" formControlName="location">
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold">City <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" formControlName="city"
+                               [class.is-invalid]="workshopForm.get('address.city')?.invalid && workshopForm.get('address.city')?.touched">
+                        <div class="invalid-feedback">City is required</div>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold">State <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" formControlName="state"
+                               [class.is-invalid]="workshopForm.get('address.state')?.invalid && workshopForm.get('address.state')?.touched">
+                        <div class="invalid-feedback">State is required</div>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold">State Code</label>
+                        <input type="text" class="form-control" formControlName="stateCode">
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold">Pincode <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" formControlName="pincode"
+                               [class.is-invalid]="workshopForm.get('address.pincode')?.invalid && workshopForm.get('address.pincode')?.touched">
+                        <div class="invalid-feedback">Pincode is required</div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold">Landmark</label>
+                        <input type="text" class="form-control" formControlName="landmark">
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label fw-semibold">Branch Address</label>
+                        <textarea class="form-control" rows="2" formControlName="branchAddress"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Business Details -->
+              <div class="accordion-item border-0">
+                <h2 class="accordion-header" id="headingBusiness">
+                  <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseBusiness" aria-expanded="false" aria-controls="collapseBusiness">
+                    <i class="fas fa-chart-line me-2 text-warning"></i>
+                    Business Details
+                  </button>
+                </h2>
+                <div id="collapseBusiness" class="accordion-collapse collapse" aria-labelledby="headingBusiness"
+                     data-bs-parent="#workshopAccordion">
+                  <div class="accordion-body p-4">
+                    <div class="row g-4">
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">In Business Since</label>
+                        <input type="month" class="form-control" formControlName="inBusinessSince">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Avg. Vehicle Inflow/Month</label>
+                        <input type="number" class="form-control" formControlName="avgVehicleInflowPerMonth">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">No. of Employees</label>
+                        <input type="number" class="form-control" formControlName="noOfEmployees">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Dealer Code</label>
+                        <input type="text" class="form-control" formControlName="dealerCode">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Timing Section -->
+              <div class="accordion-item border-0">
+                <h2 class="accordion-header" id="headingTiming">
+                  <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseTiming" aria-expanded="false" aria-controls="collapseTiming">
+                    <i class="fas fa-clock me-2 text-info"></i>
+                    Operating Hours <span class="badge bg-danger ms-2">Required</span>
+                  </button>
+                </h2>
+                <div id="collapseTiming" class="accordion-collapse collapse" aria-labelledby="headingTiming"
+                     data-bs-parent="#workshopAccordion">
+                  <div class="accordion-body p-4" formGroupName="timing">
+                    <div class="row g-4">
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Start Time <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control" formControlName="startTime"
+                               [class.is-invalid]="workshopForm.get('timing.startTime')?.invalid && workshopForm.get('timing.startTime')?.touched">
+                        <div class="invalid-feedback">Start time is required</div>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">End Time <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control" formControlName="endTime"
+                               [class.is-invalid]="workshopForm.get('timing.endTime')?.invalid && workshopForm.get('timing.endTime')?.touched">
+                        <div class="invalid-feedback">End time is required</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Business Config -->
+              <div class="accordion-item border-0">
+                <h2 class="accordion-header" id="headingConfig">
+                  <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#collapseConfig" aria-expanded="false" aria-controls="collapseConfig">
+                    <i class="fas fa-cog me-2 text-secondary"></i>
+                    Business Configuration
+                  </button>
+                </h2>
+                <div id="collapseConfig" class="accordion-collapse collapse" aria-labelledby="headingConfig"
+                     data-bs-parent="#workshopAccordion">
+                  <div class="accordion-body p-4" formGroupName="businessConfig">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Website Link</label>
+                        <input type="url" class="form-control" formControlName="websiteLink">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Google Review Link</label>
+                        <input type="url" class="form-control" formControlName="googleReviewLink">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">GSTIN</label>
+                        <input type="text" class="form-control" formControlName="gstin">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">MSME</label>
+                        <input type="text" class="form-control" formControlName="msme">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">SAC</label>
+                        <input type="text" class="form-control" formControlName="sac">
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label fw-semibold">SAC Percentage</label>
+                        <input type="text" class="form-control" formControlName="sacPercentage">
+                      </div>
+                      <div class="col-md-9">
+                        <label class="form-label fw-semibold">Default Service Type</label>
+                        <input type="text" class="form-control" formControlName="defaultServiceType">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- GDPR & Submit Section -->
+            <div class="p-4 border-top">
+              <div class="row g-3 mb-4">
+                <div class="col-12">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" formControlName="isGdprAccepted" id="gdprCheck"
+                           [class.is-invalid]="workshopForm.get('isGdprAccepted')?.invalid && workshopForm.get('isGdprAccepted')?.touched">
+                    <label class="form-check-label fw-semibold" for="gdprCheck">
+                      I accept GDPR compliance and terms & conditions <span class="text-danger">*</span>
+                    </label>
+                    <div class="invalid-feedback d-block" *ngIf="workshopForm.get('isGdprAccepted')?.invalid && workshopForm.get('isGdprAccepted')?.touched">
+                      You must accept GDPR compliance
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12 text-center">
+                  <button type="submit" class="btn btn-primary btn-lg px-5">
+                    <i class="fas fa-save me-2"></i>
+                    Create Workshop
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
