@@ -154,7 +154,7 @@ namespace GarageManagement.Server.Controllers
             if (string.IsNullOrEmpty(query))
                 return BadRequest("Query is required");
 
-            var registrations = await _autoCompleteRepository.SearchJobCradsForEstimation(query);
+            var registrations = await _autoCompleteRepository.SearchWorkshops(query);
             return Ok(registrations);
         }
         [HttpGet("searchUsers")]

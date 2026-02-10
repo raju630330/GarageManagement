@@ -87,3 +87,41 @@ html, body {
 .hover-menu .dropdown-item { display: flex; align-items: center; gap: 8px; }
 .hover-menu .dropdown-item:hover, .hover-menu .dropdown-item:focus { background-color: #0d6efd; color: #fff !important; }
 .hover-menu .dropdown-item:hover i, .hover-menu .dropdown-item:focus i { color: #fff !important; }
+
+
+
+/* Parent hover & click feel */
+.list-group-item {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+  .list-group-item:hover {
+    background-color: #f5f5f5;
+  }
+
+/* Submenu animation */
+.submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.25s ease;
+  opacity: 0;
+}
+
+  .submenu.open {
+    max-height: 500px; /* enough for children */
+    opacity: 1;
+  }
+
+/* Arrow animation */
+.fas {
+  transition: transform 0.3s ease;
+}
+
+.fa-chevron-down {
+  transform: rotate(0deg);
+}
+
+.fa-chevron-right {
+  transform: rotate(-90deg);
+}

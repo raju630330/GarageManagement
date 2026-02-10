@@ -28,7 +28,6 @@
           <!--<a class="btn btn-primary btn-sm text-center" routerLink="/Calendar">
             <i class="fas fa-calendar-check fs-5" style="color: #f39c12;"></i>Today Appointments
           </a>-->
-
           <!-- Menu Button -->
           <!--<div class="dropdown dropstart hover-menu">
             <button type="button" class="btn btn-sm text-white">
@@ -56,7 +55,6 @@
               </li>
             </ul>
           </div>-->
-
           <!-- User Dropdown -->
           <div class="dropdown">
             <button class="btn btn-primary btn-sm d-flex align-items-center"
@@ -130,7 +128,6 @@
                 Repair Order Form
               </a>
             </div>-->
-
             <!-- Logout -->
             <button class="btn btn-danger btn-sm w-100 mt-2" (click)="logout(); closePopup()">Logout</button>
           </div>
@@ -181,28 +178,75 @@
 <div class="sidebar bg-light" [class.open]="isSidebarOpen">
   <div class="list-group list-group-flush">
 
-    <a *ngFor="let tab of sidebarTabsFiltered"
-       [routerLink]="tab.route"
-       routerLinkActive="active"
-       class="list-group-item d-flex align-items-center px-3 py-2">
+    <!-- Parent tabs & single tabs -->
+    <ng-container *ngFor="let tab of sidebarTabsFiltered">
 
-      <!-- Emoji icon (Job Cards) -->
-      <span *ngIf="tab.emoji"
-            class="me-2 text-warning"
-            style="width: 20px; text-align: center;">
-        {{ tab.emoji }}
-      </span>
+      <!-- PARENT WITH CHILDREN (Admin, Jobcards) -->
+      <a *ngIf="tab.children; else singleTab"
+         class="list-group-item d-flex align-items-center px-3 py-2 position-relative"
+         role="button"
+         (click)="toggleTab(tab)">
 
-      <!-- Font/Icon -->
-      <i *ngIf="tab.icon"
-         class="{{ tab.icon }} me-2 text-warning"
-         style="width: 20px; text-align: center;"></i>
+        <!-- Icon -->
+        <i *ngIf="tab.icon"
+           class="{{ tab.icon }} me-2 text-warning"
+           style="width: 20px; text-align: center;"></i>
 
-      <span>{{ tab.name }}</span>
-    </a>
+        <span>{{ tab.name }}</span>
+
+        <!-- Arrow -->
+        <i class="fas position-absolute end-0 pe-3"
+           [ngClass]="{
+             'fa-chevron-down': tab.expanded,
+             'fa-chevron-right': !tab.expanded
+           }">
+        </i>
+      </a>
+
+      <!-- SINGLE TAB (NO CHILDREN) -->
+      <ng-template #singleTab>
+        <a class="list-group-item d-flex align-items-center px-3 py-2"
+           [routerLink]="tab.route"
+           routerLinkActive="active">
+
+          <i *ngIf="tab.icon"
+             class="{{ tab.icon }} me-2 text-warning"
+             style="width: 20px; text-align: center;"></i>
+
+          <span *ngIf="tab.emoji" class="me-2 text-warning">{{ tab.emoji }}</span>
+
+          <span>{{ tab.name }}</span>
+        </a>
+      </ng-template>
+
+      <!-- CHILD TABS -->
+      <!-- CHILD TABS -->
+      <div *ngIf="tab.children"
+           class="submenu ps-4"
+           [class.open]="tab.expanded">
+
+        <a *ngFor="let child of tab.children"
+           class="list-group-item list-group-item-secondary d-flex align-items-center px-3 py-2"
+           [routerLink]="child.route"
+           routerLinkActive="active">
+
+          <i *ngIf="child.icon"
+             class="{{ child.icon }} me-2 text-warning"
+             style="width: 20px;"></i>
+
+          <span *ngIf="child.emoji" class="me-2 text-warning">{{ child.emoji }}</span>
+
+          <span>{{ child.name }}</span>
+        </a>
+      </div>
+
+
+    </ng-container>
 
   </div>
 </div>
+
+
 
 
 

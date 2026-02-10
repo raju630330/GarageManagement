@@ -29,6 +29,7 @@ import { StockComponent } from './stock/stock.component';
 import { IssueComponent } from './issue/issue.component';
 import { OrderComponent } from './order/order.component';
 import { InwardComponent } from './inward/inward.component';
+import { AssignUserToWorkshopComponent } from './assign-user-to-workshop/assign-user-to-workshop.component';
 
 const routes: Routes = [
   {
@@ -68,6 +69,7 @@ const routes: Routes = [
       { path: 'inward', component: InwardComponent, canActivate: [authGuard] },
       { path: 'order', component: OrderComponent, canActivate: [authGuard] },
       { path: 'workshop', component: WorkshopComponent, canActivate: [authGuard] },
+      { path: 'assignuser', component: AssignUserToWorkshopComponent, canActivate: [authGuard] },
       { path: 'unauthorized', component: UnauthorizedComponent, data: { public: true } }
     ]
   },
