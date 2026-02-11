@@ -459,6 +459,12 @@ namespace GarageManagement.Server.Data
                 .WithMany()
                 .HasForeignKey(m => m.WorkshopId);
 
+            modelBuilder.Entity<StockMovement>()
+                .HasOne(sm => sm.User)
+                .WithMany(u => u.StockMovements)
+                .HasForeignKey(sm => sm.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

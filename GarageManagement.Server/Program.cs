@@ -29,6 +29,7 @@ namespace BrilliantMinds.Server
 
             // Email Service
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IHelperRepository, HelperRepository>();
             builder.Services.AddScoped<IJwtUserContext, JwtUserContext>();
             builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
             builder.Services.AddTransient<EmailService>(); ;
