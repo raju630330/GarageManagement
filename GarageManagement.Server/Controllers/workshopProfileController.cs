@@ -3,6 +3,7 @@ using GarageManagement.Server.dtos;
 using GarageManagement.Server.Model;
 using GarageManagement.Server.RepoInterfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace GarageManagement.Server.Controllers
@@ -192,5 +193,24 @@ namespace GarageManagement.Server.Controllers
             return Ok(new { isSuccess = true, Message = "User Assigned successfully" });
         }
 
+        [HttpGet("GetWorkshopsByUser")]
+        public async Task<IActionResult> GetWorkshopsByUser(long id)
+        {
+            var result = await _context.WorkshopUsers.Include(a=> a.Workshop).Include(b=> b.User).ThenInclude(a=> a.Role)
+                                        .Where(a=> a.UserId == id)
+                                        .Select(a => new
+                                        {
+                                            Id = a.Id,  
+                                            UserName = a.User.Username,
+                                            RoleName = a.User.Role.RoleName,
+                                            WorshopName = a.Workshop.WorkshopName,               
+                                        }).ToListAsync();
+
+            if (result == null)
+            { 
+                return NotFound();  
+            }
+            return Ok(result);  
+        }
     }
 }

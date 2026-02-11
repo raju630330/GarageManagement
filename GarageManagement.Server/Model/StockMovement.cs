@@ -19,6 +19,9 @@
         public DateTime TransactionDate { get; set; } = DateTime.Now;
 
         public string Barcode { get; set; } = string.Empty;
+        public long? UserId { get; set; }
+        public User User { get; set; } = null!;
+
     }
 
 }

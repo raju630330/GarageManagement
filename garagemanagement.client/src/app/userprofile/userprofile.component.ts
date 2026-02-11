@@ -55,7 +55,7 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     { name: 'Subscription', route: '/subscription', module: 'Subscription', permission: 'V' },
     { name: 'Terms & Conditions', route: '/terms', module: 'Subscription', permission: 'V' },
     { name: 'Reminders', route: '/reminders', module: 'Subscription', permission: 'V' },
-    { name: 'Associated Workshops', route: '/associated-workshops', module: 'Subscription', permission: 'V' },
+    { name: 'Associated Workshops', route: '/associatedworkshops', module: 'Subscription', permission: 'V' },
     { name: 'Activate e-payment now', route: '/activate-epayment', module: 'Subscription', permission: 'V' },
     { name: 'Integrations', route: '/integrations', module: 'Subscription', permission: 'V' },
     { name: 'Templates', route: '/templates', module: 'Templates', permission: 'V' }

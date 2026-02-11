@@ -24,5 +24,6 @@ namespace GarageManagement.Server.Model
         // Navigation
         public ICollection<WorkshopUser> WorkshopUsers { get; set; }
         public ICollection<BookAppointment> BookAppointments { get; set; }
+        public ICollection<StockMovement> StockMovements { get; set; }
     }
 }
