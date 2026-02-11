@@ -63,21 +63,22 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
 
   sidebarTabs: AppTab[] = [
     {
-      name: 'Admin', icon: 'fas fa-cog', module : 'Admin', permission: 'V', children: [
+      name: 'Admin', icon: 'bi bi-shield-lock', module : 'Admin', permission: 'V', children: [
         { name: 'Roles', icon: 'fas fa-user-shield', route: '/roles', module: 'Role', permission: 'V' },
         { name: 'Role Permission', icon: 'fas fa-lock', route: '/rolepermission', module: 'RolePermission', permission: 'V' },
         { name: 'Workshop', icon: 'fas fa-tools', route: '/workshop', module: 'RolePermission', permission: 'V' },
         { name: 'Assign User', icon: 'fas fa-user-plus', route: '/assignuser', module: 'RolePermission', permission: 'V' },
       ]
     },
-    {
-      name: 'Jobcards', icon: 'fas fa-briefcase', module: 'Jobcards', permission: 'V', children: [
-        { name: 'Add', emoji: '📝', route: '/newjobcard', module: 'JobCardAdd', permission: 'V' },
-        { name: 'List', emoji: '📝', route: '/jobcardlist', module: 'JobCardList', permission: 'V' }
-      ]
-    },
+
     { name: 'Booking Appointment', icon: 'fas fa-calendar-check', route: '/Calendar', module: 'BookAppointment', permission: 'V' },
     { name: 'Repair Order', icon: 'bi bi-tools', route: '/repair-order', module: 'RepairOrder', permission: 'V' }, //assignuser
+    {
+      name: 'Jobcards', icon: 'bi bi-clipboard-check', module: 'Jobcards', permission: 'V', children: [
+        { name: 'Add', icon: 'bi bi-clipboard-check', route: '/newjobcard', module: 'JobCardAdd', permission: 'V' },
+        { name: 'List', icon: 'bi bi-journal-text', route: '/jobcardlist', module: 'JobCardList', permission: 'V' }
+      ]
+    },
 
   ];
 

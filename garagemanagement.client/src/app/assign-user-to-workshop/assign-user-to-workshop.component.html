@@ -20,7 +20,7 @@
                               (selected)="getworkshopdetails($event)"
                               (clearForm)="resetEntireForm()">
             </app-autocomplete>
-            <span class="text-danger" *ngIf="assignuser.get('workshopId')?.hasError('required') && assignuser.get('workshopId')?.invalid && assignuser.get('workshopId')?.touched">Please search and select Workshop</span>
+            <span class="text-danger" *ngIf="assignuser.get('workshopSearch')?.hasError('required') && assignuser.get('workshopSearch')?.invalid && assignuser.get('workshopSearch')?.touched">Please search and select Workshop</span>
           </div>
         </div>
         <div class="row m-2">
@@ -33,11 +33,13 @@
                               (selected)="getuserdetails($event)"
                               (clearForm)="resetEntireForm()">
             </app-autocomplete>
+            <span class="text-danger" *ngIf="assignuser.get('userSearch')?.hasError('required') && assignuser.get('userSearch')?.invalid && assignuser.get('userSearch')?.touched">Please search and select User</span>
+
           </div>
         </div>
         <div class="row justify-content-center align-items-center">
           <div class="col-md-2">
-            <input type="submit" class="btn btn-primary" />
+            <input type="submit" class="btn btn-primary" value="Assign" />
           </div>         
         </div>
       </div>

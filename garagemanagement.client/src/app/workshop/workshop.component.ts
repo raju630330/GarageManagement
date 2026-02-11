@@ -72,6 +72,7 @@ export class WorkshopComponent implements OnInit {
   submit() {
     if (this.workshopForm.invalid) {
       this.workshopForm.markAllAsTouched();
+      this.alert.showError("Please fill all required fields!");
       return;
     }
     console.log(this.workshopForm.value);

@@ -1,38 +1,83 @@
 <div [formGroup]="jobCardForm">
 
-  <!-- MAIN TITLE -->
-  <div class="card">
-    <div class="card-body">
-      <div class="d-flex align-items-center gap-3 flex-wrap">
-        <label class="fw-bold text-dark mb-0">
-          Search Repair Order Details
-        </label>
 
-        <div class="flex-grow-1">
-          <app-autocomplete placeholder="Search by Reg No / Customer Name / Mobile"
+
+
+  <div class="d-flex align-items-center justify-content-between
+            bg-white p-3 mb-4 rounded shadow-sm">
+
+    <h1 class="mb-0 d-flex align-items-center text-dark fw-bold">
+      <i class="bi bi-clipboard-check me-2 text-primary"></i>
+
+      New Job Card
+    </h1>
+
+
+    <a routerLink="/repair-order"
+       class="btn btn-primary d-flex align-items-center">
+      <i class="bi bi-tools me-2"></i>
+      Repair Order
+    </a>
+
+  </div>
+
+
+  <div
+       class="d-flex justify-content-center mb-4">
+
+    <div class="card shadow-lg border-0 w-100"
+         style="max-width: 900px; border-radius: 16px;">
+
+      <!-- Header -->
+      <div class="card-header bg-primary text-white text-center py-3"
+           style="border-top-left-radius: 16px; border-top-right-radius: 16px;">
+        <h5 class="mb-0 fw-semibold">
+          <i class="bi bi-tools me-2"></i>
+          Search Repair Order Details
+        </h5>
+      </div>
+
+      <!-- Body -->
+      <div class="card-body px-4 py-4">
+
+        <div class="position-relative">
+
+          <!-- Search icon -->
+          <i class="bi bi-search position-absolute text-muted"
+             style="top: 50%; left: 15px; transform: translateY(-50%);
+                  z-index: 5;">
+          </i>
+
+          <!-- Autocomplete -->
+          <app-autocomplete placeholder="Search by Reg No / Customer Name / Mobile" class="form-control ps-5" 
                             [searchFn]="repairorderservice.searchRepairOrder.bind(repairorderservice)"
                             (selected)="fillJobCardFromRepairOrder($event)"
                             (clearForm)="resetEntireForm()">
           </app-autocomplete>
+
+        </div>
+
+        <!-- Hint text -->
+        <small class="text-muted d-block mt-2 text-center">
+          Start typing to search existing repair orders
+        </small>
+        <input type="hidden" formControlName="id" />
+
+        <br />
+
+        <div class="d-flex gap-2 overflow-auto py-2"
+             *ngIf="showAccordion">
+          <div class="simple-icon-box" (click)="openPopup('Service Package')">Service Package</div>
+          <div class="simple-icon-box" (click)="openPopup('Service History')">Service History</div>
+          <div class="simple-icon-box" (click)="openPopup('Feedback')">Feedback</div>
+          <div class="simple-icon-box" (click)="openPopup('Due Amount')">Due Amount</div>
+          <div class="simple-icon-box" (click)="openPopup('Reminders')">Reminders</div>
+          <div class="simple-icon-box" (click)="openPopup('Battery/Tyre')">Battery/Tyre</div>
         </div>
       </div>
-
-      <input type="hidden" formControlName="id" />
-
-      <br />
-
-      <div class="d-flex gap-2 overflow-auto py-2"
-           *ngIf="showAccordion">
-        <div class="simple-icon-box" (click)="openPopup('Service Package')">Service Package</div>
-        <div class="simple-icon-box" (click)="openPopup('Service History')">Service History</div>
-        <div class="simple-icon-box" (click)="openPopup('Feedback')">Feedback</div>
-        <div class="simple-icon-box" (click)="openPopup('Due Amount')">Due Amount</div>
-        <div class="simple-icon-box" (click)="openPopup('Reminders')">Reminders</div>
-        <div class="simple-icon-box" (click)="openPopup('Battery/Tyre')">Battery/Tyre</div>
-      </div>
     </div>
+
   </div>
-  
 
 
   <mat-accordion multi *ngIf="showAccordion">
