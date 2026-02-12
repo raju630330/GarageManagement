@@ -1,89 +1,110 @@
-<div class="container mt-4">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
+<div class="container-fluid py-3">
 
-      <div class="card shadow-sm">
+  <!-- Header -->
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="d-flex align-items-center justify-content-between
+                  bg-white p-3 rounded shadow-sm">
 
-        <!-- Header -->
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">
-            <i class="bi bi-person-badge me-2"></i>
-            Roles
-          </h5>
+        <h1 class="h4 mb-0 d-flex align-items-center fw-bold text-dark">
+          <i class="fas fa-user-shield me-2 text-primary"></i>
+          Roles
+        </h1>
 
-          <span class="badge bg-light text-primary">
-            {{ roles.length }}
-          </span>
-        </div>
+      </div>
+    </div>
+  </div>
 
-        <div class="card-body">
+  <!-- Add Task -->
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="bg-white p-3 rounded shadow-sm">
 
-          <!-- Add / Edit Form -->
-          <form [formGroup]="roleForm" (ngSubmit)="saveRole()" class="mb-3">
+        <label class="form-label fw-semibold">
+          {{ currentRoleId === 0 ? 'Add Role' : 'Edit Role' }}
+        </label>
 
-            <label class="form-label fw-semibold">
-              {{ currentRoleId === 0 ? 'Add Role' : 'Edit Role' }}
-            </label>
+        <form [formGroup]="roleForm"
+              (ngSubmit)="saveRole()">
 
-            <div class="input-group">
-              <input type="text"
-                     class="form-control"
-                     formControlName="roleName"
-                     placeholder="Enter role name"
-                     autofocus>
+          <div class="input-group input-group-lg">
+            <input type="text"
+                   class="form-control"
+                   formControlName="roleName"
+                   placeholder="Enter Role name">
 
-              <button class="btn btn-success" type="submit">
-                <i class="bi"
-                   [ngClass]="currentRoleId === 0 ? 'bi-plus-lg' : 'bi-check-lg'"></i>
-                {{ currentRoleId === 0 ? 'Add' : 'Update' }}
-              </button>
+            <button class="btn btn-success" type="submit">
+              <i class="bi"
+                 [ngClass]="currentRoleId === 0 ? 'bi-plus-lg' : 'bi-check-lg'"></i>
+              {{ currentRoleId === 0 ? 'Add' : 'Update' }}
+            </button>
 
-              <button *ngIf="currentRoleId !== 0"
-                      type="button"
-                      class="btn btn-outline-secondary"
-                      (click)="resetForm()">
-                Cancel
-              </button>
-            </div>
+            <button *ngIf="currentRoleId !== 0"
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    (click)="resetForm()">
+              Cancel
+            </button>
+          </div>
 
-          </form>
+        </form>
 
-          <!-- Roles List -->
-          <ul class="list-group">
+      </div>
+    </div>
+  </div>
 
-            <li *ngFor="let role of roles"
-                class="list-group-item d-flex justify-content-between align-items-center">
+  <!-- To-Do Table -->
+  <div class="row">
+    <div class="col-12">
 
-              <span class="fw-medium">{{ role.roleName }}</span>
+      <div class="table-responsive">
 
-              <div class="btn-group btn-group-sm">
-                <button class="btn btn-outline-primary"
-                        title="Edit"
+        <table class="table table-hover">
+
+          <thead class="table-light">
+            <tr>
+              <th>Role Name</th>
+              <th style="width:150px" class="text-center">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let role of roles">
+
+              <td class="fw-medium">
+                {{ role.roleName }}
+              </td>
+
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-primary me-2"
                         (click)="editRole(role)">
                   <i class="bi bi-pencil"></i>
                 </button>
 
-                <button class="btn btn-outline-danger"
-                        title="Delete"
+                <button class="btn btn-sm btn-outline-danger"
                         (click)="deleteRole(role.id)">
                   <i class="bi bi-trash"></i>
                 </button>
-              </div>
+              </td>
+            </tr>
 
-            </li>
+            <!-- Empty State -->
+            <tr *ngIf="roles.length === 0">
+              <td colspan="3"
+                  class="text-center text-muted py-4">
+                <i class="bi bi-clipboard-x fs-4 d-block mb-2"></i>
+                No tasks available
+              </td>
+            </tr>
 
-          </ul>
+          </tbody>
 
-          <!-- Empty State -->
-          <div *ngIf="roles.length === 0"
-               class="text-center text-muted mt-3">
-            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-            No roles available
-          </div>
+        </table>
 
-        </div>
       </div>
 
     </div>
   </div>
+
 </div>

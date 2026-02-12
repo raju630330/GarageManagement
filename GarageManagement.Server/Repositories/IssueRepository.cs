@@ -13,7 +13,8 @@ namespace GarageManagement.Server.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly IJwtUserContext _jwtUser;
-        public IssueRepository(ApplicationDbContext context, IJwtUserContext jwtUser) { _context = context; _jwtUser = jwtUser; }
+        private readonly IHelperRepository _helperRepository;
+        public IssueRepository(ApplicationDbContext context, IJwtUserContext jwtUser,IHelperRepository helperRepository) { _context = context; _jwtUser = jwtUser; _helperRepository = helperRepository; }
 
         public async Task<BaseResultDto<List<PendingIssueItemDto>>> GetEstimationPendingItems(long jobCardId)
         {
@@ -138,7 +139,9 @@ namespace GarageManagement.Server.Repositories
                     Quantity = -req.IssueQty,
                     SellingPrice = estimation.Rate,
                     TransactionType = "ISSUE",
-                    TransactionDate = DateTime.Now
+                    TransactionDate = DateTime.Now,
+                    UserId = _helperRepository.GetUserId(), 
+
                 });
             }
 
@@ -234,7 +237,8 @@ namespace GarageManagement.Server.Repositories
                     Quantity = returnItem.ReturnQty,
                     TransactionType = "RETURN",
                     SellingPrice = item.Rate,
-                    TransactionDate = DateTime.Now
+                    TransactionDate = DateTime.Now,
+                    UserId = _helperRepository.GetUserId(),
                 });
             }
 
