@@ -59,6 +59,7 @@ import { InwardComponent } from './inward/inward.component';
 import { OrderComponent } from './order/order.component';
 import { AssignUserToWorkshopComponent } from './assign-user-to-workshop/assign-user-to-workshop.component';
 import { AssociatedworkshopsComponent } from './associatedworkshops/associatedworkshops.component';
+import { WorkshopListComponent } from './workshop-list/workshop-list.component';
 
 @NgModule({
   declarations: [
@@ -105,7 +106,8 @@ import { AssociatedworkshopsComponent } from './associatedworkshops/associatedwo
     InwardComponent,
     OrderComponent,
     AssignUserToWorkshopComponent,
-    AssociatedworkshopsComponent
+    AssociatedworkshopsComponent,
+    WorkshopListComponent
   ],
   imports: [
     BrowserModule,

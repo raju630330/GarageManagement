@@ -212,5 +212,140 @@ namespace GarageManagement.Server.Controllers
             }
             return Ok(result);  
         }
+
+        [HttpGet("getall")]
+        public async Task<IActionResult> GetAllWorkshops(int pageNumber = 1, int pageSize = 10)
+        {
+            if (pageNumber <= 0) pageNumber = 1;
+            if (pageSize <= 0) pageSize = 10;
+
+            var query = _context.WorkshopProfiles
+                .Include(x => x.Address)
+                .Include(x => x.WorkshopBusinessConfigs)
+                .OrderByDescending(x => x.Id)
+                .AsQueryable();
+
+            var totalRecords = await query.CountAsync();
+
+            var workshops = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(x => new WorkshopListDto
+                {
+                    Id = x.Id,
+                    WorkshopName = x.WorkshopName,
+                    OwnerName = x.OwnerName,
+                    OwnerMobileNo = x.OwnerMobileNo,
+                    City = x.Address.City,
+                    Gstin = x.WorkshopBusinessConfigs.GSTIN
+                })
+                .ToListAsync();
+
+            var response = new PagedResponse<WorkshopListDto>
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalRecords = totalRecords,
+                TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize),
+                Data = workshops
+            };
+
+            return Ok(response);
+        }
+
+        [HttpGet("getWorkshopById/{id}")]
+        public async Task<IActionResult> GetWorkshopById(long id)
+        {
+            var workshop = await _context.WorkshopProfiles
+                .Include(x => x.Address)
+                .Include(x => x.Timing)
+                .Include(x => x.WorkshopBusinessConfigs)
+                .Include(x => x.Services)
+                .Include(x => x.WorkingDays)
+                .Include(x => x.WorkshopPaymentModes)
+                .Include(x => x.WorkshopMedias)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (workshop == null)
+                return NotFound();
+
+            var result = new
+            {
+                id = workshop.Id,
+
+                // STEP 1
+                workshopName = workshop.WorkshopName,
+                ownerName = workshop.OwnerName,
+                ownerMobileNo = workshop.OwnerMobileNo,
+                emailID = workshop.EmailID,
+                contactPerson = workshop.ContactPerson,
+                landline = workshop.Landline,
+
+                // STEP 2 - Address
+                address = workshop.Address == null ? null : new
+                {
+                    workshop.Address.FlatNo,
+                    workshop.Address.Street,
+                    workshop.Address.Location,
+                    workshop.Address.City,
+                    workshop.Address.State,
+                    workshop.Address.StateCode,
+                    workshop.Address.Country,
+                    workshop.Address.Pincode,
+                    workshop.Address.Landmark,
+                    workshop.Address.BranchAddress
+                },
+
+                // STEP 3
+                inBusinessSince = workshop.InBusinessSince,
+                avgVehicleInflowPerMonth = workshop.AvgVehicleInflowPerMonth,
+                noOfEmployees = workshop.NoOfEmployees,
+                dealerCode = workshop.DealerCode,
+
+                // STEP 4 - Timing
+                timing = workshop.Timing == null ? null : new
+                {
+                    startTime = workshop.Timing.StartTime,
+                    endTime = workshop.Timing.EndTime
+                },
+
+                // STEP 5 - Business Config
+                businessConfig = workshop.WorkshopBusinessConfigs == null ? null : new
+                {
+                    websiteLink = workshop.WorkshopBusinessConfigs.WebsiteLink,
+                    googleReviewLink = workshop.WorkshopBusinessConfigs.GoogleReviewLink,
+                    externalIntegrationUrl = workshop.WorkshopBusinessConfigs.ExternalIntegrationUrl,
+                    gstin = workshop.WorkshopBusinessConfigs.GSTIN,
+                    msme = workshop.WorkshopBusinessConfigs.MSME,
+                    sac = workshop.WorkshopBusinessConfigs.SAC,
+                    sacPercentage = workshop.WorkshopBusinessConfigs.SACPercentage
+                },
+
+                // STEP 6 - Lists (IDs only)
+                serviceIds = workshop.Services
+                    .Select(x => x.ServiceId.ToString())
+                    .ToArray(),
+
+                workingDays = workshop.WorkingDays
+                    .Select(x => ((int)x.Day).ToString())
+                    .ToArray(),
+
+                paymentModeIds = workshop.WorkshopPaymentModes
+                    .Select(x => x.PaymentModeId.ToString())
+                    .ToArray(),
+
+                media = workshop.WorkshopMedias
+                    .Select(x => x.FilePath)
+                    .ToArray(),
+
+                // STEP 7
+                isGdprAccepted = workshop.IsGdprAccepted
+            };
+
+            return Ok(result);
+        }
+
+
+
     }
 }

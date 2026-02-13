@@ -372,6 +372,16 @@ namespace GarageManagement.Server.Data
                 .WithOne(a => a.Workshop)
                 .HasForeignKey(a => a.WorkshopId);
 
+            modelBuilder.Entity<WorkshopProfile>()
+                .HasMany(w => w.WorkshopMedias)
+                .WithOne(m => m.Workshop)
+                .HasForeignKey(m => m.WorkshopId);
+
+            modelBuilder.Entity<WorkshopProfile>()
+                .HasMany(w => w.WorkshopPaymentModes)
+                .WithOne(pm => pm.Workshop)
+                .HasForeignKey(pm => pm.WorkshopId);
+
             // ===============================
             // WorkshopAddress (1 : 1)
             // ===============================
@@ -407,7 +417,7 @@ namespace GarageManagement.Server.Data
 
             modelBuilder.Entity<WorkshopService>()
                 .HasOne(ws => ws.Service)
-                .WithMany()
+                .WithMany() // OK if Service has no collection
                 .HasForeignKey(ws => ws.ServiceId);
 
             // ===============================
@@ -427,9 +437,9 @@ namespace GarageManagement.Server.Data
             modelBuilder.Entity<WorkshopBusinessConfig>()
                 .HasKey(b => b.Id);
 
-            modelBuilder.Entity<WorkshopBusinessConfig>()
-                .HasOne(b => b.Workshop)
-                .WithOne()
+            modelBuilder.Entity<WorkshopProfile>()
+                .HasOne(w => w.WorkshopBusinessConfigs)
+                .WithOne(b => b.Workshop)
                 .HasForeignKey<WorkshopBusinessConfig>(b => b.WorkshopId);
 
             // ===============================
@@ -440,12 +450,12 @@ namespace GarageManagement.Server.Data
 
             modelBuilder.Entity<WorkshopPaymentMode>()
                 .HasOne(wp => wp.Workshop)
-                .WithMany()
+                .WithMany(w => w.WorkshopPaymentModes) // ✅ FIX
                 .HasForeignKey(wp => wp.WorkshopId);
 
             modelBuilder.Entity<WorkshopPaymentMode>()
                 .HasOne(wp => wp.PaymentMode)
-                .WithMany()
+                .WithMany() // OK if PaymentMode has no collection
                 .HasForeignKey(wp => wp.PaymentModeId);
 
             // ===============================
@@ -456,7 +466,7 @@ namespace GarageManagement.Server.Data
 
             modelBuilder.Entity<WorkshopMedia>()
                 .HasOne(m => m.Workshop)
-                .WithMany()
+                .WithMany(w => w.WorkshopMedias) // ✅ FIX
                 .HasForeignKey(m => m.WorkshopId);
 
             modelBuilder.Entity<StockMovement>()

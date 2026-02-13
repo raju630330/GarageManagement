@@ -1,0 +1,115 @@
+<div class="container-fluid mt-4">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold text-primary">
+      <i class="fas fa-list me-2"></i>Workshop List
+    </h3>
+  </div>
+
+
+
+  <!-- Table -->
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Workshop Name</th>
+              <th>Owner</th>
+              <th>Mobile</th>
+              <th>City</th>
+              <th>GSTIN</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="isLoading">
+              <td colspan="6" class="text-center py-4">
+                <div class="spinner-border text-primary"></div>
+              </td>
+            </tr>
+
+            <tr *ngFor="let w of workshops; let i = index">
+              <td>{{ ((workshopForm.value.pageNumber - 1) * workshopForm.value.pageSize) + i + 1 }}</td>
+              <td class="fw-semibold">{{ w.workshopName }}</td>
+              <td>{{ w.ownerName }}</td>
+              <td>{{ w.ownerMobileNo }}</td>
+              <td>{{ w.city }}</td>
+              <td>{{ w.gstin || '-' }}</td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-primary me-2"
+                        (click)="editWorkshop(w.id)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="!isLoading && workshops.length === 0">
+              <td colspan="6" class="text-center text-muted py-4">
+                No workshops found
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+  <form [formGroup]="workshopForm"
+        class="row align-items-center g-2 m-3">
+
+    <!-- Page Size (LEFT) -->
+    <div class="col-12 col-md-2">
+      <select class="form-select form-select-sm"
+              formControlName="pageSize"
+              (change)="changePageSize()">
+        <option [value]="5">5 / page</option>
+        <option [value]="10">10 / page</option>
+        <option [value]="20">20 / page</option>
+        <option [value]="50">50 / page</option>
+      </select>
+    </div>
+
+    <!-- Spacer -->
+    <div class="d-none d-md-block col-md-4"></div>
+
+    <!-- RIGHT: Page Info + Prev / Next -->
+    <div class="col-12 col-md-6 d-flex flex-wrap
+              justify-content-center justify-content-md-end
+              align-items-center gap-2">
+
+      <!-- Page Info -->
+      <span class="text-muted small fw-semibold">
+        Page <strong>{{ workshopForm.value.pageNumber }}</strong>
+        of <strong>{{ totalPages }}</strong>
+        | Total <strong>{{ totalRecords }}</strong>
+      </span>
+
+      <!-- Prev Button -->
+      <button type="button"
+              class="btn btn-outline-primary btn-sm"
+              (click)="prevPage()"
+              [disabled]="workshopForm.get('pageNumber')?.value === 1">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <!-- Next Button -->
+      <button type="button"
+              class="btn btn-outline-primary btn-sm"
+              (click)="nextPage()"
+              [disabled]="workshopForm.get('pageNumber')?.value === totalPages">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+
+    </div>
+
+  </form>
+
+
+
+</div>

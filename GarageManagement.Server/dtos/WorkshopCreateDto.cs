@@ -77,4 +77,21 @@
         public long WorkshopId { get; set; }
         public long UserId { get; set; }
     }
+    public class PagedResponse<T>
+    {
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public int TotalRecords { get; set; }
+        public int TotalPages { get; set; }
+        public List<T> Data { get; set; } = new();
+    }
+    public class WorkshopListDto
+    {
+        public long Id { get; set; }
+        public string WorkshopName { get; set; } = string.Empty;
+        public string OwnerName { get; set; } = string.Empty;
+        public string OwnerMobileNo { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string Gstin { get; set; } = string.Empty;
+    }
 }

@@ -21,10 +21,13 @@ public class WorkshopProfile
     public DateTime? CalendarDate { get; set; }
     public WorkshopAddress Address { get; set; }
     public WorkshopTiming Timing { get; set; }
+    public WorkshopBusinessConfig WorkshopBusinessConfigs { get; set; }
 
     public ICollection<WorkshopService> Services { get; set; }
     public ICollection<WorkshopWorkingDay> WorkingDays { get; set; }
     public ICollection<WorkshopUser> WorkshopUsers { get; set; }
+    public ICollection<WorkshopMedia> WorkshopMedias { get; set; }
+    public ICollection<WorkshopPaymentMode> WorkshopPaymentModes { get; set; }
     public ICollection<BookAppointment> Appointments { get; set; } = new List<BookAppointment>();
 }
 public class WorkshopAddress
