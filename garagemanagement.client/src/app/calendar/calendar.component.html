@@ -1,5 +1,48 @@
 <div class="container-fluid my-3">
-  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+  <div class="bg-white p-3 mb-4 rounded shadow-sm">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+
+      <!-- LEFT SECTION -->
+      <div class="d-flex align-items-center gap-2">
+        <h1 class="mb-0 d-flex align-items-center text-dark fw-bold fs-4">
+          <i class="fa fa-calendar me-2 text-primary"></i>
+          Calendar
+        </h1>
+        <button class="btn btn-outline-primary btn-sm" (click)="today()">
+          Today
+        </button>
+
+        <button class="btn btn-outline-primary btn-sm" (click)="previousWeek()">
+          &lt;
+        </button>
+
+        <button class="btn btn-outline-primary btn-sm" (click)="nextWeek()">
+          &gt;
+        </button>
+        <h2 class="mb-0 text-muted fs-6">
+          {{ currentDate | date: 'MMMM y' }}
+        </h2>
+      </div>
+
+      <!-- RIGHT SECTION -->
+      <div class="d-flex flex-wrap align-items-center gap-2 justify-content-end">       
+        <select class="form-select form-select-sm w-auto" (change)="changeView($event)">
+          <option selected value="day">Day</option>
+          <option value="week">Week</option>
+          <option value="month">Month</option>
+        </select>
+
+        <a routerLink="/Calendar/bookappointment"
+           class="btn btn-primary btn-sm d-flex align-items-center">
+          <i class="fas fa-plus me-2"></i>
+          New Appointment
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+ <!-- <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
     <div class="d-flex align-items-center gap-2 flex-wrap">
       <h3 class="mb-0">📅 Calendar</h3>
       <button class="btn btn-outline-primary btn-sm" (click)="today()">Today</button>
@@ -26,7 +69,7 @@
         + New Appointment
       </button>
     </div>
-  </div>
+  </div>-->
 
   <!-- WEEK & DAY VIEW -->
   <div class="table-responsive" *ngIf="viewMode === 'week' || viewMode === 'day'">

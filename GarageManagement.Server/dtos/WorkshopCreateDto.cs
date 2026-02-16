@@ -2,6 +2,7 @@
 {
     public class WorkshopCreateDto
     {
+        public long Id { get; set; }
         public string WorkshopName { get; set; } = string.Empty;
         public string OwnerName { get; set; } = string.Empty;
         public string OwnerMobileNo { get; set; } = string.Empty;
@@ -25,7 +26,9 @@
         public List<string> ServiceIds { get; set; } = new();
         public List<string> WorkingDays { get; set; } = new();
         public List<string> PaymentModeIds { get; set; } = new();
-        public List<string> Media { get; set; } = new(); // Simple strings for now
+        // public List<string> Media { get; set; } = new(); // Simple strings for now
+
+        public List<IFormFile> MediaFiles { get; set; } = new();
     }
 
 
@@ -58,7 +61,7 @@
         public string Gstin { get; set; } = string.Empty;      // ✅ camelCase
         public string Msme { get; set; } = string.Empty;       // ✅ camelCase  
         public string Sac { get; set; } = string.Empty;        // ✅ camelCase
-        public string? SacPercentage { get; set; }             // ✅ string
+        public decimal? SacPercentage { get; set; }             // ✅ string
         public string InvoiceCaption { get; set; } = string.Empty;
         public string InvoiceHeader { get; set; } = string.Empty;
         public string DefaultServiceType { get; set; } = string.Empty;
@@ -93,5 +96,6 @@
         public string OwnerMobileNo { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string Gstin { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
     }
 }

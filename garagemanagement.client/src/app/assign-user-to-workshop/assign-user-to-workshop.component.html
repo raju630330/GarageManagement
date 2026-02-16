@@ -1,4 +1,4 @@
-<div class="container-flid">
+<div class="container-fluid  py-3">
   <!-- Header -->
   <div class="row mb-3">
     <div class="col-12">
@@ -13,48 +13,85 @@
       </div>
     </div>
   </div>
-
-  <div class="card">
-
-    <div class="card-body">
+  <div class="col-md-12 mb-3">
+    <div class="bg-white p-3 rounded shadow-sm">
       <form [formGroup]="assignuser" (ngSubmit)="submit()">
-        <div class="col-md-12">
-          <div class="row m-2">
-            <div class="col-md-3 text-end">
-              <label>Search Workshops :</label>
-            </div>
-            <div class="col-md-5">
-              <app-autocomplete placeholder="Search by Workshop Name / Owner Mobile No" formControlName="workshopSearch"
-                                [searchFn]="workshopservice.searchWorkshops.bind(workshopservice)"
-                                (selected)="getworkshopdetails($event)"
-                                (clearForm)="resetEntireForm()">
-              </app-autocomplete>
-              <span class="text-danger" *ngIf="assignuser.get('workshopSearch')?.hasError('required') && assignuser.get('workshopSearch')?.invalid && assignuser.get('workshopSearch')?.touched">Please search and select Workshop</span>
-            </div>
+        <div class="row m-2">
+          <div class="col-md-3 text-end">
+            <label>Search Workshops :</label>
           </div>
-          <div class="row m-2">
-            <div class="col-md-3 text-end">
-              <label>Search Users :</label>
-            </div>
-            <div class="col-md-5">
-              <app-autocomplete placeholder="Search by User Name / Email" formControlName="userSearch"
-                                [searchFn]="workshopservice.searchUsers.bind(workshopservice)"
-                                (selected)="getuserdetails($event)"
-                                (clearForm)="resetEntireForm()">
-              </app-autocomplete>
-              <span class="text-danger" *ngIf="assignuser.get('userSearch')?.hasError('required') && assignuser.get('userSearch')?.invalid && assignuser.get('userSearch')?.touched">Please search and select User</span>
-
-            </div>
-          </div>
-          <div class="row justify-content-center align-items-center">
-            <div class="col-md-2">
-              <input type="submit" class="btn btn-primary" value="Assign" />
-            </div>
+          <div class="col-md-5">
+            <app-autocomplete placeholder="Search by Workshop Name / Owner Mobile No" formControlName="workshopSearch"
+                              [searchFn]="workshopservice.searchWorkshops.bind(workshopservice)"
+                              (selected)="getworkshopdetails($event)"
+                              (clearForm)="resetEntireForm()">
+            </app-autocomplete>
+            <span class="text-danger" *ngIf="assignuser.get('workshopSearch')?.hasError('required') && assignuser.get('workshopSearch')?.invalid && assignuser.get('workshopSearch')?.touched">Please search and select Workshop</span>
           </div>
         </div>
+        <div class="row m-2">
+          <div class="col-md-3 text-end">
+            <label>Search Users :</label>
+          </div>
+          <div class="col-md-5">
+            <app-autocomplete placeholder="Search by User Name / Email" formControlName="userSearch"
+                              [searchFn]="workshopservice.searchUsers.bind(workshopservice)"
+                              (selected)="getuserdetails($event)"
+                              (clearForm)="resetEntireForm()">
+            </app-autocomplete>
+            <span class="text-danger" *ngIf="assignuser.get('userSearch')?.hasError('required') && assignuser.get('userSearch')?.invalid && assignuser.get('userSearch')?.touched">Please search and select User</span>
+
+          </div>
+        </div>
+        <div class="row justify-content-center align-items-center">
+          <div class="col-md-2">
+            <input type="submit" class="btn btn-primary" value="Assign" />
+          </div>
+        </div>
+
       </form>
     </div>
   </div>
+      
 
+
+
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Workshop Name</th>
+              <th>User Name</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of assignedUsers">
+              <td>{{ item.workshopName }}</td>
+              <td>{{ item.username }}</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-2"
+                    (click)="edit(item.id)"    >
+                  <i class="bi bi-pencil"></i>
+                </button>
+              </td>
+            </tr>
+
+            <!-- No Data -->
+            <tr *ngIf="assignedUsers?.length === 0">
+              <td colspan="3" class="text-center text-muted">
+                No records found
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
 </div>
 

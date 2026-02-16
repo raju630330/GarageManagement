@@ -1,363 +1,356 @@
-<div class="d-flex align-items-center justify-content-between
+<div class="container-fluid my-3">
+  <div class="d-flex align-items-center justify-content-between
             bg-white p-3 mb-4 rounded shadow-sm">
 
-  <h1 class="mb-0 d-flex align-items-center text-dark fw-bold">
-    <i class="bi bi-tools me-2 text-primary"></i>
-    Repair Order Details
-  </h1>
+    <h1 class="mb-0 d-flex align-items-center text-dark fw-bold">
+      <i class="bi bi-tools me-2 text-primary"></i>
+      Repair Order Details
+    </h1>
 
 
-  <a routerLink="/Calendar"
-     class="btn btn-primary d-flex align-items-center">
-    <i class="fas fa-calendar-check me-2"></i>
-    Book Appointment
-  </a>
+    <a routerLink="/Calendar"
+       class="btn btn-primary d-flex align-items-center">
+      <i class="fas fa-calendar-check me-2"></i>
+      Book Appointment
+    </a>
 
-</div>
+  </div>
+  <div *ngIf="showBookingSearch"
+       class="d-flex justify-content-center mb-4">
 
+    <div class="card shadow-lg border-0 w-100"
+         style="border-radius: 16px;">
 
-<div *ngIf="showBookingSearch"
-     class="d-flex justify-content-center mb-4">
-
-  <div class="card shadow-lg border-0 w-100"
-       style="max-width: 900px; border-radius: 16px;">
-
-    <!-- Header -->
-    <div class="card-header bg-primary text-white text-center py-3"
-         style="border-top-left-radius: 16px; border-top-right-radius: 16px;">
-      <h5 class="mb-0 fw-semibold">
-        <i class="bi bi-calendar-check me-2"></i>
-        Search Booking Appointments
-      </h5>
-    </div>
-
-    <!-- Body -->
-    <div class="card-body px-4 py-4">
-
-      <div class="position-relative">
-
-        <!-- Search icon -->
-        <i class="bi bi-search position-absolute text-muted"
-           style="top: 50%; left: 15px; transform: translateY(-50%);
-                  z-index: 5;">
-        </i>
-
-        <!-- Autocomplete -->
-        <app-autocomplete formControlName="search"
-                          placeholder="Search by Customer / Mobile / Email"
-                          class="form-control ps-5"
-                          [searchFn]="repairOrderService.searchBookingAppointment.bind(repairOrderService)"
-                          (selected)="onBookingSelected($event)"
-                          (clearForm)="resetAppointmentForm()">
-        </app-autocomplete>
-
+      <!-- Header -->
+      <div class="card-header bg-primary text-white text-center py-3"
+           style="border-top-left-radius: 16px; border-top-right-radius: 16px;">
+        <h5 class="mb-0 fw-semibold">
+          <i class="bi bi-calendar-check me-2"></i>
+          Search Booking Appointments
+        </h5>
       </div>
 
-      <!-- Hint text -->
-      <small class="text-muted d-block mt-2 text-center">
-        Start typing to search existing booking appointments
-      </small>
+      <!-- Body -->
+      <div class="card-body px-4 py-4">
 
+        <div class="position-relative">
+
+          <!-- Search icon -->
+          <i class="bi bi-search position-absolute text-muted"
+             style="top: 50%; left: 15px; transform: translateY(-50%);
+                  z-index: 5;">
+          </i>
+
+          <!-- Autocomplete -->
+          <app-autocomplete formControlName="search"
+                            placeholder="Search by Customer / Mobile / Email"
+                            class="form-control ps-5"
+                            [searchFn]="repairOrderService.searchBookingAppointment.bind(repairOrderService)"
+                            (selected)="onBookingSelected($event)"
+                            (clearForm)="resetAppointmentForm()">
+          </app-autocomplete>
+
+        </div>
+
+        <!-- Hint text -->
+        <small class="text-muted d-block mt-2 text-center">
+          Start typing to search existing booking appointments
+        </small>
+
+      </div>
     </div>
+
   </div>
+  <mat-accordion multi *ngIf="repairOrderLoaded">
 
-</div>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header class="custom-blue-header mt-4" style="background-color: #3f51b5; color: white;">
+        <mat-panel-title class="text-white">Initial Fields</mat-panel-title>
+      </mat-expansion-panel-header>
 
+      <div class="form-container">
+        <h2>Repair/Servicing Order</h2>
 
-
-
-
-
-<mat-accordion multi *ngIf="repairOrderLoaded">
-
-  <mat-expansion-panel>
-    <mat-expansion-panel-header class="custom-blue-header mt-4" style="background-color: #3f51b5; color: white;">
-      <mat-panel-title class="text-white">Initial Fields</mat-panel-title>
-    </mat-expansion-panel-header>
-
-    <div class="form-container">
-      <h2>Repair/Servicing Order</h2>
-
-      <form [formGroup]="repairForm" (ngSubmit)="onSubmit()">
-        <div class="form-grid">
-          <!-- Registration Number -->
-          <div class="form-group">
-            <label>Registration Number</label>
-            <input type="text"
-                   maxlength="10"
-                   formControlName="registrationNumber"
-                   (input)="onRegistrationInput($event)"
-                   placeholder="e.g., ABCD123456"
-                   class="form-control" />
-            <div class="text-danger"
-                 *ngIf="registrationNumber.invalid && (registrationNumber.dirty || registrationNumber.touched)">
-              <small *ngIf="registrationNumber.errors?.['pattern']">
-                Registration Number must be 4 letters (A–Z) followed by 6 digits.
-              </small>
-              <small *ngIf="registrationNumber.errors?.['required']">Registration Number is required.</small>
+        <form [formGroup]="repairForm" (ngSubmit)="onSubmit()">
+          <div class="form-grid">
+            <!-- Registration Number -->
+            <div class="form-group">
+              <label>Registration Number</label>
+              <input type="text"
+                     maxlength="10"
+                     formControlName="registrationNumber"
+                     (input)="onRegistrationInput($event)"
+                     placeholder="e.g., ABCD123456"
+                     class="form-control" />
+              <div class="text-danger"
+                   *ngIf="registrationNumber.invalid && (registrationNumber.dirty || registrationNumber.touched)">
+                <small *ngIf="registrationNumber.errors?.['pattern']">
+                  Registration Number must be 4 letters (A–Z) followed by 6 digits.
+                </small>
+                <small *ngIf="registrationNumber.errors?.['required']">Registration Number is required.</small>
+              </div>
             </div>
-          </div>
 
-          <!-- VIN Number -->
-          <div class="form-group">
-            <label>VIN Number</label>
-            <input type="text"
-                   maxlength="17"
-                   formControlName="vinNumber"
-                   (input)="onVinInput($event)"
-                   placeholder="Enter VIN Number"
-                   class="form-control" />
-            <div class="text-danger" *ngIf="vinNumber.invalid && (vinNumber.dirty || vinNumber.touched)">
-              <small *ngIf="vinNumber.errors?.['pattern']">VIN Number must contain digits only.</small>
-              <small *ngIf="vinNumber.errors?.['required']">VIN Number is required.</small>
+            <!-- VIN Number -->
+            <div class="form-group">
+              <label>VIN Number</label>
+              <input type="text"
+                     maxlength="17"
+                     formControlName="vinNumber"
+                     (input)="onVinInput($event)"
+                     placeholder="Enter VIN Number"
+                     class="form-control" />
+              <div class="text-danger" *ngIf="vinNumber.invalid && (vinNumber.dirty || vinNumber.touched)">
+                <small *ngIf="vinNumber.errors?.['pattern']">VIN Number must contain digits only.</small>
+                <small *ngIf="vinNumber.errors?.['required']">VIN Number is required.</small>
+              </div>
             </div>
-          </div>
 
-          <!-- KMs -->
-          <div class="form-group">
-            <label>KMs</label>
-            <input formControlName="kms" type="number" class="no-spinner" />
-          </div>
+            <!-- KMs -->
+            <div class="form-group">
+              <label>KMs</label>
+              <input formControlName="kms" type="number" class="no-spinner" />
+            </div>
 
-          <!-- Vehicle In Date & Time -->
-          <div class="form-group">
-            <label>Vehicle In Date & Time</label>
-            <input formControlName="vehicleInDateTime" type="datetime-local" class="form-control" [min]="minDateTime" />
-            <div class="text-danger"
-                 *ngIf="
+            <!-- Vehicle In Date & Time -->
+            <div class="form-group">
+              <label>Vehicle In Date & Time</label>
+              <input formControlName="vehicleInDateTime" type="datetime-local" class="form-control" [min]="minDateTime" />
+              <div class="text-danger"
+                   *ngIf="
                 repairForm.get('vehicleInDateTime')?.invalid &&
                 (repairForm.get('vehicleInDateTime')?.touched || repairForm.get('vehicleInDateTime')?.dirty)
               ">
-              <small *ngIf="repairForm.get('vehicleInDateTime')?.errors?.['required']">Date & Time is required.</small>
+                <small *ngIf="repairForm.get('vehicleInDateTime')?.errors?.['required']">Date & Time is required.</small>
+              </div>
             </div>
-          </div>
 
-          <!-- Make -->
-          <div class="form-group">
-            <label>Make</label>
-            <select formControlName="make" class="form-control" size="1">
-              <option value="" disabled selected>Select Make</option>
-              <option *ngFor="let item of makeList" [value]="item">{{ item }}</option>
-            </select>
-            <div class="text-danger" *ngIf="make.invalid && (make.dirty || make.touched)">
-              <small *ngIf="make.errors?.['required']">Please select a Make.</small>
+            <!-- Make -->
+            <div class="form-group">
+              <label>Make</label>
+              <select formControlName="make" class="form-control" size="1">
+                <option value="" disabled selected>Select Make</option>
+                <option *ngFor="let item of makeList" [value]="item">{{ item }}</option>
+              </select>
+              <div class="text-danger" *ngIf="make.invalid && (make.dirty || make.touched)">
+                <small *ngIf="make.errors?.['required']">Please select a Make.</small>
+              </div>
             </div>
-          </div>
 
-          <!-- Model -->
-          <div class="form-group">
-            <label>Model</label>
-            <input formControlName="model" type="text" class="form-control" placeholder="Enter Model Name" />
-            <div class="text-danger" *ngIf="model.invalid && (model.dirty || model.touched)">
-              <small *ngIf="model.errors?.['required']">Model name is required.</small>
-              <small *ngIf="model.errors?.['pattern']">Only alphabets and numbers are allowed.</small>
-              <small *ngIf="model.errors?.['minlength']">Minimum 2 characters required.</small>
-              <small *ngIf="model.errors?.['maxlength']">Maximum 40 characters allowed.</small>
+            <!-- Model -->
+            <div class="form-group">
+              <label>Model</label>
+              <input formControlName="model" type="text" class="form-control" placeholder="Enter Model Name" />
+              <div class="text-danger" *ngIf="model.invalid && (model.dirty || model.touched)">
+                <small *ngIf="model.errors?.['required']">Model name is required.</small>
+                <small *ngIf="model.errors?.['pattern']">Only alphabets and numbers are allowed.</small>
+                <small *ngIf="model.errors?.['minlength']">Minimum 2 characters required.</small>
+                <small *ngIf="model.errors?.['maxlength']">Maximum 40 characters allowed.</small>
+              </div>
             </div>
-          </div>
 
-          <!-- Driver Name -->
-          <div class="form-group">
-            <label>Driver Name</label>
-            <input type="text"
-                   formControlName="driverName"
-                   (input)="onDriverNameInput($event)"
-                   maxlength="40"
-                   placeholder="Enter Driver Name"
-                   class="form-control" />
-            <div class="text-danger" *ngIf="driverName.invalid && (driverName.dirty || driverName.touched)">
-              <small *ngIf="driverName.errors?.['required']">Driver Name is required.</small>
-              <small *ngIf="driverName.errors?.['pattern']">Only alphabets and spaces are allowed.</small>
-            </div>
-          </div>
-
-          <!-- Mobile Number -->
-          <div class="form-group">
-            <label>Mobile Number</label>
-            <input type="text"
-                   formControlName="mobileNumber"
-                   (input)="onMobileInput($event)"
-                   placeholder="+91XXXXXXXXXX"
-                   class="form-control"
-                   maxlength="13" />
-            <div class="text-danger" *ngIf="mobileNumber.invalid && (mobileNumber.dirty || mobileNumber.touched)">
-              <small *ngIf="mobileNumber.errors?.['required']">Mobile Number is required.</small>
-              <small *ngIf="mobileNumber.errors?.['pattern']">
-                Mobile number must start with +91 followed by 10 digits.
-              </small>
-            </div>
-          </div>
-
-          <!-- Vehicle From Site -->
-          <div class="form-group">
-            <label>Vehicle Came From Site</label>
-            <input type="text"
-                   formControlName="vehicleFromSite"
-                   (input)="onVehicleFromSiteInput($event)"
-                   maxlength="25"
-                   placeholder="Enter Site Name"
-                   class="form-control" />
-          </div>
-
-          <!-- Site Incharge Name -->
-          <div class="form-group">
-            <label>Site Incharge Name</label>
-            <input type="text"
-                   formControlName="siteInchargeName"
-                   (input)="onSiteInchargeNameInput($event)"
-                   maxlength="25"
-                   placeholder="Enter Site Incharge Name"
-                   class="form-control" />
-          </div>
-
-          <!-- Repair Cost -->
-          <div class="form-group">
-            <label>Repair Estimation Cost</label>
-            <div class="input-group">
-              <span class="input-group-text">₹</span>
+            <!-- Driver Name -->
+            <div class="form-group">
+              <label>Driver Name</label>
               <input type="text"
-                     formControlName="repairCost"
-                     (input)="onRepairCostInput($event)"
-                     placeholder="Enter Estimated Amount"
+                     formControlName="driverName"
+                     (input)="onDriverNameInput($event)"
+                     maxlength="40"
+                     placeholder="Enter Driver Name"
+                     class="form-control" />
+              <div class="text-danger" *ngIf="driverName.invalid && (driverName.dirty || driverName.touched)">
+                <small *ngIf="driverName.errors?.['required']">Driver Name is required.</small>
+                <small *ngIf="driverName.errors?.['pattern']">Only alphabets and spaces are allowed.</small>
+              </div>
+            </div>
+
+            <!-- Mobile Number -->
+            <div class="form-group">
+              <label>Mobile Number</label>
+              <input type="text"
+                     formControlName="mobileNumber"
+                     (input)="onMobileInput($event)"
+                     placeholder="+91XXXXXXXXXX"
+                     class="form-control"
+                     maxlength="13" />
+              <div class="text-danger" *ngIf="mobileNumber.invalid && (mobileNumber.dirty || mobileNumber.touched)">
+                <small *ngIf="mobileNumber.errors?.['required']">Mobile Number is required.</small>
+                <small *ngIf="mobileNumber.errors?.['pattern']">
+                  Mobile number must start with +91 followed by 10 digits.
+                </small>
+              </div>
+            </div>
+
+            <!-- Vehicle From Site -->
+            <div class="form-group">
+              <label>Vehicle Came From Site</label>
+              <input type="text"
+                     formControlName="vehicleFromSite"
+                     (input)="onVehicleFromSiteInput($event)"
+                     maxlength="25"
+                     placeholder="Enter Site Name"
                      class="form-control" />
             </div>
-          </div>
 
-          <!-- Driver Permanent -->
-          <div class="form-group checkbox-group">
-            <label>Driver permanent to this vehicle</label>
-            <div>
-              <input type="checkbox"
-                     [checked]="repairForm.get('driverPermanent')?.value === 'Yes'"
-                     (change)="repairForm.get('driverPermanent')?.setValue('Yes')" />
-              Yes
-              <input type="checkbox"
-                     [checked]="repairForm.get('driverPermanent')?.value === 'No'"
-                     (change)="repairForm.get('driverPermanent')?.setValue('No')" />
-              No
+            <!-- Site Incharge Name -->
+            <div class="form-group">
+              <label>Site Incharge Name</label>
+              <input type="text"
+                     formControlName="siteInchargeName"
+                     (input)="onSiteInchargeNameInput($event)"
+                     maxlength="25"
+                     placeholder="Enter Site Incharge Name"
+                     class="form-control" />
+            </div>
+
+            <!-- Repair Cost -->
+            <div class="form-group">
+              <label>Repair Estimation Cost</label>
+              <div class="input-group">
+                <span class="input-group-text">₹</span>
+                <input type="text"
+                       formControlName="repairCost"
+                       (input)="onRepairCostInput($event)"
+                       placeholder="Enter Estimated Amount"
+                       class="form-control" />
+              </div>
+            </div>
+
+            <!-- Driver Permanent -->
+            <div class="form-group checkbox-group">
+              <label>Driver permanent to this vehicle</label>
+              <div>
+                <input type="checkbox"
+                       [checked]="repairForm.get('driverPermanent')?.value === 'Yes'"
+                       (change)="repairForm.get('driverPermanent')?.setValue('Yes')" />
+                Yes
+                <input type="checkbox"
+                       [checked]="repairForm.get('driverPermanent')?.value === 'No'"
+                       (change)="repairForm.get('driverPermanent')?.setValue('No')" />
+                No
+              </div>
+            </div>
+
+            <!-- Road Test -->
+            <div class="form-group checkbox-group">
+              <label>Road test along with driver</label>
+              <div>
+                <input type="checkbox"
+                       [checked]="repairForm.get('roadTest')?.value === 'Yes'"
+                       (change)="repairForm.get('roadTest')?.setValue('Yes')" />
+                Yes
+                <input type="checkbox"
+                       [checked]="repairForm.get('roadTest')?.value === 'No'"
+                       (change)="repairForm.get('roadTest')?.setValue('No')" />
+                No
+              </div>
+            </div>
+
+            <!-- Type of Service -->
+            <div class="form-group">
+              <label>Type of Service</label>
+              <select formControlName="serviceType" class="form-control service-dropdown">
+                <option value="" disabled selected>Select Service Type</option>
+                <option *ngFor="let service of serviceList" [value]="service">{{ service }}</option>
+              </select>
+            </div>
+
+            <!-- Warranty -->
+            <div class="form-group checkbox-group">
+              <label>Under Warranty</label>
+              <div>
+                <input type="checkbox"
+                       [checked]="repairForm.get('warranty')?.value === 'Yes'"
+                       (change)="repairForm.get('warranty')?.setValue('Yes')" />
+                Yes
+                <input type="checkbox"
+                       [checked]="repairForm.get('warranty')?.value === 'No'"
+                       (change)="repairForm.get('warranty')?.setValue('No')" />
+                No
+              </div>
+            </div>
+
+            <!-- Expected Delivery Date & Time -->
+            <div class="form-group">
+              <label>Expected Delivery Date & Time</label>
+              <input formControlName="expectedDateTime" type="datetime-local" class="form-control" [min]="minDateTime" />
+            </div>
+
+            <!-- Technician -->
+            <div class="form-group">
+              <label>Allotted Technician</label>
+              <select formControlName="allottedTechnician" class="form-control technician-dropdown">
+                <option value="" disabled selected>Select Technician</option>
+                <option *ngFor="let tech of allTechnicians" [value]="tech">{{ tech }}</option>
+              </select>
             </div>
           </div>
 
-          <!-- Road Test -->
-          <div class="form-group checkbox-group">
-            <label>Road test along with driver</label>
-            <div>
-              <input type="checkbox"
-                     [checked]="repairForm.get('roadTest')?.value === 'Yes'"
-                     (change)="repairForm.get('roadTest')?.setValue('Yes')" />
-              Yes
-              <input type="checkbox"
-                     [checked]="repairForm.get('roadTest')?.value === 'No'"
-                     (change)="repairForm.get('roadTest')?.setValue('No')" />
-              No
-            </div>
+          <div class="form-actions mt-3">
+            <button type="submit" [disabled]="repairForm.invalid">Submit</button>
           </div>
+        </form>
+      </div>
+    </mat-expansion-panel>
 
-          <!-- Type of Service -->
-          <div class="form-group">
-            <label>Type of Service</label>
-            <select formControlName="serviceType" class="form-control service-dropdown">
-              <option value="" disabled selected>Select Service Type</option>
-              <option *ngFor="let service of serviceList" [value]="service">{{ service }}</option>
-            </select>
-          </div>
+    <!-- ========== Panel 2: Inventory Accessories ========== -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header class="bg-secondary mt-4">
+        <mat-panel-title class="text-white">Inventory Of Accessories In The Vehicle</mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-inventory></app-inventory>
+    </mat-expansion-panel>
 
-          <!-- Warranty -->
-          <div class="form-group checkbox-group">
-            <label>Under Warranty</label>
-            <div>
-              <input type="checkbox"
-                     [checked]="repairForm.get('warranty')?.value === 'Yes'"
-                     (change)="repairForm.get('warranty')?.setValue('Yes')" />
-              Yes
-              <input type="checkbox"
-                     [checked]="repairForm.get('warranty')?.value === 'No'"
-                     (change)="repairForm.get('warranty')?.setValue('No')" />
-              No
-            </div>
-          </div>
+    <!-- ========== Panel 3: Supervisor Section ========== -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header class="bg-warning mt-4">
+        <mat-panel-title class="text-white">To Be Filled By Supervisor In Front Of Driver</mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-to-be-filled-by-supervisor></app-to-be-filled-by-supervisor>
+    </mat-expansion-panel>
 
-          <!-- Expected Delivery Date & Time -->
-          <div class="form-group">
-            <label>Expected Delivery Date & Time</label>
-            <input formControlName="expectedDateTime" type="datetime-local" class="form-control" [min]="minDateTime" />
-          </div>
+    <!-- ========== Panel 4: Additional Job Observe Details ========== -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header style="background-color: #ff69b4; color: white;" class="mt-4">
+        <mat-panel-title class="text-white">Additional Job Observe Details</mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-additional-job-observe-details></app-additional-job-observe-details>
+    </mat-expansion-panel>
 
-          <!-- Technician -->
-          <div class="form-group">
-            <label>Allotted Technician</label>
-            <select formControlName="allottedTechnician" class="form-control technician-dropdown">
-              <option value="" disabled selected>Select Technician</option>
-              <option *ngFor="let tech of allTechnicians" [value]="tech">{{ tech }}</option>
-            </select>
-          </div>
-        </div>
+    <!-- ========== Panel 5: Technician Mandatory Check ========== -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header class="bg-primary mt-4">
+        <mat-panel-title class="text-white">Technician Mandatory Check</mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-TechnicianMC></app-TechnicianMC>
+    </mat-expansion-panel>
 
-        <div class="form-actions mt-3">
-          <button type="submit" [disabled]="repairForm.invalid">Submit</button>
-        </div>
-      </form>
-    </div>
-  </mat-expansion-panel>
+    <!-- ========== Panel 6: Spare Parts Issue Details ========== -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header style="background-color: #ff8c00; color: white;" class="mt-4">
+        <mat-panel-title class="text-white">Spare Parts Issue Details</mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-spare-part-issue-details></app-spare-part-issue-details>
+    </mat-expansion-panel>
 
-  <!-- ========== Panel 2: Inventory Accessories ========== -->
-  <mat-expansion-panel>
-    <mat-expansion-panel-header class="bg-secondary mt-4">
-      <mat-panel-title class="text-white">Inventory Of Accessories In The Vehicle</mat-panel-title>
-    </mat-expansion-panel-header>
-    <app-inventory></app-inventory>
-  </mat-expansion-panel>
+    <!-- ========== Panel 7: Labour Details ========== -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header class="bg-success mt-4">
+        <mat-panel-title class="text-white">Labour Details</mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-labour-details></app-labour-details>
+    </mat-expansion-panel>
 
-  <!-- ========== Panel 3: Supervisor Section ========== -->
-  <mat-expansion-panel>
-    <mat-expansion-panel-header class="bg-warning mt-4">
-      <mat-panel-title class="text-white">To Be Filled By Supervisor In Front Of Driver</mat-panel-title>
-    </mat-expansion-panel-header>
-    <app-to-be-filled-by-supervisor></app-to-be-filled-by-supervisor>
-  </mat-expansion-panel>
+    <!-- ========== Panel 8: Total Repair Cost ========== -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header class="bg-danger mt-4">
+        <mat-panel-title class="text-white">Total Repair Cost Of The Vehicle</mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-total-repair-cost></app-total-repair-cost>
+    </mat-expansion-panel>
 
-  <!-- ========== Panel 4: Additional Job Observe Details ========== -->
-  <mat-expansion-panel>
-    <mat-expansion-panel-header style="background-color: #ff69b4; color: white;" class="mt-4">
-      <mat-panel-title class="text-white">Additional Job Observe Details</mat-panel-title>
-    </mat-expansion-panel-header>
-    <app-additional-job-observe-details></app-additional-job-observe-details>
-  </mat-expansion-panel>
-
-  <!-- ========== Panel 5: Technician Mandatory Check ========== -->
-  <mat-expansion-panel>
-    <mat-expansion-panel-header class="bg-primary mt-4">
-      <mat-panel-title class="text-white">Technician Mandatory Check</mat-panel-title>
-    </mat-expansion-panel-header>
-    <app-TechnicianMC></app-TechnicianMC>
-  </mat-expansion-panel>
-
-  <!-- ========== Panel 6: Spare Parts Issue Details ========== -->
-  <mat-expansion-panel>
-    <mat-expansion-panel-header style="background-color: #ff8c00; color: white;" class="mt-4">
-      <mat-panel-title class="text-white">Spare Parts Issue Details</mat-panel-title>
-    </mat-expansion-panel-header>
-    <app-spare-part-issue-details></app-spare-part-issue-details>
-  </mat-expansion-panel>
-
-  <!-- ========== Panel 7: Labour Details ========== -->
-  <mat-expansion-panel>
-    <mat-expansion-panel-header class="bg-success mt-4">
-      <mat-panel-title class="text-white">Labour Details</mat-panel-title>
-    </mat-expansion-panel-header>
-    <app-labour-details></app-labour-details>
-  </mat-expansion-panel>
-
-  <!-- ========== Panel 8: Total Repair Cost ========== -->
-  <mat-expansion-panel>
-    <mat-expansion-panel-header class="bg-danger mt-4">
-      <mat-panel-title class="text-white">Total Repair Cost Of The Vehicle</mat-panel-title>
-    </mat-expansion-panel-header>
-    <app-total-repair-cost></app-total-repair-cost>
-  </mat-expansion-panel>
-
-</mat-accordion>
-
+  </mat-accordion>
+</div>
 
 
 

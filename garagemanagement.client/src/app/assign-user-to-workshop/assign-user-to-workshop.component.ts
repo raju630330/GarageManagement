@@ -16,7 +16,7 @@ export class AssignUserToWorkshopComponent implements OnInit {
   constructor(private http: HttpClient, private alert: AlertService, private fb: FormBuilder, public workshopservice: WorkshopProfileService) { }
   private baseUrl = environment.apiUrl;
   assignuser!: FormGroup;
-
+  assignedUsers!: any[];
   ngOnInit() {
     this.assignuser = this.fb.group({
       id: [0],
@@ -25,7 +25,7 @@ export class AssignUserToWorkshopComponent implements OnInit {
       userSearch: ['', [Validators.required]],
       userId: [0, [Validators.required]]
     });
-
+    this.getassignedusers();
   }
 
   getworkshopdetails(result: any) {
@@ -39,20 +39,20 @@ export class AssignUserToWorkshopComponent implements OnInit {
       userId: Number(result.id)
     })
   }
-  resetEntireForm() { alert("clear") }
+  resetEntireForm() {  }
   submit() {
     if (this.assignuser.invalid) {
       this.assignuser.markAllAsTouched();
       this.alert.showError("Please fill all required fields!");
       return;
     }
-    alert(JSON.stringify(this.assignuser.value));
 
     this.http.post(`${this.baseUrl}/WorkshopProfile/assignuser`, this.assignuser.value).subscribe({
       next: (res: any) => {
         if (res.isSuccess) {
           this.alert.showInfo('Assined Succesfully', () => {
             this.assignuser.reset();
+            this.getassignedusers();
           });
         }
       },
@@ -62,5 +62,28 @@ export class AssignUserToWorkshopComponent implements OnInit {
       }
 
     })
+  }
+
+  getassignedusers() {
+
+    this.workshopservice.getAllAssignedUsers()
+      .subscribe(res => {
+        if (res.isSuccess) {
+          this.assignedUsers = res.data;
+        }
+      });
+  }
+  edit(id: any) {
+    if (id > 0) {
+      this.workshopservice.getAssignedUser(id).subscribe({
+
+        next: (res: any) => {
+          this.assignuser.patchValue(res.data)
+        },
+        error: (error: any) => {
+          this.alert.showError("Internal server error");
+        }
+      })
+    }
   }
 }

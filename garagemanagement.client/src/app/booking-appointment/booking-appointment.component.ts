@@ -154,7 +154,7 @@ export class BookingAppointmentComponent {
       ServiceAdvisor: this.appointmentForm.value.serviceAdvisor ?? '',
 
       UserId: this.auth.getUserId(),
-      WorkshopId: 1, // TODO: get from login/session later
+      WorkshopId: 9, // TODO: get from login/session later
 
       VehicleId: this.selectedVehicleId ?? null,
 

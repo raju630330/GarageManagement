@@ -13,7 +13,7 @@ namespace GarageManagement.Server.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IAutoCompleteRepository _autoCompleteRepository;
 
-        public WorkshopProfileController(ApplicationDbContext context,IAutoCompleteRepository autoCompleteRepository)
+        public WorkshopProfileController(ApplicationDbContext context, IAutoCompleteRepository autoCompleteRepository)
         {
             _context = context;
             _autoCompleteRepository = autoCompleteRepository;
@@ -21,133 +21,212 @@ namespace GarageManagement.Server.Controllers
 
 
         [HttpPost("createworkshop")]
-        public async Task<IActionResult> CreateWorkshop([FromBody] WorkshopCreateDto dto)
+        public async Task<IActionResult> CreateOrUpdateWorkshop([FromForm] WorkshopCreateDto dto)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                // 1️⃣ Workshop Profile
-                var workshop = new WorkshopProfile
-                {
-                    WorkshopName = dto.WorkshopName,
-                    OwnerName = dto.OwnerName,
-                    OwnerMobileNo = dto.OwnerMobileNo,
-                    EmailID = dto.EmailID,
-                    ContactPerson = dto.ContactPerson ?? "",
-                    ContactNo = dto.ContactNo ?? "",
-                    Landline = dto.Landline ?? "",
-                    InBusinessSince = DateTime.Parse(dto.InBusinessSince), // "2026-02" → DateTime
-                    AvgVehicleInflowPerMonth = dto.AvgVehicleInflowPerMonth ?? 0,
-                    NoOfEmployees = dto.NoOfEmployees ?? 0,
-                    DealerCode = dto.DealerCode ?? "",
-                    IsGdprAccepted = dto.IsGdprAccepted
-                };
+                var workshop = await _context.WorkshopProfiles.Where(a => a.Id == dto.Id).FirstOrDefaultAsync();
+                if (workshop == null)
+                { workshop = new WorkshopProfile(); }
 
-                _context.WorkshopProfiles.Add(workshop);
+                /* =========================
+                   1️⃣ CREATE OR UPDATE
+                ========================= */
+                workshop.Id = dto.Id;
+                workshop.WorkshopName = dto.WorkshopName;
+                workshop.OwnerName = dto.OwnerName;
+                workshop.OwnerMobileNo = dto.OwnerMobileNo;
+                workshop.EmailID = dto.EmailID;
+                workshop.ContactPerson = dto.ContactPerson ?? "";
+                workshop.ContactNo = dto.ContactNo ?? "";
+                workshop.Landline = dto.Landline ?? "";
+                workshop.InBusinessSince = DateTime.Parse(dto.InBusinessSince);
+                workshop.AvgVehicleInflowPerMonth = dto.AvgVehicleInflowPerMonth ?? 0;
+                workshop.NoOfEmployees = dto.NoOfEmployees ?? 0;
+                workshop.DealerCode = dto.DealerCode ?? "";
+                workshop.IsGdprAccepted = dto.IsGdprAccepted;
+
+                if (dto.Id == 0)
+                {
+                    await _context.WorkshopProfiles.AddAsync(workshop);
+                }
+                else
+                {
+                    _context.WorkshopProfiles.Update(workshop);
+                }
+
                 await _context.SaveChangesAsync();
 
-                // 2️⃣ Address
-                _context.WorkshopAddresses.Add(new WorkshopAddress
-                {
-                    WorkshopId = workshop.Id,
-                    FlatNo = dto.Address.FlatNo ?? "",
-                    Street = dto.Address.Street ?? "",
-                    Location = dto.Address.Location ?? "",
-                    City = dto.Address.City ?? "",
-                    State = dto.Address.State ?? "",
-                    StateCode = dto.Address.StateCode ?? "",
-                    Country = dto.Address.Country ?? "India",
-                    Pincode = dto.Address.Pincode ?? "",
-                    Landmark = dto.Address.Landmark ?? "",
-                    BranchAddress = dto.Address.BranchAddress ?? ""
-                });
 
-                // 3️⃣ Timing - ✅ Now strings, convert to TimeSpan
-                _context.WorkshopTimings.Add(new WorkshopTiming
-                {
-                    WorkshopId = workshop.Id,
-                    StartTime = TimeSpan.Parse(dto.Timing.StartTime + ":00"), // "16:26" → TimeSpan
-                    EndTime = TimeSpan.Parse(dto.Timing.EndTime + ":00")      // "22:32" → TimeSpan
-                });
+                /* =========================
+                   2️⃣ ADDRESS (UPSERT)
+                ========================= */
 
-                // 4️⃣ Business Config
-                _context.WorkshopBusinessConfigs.Add(new WorkshopBusinessConfig
-                {
-                    WorkshopId = workshop.Id,
-                    WebsiteLink = dto.BusinessConfig.WebsiteLink,
-                    GoogleReviewLink = dto.BusinessConfig.GoogleReviewLink,
-                    ExternalIntegrationUrl = dto.BusinessConfig.ExternalIntegrationUrl,
-                    GSTIN = dto.BusinessConfig.Gstin,
-                    MSME = dto.BusinessConfig.Msme,
-                    SAC = dto.BusinessConfig.Sac,
-                    SACPercentage = decimal.TryParse(dto.BusinessConfig.SacPercentage, out var sac) ? sac : null,
-                    InvoiceCaption = dto.BusinessConfig.InvoiceCaption,
-                    InvoiceHeader = dto.BusinessConfig.InvoiceHeader,
-                    DefaultServiceType = dto.BusinessConfig.DefaultServiceType
-                });
+                var address = await _context.WorkshopAddresses
+                    .FirstOrDefaultAsync(x => x.WorkshopId == workshop.Id);
 
-                // 5️⃣ Services - ✅ Convert string[] → long[]
-                foreach (var serviceIdStr in dto.ServiceIds)
+                if (address == null)
                 {
-                    if (long.TryParse(serviceIdStr, out var serviceId))
+                    address = new WorkshopAddress { WorkshopId = workshop.Id };
+                    _context.WorkshopAddresses.Add(address);
+                }
+
+                address.FlatNo = dto.Address.FlatNo ?? "";
+                address.Street = dto.Address.Street ?? "";
+                address.Location = dto.Address.Location ?? "";
+                address.City = dto.Address.City ?? "";
+                address.State = dto.Address.State ?? "";
+                address.StateCode = dto.Address.StateCode ?? "";
+                address.Country = dto.Address.Country ?? "India";
+                address.Pincode = dto.Address.Pincode ?? "";
+                address.Landmark = dto.Address.Landmark ?? "";
+                address.BranchAddress = dto.Address.BranchAddress ?? "";
+
+                /* =========================
+                   3️⃣ TIMING (UPSERT)
+                ========================= */
+
+
+                var timing = await _context.WorkshopTimings
+                    .FirstOrDefaultAsync(x => x.WorkshopId == workshop.Id);
+
+                if (timing == null)
+                {
+                    timing = new WorkshopTiming { WorkshopId = workshop.Id };
+                    _context.WorkshopTimings.Add(timing);
+                }
+
+                timing.StartTime = TimeSpan.Parse(dto.Timing.StartTime + ":00");
+                timing.EndTime = TimeSpan.Parse(dto.Timing.EndTime + ":00");
+
+                /* =========================
+                   4️⃣ BUSINESS CONFIG (UPSERT)
+                ========================= */
+
+                var config = await _context.WorkshopBusinessConfigs
+                    .FirstOrDefaultAsync(x => x.WorkshopId == workshop.Id);
+
+                if (config == null)
+                {
+                    config = new WorkshopBusinessConfig { WorkshopId = workshop.Id };
+                    _context.WorkshopBusinessConfigs.Add(config);
+                }
+
+                config.WebsiteLink = dto.BusinessConfig.WebsiteLink;
+                config.GoogleReviewLink = dto.BusinessConfig.GoogleReviewLink;
+                config.ExternalIntegrationUrl = dto.BusinessConfig.ExternalIntegrationUrl;
+                config.GSTIN = dto.BusinessConfig.Gstin;
+                config.MSME = dto.BusinessConfig.Msme;
+                config.SAC = dto.BusinessConfig.Sac;
+                config.SACPercentage = dto.BusinessConfig.SacPercentage;
+                config.InvoiceCaption = dto.BusinessConfig.InvoiceCaption;
+                config.InvoiceHeader = dto.BusinessConfig.InvoiceHeader;
+                config.DefaultServiceType = dto.BusinessConfig.DefaultServiceType;
+
+                /* =========================
+                   5️⃣ SERVICES (DELETE + INSERT)
+                ========================= */
+
+                _context.WorkshopServices.RemoveRange(
+                    _context.WorkshopServices.Where(x => x.WorkshopId == workshop.Id)
+                );
+
+                foreach (var s in dto.ServiceIds)
+                {
+                    if (long.TryParse(s, out var id))
                     {
                         _context.WorkshopServices.Add(new WorkshopService
                         {
                             WorkshopId = workshop.Id,
-                            ServiceId = serviceId
+                            ServiceId = id
                         });
                     }
                 }
 
-                // 6️⃣ Working Days - ✅ Convert string[] → DayOfWeek
-                foreach (var dayStr in dto.WorkingDays)
+                /* =========================
+                   6️⃣ WORKING DAYS
+                ========================= */
+
+                _context.WorkshopWorkingDays.RemoveRange(
+                    _context.WorkshopWorkingDays.Where(x => x.WorkshopId == workshop.Id)
+                );
+
+                foreach (var d in dto.WorkingDays)
                 {
-                    if (int.TryParse(dayStr, out var dayNum) && Enum.IsDefined(typeof(DayOfWeek), dayNum))
+                    if (int.TryParse(d, out var day))
                     {
                         _context.WorkshopWorkingDays.Add(new WorkshopWorkingDay
                         {
                             WorkshopId = workshop.Id,
-                            Day = (DayOfWeek)dayNum  // "0" → Sunday, "1" → Monday, etc.
+                            Day = (DayOfWeek)day
                         });
                     }
                 }
 
-                // 7️⃣ Payment Modes - ✅ Convert string[] → long[]
-                foreach (var paymentIdStr in dto.PaymentModeIds)
+                /* =========================
+                   7️⃣ PAYMENT MODES
+                ========================= */
+
+                _context.WorkshopPaymentModes.RemoveRange(
+                    _context.WorkshopPaymentModes.Where(x => x.WorkshopId == workshop.Id)
+                );
+
+                foreach (var p in dto.PaymentModeIds)
                 {
-                    if (long.TryParse(paymentIdStr, out var paymentId))
+                    if (long.TryParse(p, out var pid))
                     {
                         _context.WorkshopPaymentModes.Add(new WorkshopPaymentMode
                         {
                             WorkshopId = workshop.Id,
-                            PaymentModeId = paymentId
+                            PaymentModeId = pid
                         });
                     }
                 }
 
-                // 8️⃣ Media - List<string> → WorkshopMediaDto
-                foreach (var mediaPath in dto.Media)
+                /* =========================
+                   8️⃣ MEDIA 
+                ========================= */
+                if (dto.MediaFiles != null && dto.MediaFiles.Any())
                 {
-                    _context.WorkshopMedias.Add(new WorkshopMedia
+                    string basePath = @"D:\GarageUploads\Workshops";
+                    string folder = Path.Combine(basePath, workshop.Id.ToString());
+                    Directory.CreateDirectory(folder);
+
+                    foreach (var file in dto.MediaFiles)
                     {
-                        WorkshopId = workshop.Id,
-                        FilePath = mediaPath ?? "",
-                        MediaType = "image" // Default for now
-                    });
+                        var fileName = $"media_{DateTime.Now:yyyyMMddHHmmssfff}{Path.GetExtension(file.FileName)}";
+                        var path = Path.Combine(folder, fileName);
+
+                        using var stream = new FileStream(path, FileMode.Create);
+                        await file.CopyToAsync(stream);
+
+                        _context.WorkshopMedias.Add(new WorkshopMedia
+                        {
+                            WorkshopId = workshop.Id,
+                            FilePath = $"Workshops/{workshop.Id}/{fileName}",
+                            MediaType = file.ContentType
+                        });
+                    }
                 }
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return Ok(new { Id = workshop.Id, Message = "Workshop created successfully" });
+                return Ok(new
+                {
+                    Id = workshop.Id,
+                    Message = dto.Id > 0 ? "Workshop updated successfully" : "Workshop created successfully"
+                });
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return BadRequest($"Error: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
+
 
         [HttpGet("searchWorshops")]
         public async Task<IActionResult> searchWorshops([FromQuery] string query)
@@ -169,14 +248,14 @@ namespace GarageManagement.Server.Controllers
         }
         [HttpPost("assignuser")]
         public async Task<IActionResult> AssignUsersToWorkshop(AssignUserToWorkshopDto model)
-        { 
+        {
             var result = await _context.WorkshopUsers.FindAsync(model.Id);
             if (result == null)
             {
                 result = new WorkshopUser();
             }
-            result.Id = model.Id;   
-            result.UserId = model.UserId;   
+            result.Id = model.Id;
+            result.UserId = model.UserId;
             result.WorkshopId = model.WorkshopId;
             result.IsActive = true;
             if (model.Id == 0)
@@ -184,10 +263,10 @@ namespace GarageManagement.Server.Controllers
                 await _context.WorkshopUsers.AddAsync(result);
             }
             else
-            { 
-                 _context.WorkshopUsers.Update(result);   
+            {
+                _context.WorkshopUsers.Update(result);
             }
-            
+
             await _context.SaveChangesAsync();
 
             return Ok(new { isSuccess = true, Message = "User Assigned successfully" });
@@ -196,21 +275,21 @@ namespace GarageManagement.Server.Controllers
         [HttpGet("GetWorkshopsByUser")]
         public async Task<IActionResult> GetWorkshopsByUser(long id)
         {
-            var result = await _context.WorkshopUsers.Include(a=> a.Workshop).Include(b=> b.User).ThenInclude(a=> a.Role)
-                                        .Where(a=> a.UserId == id)
+            var result = await _context.WorkshopUsers.Include(a => a.Workshop).Include(b => b.User).ThenInclude(a => a.Role)
+                                        .Where(a => a.UserId == id)
                                         .Select(a => new
                                         {
-                                            Id = a.Id,  
+                                            Id = a.Id,
                                             UserName = a.User.Username,
                                             RoleName = a.User.Role.RoleName,
-                                            WorshopName = a.Workshop.WorkshopName,               
+                                            WorshopName = a.Workshop.WorkshopName,
                                         }).ToListAsync();
 
             if (result == null)
-            { 
-                return NotFound();  
+            {
+                return NotFound();
             }
-            return Ok(result);  
+            return Ok(result);
         }
 
         [HttpGet("getall")]
@@ -237,7 +316,8 @@ namespace GarageManagement.Server.Controllers
                     OwnerName = x.OwnerName,
                     OwnerMobileNo = x.OwnerMobileNo,
                     City = x.Address.City,
-                    Gstin = x.WorkshopBusinessConfigs.GSTIN
+                    Gstin = x.WorkshopBusinessConfigs.GSTIN,
+                    Location = x.WorkshopBusinessConfigs.GoogleReviewLink
                 })
                 .ToListAsync();
 
@@ -279,6 +359,7 @@ namespace GarageManagement.Server.Controllers
                 ownerMobileNo = workshop.OwnerMobileNo,
                 emailID = workshop.EmailID,
                 contactPerson = workshop.ContactPerson,
+                contactNo = workshop.ContactNo,
                 landline = workshop.Landline,
 
                 // STEP 2 - Address
@@ -334,9 +415,16 @@ namespace GarageManagement.Server.Controllers
                     .Select(x => x.PaymentModeId.ToString())
                     .ToArray(),
 
-                media = workshop.WorkshopMedias
-                    .Select(x => x.FilePath)
-                    .ToArray(),
+                mediaFiles = workshop.WorkshopMedias
+                                .Where(x => x.MediaType.StartsWith("image"))
+                                .Select(x => new
+                                {
+                                    fileName = Path.GetFileName(x.FilePath),
+                                    filePath = x.FilePath,
+                                    fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{x.FilePath}",
+                                    mediaType = x.MediaType
+                                })
+                                .ToArray(),
 
                 // STEP 7
                 isGdprAccepted = workshop.IsGdprAccepted
@@ -345,6 +433,57 @@ namespace GarageManagement.Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet("list")]
+        public async Task<IActionResult> GetAllAssignedUsers()
+        {
+            var data = await _context.WorkshopUsers.Include(a => a.User).Include(b => b.Workshop)
+                .AsNoTracking()
+                .Select(x => new
+                {
+                    x.Id,
+                    x.User.Username,
+                    x.Workshop.WorkshopName,
+                    x.IsActive
+                })
+                .ToListAsync();
+
+            return Ok(new
+            {
+                isSuccess = true,
+                Data = data
+            });
+        }
+
+        [HttpGet("getAssignedUser/{id}")]
+
+        public async Task<IActionResult> getAssignedUser(long id)
+        {
+            if(id <= 0)
+            {
+                return BadRequest("id not found");
+            }
+
+            var data = await _context.WorkshopUsers.Include(a => a.User).Include(b => b.Workshop)
+                .Where(a=> a.Id == id)
+                .AsNoTracking()
+                .Select(x => new
+                {
+                    id = x.Id,
+
+                    workshopSearch = $"{x.Workshop.WorkshopName} ({x.Workshop.OwnerMobileNo})",
+                    workshopId = x.Workshop.Id,
+                    userSearch = $"{x.User.Username} ({x.User.Email})",
+                    userId = x.User.Id,
+                    isActive = x.IsActive
+                })
+                .FirstOrDefaultAsync(); 
+
+            return Ok(new
+            {
+                isSuccess = true,
+                Data = data
+            });
+        }
 
 
     }

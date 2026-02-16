@@ -62,7 +62,7 @@
               </div>
 
               <div class="col-md-6">
-                <label class="form-label ">Mobile Number </label>
+                <label class="form-label ">Owner Mobile Number </label>
                 <input type="tel" class="form-control" formControlName="ownerMobileNo"
                        placeholder="9876543210"
                        [class.is-invalid]="workshopForm.get('ownerMobileNo')?.invalid && workshopForm.get('ownerMobileNo')?.touched">
@@ -78,15 +78,6 @@
                        [class.is-invalid]="workshopForm.get('emailID')?.invalid && workshopForm.get('emailID')?.touched">
                 <div class="invalid-feedback">Enter valid email address</div>
               </div>
-
-              <div class="col-md-6">
-                <label class="form-label">Contact Person</label>
-                <input type="text" class="form-control" formControlName="contactPerson"
-                       placeholder="Manager/Supervisor"
-                       [class.is-invalid]="workshopForm.get('contactPerson')?.invalid && workshopForm.get('contactPerson')?.touched">
-                <div class="invalid-feedback">Max 100 characters allowed</div>
-              </div>
-
               <div class="col-md-6">
                 <label class="form-label">Landline</label>
                 <input type="tel" class="form-control" formControlName="landline"
@@ -94,13 +85,26 @@
                        [class.is-invalid]="workshopForm.get('landline')?.invalid && workshopForm.get('landline')?.touched">
                 <div class="invalid-feedback">Enter valid landline (10-15 digits)</div>
               </div>
+              <div class="col-md-6">
+                <label class="form-label">Contact Person</label>
+                <input type="text" class="form-control" formControlName="contactPerson"
+                       placeholder="Manager/Supervisor"
+                       [class.is-invalid]="workshopForm.get('contactPerson')?.invalid && workshopForm.get('contactPerson')?.touched">
+                <div class="invalid-feedback">Max 100 characters allowed</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Contact Number</label>
+                <input type="text" class="form-control" formControlName="contactNo"
+                       placeholder="Contact Number"
+                       [class.is-invalid]="workshopForm.get('contactNo')?.invalid && workshopForm.get('contactNo')?.touched">
+                <div class="invalid-feedback">Enter valid Contact Number (10-15 digits)</div>
+              </div>
             </div>
           </div>
-          <div class="card-footer bg-light border-0 pt-0">
+          <div class="card-footer bg-light">
             <div class="d-flex justify-content-end">
               <button type="button" class="btn btn-primary btn-lg px-4"
-                      (click)="nextStep()"
-                      [disabled]="!canGoNext()">
+                      (click)="nextStep()">
                 <i class="fas fa-arrow-right me-2"></i>Next: Address Details
               </button>
             </div>
@@ -193,13 +197,13 @@
               </div>
             </div>
           </div>
-          <div class="card-footer bg-light border-0 pt-0">
+          <div class="card-footer bg-light">
             <div class="d-flex justify-content-between">
               <button type="button" class="btn btn-outline-secondary px-4" (click)="prevStep()">
                 <i class="fas fa-arrow-left me-2"></i>Back
               </button>
               <button type="button" class="btn btn-success btn-lg px-4" (click)="nextStep()"
-                      [disabled]="!canGoNext()">
+                      >
                 Next: Business Info <i class="fas fa-arrow-right ms-2"></i>
               </button>
             </div>
@@ -223,9 +227,9 @@
               </div>
 
               <div class="col-md-3">
-                <label class="form-label ">Avg Cars/Month</label>
+                <label class="form-label ">Avg Vehicles/Month</label>
                 <input type="number" class="form-control" formControlName="avgVehicleInflowPerMonth"
-                       placeholder="50" min="0" max="10000"
+                       placeholder="50" min="1" max="10000"
                        [class.is-invalid]="workshopForm.get('avgVehicleInflowPerMonth')?.invalid && workshopForm.get('avgVehicleInflowPerMonth')?.touched">
                 <div class="invalid-feedback">0-10000 vehicles</div>
               </div>
@@ -233,7 +237,7 @@
               <div class="col-md-3">
                 <label class="form-label ">Employees</label>
                 <input type="number" class="form-control" formControlName="noOfEmployees"
-                       placeholder="15" min="0" max="1000"
+                       placeholder="15" min="1" max="1000"
                        [class.is-invalid]="workshopForm.get('noOfEmployees')?.invalid && workshopForm.get('noOfEmployees')?.touched">
                 <div class="invalid-feedback">0-1000 employees</div>
               </div>
@@ -247,12 +251,12 @@
               </div>
             </div>
           </div>
-          <div class="card-footer bg-light border-0 pt-0">
+          <div class="card-footer bg-light">
             <div class="d-flex justify-content-between">
               <button type="button" class="btn btn-outline-secondary px-4" (click)="prevStep()">
                 <i class="fas fa-arrow-left me-2"></i>Back
               </button>
-              <button type="button" class="btn btn-warning btn-lg px-4 text-dark " (click)="nextStep()"  [disabled]="!canGoNext()">
+              <button type="button" class="btn btn-warning btn-lg px-4 text-dark " (click)="nextStep()" >
                 Next: Operating Hours <i class="fas fa-arrow-right ms-2"></i>
               </button>
             </div>
@@ -284,13 +288,13 @@
               </div>
             </div>
           </div>
-          <div class="card-footer bg-light border-0 pt-0">
+          <div class="card-footer bg-light">
             <div class="d-flex justify-content-between">
               <button type="button" class="btn btn-outline-secondary px-4" (click)="prevStep()">
                 <i class="fas fa-arrow-left me-2"></i>Back
               </button>
               <button type="button" class="btn btn-info btn-lg px-4 text-white" (click)="nextStep()"
-                      [disabled]="!canGoNext()">
+                      >
                 Next: Configuration <i class="fas fa-arrow-right ms-2"></i>
               </button>
             </div>
@@ -370,21 +374,20 @@
               <button type="button" class="btn btn-outline-secondary px-4" (click)="prevStep()">
                 <i class="fas fa-arrow-left me-2"></i>Back
               </button>
-              <button type="button" class="btn btn-danger btn-lg px-4" (click)="nextStep()" [disabled]="!canGoNext()">
+              <button type="button" class="btn btn-secondary btn-lg px-4" (click)="nextStep()" >
                 Next: Services <i class="fas fa-arrow-right ms-2"></i>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- STEP 6: Services & Configuration (NO ERRORS) -->
+        <!-- STEP 6: Services & Configuration -->
         <div class="form-step card border-0 shadow-sm mb-4" [class.show]="currentStep === 6">
           <div class="card-header bg-danger text-white py-3">
             <h3 class="h4 mb-0">
               <i class="fas fa-tools me-2"></i>Services & Configuration
             </h3>
           </div>
-
           <div class="card-body p-4 p-md-5">
             <div class="row g-4">
 
@@ -396,12 +399,13 @@
                 </label>
 
                 <div class="border rounded p-3">
-                  <div class="form-check"
-                       *ngFor="let service of availableServices">
+                  <div class="form-check" *ngFor="let service of availableServices">
                     <input type="checkbox"
                            class="form-check-input"
                            [id]="'service-' + service.id"
-                           (change)="addService(service.id)">
+                           [checked]="isServiceChecked(service.id)"
+                           (change)="onServiceChange(service.id, $event)">
+
                     <label class="form-check-label"
                            [for]="'service-' + service.id">
                       {{ service.name }}
@@ -426,7 +430,9 @@
                     <input class="form-check-input"
                            type="checkbox"
                            [id]="'day-' + day"
+                           [checked]="isWorkingDayChecked(day)"
                            (change)="toggleWorkingDay(day)">
+
                     <label class="form-check-label"
                            [for]="'day-' + day">
                       {{ getDayName(day) }}
@@ -437,6 +443,9 @@
                 <span class="badge bg-info mt-2">
                   {{ workingDaysArray.length }} / 7 selected
                 </span>
+                <div class="text-danger mt-1" *ngIf="workingDaysArray.length < 5">
+                  Working days must be 5
+                </div>
               </div>
 
               <!-- 3️⃣ Payment Modes -->
@@ -447,12 +456,13 @@
                 </label>
 
                 <div class="border rounded p-3">
-                  <div class="form-check"
-                       *ngFor="let payment of availablePaymentModes">
+                  <div class="form-check" *ngFor="let payment of availablePaymentModes">
                     <input type="checkbox"
                            class="form-check-input"
                            [id]="'pay-' + payment.id"
-                           (change)="addPaymentMode(payment.id)">
+                           [checked]="isPaymentModeChecked(payment.id)"
+                           (change)="onPaymentModeChange(payment.id, $event)">
+
                     <label class="form-check-label"
                            [for]="'pay-' + payment.id">
                       {{ payment.name }}
@@ -465,32 +475,58 @@
                 </div>
               </div>
 
-              <!-- 4️⃣ Media -->
+              <!-- 4️⃣ Media Upload -->
               <div class="col-md-6">
                 <label class="form-label fw-bold">
-                  Media Path <span class="text-danger">*</span>
+                  Media Upload <span class="text-danger">*</span>
                 </label>
 
-                <div class="input-group">
-                  <input type="text"
-                         class="form-control"
-                         #mediaInput
-                         placeholder="/uploads/logo.jpg">
-                  <button class="btn btn-outline-primary"
-                          type="button"
-                          (click)="addMediaPath(mediaInput.value); mediaInput.value=''">
-                    Add
-                  </button>
+                <!-- File input -->
+                <input type="file"
+                       class="form-control"
+                       multiple
+                       accept="image/*"
+                       (change)="onFileSelected($event)" />
+
+                <!-- Selected count -->
+                <small class="text-muted d-block mt-1">
+                  {{ selectedFiles.length + existingMedia.length }} file(s) selected
+                </small>
+
+                <!-- Validation -->
+                <div class="text-danger mt-1"
+                     *ngIf="(selectedFiles.length + existingMedia.length) === 0">
+                  Please select at least 1 file
                 </div>
 
-                <small class="text-muted d-block mt-1">
-                  {{ mediaArray.length }} file(s) added
-                </small>
+                <!-- EXISTING FILES (EDIT MODE) -->
+                <ul class="list-group mt-2" *ngIf="existingMedia.length > 0">
+                  <li class="list-group-item py-1 d-flex justify-content-between align-items-center"
+                      *ngFor="let file of existingMedia; let i = index">
+                    <span class="text-primary"
+                          style="cursor:pointer"
+                          (click)="viewImage(file.fileUrl)">
+                      {{ file.fileName }}
+                    </span>
+                  </li>
+                </ul>
+
+                <!-- NEWLY SELECTED FILES -->
+                <ul class="list-group mt-2" *ngIf="selectedFiles.length > 0">
+                  <li class="list-group-item py-1 d-flex justify-content-between align-items-center"
+                      *ngFor="let file of selectedFiles; let i = index">
+                    {{ file.name }}
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger"
+                            (click)="removeFile(i)">
+                      ✕
+                    </button>
+                  </li>
+                </ul>
               </div>
 
             </div>
           </div>
-
           <div class="card-footer bg-light">
             <div class="d-flex justify-content-between">
               <button type="button"
@@ -501,17 +537,13 @@
 
               <button type="button"
                       class="btn btn-danger btn-lg px-4"
-                      (click)="nextStep()"
-                      [disabled]="!canGoNext()">
+                      (click)="nextStep()">
                 Next: GDPR Agreement
                 <i class="fas fa-arrow-right ms-2"></i>
               </button>
             </div>
           </div>
         </div>
-
-
-
 
         <!-- STEP 7: GDPR Agreement (Final) -->
         <div class="form-step card border-0 shadow-sm mb-4" [class.show]="currentStep === 7">
@@ -535,17 +567,20 @@
                     <i class="fas fa-shield-alt me-2 text-warning"></i>
                     I accept GDPR compliance and Terms & Conditions <span class="text-danger">*</span>
                   </label>
+                  <div class="text-danger mt-1"
+                       *ngIf="workshopForm.get('isGdprAccepted')?.value == false">
+                    Please accept GDPR compliance and Terms & Conditions
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="card-footer bg-light border-0 pt-0">
+          <div class="card-footer bg-light">
             <div class="d-flex justify-content-between">
               <button type="button" class="btn btn-outline-secondary px-4" (click)="prevStep()">
                 <i class="fas fa-arrow-left me-2"></i>Back
               </button>
-              <button type="submit" class="btn btn-success btn-lg px-5"
-                      [disabled]="workshopForm.invalid || isSubmitting">
+              <button type="submit" class="btn btn-success btn-lg px-5" >
                 <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
                 {{ isSubmitting ? 'Creating...' : '✅ CREATE WORKSHOP' }}
               </button>

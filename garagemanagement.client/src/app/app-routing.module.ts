@@ -71,6 +71,7 @@ const routes: Routes = [
       { path: 'inward', component: InwardComponent, canActivate: [authGuard] },
       { path: 'order', component: OrderComponent, canActivate: [authGuard] },
       { path: 'workshop/:id', component: WorkshopComponent, canActivate: [authGuard] },
+      { path: 'workshop', component: WorkshopComponent, canActivate: [authGuard] },
       { path: 'assignuser', component: AssignUserToWorkshopComponent, canActivate: [authGuard] },
       { path: 'associatedworkshops', component: AssociatedworkshopsComponent, canActivate: [authGuard] },
       { path: 'workshoplist', component: WorkshopListComponent, canActivate: [authGuard] },

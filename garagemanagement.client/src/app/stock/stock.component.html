@@ -1,9 +1,20 @@
-<div class="container-fluid mt-3">
+<div class="container-fluid py-3">
+  <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between bg-white p-3 mb-4 rounded shadow-sm gap-3 ">
+    <!-- Title -->
+    <h1 class="mb-0 d-flex align-items-center text-dark fw-bold fs-4">
+      <i class="bi bi-boxes me-2 text-primary fs-3"></i>
+      Stock
+    </h1>
 
-  <!-- Header with Export + Statistics -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="text-primary">Stock List</h3>
-    <button class="btn btn-primary btn-sm" (click)="exportStock()">Export</button>
+    <!-- Buttons (End Aligned, Medium Size) -->
+    <div class="d-flex gap-2 ms-md-auto flex-wrap">
+
+      <button class="btn btn-primary btn-md d-flex align-items-center px-3"
+              (click)="exportStock()">
+        Export
+      </button>
+
+    </div>
   </div>
 
   <!-- Statistics -->
@@ -11,11 +22,11 @@
     <div class="col-12 text-center">
       <div class="card shadow-sm p-3">
         <div class="d-flex justify-content-center align-items-center">
-          <span>Unique Part Nos:   </span> <span style="font-size:3rem;">{{   stockStats.uniquePartNos }}</span> 
+          <span>Unique Part Nos:   </span> <span style="font-size:3rem;">{{   stockStats.uniquePartNos }}</span>
           <span class="divider"></span>
-          <span>Total Stock Items:   </span> <span style="font-size:3rem;">{{   stockStats.totalStockItems | number }}</span> 
+          <span>Total Stock Items:   </span> <span style="font-size:3rem;">{{   stockStats.totalStockItems | number }}</span>
           <span class="divider"></span>
-          <span>Stock Value ₹:   </span> <span style="font-size:3rem;">{{   stockStats.stockValue | number:'1.2-2' }}</span> 
+          <span>Stock Value ₹:   </span> <span style="font-size:3rem;">{{   stockStats.stockValue | number:'1.2-2' }}</span>
         </div>
       </div>
     </div>

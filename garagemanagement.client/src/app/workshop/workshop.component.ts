@@ -16,17 +16,112 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
   isSubmitting = false;
   progressPercentage = 0;
   currentStep = 1;
+  showStep6Errors: boolean = false;
+
+
+  /* ---------- SERVICES ---------- */
   availableServices = [
-    { id: '1', name: 'Oil Change' },
-    { id: '2', name: 'Wheel Alignment' },
-    { id: '3', name: 'Brake Service' },
-    { id: '4', name: 'AC Repair' }
+    { id: 1, name: 'Car Wash' },
+    { id: 2, name: 'Oil Change' },
+    { id: 3, name: 'Engine Repair' }
   ];
+
+  onServiceChange(id: number, event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    const checked = checkbox.checked;
+
+    const index = this.serviceIdsArray.value.indexOf(id.toString());
+
+    if (checked && index === -1) {
+      this.serviceIdsArray.push(this.fb.control(id.toString()));
+    }
+
+    if (!checked && index > -1) {
+      this.serviceIdsArray.removeAt(index);
+    }
+  }
+
+  isServiceChecked(id: number): boolean {
+    return this.serviceIdsArray.value.includes(id.toString());
+  }
+
+
+  /* ---------- WORKING DAYS ---------- */
+
+  toggleWorkingDay(day: number): void {
+    const index = this.workingDaysArray.value.indexOf(day.toString());
+
+    if (index > -1) {
+      this.workingDaysArray.removeAt(index);
+    } else {
+      this.workingDaysArray.push(this.fb.control(day.toString()));
+    }
+  }
+
+  isWorkingDayChecked(day: number): boolean {
+    return this.workingDaysArray.value.includes(day.toString());
+  }
+
+
+  getDayName(day: number): string {
+    return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day];
+  }
+
+  /* ---------- PAYMENT MODES ---------- */
   availablePaymentModes = [
-    { id: '1', name: 'Cash' },
-    { id: '2', name: 'UPI' },
-    { id: '3', name: 'Card' }
+    { id: 1, name: 'Cash' },
+    { id: 2, name: 'UPI' },
+    { id: 3, name: 'Card' }
   ];
+
+  onPaymentModeChange(id: number, event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    const checked = checkbox.checked;
+
+    const index = this.paymentModeIdsArray.value.indexOf(id.toString());
+
+    if (checked && index === -1) {
+      this.paymentModeIdsArray.push(this.fb.control(id.toString()));
+    }
+
+    if (!checked && index > -1) {
+      this.paymentModeIdsArray.removeAt(index);
+    }
+  }
+
+  isPaymentModeChecked(id: number): boolean {
+    return this.paymentModeIdsArray.value.includes(id.toString());
+  }
+
+
+  /* ---------- FILE UPLOAD ---------- */
+  selectedFiles: File[] = [];
+  existingMedia: any[] = []; // from API
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files) return;
+
+    for (let i = 0; i < input.files.length; i++) {
+      this.selectedFiles.push(input.files[i]);
+    }
+
+    // reset input so same file can be reselected
+    input.value = '';
+  }
+
+  removeFile(index: number) {
+    this.selectedFiles.splice(index, 1);
+  }
+
+  removeExistingFile(index: number) {
+    this.existingMedia.splice(index, 1);
+  }
+
+  viewImage(url: string) {
+    window.open(url, '_blank');
+  }
+
 
   @ViewChildren('form-step', { read: ElementRef }) stepElements!: QueryList<ElementRef>;
 
@@ -65,6 +160,7 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
       ownerMobileNo: ['', [Validators.required, this.indianMobileValidator]],
       emailID: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
       contactPerson: ['', [Validators.required, Validators.maxLength(100)]],
+      contactNo: ['', [Validators.required, this.indianMobileValidator]],
       landline: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]{10,15}$/)]],
 
       // ✅ STEP 2: Address
@@ -130,16 +226,6 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // ✅ Toggle Working Day
-  toggleWorkingDay(dayNum: number) {
-    const index = this.workingDaysArray.value.indexOf(dayNum.toString());
-    if (index > -1) {
-      this.workingDaysArray.removeAt(index);
-    } else {
-      this.workingDaysArray.push(this.fb.control(dayNum.toString()));
-    }
-  }
-
   // ✅ Add Payment Mode
   addPaymentMode(paymentId: string) {
     if (!this.paymentModeIdsArray.value.includes(paymentId)) {
@@ -152,48 +238,117 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
     this.mediaArray.push(this.fb.control(path));
   }
 
-  getDayName(dayNum: number): string {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    return days[dayNum] || '';
-  }
-
   // ✅ COMPLETE Step Validation (ALL fields)
   canGoNext(): boolean {
     switch (this.currentStep) {
-      case 1: // Basic Info - ALL 6 fields
-        return !!(this.workshopForm.get('workshopName')?.valid &&
-          this.workshopForm.get('ownerName')?.valid &&
-          this.workshopForm.get('ownerMobileNo')?.valid &&
-          this.workshopForm.get('emailID')?.valid &&
-          this.workshopForm.get('contactPerson')?.valid &&
-          this.workshopForm.get('landline')?.valid);
 
-      case 2: // Address - ALL 10 fields
+      // STEP 1
+      case 1: {
+        const controls = [
+          'workshopName',
+          'ownerName',
+          'ownerMobileNo',
+          'emailID',
+          'contactPerson',
+          'contactNo',
+          'landline'
+        ];
+
+        const valid = controls.every(c => this.workshopForm.get(c)?.valid);
+
+        if (!valid) {
+          this.markControlsTouched(controls);
+        }
+
+        return valid;
+      }
+
+      // STEP 2
+      case 2: {
         const address = this.workshopForm.get('address') as FormGroup;
-        return !!(address?.valid);
 
-      case 3: // Business Details - ALL 4 fields
-        return !!(this.workshopForm.get('inBusinessSince')?.valid &&
-          this.workshopForm.get('avgVehicleInflowPerMonth')?.valid &&
-          this.workshopForm.get('noOfEmployees')?.valid &&
-          this.workshopForm.get('dealerCode')?.valid);
+        if (!address.valid) {
+          this.markGroupTouched('address');
+          return false;
+        }
 
-      case 4: // Timing - ALL 2 fields
+        return true;
+      }
+
+      // STEP 3
+      case 3: {
+        const controls = [
+          'inBusinessSince',
+          'avgVehicleInflowPerMonth',
+          'noOfEmployees',
+          'dealerCode'
+        ];
+
+        const valid = controls.every(c => this.workshopForm.get(c)?.valid);
+
+        if (!valid) {
+          this.markControlsTouched(controls);
+        }
+
+        return valid;
+      }
+
+      // STEP 4
+      case 4: {
         const timing = this.workshopForm.get('timing') as FormGroup;
-        return !!timing?.valid;
 
-      case 5: // Business Config - ALL 7 fields
+        if (!timing.valid) {
+          this.markGroupTouched('timing');
+          return false;
+        }
+
+        return true;
+      }
+
+      // STEP 5
+      case 5: {
         const businessConfig = this.workshopForm.get('businessConfig') as FormGroup;
-        return !!businessConfig?.valid;
 
-      case 6: // ALL 4 Backend Fields - Minimum selections required
-        return !!(this.serviceIdsArray.length > 0 &&
+        if (!businessConfig.valid) {
+          this.markGroupTouched('businessConfig');
+          return false;
+        }
+
+        return true;
+      }
+
+      // STEP 6 (Arrays + files)
+      case 6: {
+        const hasFiles =
+          this.selectedFiles.length > 0 ||
+          this.existingMedia.length > 0;
+
+        const valid =
+          this.serviceIdsArray.length > 0 &&
           this.workingDaysArray.length >= 5 &&
           this.paymentModeIdsArray.length > 0 &&
-          this.mediaArray.length > 0);
+          hasFiles;
 
-      case 7: // GDPR
-        return !!this.workshopForm.get('isGdprAccepted')?.valid;
+        if (!valid) {
+          this.showStep6Errors = true;
+        }
+
+        return valid;
+      }
+
+
+      // STEP 7
+      case 7: {
+        const ctrl = this.workshopForm.get('isGdprAccepted');
+
+        if (!ctrl?.valid) {
+          ctrl?.markAsTouched();
+          ctrl?.markAsDirty();
+          return false;
+        }
+
+        return true;
+      }
 
       default:
         return true;
@@ -206,6 +361,9 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
       this.currentStep = Math.min(this.currentStep + 1, 7);
       this.showCurrentStep();
       this.updateProgress();
+    }
+    else {
+      this.alert.showError("Please fill all required fields!");
     }
   }
 
@@ -268,12 +426,64 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
     }
 
     this.isSubmitting = true;
-    const formData = this.workshopForm.value; // ✅ EXACTLY matches your C# DTO
+
+    const formData = new FormData();
+    const formValue = this.workshopForm.value;
+
+    // 🔹 Basic fields
+    formData.append('Id', formValue.id);
+    formData.append('WorkshopName', formValue.workshopName);
+    formData.append('OwnerName', formValue.ownerName);
+    formData.append('OwnerMobileNo', formValue.ownerMobileNo);
+    formData.append('EmailID', formValue.emailID);
+    formData.append('ContactPerson', formValue.contactPerson);
+    formData.append('ContactNo', formValue.contactNo);
+    formData.append('Landline', formValue.landline);
+    formData.append('InBusinessSince', formValue.inBusinessSince);
+    formData.append('AvgVehicleInflowPerMonth', formValue.avgVehicleInflowPerMonth);
+    formData.append('DealerCode', formValue.dealerCode);
+    formData.append('NoOfEmployees', formValue.noOfEmployees);
+    formData.append('IsGdprAccepted', formValue.isGdprAccepted.toString());
+
+    // 🔹 Address
+    Object.keys(formValue.address).forEach(key => {
+      formData.append(`Address.${key}`, formValue.address[key]);
+    });
+
+    // 🔹 Timing
+    formData.append('Timing.StartTime', formValue.timing.startTime);
+    formData.append('Timing.EndTime', formValue.timing.endTime);
+
+    // 🔹 Business Config
+    Object.keys(formValue.businessConfig).forEach(key => {
+      formData.append(`BusinessConfig.${key}`, formValue.businessConfig[key]);
+    });
+
+    // 🔹 Arrays
+    formValue.serviceIds.forEach((id: string) =>
+      formData.append('ServiceIds', id)
+    );
+
+    formValue.workingDays.forEach((day: string) =>
+      formData.append('WorkingDays', day)
+    );
+
+    formValue.paymentModeIds.forEach((id: string) =>
+      formData.append('PaymentModeIds', id)
+    );
+
+    // 🔹 Files
+    if (this.selectedFiles && this.selectedFiles.length > 0) {
+      for (let i = 0; i < this.selectedFiles.length; i++) {
+        formData.append('MediaFiles', this.selectedFiles[i]);
+      }
+    }
 
     this.http.post(this.apiUrl, formData).subscribe({
-      next: (response) => {
-        this.alert.showInfo('Workshop created successfully with all configurations!');
+      next: (res: any) => {
+        this.alert.showInfo(res.message || 'Workshop created successfully with media!');
         this.resetForm();
+        this.isSubmitting = false;
       },
       error: (error) => {
         this.alert.showError(error.error?.message || 'Creation failed!');
@@ -281,6 +491,7 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
 
   private markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
@@ -314,7 +525,9 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
     this.http.get<any>(`${this.getByIdUrl}/${id}`).subscribe({
       next: (res) => {
 
-        // ✅ PATCH MAIN FORM (STEP 1–5)
+        /* =========================
+           STEP 1–5 : MAIN FORM
+        ========================= */
         this.workshopForm.patchValue({
           id: res.id,
 
@@ -323,9 +536,10 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
           ownerMobileNo: res.ownerMobileNo,
           emailID: res.emailID,
           contactPerson: res.contactPerson,
+          contactNo: res.contactNo,
           landline: res.landline,
 
-          inBusinessSince: res.inBusinessSince?.substring(0, 7), // YYYY-MM
+          inBusinessSince: res.inBusinessSince?.substring(0, 7),
           avgVehicleInflowPerMonth: res.avgVehicleInflowPerMonth,
           noOfEmployees: res.noOfEmployees,
           dealerCode: res.dealerCode,
@@ -341,36 +555,42 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
           }
         });
 
-        alert(JSON.stringify(res.serviceIds))
+        /* =========================
+           STEP 6 : FORM ARRAYS
+        ========================= */
 
-        // ✅ PATCH FORM ARRAYS (STEP 6)
-        // ✅ SERVICES (M:M)
+        // SERVICES
         this.setFormArray(
           this.serviceIdsArray,
-          res.serviceIds?.map((x: any) => x.toString())
+          res.serviceIds?.map((x: any) => x.toString()) || []
         );
 
-        // ✅ WORKING DAYS (1:M)
+        // WORKING DAYS
         this.setFormArray(
           this.workingDaysArray,
-          res.workingDays?.map((x: any) => x.toString())
+          res.workingDays?.map((x: any) => x.toString()) || []
         );
 
-        // ✅ PAYMENT MODES (M:M)
+        // PAYMENT MODES
         this.setFormArray(
           this.paymentModeIdsArray,
-          res.paymentModeIds?.map((x: any) => x.toString())
+          res.paymentModeIds?.map((x: any) => x.toString()) || []
         );
 
-        // ✅ MEDIA (1:M)
-        this.setFormArray(
-          this.mediaArray,
-          res.media?.map((x: any) => x.toString())
-        );
+        /* =========================
+           STEP 7 : MEDIA (SEPARATE)
+        ========================= */
 
+        // ✅ store existing uploaded images
+        this.existingMedia = res.mediaFiles || [];
 
-        // ✅ Move user to last completed step
-        this.currentStep = 7;
+        // ❌ DO NOT touch selectedFiles here
+        this.selectedFiles = [];
+
+        /* =========================
+           STEP CONTROL
+        ========================= */
+        this.currentStep = 1; // edit always starts from step 1
         this.updateProgress();
         this.showCurrentStep();
       },
@@ -390,6 +610,24 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
   private formatTime(time: string | null): string {
     if (!time) return '';
     return time.substring(0, 5); // "10:30:00" → "10:30"
+  }
+
+  private markControlsTouched(controlNames: string[]) {
+    controlNames.forEach(name => {
+      const ctrl = this.workshopForm.get(name);
+      ctrl?.markAsTouched();
+      ctrl?.markAsDirty();
+    });
+  }
+
+  private markGroupTouched(groupName: string) {
+    const group = this.workshopForm.get(groupName) as FormGroup;
+    if (!group) return;
+
+    Object.values(group.controls).forEach(control => {
+      control.markAsTouched();
+      control.markAsDirty();
+    });
   }
 
 }

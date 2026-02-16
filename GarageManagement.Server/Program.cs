@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.FileProviders;
 
 
 namespace BrilliantMinds.Server
@@ -85,6 +86,13 @@ namespace BrilliantMinds.Server
 
             app.UseDefaultFiles();
             app.UseHttpsRedirection();
+            app.UseStaticFiles(); // wwwroot
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(@"D:\GarageUploads"),
+                RequestPath = "/uploads"
+            });
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapStaticAssets();

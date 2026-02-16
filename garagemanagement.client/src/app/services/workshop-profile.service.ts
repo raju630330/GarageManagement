@@ -58,4 +58,12 @@ export class WorkshopProfileService {
       `${this.baseUrl}/WorkshopProfile/searchUsers?query=${query}`
     );
   }
+  getAllAssignedUsers(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/WorkshopProfile/list`);
+  }
+  getAssignedUser(id: number): Observable<any> {
+    return this.http.get<any>(
+      `${this.baseUrl}/WorkshopProfile/getAssignedUser/${id}`
+    );
+  }
 }
