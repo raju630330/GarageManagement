@@ -51,7 +51,7 @@ export class AssignUserToWorkshopComponent implements OnInit {
       next: (res: any) => {
         if (res.isSuccess) {
           this.alert.showInfo('Assined Succesfully', () => {
-            this.assignuser.reset();
+            this.assignuser.reset({ id: 0, workshopId: 0, userId: 0, workshopSearch: '', userSearch: '' });
             this.getassignedusers();
           });
         }
