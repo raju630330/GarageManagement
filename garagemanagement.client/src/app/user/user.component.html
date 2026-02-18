@@ -1,95 +1,122 @@
-<div class="container mt-4">
+<div class="container-fluid py-3">
 
-  <!-- 🔹 EDIT FORM (TOP) -->
-  <form *ngIf="isEditMode"
-        [formGroup]="userForm"
-        class="card shadow mb-4">
+  <!-- 🔹 HEADER -->
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="d-flex align-items-center justify-content-between
+                  bg-white p-3 rounded shadow-sm">
 
-    <div class="card-header bg-primary text-white">
-      Edit User Role
-    </div>
+        <h1 class="h4 mb-0 d-flex align-items-center fw-bold text-dark">
+          <i class="fas fa-users-cog me-2 text-primary"></i>
+          Manage User Roles
+        </h1>
 
-    <div class="card-body row g-3">
-
-      <!-- User Name (Read Only) -->
-      <div class="col-md-6">
-        <label class="form-label">User Name</label>
-        <input type="text"
-               class="form-control"
-               formControlName="username"
-               readonly />
       </div>
-
-      <!-- Role -->
-      <div class="col-md-6">
-        <label class="form-label">Role</label>
-        <select class="form-select"
-                formControlName="roleId">
-          <option value="0">-- Select Role --</option>
-          <option value="1">Admin</option>
-          <option value="2">Manager</option>
-          <option value="3">Supervisor</option>
-          <option value="4">Technician</option>
-          <option value="5">Driver</option>
-        </select>
-
-        <small class="text-danger"
-               *ngIf="userForm.get('roleId')?.touched && userForm.get('roleId')?.invalid">
-          Role is required
-        </small>
-      </div>
-
-      <!-- Buttons -->
-      <div class="col-12 text-end">
-        <button type="button"
-                class="btn btn-success me-2"
-                (click)="updateUserRole()">
-          Update
-        </button>
-
-        <button type="button"
-                class="btn btn-secondary"
-                (click)="cancelEdit()">
-          Cancel
-        </button>
-      </div>
-
     </div>
-  </form>
+  </div>
 
-  <!-- 🔹 USER LIST (BOTTOM) -->
-  <div class="card shadow">
-    <div class="card-header bg-dark text-white">
-      User List
-    </div>
+  <!-- 🔹 EDIT FORM -->
+  <div class="row mb-3" *ngIf="isEditMode">
+    <div class="col-md-12">
+      <div class="bg-white p-3 rounded shadow-sm">
 
-    <div class="card-body p-0">
-      <table class="table table-striped mb-0">
-        <thead>
-          <tr>
-            <th>User Name</th>
-            <th>Role</th>
-            <th width="120">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of users">
-            <td>{{ user.username }}</td>
-            <td>{{ user.roleName }}</td>
-            <td>
-              <button class="btn btn-sm btn-primary"
-                      (click)="editUser(user)">
-                Edit
+        <form [formGroup]="userForm">
+
+          <!-- User Name -->
+          <div class="row m-2 align-items-center">
+            <div class="col-md-3 text-end">
+              <label class="fw-semibold">User Name :</label>
+            </div>
+            <div class="col-md-5">
+              <input type="text"
+                     class="form-control"
+                     formControlName="username"
+                     readonly />
+            </div>
+          </div>
+
+          <!-- Role -->
+          <div class="row m-2 align-items-center">
+            <div class="col-md-3 text-end">
+              <label class="fw-semibold">Role :</label>
+            </div>
+            <div class="col-md-5">
+              <select class="form-select" formControlName="roleId">
+                <option value="">-- Select Role --</option>
+                <option value="2">Manager</option>
+                <option value="3">Supervisor</option>
+                <option value="4">Technician</option>
+                <option value="5">Driver</option>
+              </select>
+
+              <span class="text-danger"
+                    *ngIf="userForm.get('roleId')?.touched && userForm.get('roleId')?.invalid">
+                Please select role
+              </span>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="row justify-content-center mt-3">
+            <div class="col-md-2 text-center">
+              <button type="button"
+                      class="btn btn-primary w-100"
+                      (click)="updateUserRole()">
+                Update
               </button>
-            </td>
-          </tr>
-          <tr *ngIf="users.length === 0">
-            <td colspan="3" class="text-center text-muted">
-              No users found
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+            <div class="col-md-2 text-center">
+              <button type="button"
+                      class="btn btn-outline-secondary w-100"
+                      (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 USER LIST TABLE -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-responsive bg-white rounded shadow-sm">
+
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>User Name</th>
+              <th>Role</th>
+              <th style="width:120px">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td>{{ user.username }}</td>
+              <td>{{ user.roleName }}</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-2"
+                        (click)="editUser(user)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+              </td>
+            </tr>
+
+            <!-- No Data -->
+            <tr *ngIf="users.length === 0">
+              <td colspan="3" class="text-center text-muted">
+                No records found
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+
+      </div>
     </div>
   </div>
 

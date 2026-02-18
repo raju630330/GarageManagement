@@ -15,7 +15,7 @@ namespace GarageManagement.Server.Repositories
         }
         public async Task<List<UserListDto>> GetUsersAsync()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users.Include(a=> a.Role).Where(a=> a.RoleId != 1).ToListAsync();
 
             return users.Select(u => new UserListDto
             {
@@ -23,6 +23,7 @@ namespace GarageManagement.Server.Repositories
                 Username = u.Username,
                 Email = u.Email,
                 RoleName = u.Role?.RoleName ?? "N/A",
+                RoleId = u.RoleId,  
                 IsActive = u.IsActive  // map the active status
             }).ToList();
         }

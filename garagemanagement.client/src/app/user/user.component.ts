@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { AlertService } from '../services/alert.service';
 @Component({
   selector: 'app-user',
   standalone: false,
@@ -16,7 +17,8 @@ export class UserComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient
+    private http: HttpClient,
+    private alert: AlertService
   ) { }
 
   ngOnInit(): void {
@@ -29,7 +31,7 @@ export class UserComponent implements OnInit {
     this.userForm = this.fb.group({
       userId: [0, Validators.required],
       username: [{ value: '', disabled: true }, Validators.required],
-      roleId: [0, Validators.required]
+      roleId: ['', Validators.required]
     });
   }
 
@@ -56,6 +58,7 @@ export class UserComponent implements OnInit {
 
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
+      this.alert.showError("Please select all required fields!");
       return;
     }
 
@@ -66,7 +69,7 @@ export class UserComponent implements OnInit {
 
     this.http.put(`${this.baseUrl}/User/update-role`, payload).subscribe({
       next: (res: any) => {
-        alert(res.message || 'Role updated successfully');
+        this.alert.showSuccess(res.message || 'Role updated successfully');
         this.cancelEdit();
         this.getUsers();
       },
