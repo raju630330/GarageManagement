@@ -4,7 +4,10 @@ import { Observable, tap, BehaviorSubject } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
-
+export interface Role {
+  id: number;
+  roleName: string;
+}
 interface AuthResponse { token: string; }
 interface Decoded { role?: string; roleId?: number; exp?: number; name?: string; email?: string; sub?: string; }
 
@@ -182,5 +185,7 @@ export class AuthService {
       return 0;
     }
   }
-
+  getRoles(): Observable<Role[]> {
+    return this.http.get<Role[]>(`${this.base}/Auth/GetRoles`);
+  }
 }

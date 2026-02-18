@@ -38,29 +38,47 @@ namespace GarageManagement.Server.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            // Only one Admin allowed
-            if (dto.RoleId == 1 && await _db.Users.AnyAsync(u => u.RoleId == 1))
-                return BadRequest("Only one Admin is allowed.");
+            var username = dto.Username.Trim();
+            var email = dto.Email.Trim().ToLower();
 
-            // Check for existing username/email
-            if (await _db.Users.AnyAsync(u => u.Username == dto.Username || u.Email == dto.Email))
+            // Check username OR email existence in ONE query
+            var existingUser = await _db.Users
+                .Where(u => u.Username == username || u.Email == email)
+                .Select(u => new { u.RoleId })
+                .FirstOrDefaultAsync();
+
+            if (existingUser != null)
                 return BadRequest("Username or Email already exists.");
 
-            // Create user using RoleId
+            // Only one Admin allowed
+            if (dto.RoleId == 1)
+            {
+                bool adminExists = await _db.Users.AnyAsync(u => u.RoleId == 1);
+                if (adminExists)
+                    return BadRequest("Only one Admin is allowed.");
+            }
+
             var user = new User
             {
-                Username = dto.Username.Trim(),
-                Email = dto.Email.Trim(),
+                Username = username,
+                Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                RoleId = dto.RoleId
+                RoleId = dto.RoleId,
+                IsActive = true
             };
 
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
 
-            return Ok(new AuthResponse { message = "Registered successfully. Please login." });
+            return Ok(new AuthResponse
+            {
+                message = "Registered successfully. Please login."
+            });
         }
+
 
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponse>> Login([FromBody]  LoginDto dto)
@@ -235,8 +253,16 @@ namespace GarageManagement.Server.Controllers
             return Convert.ToHexString(bytes);
         }
 
+        [HttpGet("GetRoles")]
+        public async Task<List<RoleDto>> GetAllRolesAsync()
+        {
+            return await _db.Roles
+                .Select(r => new RoleDto { Id = r.Id, RoleName = r.RoleName })
+                .ToListAsync();
+        }
 
-       
+
+
     }
 }
 

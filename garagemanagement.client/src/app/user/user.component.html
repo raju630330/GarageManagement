@@ -1,0 +1,96 @@
+<div class="container mt-4">
+
+  <!-- 🔹 EDIT FORM (TOP) -->
+  <form *ngIf="isEditMode"
+        [formGroup]="userForm"
+        class="card shadow mb-4">
+
+    <div class="card-header bg-primary text-white">
+      Edit User Role
+    </div>
+
+    <div class="card-body row g-3">
+
+      <!-- User Name (Read Only) -->
+      <div class="col-md-6">
+        <label class="form-label">User Name</label>
+        <input type="text"
+               class="form-control"
+               formControlName="username"
+               readonly />
+      </div>
+
+      <!-- Role -->
+      <div class="col-md-6">
+        <label class="form-label">Role</label>
+        <select class="form-select"
+                formControlName="roleId">
+          <option value="0">-- Select Role --</option>
+          <option value="1">Admin</option>
+          <option value="2">Manager</option>
+          <option value="3">Supervisor</option>
+          <option value="4">Technician</option>
+          <option value="5">Driver</option>
+        </select>
+
+        <small class="text-danger"
+               *ngIf="userForm.get('roleId')?.touched && userForm.get('roleId')?.invalid">
+          Role is required
+        </small>
+      </div>
+
+      <!-- Buttons -->
+      <div class="col-12 text-end">
+        <button type="button"
+                class="btn btn-success me-2"
+                (click)="updateUserRole()">
+          Update
+        </button>
+
+        <button type="button"
+                class="btn btn-secondary"
+                (click)="cancelEdit()">
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </form>
+
+  <!-- 🔹 USER LIST (BOTTOM) -->
+  <div class="card shadow">
+    <div class="card-header bg-dark text-white">
+      User List
+    </div>
+
+    <div class="card-body p-0">
+      <table class="table table-striped mb-0">
+        <thead>
+          <tr>
+            <th>User Name</th>
+            <th>Role</th>
+            <th width="120">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.username }}</td>
+            <td>{{ user.roleName }}</td>
+            <td>
+              <button class="btn btn-sm btn-primary"
+                      (click)="editUser(user)">
+                Edit
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="users.length === 0">
+            <td colspan="3" class="text-center text-muted">
+              No users found
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

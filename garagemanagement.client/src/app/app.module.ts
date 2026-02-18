@@ -60,6 +60,7 @@ import { OrderComponent } from './order/order.component';
 import { AssignUserToWorkshopComponent } from './assign-user-to-workshop/assign-user-to-workshop.component';
 import { AssociatedworkshopsComponent } from './associatedworkshops/associatedworkshops.component';
 import { WorkshopListComponent } from './workshop-list/workshop-list.component';
+import { UserComponent } from './user/user.component';
 
 @NgModule({
   declarations: [
@@ -107,7 +108,8 @@ import { WorkshopListComponent } from './workshop-list/workshop-list.component';
     OrderComponent,
     AssignUserToWorkshopComponent,
     AssociatedworkshopsComponent,
-    WorkshopListComponent
+    WorkshopListComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,

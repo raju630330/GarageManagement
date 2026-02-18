@@ -32,6 +32,7 @@ import { InwardComponent } from './inward/inward.component';
 import { AssignUserToWorkshopComponent } from './assign-user-to-workshop/assign-user-to-workshop.component';
 import { AssociatedworkshopsComponent } from './associatedworkshops/associatedworkshops.component';
 import { WorkshopListComponent } from './workshop-list/workshop-list.component';
+import { UserComponent } from './user/user.component';
 
 const routes: Routes = [
   {
@@ -75,6 +76,7 @@ const routes: Routes = [
       { path: 'assignuser', component: AssignUserToWorkshopComponent, canActivate: [authGuard] },
       { path: 'associatedworkshops', component: AssociatedworkshopsComponent, canActivate: [authGuard] },
       { path: 'workshoplist', component: WorkshopListComponent, canActivate: [authGuard] },
+      { path: 'userlist', component: UserComponent, canActivate: [authGuard] },
       { path: 'unauthorized', component: UnauthorizedComponent, data: { public: true } }
     ]
   },

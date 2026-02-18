@@ -43,6 +43,7 @@ namespace BrilliantMinds.Server
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
             builder.Services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
             builder.Services.AddScoped<IIssueRepository, IssueRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             builder.Services.AddSwaggerGen();
 

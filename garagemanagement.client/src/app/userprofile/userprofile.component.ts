@@ -48,7 +48,7 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
   /* ---------- ALL TABS CONFIG (STATIC) ---------- */
   mainTabs: AppTab[] = [
     { name: 'Workshop', route: '/workshop', module: 'Workshop', permission: 'V' },
-    { name: 'Users', route: '/users', module: 'User', permission: 'V' },
+    { name: 'Users', route: '/userlist', module: 'User', permission: 'V' },
     { name: 'MMVY', route: '/mmvy', module: 'MMVY', permission: 'V' },
     { name: 'Settings', route: '/settings', module: 'Settings', permission: 'V' },
     { name: 'Subscription', route: '/subscription', module: 'Subscription', permission: 'V' },
@@ -69,7 +69,7 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
       children: [
         { name: 'Roles', icon: 'fas fa-user-shield', route: '/roles', module: 'Role', permission: 'V' },
         { name: 'Role Permission', icon: 'fas fa-lock', route: '/rolepermission', module: 'RolePermission', permission: 'V' },
-
+        { name: 'Users', icon: 'fas fa-user', route: '/userlist', module: 'User', permission: 'V' },
         {
           name: 'Workshop',
           icon: 'fas fa-tools',
