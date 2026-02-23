@@ -2,23 +2,13 @@
 
 namespace GarageManagement.Server.Model
 {
-    public class Vehicle
+    public class Vehicle : BaseEntity
     {
-        public long Id { get; set; }
-
         public long CustomerId { get; set; }
-        public Customer Customer { get; set; }
-
-        [Required]
-        public string RegPrefix { get; set; }
-
-        [Required]
-        public string RegNo { get; set; }
-
-        [Required]
-        public string VehicleType { get; set; }
-
-        // Navigation
-        public ICollection<BookAppointment> Appointments { get; set; }
+        public Customer? Customer { get; set; }
+        public string RegPrefix { get; set; } = string.Empty;
+        public string RegNo { get; set; } = string.Empty;
+        public string VehicleType { get; set; } = string.Empty;
+        public ICollection<BookAppointment>? Appointments { get; set; }
     }
 }

@@ -1,12 +1,9 @@
 ﻿namespace GarageManagement.Server.Model
 {
-    public class JobCardTyreBattery
+    public class JobCardTyreBattery : BaseEntity
     {
-        public long Id { get; set; }
-
         public long JobCardId { get; set; }
         public JobCard JobCard { get; set; } = null!;
-
         public string Type { get; set; } = string.Empty;
         public string Brand { get; set; } = string.Empty;
         public string Model { get; set; } = string.Empty;

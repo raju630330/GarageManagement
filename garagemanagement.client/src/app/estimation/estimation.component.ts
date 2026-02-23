@@ -243,6 +243,8 @@ export class EstimationComponent implements OnInit {
 
     const { quantity, serviceType } = this.addItemForm.value;
 
+    if (true) { alert(quantity) }
+
     // Use selected part values
     const part = this.selectedPart;
 
@@ -271,12 +273,20 @@ export class EstimationComponent implements OnInit {
 
     this.jobcardService.saveJobCardEstimation(item.value).subscribe({
       next: (res) => {
-        this.items.push(item);
-        this.calculateTotals();
-        this.resetEntireForm();
+        if (res.isSuccess) {
+          this.items.push(item);
+          this.calculateTotals();
+          this.resetEntireForm();
+        }
+        else {
+          this.alert.showError("Not saved successfully");
+          return;
+        }
+        
       },
       error: (error) => {
-        console.log(error);
+        this.alert.showError("Internal server error");
+        return;
       }
     });
   }

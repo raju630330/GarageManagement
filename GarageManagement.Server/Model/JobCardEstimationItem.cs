@@ -1,9 +1,7 @@
 ﻿namespace GarageManagement.Server.Model
 {
-    public class JobCardEstimationItem
+    public class JobCardEstimationItem : BaseEntity
     {
-        public long Id { get; set; }
-
         public long JobCardId { get; set; }
         public JobCard JobCard { get; set; } = null!;
         public long? PartId { get; set; }
@@ -22,7 +20,7 @@
         public DateTime? IssuedDate { get; set; }
         public string? IssuedBy { get; set; }  
         public string? IssuedId { get; set; }
-        public ICollection<StockMovement> StockMovements { get; set; }
-        = new List<StockMovement>();
+        public ICollection<StockMovement> StockMovements { get; set; } = new List<StockMovement>();
+
     }
 }

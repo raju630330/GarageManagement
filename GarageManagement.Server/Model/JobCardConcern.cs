@@ -1,13 +1,10 @@
 ﻿namespace GarageManagement.Server.Model
 {
-    public class JobCardConcern
+    public class JobCardConcern : BaseEntity
     {
-        public long Id { get; set; }
         public long JobCardId { get; set; }
-
         public string? Text { get; set; }
         public bool Active { get; set; }
-
         public JobCard? JobCard { get; set; }
     }
 }

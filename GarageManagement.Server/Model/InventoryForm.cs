@@ -2,11 +2,10 @@
 
 namespace GarageManagement.Server.Model
 {
-    public class InventoryForm
+    public class InventoryForm : BaseEntity
     {
-        public long Id { get; set; }
         public long? RepairOrderId { get; set; }
-        public RepairOrder RepairOrder { get; set; }
-        public ICollection<InventoryAccessory> Accessories { get; set; }
+        public RepairOrder? RepairOrder { get; set; }
+        public ICollection<InventoryAccessory>? Accessories { get; set; }
     }
 }

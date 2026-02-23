@@ -2,9 +2,8 @@
 
 namespace GarageManagement.Server.Model
 {
-    public class JobCard
+    public class JobCard : BaseEntity
     {
-        public long Id { get; set; }
         public long? RepairOrderId { get; set; }
         public RepairOrder? RepairOrder { get; set; }
         // Vehicle

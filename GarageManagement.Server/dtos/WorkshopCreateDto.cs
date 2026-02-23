@@ -34,16 +34,16 @@
 
     public class WorkshopAddressDto
     {
-        public string FlatNo { get; set; }
-        public string Street { get; set; }
-        public string Location { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string StateCode { get; set; }
-        public string Country { get; set; }
-        public string Pincode { get; set; }
-        public string Landmark { get; set; }
-        public string BranchAddress { get; set; }
+        public string FlatNo { get; set; } = string.Empty;
+        public string Street { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string State { get; set; } = string.Empty;
+        public string StateCode { get; set; } = string.Empty;
+        public string Country { get; set; } = string.Empty;
+        public string Pincode { get; set; } = string.Empty;
+        public string Landmark { get; set; } = string.Empty;
+        public string BranchAddress { get; set; } = string.Empty;
     }
 
     public class WorkshopTimingDto
@@ -70,8 +70,8 @@
 
     public class WorkshopMediaDto
     {
-        public string FilePath { get; set; }
-        public string MediaType { get; set; }
+        public string FilePath { get; set; } = string.Empty;
+        public string MediaType { get; set; } = string.Empty;
     }
 
     public class AssignUserToWorkshopDto

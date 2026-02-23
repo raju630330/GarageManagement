@@ -2,10 +2,8 @@
 
 namespace GarageManagement.Server.Model
 {
-    public class JobCardCancelledInvoice
+    public class JobCardCancelledInvoice : BaseEntity
     {
-        public long Id { get; set; }
-
         public long JobCardId { get; set; }
         public JobCard JobCard { get; set; } = null!;
 

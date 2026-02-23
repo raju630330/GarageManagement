@@ -2,13 +2,11 @@
 
 namespace GarageManagement.Server.Model
 {
-    public class InventoryAccessory
+    public class InventoryAccessory : BaseEntity
     {
-        public long Id { get; set; }
-        public string Label { get; set; }
+        public string Label { get; set; } = string.Empty;
         public bool Checked { get; set; }
-
         public long InventoryFormId { get; set; }
-        public InventoryForm InventoryForm { get; set; }
+        public InventoryForm? InventoryForm { get; set; }
     }
 }

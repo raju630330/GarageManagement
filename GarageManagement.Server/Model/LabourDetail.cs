@@ -2,9 +2,8 @@
 
 namespace GarageManagement.Server.Model
 {
-    public class LabourDetail
+    public class LabourDetail : BaseEntity
     {
-        public long Id { get; set; }
         public string? Description { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
@@ -16,6 +15,6 @@ namespace GarageManagement.Server.Model
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
         public long? RepairOrderId { get; set; }
-        public RepairOrder RepairOrder { get; set; }
+        public RepairOrder? RepairOrder { get; set; }
     }
 }

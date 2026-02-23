@@ -2,6 +2,6 @@
 {
     public class ForgotPasswordRequest
     {
-        public string EmailOrUsername { get; set; }
+        public string EmailOrUsername { get; set; } = string.Empty;
     }
 }

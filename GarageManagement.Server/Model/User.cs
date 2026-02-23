@@ -2,9 +2,8 @@
 
 namespace GarageManagement.Server.Model
 {
-    public class User
+    public class User : BaseEntity
     {
-        public long Id { get; set; }
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
@@ -12,9 +11,9 @@ namespace GarageManagement.Server.Model
         public DateTime? ResetTokenExpiresUtc { get; set; }
         public long RoleId { get; set; }
         public bool? IsActive { get; set; }
-        public Role Role { get; set; }
-        public ICollection<WorkshopUser> WorkshopUsers { get; set; } 
-        public ICollection<BookAppointment> BookAppointments { get; set; }
-        public ICollection<StockMovement> StockMovements { get; set; }
+        public Role? Role { get; set; }
+        public ICollection<WorkshopUser>? WorkshopUsers { get; set; } 
+        public ICollection<BookAppointment>? BookAppointments { get; set; }
+        public ICollection<StockMovement>? StockMovements { get; set; }
     }
 }

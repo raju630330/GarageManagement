@@ -2,11 +2,10 @@
 
 namespace GarageManagement.Server.Model
 {
-    public class Permission
+    public class Permission : BaseEntity
     {
-        public long Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ICollection<RolePermission> RolePermissions { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty; 
+        public ICollection<RolePermission>? RolePermissions { get; set; }
     }
 }

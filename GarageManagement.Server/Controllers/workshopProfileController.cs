@@ -38,7 +38,7 @@ namespace GarageManagement.Server.Controllers
                 workshop.WorkshopName = dto.WorkshopName;
                 workshop.OwnerName = dto.OwnerName;
                 workshop.OwnerMobileNo = dto.OwnerMobileNo;
-                workshop.EmailID = dto.EmailID;
+                workshop.EmailID = dto.EmailID ?? "";
                 workshop.ContactPerson = dto.ContactPerson ?? "";
                 workshop.ContactNo = dto.ContactNo ?? "";
                 workshop.Landline = dto.Landline ?? "";
@@ -275,16 +275,20 @@ namespace GarageManagement.Server.Controllers
         [HttpGet("GetWorkshopsByUser")]
         public async Task<IActionResult> GetWorkshopsByUser(long id)
         {
-            var result = await _context.WorkshopUsers.Include(a => a.Workshop).Include(b => b.User).ThenInclude(a => a.Role)
+            var result = await _context.WorkshopUsers
                                         .Where(a => a.UserId == id)
                                         .Select(a => new
                                         {
-                                            Id = a.Id,
-                                            UserName = a.User.Username,
-                                            RoleName = a.User.Role.RoleName,
-                                            WorshopName = a.Workshop.WorkshopName,
-                                        }).ToListAsync();
-
+                                            a.Id,
+                                            UserName = a.User != null ? a.User.Username : null,
+                                            RoleName = a.User != null && a.User.Role != null
+                                                        ? a.User.Role.RoleName
+                                                        : null,
+                                            WorkshopName = a.Workshop != null
+                                                        ? a.Workshop.WorkshopName
+                                                        : null
+                                        })
+                                        .ToListAsync();
             if (result == null)
             {
                 return NotFound();
@@ -307,19 +311,19 @@ namespace GarageManagement.Server.Controllers
             var totalRecords = await query.CountAsync();
 
             var workshops = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .Select(x => new WorkshopListDto
-                {
-                    Id = x.Id,
-                    WorkshopName = x.WorkshopName,
-                    OwnerName = x.OwnerName,
-                    OwnerMobileNo = x.OwnerMobileNo,
-                    City = x.Address.City,
-                    Gstin = x.WorkshopBusinessConfigs.GSTIN,
-                    Location = x.WorkshopBusinessConfigs.GoogleReviewLink
-                })
-                .ToListAsync();
+      .Skip((pageNumber - 1) * pageSize)
+      .Take(pageSize)
+      .Select(x => new WorkshopListDto
+      {
+          Id = x.Id,
+          WorkshopName = x.WorkshopName,
+          OwnerName = x.OwnerName,
+          OwnerMobileNo = x.OwnerMobileNo,
+          City = x.Address != null ? x.Address.City : string.Empty,
+          Gstin = x.WorkshopBusinessConfigs != null ? x.WorkshopBusinessConfigs.GSTIN : string.Empty,
+          Location = x.WorkshopBusinessConfigs != null ? x.WorkshopBusinessConfigs.GoogleReviewLink : string.Empty
+      })
+      .ToListAsync();
 
             var response = new PagedResponse<WorkshopListDto>
             {
@@ -403,28 +407,29 @@ namespace GarageManagement.Server.Controllers
                 },
 
                 // STEP 6 - Lists (IDs only)
-                serviceIds = workshop.Services
+                serviceIds = workshop.Services?
                     .Select(x => x.ServiceId.ToString())
-                    .ToArray(),
+                    .ToArray() ?? Array.Empty<string>(),
 
-                workingDays = workshop.WorkingDays
+                workingDays = workshop.WorkingDays?
                     .Select(x => ((int)x.Day).ToString())
-                    .ToArray(),
+                    .ToArray() ?? Array.Empty<string>(),
 
-                paymentModeIds = workshop.WorkshopPaymentModes
+                paymentModeIds = workshop.WorkshopPaymentModes?
                     .Select(x => x.PaymentModeId.ToString())
-                    .ToArray(),
+                    .ToArray() ?? Array.Empty<string>(),
 
-                mediaFiles = workshop.WorkshopMedias
-                                .Where(x => x.MediaType.StartsWith("image"))
-                                .Select(x => new
-                                {
-                                    fileName = Path.GetFileName(x.FilePath),
-                                    filePath = x.FilePath,
-                                    fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{x.FilePath}",
-                                    mediaType = x.MediaType
-                                })
-                                .ToArray(),
+                mediaFiles = workshop.WorkshopMedias?
+                    .Where(x => !string.IsNullOrEmpty(x.MediaType)
+                             && x.MediaType.StartsWith("image"))
+                    .Select(x => new
+                    {
+                        fileName = Path.GetFileName(x.FilePath ?? string.Empty),
+                        filePath = x.FilePath,
+                        fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{x.FilePath}",
+                        mediaType = x.MediaType
+                    })
+                    .ToArray() ?? Array.Empty<object>(),
 
                 // STEP 7
                 isGdprAccepted = workshop.IsGdprAccepted
@@ -436,16 +441,16 @@ namespace GarageManagement.Server.Controllers
         [HttpGet("list")]
         public async Task<IActionResult> GetAllAssignedUsers()
         {
-            var data = await _context.WorkshopUsers.Include(a => a.User).Include(b => b.Workshop)
-                .AsNoTracking()
-                .Select(x => new
-                {
-                    x.Id,
-                    x.User.Username,
-                    x.Workshop.WorkshopName,
-                    x.IsActive
-                })
-                .ToListAsync();
+            var data = await _context.WorkshopUsers
+                                    .AsNoTracking()
+                                    .Select(x => new
+                                    {
+                                        x.Id,
+                                        UserName = x.User != null ? x.User.Username : null,
+                                        WorkshopName = x.Workshop != null ? x.Workshop.WorkshopName : null,
+                                        x.IsActive
+                                    })
+                                    .ToListAsync();
 
             return Ok(new
             {
@@ -458,25 +463,38 @@ namespace GarageManagement.Server.Controllers
 
         public async Task<IActionResult> getAssignedUser(long id)
         {
-            if(id <= 0)
+            if (id <= 0)
             {
                 return BadRequest("id not found");
             }
 
-            var data = await _context.WorkshopUsers.Include(a => a.User).Include(b => b.Workshop)
-                .Where(a=> a.Id == id)
+            var data = await _context.WorkshopUsers
                 .AsNoTracking()
+                .Where(x => x.Id == id)
                 .Select(x => new
                 {
                     id = x.Id,
 
-                    workshopSearch = $"{x.Workshop.WorkshopName} ({x.Workshop.OwnerMobileNo})",
-                    workshopId = x.Workshop.Id,
-                    userSearch = $"{x.User.Username} ({x.User.Email})",
-                    userId = x.User.Id,
+                    workshopSearch = x.Workshop != null
+                        ? $"{x.Workshop.WorkshopName} ({x.Workshop.OwnerMobileNo})"
+                        : null,
+
+                    workshopId = x.Workshop != null ? x.Workshop.Id : 0,
+
+                    userSearch = x.User != null
+                        ? $"{x.User.Username} ({x.User.Email})"
+                        : null,
+
+                    userId = x.User != null ? x.User.Id : 0,
+
                     isActive = x.IsActive
                 })
-                .FirstOrDefaultAsync(); 
+                .FirstOrDefaultAsync();
+
+            if (data == null)
+            {
+                return NotFound("Assigned user not found");
+            }
 
             return Ok(new
             {
