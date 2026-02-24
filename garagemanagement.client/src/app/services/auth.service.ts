@@ -24,7 +24,10 @@ export class AuthService {
   private loggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
   loggedIn$ = this.loggedInSubject.asObservable();
     profile: any;
-
+  // session time out
+  private sessionTimer: any;
+  private remainingTimeSubject = new BehaviorSubject<number | null>(null);
+  remainingTime$ = this.remainingTimeSubject.asObservable();
   constructor(private http: HttpClient, private router: Router) {
     this.restore();
   }
@@ -92,6 +95,7 @@ export class AuthService {
   }
 
   logout() {
+    this.stopSessionTimer();
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     this._token = null;
@@ -109,14 +113,9 @@ export class AuthService {
       const decoded = jwtDecode<Decoded>(t);
       this._role = decoded.role ?? null;
       this._roleId = decoded.roleId ?? 0;
-      //if (this._role) {
-      //  localStorage.setItem('role', this._role);
-      //}
       this.currentUserSubject.next(decoded);
       this.loggedInSubject.next(true);
-      console.log("Full decoded token:", decoded);
-
-
+      this.startSessionTimer(t);
     } catch {
       this._role = null;
       this._roleId = 0;
@@ -129,6 +128,7 @@ export class AuthService {
     const t = localStorage.getItem('token');
     if (t && !this.isExpired(t)) {
       this._token = t;
+      this.startSessionTimer(t);
       try {
         const decoded = jwtDecode<Decoded>(t);
         this._role = decoded.role ?? null;
@@ -185,7 +185,45 @@ export class AuthService {
       return 0;
     }
   }
+
   getRoles(): Observable<Role[]> {
     return this.http.get<Role[]>(`${this.base}/Auth/GetRoles`);
+  }
+  private startSessionTimer(token: string) {
+    this.stopSessionTimer();
+
+    try {
+      const decoded = jwtDecode<Decoded>(token);
+      if (!decoded.exp) return;
+
+      const expiryTime = decoded.exp * 1000;
+
+      const updateRemaining = () => {
+        const remaining = Math.floor((expiryTime - Date.now()) / 1000);
+
+        if (remaining <= 0) {
+          this.stopSessionTimer();
+          this.logout();
+        } else {
+          this.remainingTimeSubject.next(remaining);
+        }
+      };
+
+      // 🔥 Immediately calculate once
+      updateRemaining();
+
+      // Then every second
+      this.sessionTimer = setInterval(updateRemaining, 1000);
+
+    } catch {
+      this.logout();
+    }
+  }
+
+  private stopSessionTimer() {
+    if (this.sessionTimer) {
+      clearInterval(this.sessionTimer);
+      this.sessionTimer = null;
+    }
   }
 }

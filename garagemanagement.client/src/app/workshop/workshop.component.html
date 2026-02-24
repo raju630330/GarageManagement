@@ -1,6 +1,7 @@
-<div class="container-fluid py-5 bg-light min-vh-100">
+<div class="container-fluid bg-light min-vh-100">
   <!-- Header -->
-  <div class="row justify-content-center mb-5">
+  <div class="row justify-content-center sticky-top bg-light shadow-sm"
+       style="top: 120px; z-index:1020;">
     <div class="col-12 col-lg-10">
       <div class="card border-0 shadow-lg">
         <div class="card-body p-5 text-center bg-gradient-primary text-white rounded-top">
@@ -30,7 +31,7 @@
   </div>
 
   <!-- Form Content -->
-  <div class="row justify-content-center">
+  <div class="row justify-content-center mt-4">
     <div class="col-12 col-lg-10 col-xl-8">
       <form [formGroup]="workshopForm" (ngSubmit)="submit()" novalidate>
 
@@ -202,8 +203,7 @@
               <button type="button" class="btn btn-outline-secondary px-4" (click)="prevStep()">
                 <i class="fas fa-arrow-left me-2"></i>Back
               </button>
-              <button type="button" class="btn btn-success btn-lg px-4" (click)="nextStep()"
-                      >
+              <button type="button" class="btn btn-success btn-lg px-4" (click)="nextStep()">
                 Next: Business Info <i class="fas fa-arrow-right ms-2"></i>
               </button>
             </div>
@@ -256,7 +256,7 @@
               <button type="button" class="btn btn-outline-secondary px-4" (click)="prevStep()">
                 <i class="fas fa-arrow-left me-2"></i>Back
               </button>
-              <button type="button" class="btn btn-warning btn-lg px-4 text-dark " (click)="nextStep()" >
+              <button type="button" class="btn btn-warning btn-lg px-4 text-dark " (click)="nextStep()">
                 Next: Operating Hours <i class="fas fa-arrow-right ms-2"></i>
               </button>
             </div>
@@ -293,8 +293,7 @@
               <button type="button" class="btn btn-outline-secondary px-4" (click)="prevStep()">
                 <i class="fas fa-arrow-left me-2"></i>Back
               </button>
-              <button type="button" class="btn btn-info btn-lg px-4 text-white" (click)="nextStep()"
-                      >
+              <button type="button" class="btn btn-info btn-lg px-4 text-white" (click)="nextStep()">
                 Next: Configuration <i class="fas fa-arrow-right ms-2"></i>
               </button>
             </div>
@@ -374,7 +373,7 @@
               <button type="button" class="btn btn-outline-secondary px-4" (click)="prevStep()">
                 <i class="fas fa-arrow-left me-2"></i>Back
               </button>
-              <button type="button" class="btn btn-secondary btn-lg px-4" (click)="nextStep()" >
+              <button type="button" class="btn btn-secondary btn-lg px-4" (click)="nextStep()">
                 Next: Services <i class="fas fa-arrow-right ms-2"></i>
               </button>
             </div>
@@ -580,7 +579,7 @@
               <button type="button" class="btn btn-outline-secondary px-4" (click)="prevStep()">
                 <i class="fas fa-arrow-left me-2"></i>Back
               </button>
-              <button type="submit" class="btn btn-success btn-lg px-5" >
+              <button type="submit" class="btn btn-success btn-lg px-5">
                 <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
                 {{ isSubmitting ? 'Creating...' : '✅ CREATE WORKSHOP' }}
               </button>

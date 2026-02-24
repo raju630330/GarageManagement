@@ -1,4 +1,5 @@
 ﻿using GarageManagement.Server.Model;
+using GarageManagement.Server.RepoInterfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,8 +8,9 @@ namespace GarageManagement.Server.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) { }
+        private readonly IHelperRepository _helperRepository;
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHelperRepository helperRepository)
+            : base(options) { _helperRepository = helperRepository; }
 
         // ------------------- DbSets -------------------
         public DbSet<User> Users { get; set; }
@@ -475,6 +477,52 @@ namespace GarageManagement.Server.Data
                 .HasForeignKey(sm => sm.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+        }
+
+        public override int SaveChanges()
+        {
+            UpdateAuditFields();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            UpdateAuditFields();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+        private void UpdateAuditFields()
+        {
+            var entries = ChangeTracker.Entries<BaseEntity>();
+
+            var currentUserId = _helperRepository.GetUserId();
+            var currentTime = DateTime.UtcNow;
+
+            foreach (var entry in entries)
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.RowState = 1;   // 1 = Added
+                        entry.Entity.ModifiedBy = currentUserId;
+                        entry.Entity.ModifiedOn = currentTime;
+                        break;
+
+                    case EntityState.Modified:
+                        entry.Entity.RowState = 2;   // 2 = Updated
+                        entry.Entity.ModifiedBy = currentUserId;
+                        entry.Entity.ModifiedOn = currentTime;
+                        break;
+
+                    case EntityState.Deleted:
+                        entry.Entity.RowState = 3;   // 3 = Deleted
+                        entry.Entity.ModifiedBy = currentUserId;
+                        entry.Entity.ModifiedOn = currentTime;
+
+                        // 🔥 Soft delete instead of hard delete
+                        entry.State = EntityState.Modified;
+                        break;
+                }
+            }
         }
     }
 }

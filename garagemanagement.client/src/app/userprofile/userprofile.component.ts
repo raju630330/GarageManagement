@@ -110,8 +110,9 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
       ]
     }
   ];
-
-
+  remainingTime: number = 0;
+  formattedTime: string = '';
+  private subscriptions: any[] = [];
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -119,33 +120,56 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-    this.authService.loggedIn$.subscribe(isLogged => {
-      this.isLoggedIn = isLogged;
-      if (!isLogged) {
-        this.resetState();
-        return;
-      }
 
-      this.authService.getUserProfile().subscribe(profile => {
-        this.user = profile;
-        this.role = profile.role;
+    // 🔐 Login state subscription
+    const loginSub = this.authService.loggedIn$
+      .subscribe(isLogged => {
 
-        const roleId = this.authService.getRoleId();
-        if (!roleId) return;
+        this.isLoggedIn = isLogged;
 
-        this.loadTabsByPermission(roleId);
+        if (!isLogged) {
+          this.resetState();
+          return;
+        }
+
+        this.authService.getUserProfile().subscribe(profile => {
+          this.user = profile;
+          this.role = profile.role;
+
+          const roleId = this.authService.getRoleId();
+          if (!roleId) return;
+
+          this.loadTabsByPermission(roleId);
+        });
       });
-    });
 
-    this.router.events
+    // ⏳ Session expiry countdown subscription
+    const timerSub = this.authService.remainingTime$
+      .subscribe(seconds => {
+
+        if (seconds === null) return; // ignore initial null
+
+        this.remainingTime = seconds;
+        this.formattedTime = this.formatTime(seconds);
+
+      });
+
+    // 📍 Router event subscription
+    const routerSub = this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => {
         if (window.innerWidth < 768) this.isSidebarOpen = false;
       });
+
+    this.subscriptions.push(loginSub, timerSub, routerSub);
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => this.checkScroll(), 200);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   /* ---------- CORE PERMISSION LOGIC ---------- */
@@ -221,5 +245,14 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
     this.sidebarTabsFiltered = [];
     this.isSidebarOpen = false;
     this.showUserPopup = false;
+  }
+  private formatTime(seconds: number): string {
+
+    if (!seconds || seconds <= 0) return '0:00';
+
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
   }
 }
