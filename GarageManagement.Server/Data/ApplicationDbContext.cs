@@ -214,22 +214,29 @@ namespace GarageManagement.Server.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // BookAppointment -> Customer, Workshop, User
-            modelBuilder.Entity<BookAppointment>()
-                .HasOne(b => b.Customer)
-                .WithMany(c => c.Appointments)
-                .HasForeignKey(b => b.CustomerId)
-                .OnDelete(DeleteBehavior.Cascade);
+                    modelBuilder.Entity<BookAppointment>()
+            .HasOne(b => b.Customer)
+            .WithMany(c => c.Appointments)
+            .HasForeignKey(b => b.CustomerId)
+            .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<BookAppointment>()
                 .HasOne(b => b.Workshop)
                 .WithMany(w => w.Appointments)
                 .HasForeignKey(b => b.WorkshopId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<BookAppointment>()
                 .HasOne(b => b.User)
                 .WithMany()
-                .HasForeignKey(b => b.UserId);
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<BookAppointment>()
+                .HasOne(b => b.Vehicle)
+                .WithMany()
+                .HasForeignKey(b => b.VehicleId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             // TechnicianMC -> CheckItems
             modelBuilder.Entity<TechnicianMC>()

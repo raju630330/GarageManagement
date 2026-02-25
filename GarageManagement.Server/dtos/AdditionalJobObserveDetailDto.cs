@@ -20,6 +20,6 @@ namespace GarageManagement.Server.dtos
 
         [Required(ErrorMessage = "EndTime is required")]
         public string EndTime { get; set; } = string.Empty;
-        public long? RepairOrderId { get; set; }
+        public long RepairOrderId { get; set; }
     }
 }

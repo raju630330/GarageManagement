@@ -178,22 +178,22 @@ namespace GarageManagement.Server.Repositories
 
             var estimationItems = await _context.JobCardEstimationItems.Include(a=> a.Part)
                 .AsNoTracking()
-                .Where(e => e.JobCardId == jobCardId)
+                .Where(e => e.JobCardId == jobCardId && e.RowState < 3)
                 .ToListAsync();
 
             var tyreBattery = await _context.JobCardTyreBatteries
                 .AsNoTracking()
-                .Where(x => x.JobCardId == jobCardId)
+                .Where(x => x.JobCardId == jobCardId && x.RowState<3)
                 .ToListAsync();
 
             var cancelledInvoices = await _context.JobCardCancelledInvoices
                 .AsNoTracking()
-                .Where(x => x.JobCardId == jobCardId)
+                .Where(x => x.JobCardId == jobCardId && x.RowState < 3)
                 .ToListAsync();
 
             var collections = await _context.JobCardCollections
                 .AsNoTracking()
-                .Where(x => x.JobCardId == jobCardId)
+                .Where(x => x.JobCardId == jobCardId && x.RowState < 3)
                 .ToListAsync();
 
             decimal grossAmount = estimationItems.Sum(i => i.Total);
@@ -325,6 +325,146 @@ namespace GarageManagement.Server.Repositories
             await _context.SaveChangesAsync();
 
             return new BaseResultDto() { IsSuccess = true, Message = "SavedSuceesfully"};
+        }
+
+        public async Task<BaseResultDto> SaveTyreBatteryAsync(int jobCardId, List<TyreBatteryDto> items)
+        {
+            var existing = await _context.JobCardTyreBatteries
+                .Where(x => x.JobCardId == jobCardId)
+                .ToListAsync();
+
+            _context.JobCardTyreBatteries.RemoveRange(existing);
+
+            var entities = items.Select(item => new JobCardTyreBattery
+            {
+                JobCardId = jobCardId,
+                Type = item.Type,
+                Brand = item.Brand,
+                Model = item.Model,
+                ManufactureDate = item.ManufactureDate,
+                ExpiryDate = item.ExpiryDate,
+                Condition = item.Condition
+            }).ToList();
+
+            await _context.JobCardTyreBatteries.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+
+            return new BaseResultDto
+            {
+                Id = jobCardId,
+                IsSuccess = true,
+                Message = "Tyre & Battery details saved successfully."
+            };
+        }
+        // ✅ Save Cancelled Invoices
+        public async Task<BaseResultDto> SaveCancelledInvoicesAsync(int jobCardId, List<CancelledInvoiceDto> invoices)
+        {
+            // 🔹 Get existing records
+            var existing = await _context.JobCardCancelledInvoices
+                .Where(x => x.JobCardId == jobCardId)
+                .ToListAsync();
+
+            _context.JobCardCancelledInvoices.RemoveRange(existing);
+
+            // 🔥 Convert DTO → Entity
+            var entities = invoices.Select(invoice => new JobCardCancelledInvoice
+            {
+                JobCardId = jobCardId,
+                InvoiceNo = invoice.InvoiceNo,
+                Date = invoice.Date,
+                Amount = invoice.Amount,
+            }).ToList();
+
+            await _context.JobCardCancelledInvoices.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+
+            return new BaseResultDto
+            {
+                Id = jobCardId,
+                IsSuccess = true,
+                Message = "Cancelled invoices saved successfully."
+            };
+        }
+
+        // ✅ Save Collections
+        public async Task<BaseResultDto> SaveCollectionsAsync(int jobCardId, List<CollectionDto> collections)
+        {
+            // 🔹 Get existing records
+            var existing = await _context.JobCardCollections
+                .Where(x => x.JobCardId == jobCardId)
+                .ToListAsync();
+
+            _context.JobCardCollections.RemoveRange(existing);
+
+            // 🔥 Convert DTO → Entity
+            var entities = collections.Select(collection => new JobCardCollection
+            {
+                JobCardId = jobCardId,
+                Type = collection.Type,
+                Bank = collection.Bank,
+                ChequeNo = collection.ChequeNo,
+                Date = collection.Date,
+                Amount = collection.Amount,
+                InvoiceNo = collection.InvoiceNo,
+                Remarks = collection.Remarks
+            }).ToList();
+
+            await _context.JobCardCollections.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+
+            return new BaseResultDto
+            {
+                Id = jobCardId,
+                IsSuccess = true,
+                Message = "Collections saved successfully."
+            };
+        }
+
+        // ✅ Save Service Suggestion
+        public async Task<BaseResultDto> SaveServiceSuggestionAsync(int jobCardId, string suggestion)
+        {
+               var existing = await _context.JobCards
+                    .FirstOrDefaultAsync(x => x.Id == jobCardId);
+
+                if (existing != null)
+                {
+                    existing.ServiceSuggestions = suggestion;
+                    _context.JobCards.Update(existing);
+                }
+                await _context.SaveChangesAsync();
+
+                return new BaseResultDto
+                {
+                    Id = jobCardId,
+                    IsSuccess = true,
+                    Message = "Service suggestion saved successfully."
+                };
+            
+
+        }
+
+        // ✅ Save Remarks
+        public async Task<BaseResultDto> SaveRemarksAsync(int jobCardId, string remarks)
+        {
+
+                var existing = await _context.JobCards
+                    .FirstOrDefaultAsync(x => x.Id == jobCardId);
+
+                if (existing != null)
+                {
+                    existing.Remarks = remarks;
+                    _context.JobCards.Update(existing);
+                }
+                
+                await _context.SaveChangesAsync();
+
+                return new BaseResultDto
+                {
+                    Id = jobCardId,
+                    IsSuccess = true,
+                    Message = "Remarks saved successfully."
+                };
+
         }
     }
 }

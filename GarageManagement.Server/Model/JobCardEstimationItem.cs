@@ -4,7 +4,7 @@
     {
         public long JobCardId { get; set; }
         public JobCard JobCard { get; set; } = null!;
-        public long? PartId { get; set; }
+        public long PartId { get; set; }
         public Part? Part { get; set; }
         public string Type { get; set; } = string.Empty;
         public decimal RequestedQuantity { get; set; }    

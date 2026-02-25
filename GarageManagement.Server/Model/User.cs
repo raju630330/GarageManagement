@@ -10,7 +10,7 @@ namespace GarageManagement.Server.Model
         public string? ResetTokenHash { get; set; }
         public DateTime? ResetTokenExpiresUtc { get; set; }
         public long RoleId { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
         public Role? Role { get; set; }
         public ICollection<WorkshopUser>? WorkshopUsers { get; set; } 
         public ICollection<BookAppointment>? BookAppointments { get; set; }

@@ -36,7 +36,7 @@
             <th *ngFor="let col of activeTab.columns">
               {{ col.header }}
             </th>
-            <th *ngIf="activeTab.allowDelete">Action</th>
+            <th *appHasPermission="'D'" module="TablePopup">Action</th>
           </tr>
         </thead>
 
@@ -72,7 +72,7 @@
                 {{ getErrorMessage(row.get(col.field), col) }}
               </div>
             </td>
-            <td *appHasRole="'TablePopup'; permission: 'D'"  class="text-center">
+            <td *appHasPermission="'D'" module="TablePopup" class="text-center">
               <button type="button"
                       class="btn btn-outline-danger btn-sm"
                       (click)="removeRow(activeTab, i)"
@@ -94,7 +94,11 @@
             (click)="addRow(activeTab)">
       + Add
     </button>
-
+    <button type="button"
+            class="btn btn-success btn-sm ms-2"
+            (click)="saveActiveTab()">
+      Save
+    </button>
     <button type="button"
             class="btn btn-secondary btn-sm ms-auto"
             (click)="close()">

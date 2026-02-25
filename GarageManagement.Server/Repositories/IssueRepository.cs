@@ -134,7 +134,7 @@ namespace GarageManagement.Server.Repositories
                 // 🔹 Stock movement (ISSUE = NEGATIVE)
                 _context.StockMovements.Add(new StockMovement
                 {
-                    PartId = estimation.PartId!.Value,
+                    PartId = estimation.PartId!,
                     EstimationItemId = estimation.Id,   
                     Quantity = -req.IssueQty,
                     SellingPrice = estimation.Rate,
@@ -232,7 +232,7 @@ namespace GarageManagement.Server.Repositories
                 // Add stock movement (RETURN = positive)
                 _context.StockMovements.Add(new StockMovement
                 {
-                    PartId = item.PartId.Value,
+                    PartId = item.PartId,
                     EstimationItemId = item.Id,
                     Quantity = returnItem.ReturnQty,
                     TransactionType = "RETURN",

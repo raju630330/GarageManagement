@@ -3,13 +3,13 @@
     public class TechnicianMCDto
     {
         public long Id { get; set; }
-        public long? RepairOrderId { get; set; }
+        public long RepairOrderId { get; set; }
 
-        public string? Remarks { get; set; }
-        public string? TechnicianSign { get; set; }
-        public string? DriverSign { get; set; }
-        public string? FloorSign { get; set; }
-        public string? AuthSign { get; set; }
+        public string Remarks { get; set; } = string.Empty;
+        public string TechnicianSign { get; set; } = string.Empty;
+        public string DriverSign { get; set; } = string.Empty;
+        public string FloorSign { get; set; } = string.Empty;
+        public string AuthSign { get; set; } = string.Empty;
 
         public List<CheckItemDto>? CheckList { get; set; }
     }

@@ -25,6 +25,6 @@ namespace GarageManagement.Server.dtos
 
         [Required]
         public int Quantity { get; set; }
-        public long? RepairOrderId { get; set; }
+        public long RepairOrderId { get; set; }
     }
 }

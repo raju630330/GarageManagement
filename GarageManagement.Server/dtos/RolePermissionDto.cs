@@ -5,9 +5,9 @@ namespace GarageManagement.Server.dtos
     public class RolePermissionDto
     {
         public long Id { get; set; }
-        public string ModuleName { get; set; }
+        public string ModuleName { get; set; } = string.Empty;
         public long RoleId { get; set; }
-        public long? PermissionId { get; set; }
-        public long? PermissionModuleId { get; set; }
+        public long PermissionId { get; set; }
+        public long PermissionModuleId { get; set; }
     }
 }

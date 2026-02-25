@@ -4,6 +4,7 @@ import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '
 import { PopupColumnConfig, PopupTabConfig } from '../models/job-card';
 import { AlertService } from '../services/alert.service';
 import { ROLES } from '../constants/roles.constants';
+import { JobCardService } from '../services/job-card.service';
 
 @Component({
   selector: 'app-table-popup',
@@ -31,11 +32,13 @@ export class TablePopupComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private jobCardService: JobCardService,
     private dialogRef: MatDialogRef<TablePopupComponent>, private alert: AlertService,
     @Inject(MAT_DIALOG_DATA) public data: {
       tabs: PopupTabConfig[];
       popupData: any;
       activeTabKey?: string;
+      jobCardId: number;
     }
   ) { }
 
@@ -133,6 +136,7 @@ export class TablePopupComponent implements OnInit {
     // Stop if any existing row is invalid
     if (arr.invalid) {
       arr.markAllAsTouched();
+      this.alert.showError("Please fill all required fields!");
       return;
     }
 
@@ -209,5 +213,86 @@ export class TablePopupComponent implements OnInit {
       default:
         return '';
     }
+  }
+
+  saveActiveTab() {
+
+    if (this.activeTab.isTextarea) {
+
+      const ctrl = this.form.get(this.activeTab.tabKey);
+
+      if (ctrl?.invalid) {
+        ctrl.markAsTouched();
+        this.alert.showError("Please fill all required fields!");
+        return;
+      }
+
+      const value = ctrl?.value;
+
+      this.saveToServer(this.activeTab.tabKey, value);
+    }
+    else {
+
+      const arr = this.getArray(this.activeTab);
+
+      if (arr.invalid) {
+        arr.markAllAsTouched();
+        this.alert.showError("Please fill all required fields!");
+        return;
+      }
+
+      const value = arr.value;
+
+      this.saveToServer(this.activeTab.tabKey, value);
+    }
+
+  }
+  isSaving = false;
+  private saveToServer(tabKey: string, payload: any) {
+
+    const jobCardId = this.data.jobCardId;
+
+    let request$;
+
+    switch (tabKey) {
+
+      case 'tyreBattery':
+        request$ = this.jobCardService.saveTyreBattery(jobCardId, payload);
+        break;
+
+      case 'cancelledInvoices':
+        request$ = this.jobCardService.saveCancelledInvoices(jobCardId, payload);
+        break;
+
+      case 'collections':
+        request$ = this.jobCardService.saveCollections(jobCardId, payload);
+        break;
+
+      case 'remarks':
+        request$ = this.jobCardService.saveRemarks(jobCardId, payload);
+        break;
+
+      case 'serviceSuggestions':
+        request$ = this.jobCardService.saveServiceSuggestions(jobCardId, payload);
+        break;
+    }
+
+    if (!request$) return;
+
+    this.isSaving = true;
+
+    request$.subscribe({
+      next: () => {
+        this.alert.showSuccess(`${this.activeTab.label} saved successfully`);
+        this.form.markAsPristine();  // ✅ disable save button
+      },
+      error: () => {
+        this.alert.showError(`Failed to save ${this.activeTab.label}`);
+      },
+      complete: () => {
+        this.isSaving = false;
+      }
+    });
+
   }
 }

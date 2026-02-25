@@ -109,4 +109,69 @@ export class JobCardService {
     return this.http.get<any[]>(`${this.baseUrl}/NewJobCard/searchJobCradsForEstimation?query=${query}`);
   }
 
+  getTyreBatteryDetails(jobCardId: number) {
+    return this.http.get<any>(
+      `${this.baseUrl}/NewJobCard/get-tyre-battery/${jobCardId}`
+    );
+  }
+
+  getCancelledInvoices(jobCardId: number) {
+    return this.http.get<any>(
+      `${this.baseUrl}/NewJobCard/get-cancelled-invoices/${jobCardId}`
+    );
+  }
+
+  getCollections(jobCardId: number) {
+    return this.http.get<any>(
+      `${this.baseUrl}/NewJobCard/get-collections/${jobCardId}`
+    );
+  }
+
+  getServiceSuggestions(jobCardId: number) {
+    return this.http.get<any>(
+      `${this.baseUrl}/NewJobCard/get-service-suggestions/${jobCardId}`
+    );
+  }
+
+  getRemarks(jobCardId: number) {
+    return this.http.get<any>(
+      `${this.baseUrl}/NewJobCard/get-remarks/${jobCardId}`
+    );
+  }
+
+  saveTyreBattery(jobCardId: number, data: any[]) {
+    return this.http.post<any>(
+      `${this.baseUrl}/NewJobCard/save-tyre-battery/${jobCardId}`,
+      data
+    );
+  }
+
+  saveCancelledInvoices(jobCardId: number, data: any[]) {
+    return this.http.post<any>(
+      `${this.baseUrl}/NewJobCard/save-cancelled-invoices/${jobCardId}`,
+      data
+    );
+  }
+
+  saveCollections(jobCardId: number, data: any[]) {
+    return this.http.post<any>(
+      `${this.baseUrl}/NewJobCard/save-collections/${jobCardId}`,
+      data
+    );
+  }
+
+  saveServiceSuggestions(jobCardId: number, suggestion: string) {
+    return this.http.post<any>(
+      `${this.baseUrl}/NewJobCard/save-service-suggestions/${jobCardId}`,
+      JSON.stringify(suggestion),
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+  saveRemarks(jobCardId: number, remarks: string) {
+    return this.http.post<any>(
+      `${this.baseUrl}/NewJobCard/save-remarks/${jobCardId}`,      
+      JSON.stringify(remarks),
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 }

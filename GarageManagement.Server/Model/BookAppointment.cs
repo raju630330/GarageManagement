@@ -13,13 +13,13 @@ public class BookAppointment : BaseEntity
     public long CustomerId { get; set; }
     public Customer? Customer { get; set; }
 
-    public long? VehicleId { get; set; }
+    public long VehicleId { get; set; }
     public Vehicle? Vehicle { get; set; }
 
-    public long? UserId { get; set; } 
+    public long UserId { get; set; } 
     public User? User { get; set; }
 
-    public long? WorkshopId { get; set; }
+    public long WorkshopId { get; set; }
     public WorkshopProfile? Workshop { get; set; }
 
 }

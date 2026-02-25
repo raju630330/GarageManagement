@@ -4,7 +4,7 @@ namespace GarageManagement.Server.dtos
 {
     public class JobCardDto:BaseResultDto
     {
-        public long? RepairOrderId { get; set; }
+        public long RepairOrderId { get; set; }
         public VehicleDataDto VehicleData { get; set; } = new VehicleDataDto();
         public List<ConcernDto> Concerns { get; set; } = new List<ConcernDto>();
         public CustomerInfoDto CustomerInfo { get; set; } = new CustomerInfoDto();
@@ -111,7 +111,7 @@ namespace GarageManagement.Server.dtos
     {
         public long Id { get; set; }
         public long JobCardId { get; set; }
-        public long? PartId { get; set; }
+        public long PartId { get; set; }
         public string Type { get; set; } = string.Empty;
         public decimal Quantity { get; set; }
         public decimal Rate { get; set; }

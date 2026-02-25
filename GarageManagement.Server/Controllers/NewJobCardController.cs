@@ -47,7 +47,7 @@ namespace GarageManagement.Server.Controllers
             var jobCard = await _newJobCardRepsoitory.SaveEstimationDetails(estimation);
             if (!jobCard.IsSuccess) { NotFound(jobCard.Message); }
 
-            return Ok(new { success = true, jobCardId = jobCard.Id });
+            return Ok(new { IsSuccess = true, jobCardId = jobCard.Id });
 
         }
 
@@ -103,10 +103,50 @@ namespace GarageManagement.Server.Controllers
             return Ok(registrations);
         }
 
-       
+        // ✅ Save Tyre Battery
+        [HttpPost("save-tyre-battery/{jobCardId}")]
+        public async Task<IActionResult> SaveTyreBattery(int jobCardId, [FromBody] List<TyreBatteryDto> items)
+        {
+            var result = await _newJobCardRepsoitory.SaveTyreBatteryAsync(jobCardId, items);
+            return Ok(result);
+        }
+
+        // ✅ Save Cancelled Invoices
+        [HttpPost("save-cancelled-invoices/{jobCardId}")]
+        public async Task<IActionResult> SaveCancelledInvoices(int jobCardId, [FromBody] List<CancelledInvoiceDto> invoices)
+        {
+            var result = await _newJobCardRepsoitory.SaveCancelledInvoicesAsync(jobCardId, invoices);
+            return Ok(result);
+        }
+
+        // ✅ Save Collections
+        [HttpPost("save-collections/{jobCardId}")]
+        public async Task<IActionResult> SaveCollections(int jobCardId, [FromBody] List<CollectionDto> collections)
+        {
+            var result = await _newJobCardRepsoitory.SaveCollectionsAsync(jobCardId, collections);
+            return Ok(result);
+        }
+
+        // ✅ Save Service Suggestions
+        [HttpPost("save-service-suggestions/{jobCardId}")]
+        public async Task<IActionResult> SaveServiceSuggestion(int jobCardId, [FromBody] string suggestion)
+        {
+            var result = await _newJobCardRepsoitory.SaveServiceSuggestionAsync(jobCardId, suggestion);
+            return Ok(result);
+        }
+
+        // ✅ Save Remarks
+        [HttpPost("save-remarks/{jobCardId}")]
+        public async Task<IActionResult> SaveRemarks(int jobCardId, [FromBody] string remarks)
+        {
+            var result = await _newJobCardRepsoitory.SaveRemarksAsync(jobCardId, remarks);
+            return Ok(result);
+        }
     }
 
 }
+
+
 
 
 

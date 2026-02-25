@@ -21,7 +21,7 @@ namespace GarageManagement.Server.Reports.Repositories
                 {
                     JobCardNo = a.JobCardNo,
                     RegistrationNo = a.RegistrationNo,
-                    OdometerIn = a.OdometerIn ?? 0
+                    OdometerIn = a.OdometerIn 
                 })
                 .FirstOrDefaultAsync();
 

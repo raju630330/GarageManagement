@@ -16,6 +16,7 @@ import { IssueComponent } from '../issue/issue.component';
 import { InwardComponent } from '../inward/inward.component';
 import { OrderComponent } from '../order/order.component';
 import { StockService } from '../services/stock.service';
+import { IssueService } from '../services/issue.service';
 
 
 
@@ -58,7 +59,7 @@ export class EstimationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog, private router: Router, private http: HttpClient, private loader: LoaderService, public stockservice: StockService
+    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog, private router: Router, private http: HttpClient, private loader: LoaderService, public stockservice: StockService, public issueservice: IssueService
   ) { }
 
   ngOnInit(): void {
@@ -105,7 +106,7 @@ export class EstimationComponent implements OnInit {
           search: part.name,
           workshopState: '',
           unitPrice: data.sellingPrice,
-          quantity: 0                  
+          quantity: 1                  
         });
       },
       error: (err) => {
@@ -242,8 +243,6 @@ export class EstimationComponent implements OnInit {
     }
 
     const { quantity, serviceType } = this.addItemForm.value;
-
-    if (true) { alert(quantity) }
 
     // Use selected part values
     const part = this.selectedPart;
@@ -532,7 +531,8 @@ export class EstimationComponent implements OnInit {
       data: {
         tabs: this.popupTabs,
         popupData: this.popupData || {},
-        activeTabKey: tab.tabKey
+        activeTabKey: tab.tabKey,
+        jobCardId: this.id  
       }
     });
 
@@ -546,9 +546,39 @@ export class EstimationComponent implements OnInit {
 
 
   markJobAsDone() {
-    this.alert.showInfo("Job Card Saved Sucessfully");
-  }
+    if (!this.id) {
+      this.alert.showError("Job Card ID is missing. Please reload and try again.");
+      return;
+    }
 
+    this.issueservice.getPendingIssues(this.id).subscribe({
+      next: (res) => {
+
+        if (!res.isSuccess) {
+          this.alert.showError("Unable to verify pending items. Please try again.");
+          return;
+        }
+
+        // 🔴 If pending items exist
+        if (res.data && res.data.length > 0) {
+          this.alert.showWarning(
+            `Cannot complete job. ${res.data.length} item(s) are still pending to issue.`
+          );
+          return;
+        }
+
+        // 🟢 If no pending items
+        this.alert.showSuccess("All items issued successfully. Job marked as completed.");
+
+        // 👉 Call API to update status here
+        // this.jobcardservice.markAsCompleted(this.id).subscribe();
+
+      },
+      error: () => {
+        this.alert.showError("Internal server error. Please contact administrator.");
+      }
+    });
+  }
   cancelJobCard() {
     this.alert.showInfo("Job Card Cancelled");
     this.router.navigate(['/jobcardlist']);

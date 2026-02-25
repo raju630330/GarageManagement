@@ -2,17 +2,17 @@
 {
     public class VehicleDataDto
     {
-        public string? JobCardNo { get; set; }
-        public string? RegistrationNo { get; set; }
-        public long? OdometerIn { get; set; }
-        public long? AvgKmsPerDay { get; set; }
-        public string? Vin { get; set; }
-        public string? EngineNo { get; set; }
-        public string? VehicleColor { get; set; }
-        public string? FuelType { get; set; }
-        public string? ServiceType { get; set; }
-        public string? ServiceAdvisor { get; set; }
-        public string? Technician { get; set; }
-        public string? Vendor { get; set; }
+        public string JobCardNo { get; set; } = string.Empty;
+        public string RegistrationNo { get; set; } = string.Empty;
+        public long OdometerIn { get; set; }
+        public long AvgKmsPerDay { get; set; }
+        public string Vin { get; set; } = string.Empty;
+        public string EngineNo { get; set; } = string.Empty;
+        public string VehicleColor { get; set; } = string.Empty;
+        public string FuelType { get; set; } = string.Empty;
+        public string ServiceType { get; set; } = string.Empty;
+        public string ServiceAdvisor { get; set; } = string.Empty;
+        public string Technician { get; set; } = string.Empty;
+        public string Vendor { get; set; } = string.Empty;
     }
 }

@@ -10,7 +10,7 @@ namespace GarageManagement.Server.Model
         public string Make { get; set; } = string.Empty;
         public decimal UnitCost { get; set; }
         public int Quantity { get; set; }
-        public long? RepairOrderId { get; set; }
+        public long RepairOrderId { get; set; }
         public RepairOrder? RepairOrder { get; set; }
     }
 }
