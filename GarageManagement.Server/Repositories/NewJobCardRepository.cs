@@ -197,7 +197,8 @@ namespace GarageManagement.Server.Repositories
                 .ToListAsync();
 
             decimal grossAmount = estimationItems.Sum(i => i.Total);
-            decimal totalDiscount = estimationItems.Sum(i => i.Discount);
+            // decimal totalDiscount = estimationItems.Sum(i => i.Discount);
+            decimal totalDiscount = jobCard.Discount;
             decimal paidAmount = jobCard.Paid;
 
             decimal netAmount = grossAmount - totalDiscount;
@@ -245,6 +246,7 @@ namespace GarageManagement.Server.Repositories
 
                     Items = estimationItems.Select(i => new EstimationItemDto
                     {
+                        Id = i.Id,
                         Name = i.Part?.PartName,
                         Type = i.Type,
                         PartNo = i.Part?.PartNo,
@@ -296,7 +298,19 @@ namespace GarageManagement.Server.Repositories
 
         public async Task<BaseResultDto> SaveEstimationDetails(EstimationItemsSaveDto estimationItem)
         {
+            var jobcard = await _context.JobCards.Where(a=> a.Id == estimationItem.JobCardId).FirstOrDefaultAsync();
+
+            if (jobcard == null) {
+                return new BaseResultDto() { IsSuccess = false, Message = "JobCard Not Found" };
+            }
+
+            if (jobcard.Status == "Completed")
+            {
+                return new BaseResultDto() { IsSuccess = false, Message = "Job card already completed. " };
+            }
+
             var result = await _context.JobCardEstimationItems.Where(a => a.Id == estimationItem.Id).FirstOrDefaultAsync();
+
             if (result == null) { result = new JobCardEstimationItem(); };
 
             result.Id = estimationItem.Id;
@@ -465,6 +479,73 @@ namespace GarageManagement.Server.Repositories
                     Message = "Remarks saved successfully."
                 };
 
+        }
+
+        public async Task<BaseResultDto> CompleteJobCard(JobCardBillingDto dto)
+        {
+            var result = new BaseResultDto();
+
+            var jobCard = await _context.JobCards
+                .FirstOrDefaultAsync(x => x.Id == dto.JobCardId);
+
+            if (jobCard == null)
+            {
+                result.IsSuccess = false;
+                result.Message = "Job card not found.";
+                return result;
+            }
+
+            if (jobCard.Status == "Completed")
+            {
+                result.IsSuccess = false;
+                result.Message = "Job card already completed.";
+                return result;
+            }
+
+            // 🔴 Business validation
+            if (dto.BalanceAmount > 0)
+            {
+                result.IsSuccess = false;
+                result.Message = "Cannot complete job. Balance amount is pending.";
+                return result;
+            }
+
+            if (dto.GrossAmount <= 0)
+            {
+                result.IsSuccess = false;
+                result.Message = "Invalid gross amount.";
+                return result;
+            }
+
+
+            // 🔴 Update each item discount
+            foreach (var itemDto in dto.Items)
+            {
+                var item = await _context.JobCardEstimationItems
+                    .FirstOrDefaultAsync(x => x.Id == itemDto.ItemId
+                                           && x.JobCardId == dto.JobCardId);
+
+                if (item != null)
+                {
+                    item.Discount = itemDto.Discount;
+                }
+            }
+
+            // ✅ Update Billing Fields
+            jobCard.GrossAmount = dto.GrossAmount;
+            jobCard.Discount = dto.DiscountInput;
+            jobCard.NetAmount = dto.NetAmount;
+            jobCard.Paid = dto.PaidAmount;
+            jobCard.BalanceAmount = dto.BalanceAmount;
+            jobCard.Status = "Completed";
+
+            await _context.SaveChangesAsync();
+
+            result.Id = jobCard.Id;
+            result.IsSuccess = true;
+            result.Message = "Job card completed successfully.";
+
+            return result;
         }
     }
 }

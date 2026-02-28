@@ -174,4 +174,10 @@ export class JobCardService {
       { headers: { 'Content-Type': 'application/json' } }
     );
   }
+  completeJobCard(dto: any) {
+    return this.http.post(
+      `${this.baseUrl}/NewJobCard/complete`,
+      dto
+    );
+  }
 }

@@ -32,6 +32,13 @@ namespace GarageManagement.Server.Model
         // Popup (single column)
         public decimal Discount { get; set; }
         public decimal Paid { get; set; }
+        public decimal GrossAmount { get; set; }
+
+        public decimal NetAmount { get; set; }
+
+        public decimal BalanceAmount { get; set; }
+
+        public decimal RoundOffAmount { get; set; }
         public string? ServiceSuggestions { get; set; } = string.Empty;
         public string? Remarks { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;

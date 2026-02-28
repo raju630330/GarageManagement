@@ -40,6 +40,7 @@ namespace GarageManagement.Server.dtos
 
     public class EstimationItemDto
     {
+        public long Id { get; set; }  
         public string Name { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public string PartNo { get; set; } = string.Empty;
@@ -203,5 +204,22 @@ namespace GarageManagement.Server.dtos
         public string IssuedTo { get; set; } = string.Empty;
     }
 
+    public class JobCardBillingDto
+    {
+        public long JobCardId { get; set; }
+        public decimal DiscountInput { get; set; }
+        public decimal PaidAmount { get; set; }
+        public decimal GrossAmount { get; set; }
+        public decimal NetAmount { get; set; }
+        public decimal BalanceAmount { get; set; }
+        public decimal RoundOffAmount { get; set; }
+
+        public List<JobCardItemDiscountDto> Items { get; set; } = new();
+    }
+    public class JobCardItemDiscountDto
+    {
+        public long ItemId { get; set; }
+        public decimal Discount { get; set; }
+    }
 
 }

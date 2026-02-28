@@ -41,14 +41,8 @@ namespace GarageManagement.Server.Controllers
         [HttpPost("save-estimation")]
         public async Task<IActionResult> SaveEstimationDetails([FromBody] EstimationItemsSaveDto estimation)
         {
-            if (estimation == null || estimation.JobCardId == 0)
-                return BadRequest("Invalid JobCard data.");
-
             var jobCard = await _newJobCardRepsoitory.SaveEstimationDetails(estimation);
-            if (!jobCard.IsSuccess) { NotFound(jobCard.Message); }
-
-            return Ok(new { IsSuccess = true, jobCardId = jobCard.Id });
-
+            return Ok(jobCard);
         }
 
         [HttpGet("search-registration")]
@@ -140,6 +134,13 @@ namespace GarageManagement.Server.Controllers
         public async Task<IActionResult> SaveRemarks(int jobCardId, [FromBody] string remarks)
         {
             var result = await _newJobCardRepsoitory.SaveRemarksAsync(jobCardId, remarks);
+            return Ok(result);
+        }
+
+        [HttpPost("complete")]
+        public async Task<IActionResult> CompleteJobCard([FromBody] JobCardBillingDto dto)
+        {
+            var result = await _newJobCardRepsoitory.CompleteJobCard(dto);
             return Ok(result);
         }
     }

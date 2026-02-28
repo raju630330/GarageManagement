@@ -160,6 +160,7 @@ export class EstimationComponent implements OnInit {
         if (res.estimation?.items?.length) {
           res.estimation.items.forEach((i: any) => {
             itemsArray.push(this.fb.group({
+              id: [i.id],
               name: [i.name, Validators.required],
               type: [i.type, Validators.required],
               partNo: [i.partNo, Validators.required],
@@ -254,6 +255,7 @@ export class EstimationComponent implements OnInit {
 
     const item = this.fb.group({
       jobCardId: this.id,
+      id : [0],
       partId: [part.id],         // save partId instead of name/free text
       name: [part.partName],
       type: [serviceType],
@@ -278,7 +280,7 @@ export class EstimationComponent implements OnInit {
           this.resetEntireForm();
         }
         else {
-          this.alert.showError("Not saved successfully");
+          this.alert.showError(res.message);
           return;
         }
         
@@ -555,11 +557,10 @@ export class EstimationComponent implements OnInit {
       next: (res) => {
 
         if (!res.isSuccess) {
-          this.alert.showError("Unable to verify pending items. Please try again.");
+          this.alert.showError("Unable to verify pending items.");
           return;
         }
 
-        // 🔴 If pending items exist
         if (res.data && res.data.length > 0) {
           this.alert.showWarning(
             `Cannot complete job. ${res.data.length} item(s) are still pending to issue.`
@@ -567,19 +568,37 @@ export class EstimationComponent implements OnInit {
           return;
         }
 
-        // 🟢 If no pending items
-        this.alert.showSuccess("All items issued successfully. Job marked as completed.");
+        // ✅ Prepare DTO
+        const dto = {
+          jobCardId: this.id,
+          discountInput: this.totalDiscountAmount,
+          paidAmount: this.estimationForm.value.paidAmount || 0,
+          grossAmount: this.grossAmount,
+          netAmount: this.netPayableAmount,
+          balanceAmount: this.balanceAmount,
+          roundOffAmount: this.roundOffAmount,
+          items: this.items.controls.map((item: any) => ({
+            itemId: item.value.id,  
+            discount: item.value.discount
+          }))
+        };
 
-        // 👉 Call API to update status here
-        // this.jobcardservice.markAsCompleted(this.id).subscribe();
-
-      },
-      error: () => {
-        this.alert.showError("Internal server error. Please contact administrator.");
+        this.jobcardService.completeJobCard(dto).subscribe({
+          next: (response: any) => {
+            if (response.isSuccess) {
+              this.alert.showSuccess("Job marked as completed successfully.");
+              this.router.navigate(['/jobcardlist']);
+            } else {
+              this.alert.showError(response.message);
+            }
+          },
+          error: () => {
+            this.alert.showError("Internal server error.");
+          }
+        });
       }
     });
-  }
-  cancelJobCard() {
+  }  cancelJobCard() {
     this.alert.showInfo("Job Card Cancelled");
     this.router.navigate(['/jobcardlist']);
     return;

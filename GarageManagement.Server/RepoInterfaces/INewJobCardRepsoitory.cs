@@ -15,5 +15,6 @@ namespace GarageManagement.Server.RepoInterfaces
         Task<BaseResultDto> SaveCollectionsAsync(int jobCardId, List<CollectionDto> collections);
         Task<BaseResultDto> SaveServiceSuggestionAsync(int jobCardId, string suggestion);
         Task<BaseResultDto> SaveRemarksAsync(int jobCardId, string remarks);
+        Task<BaseResultDto> CompleteJobCard(JobCardBillingDto dto);
     }
 }
