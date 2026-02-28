@@ -178,14 +178,16 @@ namespace GarageManagement.Server.Data
 
             // WorkshopUser -> User & Workshop
             modelBuilder.Entity<WorkshopUser>()
-                .HasOne(wu => wu.User)
-                .WithMany()
-                .HasForeignKey(wu => wu.UserId);
+                  .HasOne(wu => wu.User)
+                  .WithMany(u => u.WorkshopUsers)
+                  .HasForeignKey(wu => wu.UserId)
+                  .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<WorkshopUser>()
-                .HasOne(wu => wu.Workshop)
-                .WithMany()
-                .HasForeignKey(wu => wu.WorkshopId);
+                 .HasOne(wu => wu.Workshop)
+                 .WithMany(w => w.WorkshopUsers)
+                 .HasForeignKey(wu => wu.WorkshopId)
+                 .OnDelete(DeleteBehavior.Restrict);
 
             // RolePermission
             modelBuilder.Entity<RolePermission>()
@@ -484,6 +486,12 @@ namespace GarageManagement.Server.Data
                 .HasForeignKey(sm => sm.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<WorkshopProfile>()
+                .HasOne(w => w.ParentWorkshop)
+                .WithMany(w => w.Branches)
+                .HasForeignKey(w => w.ParentWorkshopId)
+                .OnDelete(DeleteBehavior.Restrict); // 🔥 IMPORTANT
+
         }
 
         public override int SaveChanges()
@@ -492,16 +500,19 @@ namespace GarageManagement.Server.Data
             return base.SaveChanges();
         }
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(
+            CancellationToken cancellationToken = default)
         {
             UpdateAuditFields();
             return await base.SaveChangesAsync(cancellationToken);
         }
+
         private void UpdateAuditFields()
         {
             var entries = ChangeTracker.Entries<BaseEntity>();
 
             var currentUserId = _helperRepository.GetUserId();
+            var currentWorkshopId = _helperRepository.GetWorkshopId(); // 🔥 new
             var currentTime = DateTime.UtcNow;
 
             foreach (var entry in entries)
@@ -509,24 +520,36 @@ namespace GarageManagement.Server.Data
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.RowState = 1;   // 1 = Added
+
+                        entry.Entity.RowState = 1;   // Added
                         entry.Entity.ModifiedBy = currentUserId;
                         entry.Entity.ModifiedOn = currentTime;
+
+                        // 🔥 Set WorkshopId only if not already set
+                        if (!entry.Entity.WorkshopId.HasValue && currentWorkshopId > 0)
+                        {
+                            entry.Entity.WorkshopId = currentWorkshopId;
+                        }
+
                         break;
 
                     case EntityState.Modified:
-                        entry.Entity.RowState = 2;   // 2 = Updated
+
+                        entry.Entity.RowState = 2;   // Updated
                         entry.Entity.ModifiedBy = currentUserId;
                         entry.Entity.ModifiedOn = currentTime;
+
                         break;
 
                     case EntityState.Deleted:
-                        entry.Entity.RowState = 3;   // 3 = Deleted
+
+                        // 🔥 Soft delete
+                        entry.State = EntityState.Modified;
+
+                        entry.Entity.RowState = 3;   // Deleted
                         entry.Entity.ModifiedBy = currentUserId;
                         entry.Entity.ModifiedOn = currentTime;
 
-                        // 🔥 Soft delete instead of hard delete
-                        entry.State = EntityState.Modified;
                         break;
                 }
             }

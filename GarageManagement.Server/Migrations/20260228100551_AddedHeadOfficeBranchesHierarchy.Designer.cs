@@ -4,6 +4,7 @@ using GarageManagement.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260228100551_AddedHeadOfficeBranchesHierarchy")]
+    partial class AddedHeadOfficeBranchesHierarchy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,9 +140,6 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RepairOrderId");
@@ -177,9 +177,6 @@ namespace GarageManagement.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("TechnicianMCId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("WorkshopId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -225,9 +222,6 @@ namespace GarageManagement.Server.Migrations
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.ToTable("Customer", (string)null);
@@ -260,9 +254,6 @@ namespace GarageManagement.Server.Migrations
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("InventoryFormId");
@@ -289,9 +280,6 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
-
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -422,9 +410,6 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RepairOrderId");
@@ -469,9 +454,6 @@ namespace GarageManagement.Server.Migrations
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("JobCardId")
@@ -509,9 +491,6 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
-
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -566,9 +545,6 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("JobCardId");
@@ -602,9 +578,6 @@ namespace GarageManagement.Server.Migrations
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -678,9 +651,6 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("JobCardId");
@@ -732,9 +702,6 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("JobCardId");
@@ -774,9 +741,6 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
-
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -832,9 +796,6 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PartNo")
@@ -868,9 +829,6 @@ namespace GarageManagement.Server.Migrations
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.ToTable("Permission", (string)null);
@@ -900,9 +858,6 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
-
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -991,9 +946,6 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BookingAppointmentId");
@@ -1021,9 +973,6 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
-
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -1096,9 +1045,6 @@ namespace GarageManagement.Server.Migrations
                     b.Property<decimal>("UnitCost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RepairOrderId");
@@ -1152,9 +1098,6 @@ namespace GarageManagement.Server.Migrations
                     b.Property<long?>("UserId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EstimationItemId");
@@ -1206,9 +1149,6 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RepairOrderId")
@@ -1256,9 +1196,6 @@ namespace GarageManagement.Server.Migrations
                     b.Property<string>("SupervisorInstructions")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -1308,9 +1245,6 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
@@ -1350,9 +1284,6 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
@@ -1383,12 +1314,17 @@ namespace GarageManagement.Server.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("UserId1")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("WorkshopId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.HasIndex("WorkshopId");
 
@@ -1416,9 +1352,6 @@ namespace GarageManagement.Server.Migrations
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
 
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.ToTable("PaymentMode", (string)null);
@@ -1444,9 +1377,6 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
-
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -1715,9 +1645,6 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<byte>("RowState")
                         .HasColumnType("tinyint");
-
-                    b.Property<long?>("WorkshopId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("WorkshopName")
                         .IsRequired()
@@ -2125,15 +2052,19 @@ namespace GarageManagement.Server.Migrations
             modelBuilder.Entity("GarageManagement.Server.Model.WorkshopUser", b =>
                 {
                     b.HasOne("GarageManagement.Server.Model.User", "User")
-                        .WithMany("WorkshopUsers")
+                        .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("GarageManagement.Server.Model.User", null)
+                        .WithMany("WorkshopUsers")
+                        .HasForeignKey("UserId1");
 
                     b.HasOne("WorkshopProfile", "Workshop")
                         .WithMany("WorkshopUsers")
                         .HasForeignKey("WorkshopId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -2197,8 +2128,7 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.HasOne("WorkshopProfile", "ParentWorkshop")
                         .WithMany("Branches")
-                        .HasForeignKey("ParentWorkshopId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ParentWorkshopId");
 
                     b.Navigation("ParentWorkshop");
                 });

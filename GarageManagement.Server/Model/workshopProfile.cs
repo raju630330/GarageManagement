@@ -28,6 +28,10 @@ public class WorkshopProfile : BaseEntity
     public ICollection<WorkshopMedia>? WorkshopMedias { get; set; }
     public ICollection<WorkshopPaymentMode>? WorkshopPaymentModes { get; set; }
     public ICollection<BookAppointment>? Appointments { get; set; } = new List<BookAppointment>();
+    public long? ParentWorkshopId { get; set; }
+    public WorkshopProfile? ParentWorkshop { get; set; }
+    public ICollection<WorkshopProfile>? Branches { get; set; }
+    public bool IsActive { get; set; } = true;
 }
 public class WorkshopAddress : BaseEntity
 {

@@ -1,10 +1,9 @@
-﻿
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using GarageManagement.Server.RepoInterfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace GarageManagement.Server.Repositories
-{  
+{
     public class HelperRepository : IHelperRepository
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -20,8 +19,7 @@ namespace GarageManagement.Server.Repositories
         public long GetUserId()
         {
             var userId = User?.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            return string.IsNullOrEmpty(userId) ? 0 : long.Parse(userId);
+            return long.TryParse(userId, out var id) ? id : 0;
         }
 
         public string GetUsername()
@@ -38,6 +36,16 @@ namespace GarageManagement.Server.Repositories
         {
             return User?.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
         }
-    }
 
+        public long GetWorkshopId()
+        {
+            var workshopId = User?.FindFirstValue("workshopId");
+            return long.TryParse(workshopId, out var id) ? id : 0;
+        }
+
+        public bool IsBootstrapMode()
+        {
+            return GetWorkshopId() == 0;
+        }
+    }
 }

@@ -12,11 +12,12 @@ namespace GarageManagement.Server.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IAutoCompleteRepository _autoCompleteRepository;
-
-        public WorkshopProfileController(ApplicationDbContext context, IAutoCompleteRepository autoCompleteRepository)
+        private readonly IHelperRepository _helperRepository;
+        public WorkshopProfileController(ApplicationDbContext context, IAutoCompleteRepository autoCompleteRepository,IHelperRepository helperRepository)
         {
             _context = context;
             _autoCompleteRepository = autoCompleteRepository;
+            _helperRepository = helperRepository;
         }
 
 
@@ -34,7 +35,8 @@ namespace GarageManagement.Server.Controllers
                 /* =========================
                    1️⃣ CREATE OR UPDATE
                 ========================= */
-                workshop.Id = dto.Id;
+                var currentWorkshopId = _helperRepository.GetWorkshopId();
+
                 workshop.WorkshopName = dto.WorkshopName;
                 workshop.OwnerName = dto.OwnerName;
                 workshop.OwnerMobileNo = dto.OwnerMobileNo;
@@ -48,6 +50,8 @@ namespace GarageManagement.Server.Controllers
                 workshop.DealerCode = dto.DealerCode ?? "";
                 workshop.IsGdprAccepted = dto.IsGdprAccepted;
 
+                // 🔥 This is important
+                workshop.ParentWorkshopId = currentWorkshopId == 0 ? null : currentWorkshopId;
                 if (dto.Id == 0)
                 {
                     await _context.WorkshopProfiles.AddAsync(workshop);

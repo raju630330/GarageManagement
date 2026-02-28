@@ -6,6 +6,8 @@
         string GetUsername();
         string GetEmail();
         string GetRole();
+        long GetWorkshopId();
+        bool IsBootstrapMode();
     }
 
 }

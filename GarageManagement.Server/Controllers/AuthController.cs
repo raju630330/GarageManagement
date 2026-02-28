@@ -81,18 +81,43 @@ namespace GarageManagement.Server.Controllers
 
 
         [HttpPost("login")]
-        public async Task<ActionResult<AuthResponse>> Login([FromBody]  LoginDto dto)
+        public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginDto dto)
         {
-            var user = await _db.Users.Include(a=>a.Role)
-                .FirstOrDefaultAsync(u => u.Username == dto.UsernameOrEmail || u.Email == dto.UsernameOrEmail);
+            if (string.IsNullOrWhiteSpace(dto.UsernameOrEmail) ||
+                string.IsNullOrWhiteSpace(dto.Password))
+                return BadRequest("Username and password are required.");
+
+            var user = await _db.Users
+                .Include(u => u.Role)
+                .Include(u => u.WorkshopUsers.Where(w => w.IsActive))
+                .FirstOrDefaultAsync(u =>
+                    u.Username == dto.UsernameOrEmail ||
+                    u.Email == dto.UsernameOrEmail);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-                return Unauthorized("Invalid credentials");
+                return Unauthorized("Invalid credentials.");
 
-            var token = GenerateJwt(user);
-            return Ok(new AuthResponse { Token = token });
+            long? workshopId = user.WorkshopUsers?
+                .Select(w => w.WorkshopId)
+                .FirstOrDefault();
+
+            // 🚀 Bootstrap logic
+            if (workshopId == null || workshopId == 0)
+            {
+                if (user.Role.RoleName != "Admin")
+                    return Unauthorized("User is not assigned to any workshop.");
+
+                workshopId = 0; // temporary bootstrap mode
+            }
+
+            var token = GenerateJwt(user, workshopId);
+
+            return Ok(new AuthResponse
+            {
+                Token = token,
+                message = "Login successful"
+            });
         }
-
         [Authorize]
         [HttpGet("me")]
         public ActionResult<ProfileView> me()
@@ -120,108 +145,114 @@ namespace GarageManagement.Server.Controllers
         }
 
 
-
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
-            if (string.IsNullOrEmpty(dto.EmailOrUsername))
-                return BadRequest("Email is required");
+            if (string.IsNullOrWhiteSpace(dto.EmailOrUsername))
+                return BadRequest("Email is required.");
 
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == dto.EmailOrUsername.Trim().ToLower());
+            var email = dto.EmailOrUsername.Trim().ToLower();
 
-            if (user == null) return BadRequest("User not found");
+            var user = await _db.Users
+                .FirstOrDefaultAsync(u => u.Email.ToLower() == email);
 
+            if (user == null)
+                return Ok(new { message = "If account exists, reset link sent." }); // prevent email enumeration
 
-            // Generate JWT reset token
-            var token = GenerateJwt(user);
+            // Generate secure random token
+            var rawToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+            var tokenHash = Sha256(rawToken);
+
+            user.ResetTokenHash = tokenHash;
+            user.ResetTokenExpiresUtc = DateTime.UtcNow.AddMinutes(30);
+
+            await _db.SaveChangesAsync();
+
             var frontendUrl = "http://localhost:4200/reset-password";
-            var callbackUrl = $"{frontendUrl}?token={token}&email={user.Email}";
+            var callbackUrl = $"{frontendUrl}?token={WebUtility.UrlEncode(rawToken)}&email={user.Email}";
 
             var mailRequest = new EmailRequest
             {
                 ToEmail = user.Email,
                 Subject = "Password Reset Request",
-                Body = $"<p>Click the link below to reset your password:</p><a href='{callbackUrl}'>Reset Password</a>"
+                Body = $@"
+            <p>Click the link below to reset your password:</p>
+            <a href='{callbackUrl}'>Reset Password</a>
+            <p>This link expires in 30 minutes.</p>"
             };
 
             await _emailService.SendEmailAsync(mailRequest);
 
-            return Ok(new { message = "Reset link has been sent to your email" });
-
+            return Ok(new { message = "If account exists, reset link sent." });
         }
-
 
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            try
-            {
-                var principal = tokenHandler.ValidateToken(request.Token, new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidIssuer = _config["Jwt:Issuer"],
-                    ValidAudience = _config["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"])),
-                    ValidateLifetime = true
-                }, out var validatedToken);
+            if (string.IsNullOrWhiteSpace(request.Token) ||
+                string.IsNullOrWhiteSpace(request.EmailOrUsername) ||
+                string.IsNullOrWhiteSpace(request.NewPassword))
+                return BadRequest("Invalid request.");
 
-                var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var user = await _db.Users.FindAsync(int.Parse(userId));
+            var email = request.EmailOrUsername.Trim().ToLower();
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email);
 
-                if (user == null)
-                    return BadRequest("Invalid token");
+            if (user == null)
+                return BadRequest("Invalid token.");
 
-                // Update password
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-                user.ResetTokenHash = null;
-                user.ResetTokenExpiresUtc = null;
-                await _db.SaveChangesAsync();
+            var incomingTokenHash = Sha256(request.Token);
 
-                return Ok(new { message = "Password has been reset successfully." });
-            }
-            catch
+            if (user.ResetTokenHash != incomingTokenHash ||
+                user.ResetTokenExpiresUtc == null ||
+                user.ResetTokenExpiresUtc < DateTime.UtcNow)
             {
                 return BadRequest("Invalid or expired token.");
             }
 
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            user.ResetTokenHash = null;
+            user.ResetTokenExpiresUtc = null;
+
+            await _db.SaveChangesAsync();
+
+            return Ok(new { message = "Password reset successfully." });
         }
-        
 
 
         // Helpers
-        private string GenerateJwt(User user)
+        private string GenerateJwt(User user, long? workshopId)
         {
             var claims = new List<Claim>
-        {
-            // include both to be safe
-            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Email, user.Email),
-            new(ClaimTypes.Role, user.Role.RoleName),
-            new Claim("roleId", user.Role.Id.ToString()),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+    {
+        new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new(ClaimTypes.Name, user.Username),
+        new(ClaimTypes.Email, user.Email),
+        new(ClaimTypes.Role, user.Role!.RoleName),
+        new("roleId", user.Role.Id.ToString()),
+        new("workshopId", workshopId?.ToString() ?? "0"),
+        new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+    };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
+            );
+
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(int.Parse(_config["Jwt:ExpiresInMinutes"]!)),
+                expires: DateTime.UtcNow.AddMinutes(
+                    int.Parse(_config["Jwt:ExpiresInMinutes"]!)
+                ),
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
-
         }
-     
-       
-       
+
         [HttpGet("admin")]
         [Authorize(Roles = "Admin")]
         public IActionResult AdminData() => Ok("This is admin-only data.");
