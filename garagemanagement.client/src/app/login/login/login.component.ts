@@ -22,13 +22,30 @@ export class LoginComponent {
     });
   }
 
-submit() {
-  if (this.loginForm.invalid) { this.error = 'Enter credentials'; return; }
+  submit() {
 
-  this.authService.login(this.loginForm.value).subscribe({
-    next: () => this.router.navigate(['/']),
-    error: () => this.error = 'Invalid username/email or password'
-  });
-  
-}
+    if (this.loginForm.invalid) {
+      this.error = 'Enter username/email and password';
+      return;
+    }
+
+    this.authService.login(this.loginForm.value).subscribe({
+
+      next: () => {
+        this.router.navigate(['/']);
+      },
+
+      error: (err) => {
+
+        if (err.error) {
+          this.error = err.error;   // message from backend
+        } else {
+          this.error = 'Login failed. Please try again.';
+        }
+
+      }
+
+    });
+
+  }
 }

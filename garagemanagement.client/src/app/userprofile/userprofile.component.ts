@@ -41,6 +41,7 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
   showUserPopup = false;
   isSidebarOpen = false;
 
+  permissions: any[] = [];
   @ViewChild('tabScroll') tabScroll!: ElementRef;
 
   moduleMap: Record<string, number> = {}; // Map module name → moduleId
@@ -174,41 +175,44 @@ export class UserprofileComponent implements OnInit, AfterViewInit {
 
   /* ---------- CORE PERMISSION LOGIC ---------- */
   private loadTabsByPermission(roleId: number) {
+
     this.topTabs = [];
     this.sidebarTabsFiltered = [];
 
-    this.rolePermissionService.getRolePermissions(roleId).subscribe((permissions) => {
+    forkJoin([
+      this.rolePermissionService.getRolePermissions(roleId),
+      this.rolePermissionService.getPermissions()
+    ]).subscribe(([rolePermissions, permissions]) => {
 
-      const hasPermission = (permissionCode: string, moduleName?: string): boolean => {
-        // Parent tabs without module = no permission (hidden)
-        if (!moduleName) return false;
+      this.permissions = permissions;
 
-        return permissions.some(p =>
-          p.moduleName === moduleName &&
-          this.mapPermissionIdToCode(p.permissionId) === permissionCode
-        );
+      const getPermissionCode = (permissionId?: number) => {
+        return this.permissions.find(p => p.id === permissionId)?.name;
       };
 
-      // Swap order in filter calls too
-      this.topTabs = this.mainTabs.filter(tab => hasPermission(tab.permission, tab.module));
-      this.sidebarTabsFiltered = this.sidebarTabs.filter(tab => hasPermission(tab.permission, tab.module));
+      const hasPermission = (permissionCode: string, moduleName?: string): boolean => {
+
+        if (!moduleName) return false;
+
+        return rolePermissions.some(p =>
+          p.moduleName === moduleName &&
+          getPermissionCode(p.permissionId) === permissionCode
+        );
+
+      };
+
+      this.topTabs = this.mainTabs.filter(tab =>
+        hasPermission(tab.permission, tab.module)
+      );
+
+      this.sidebarTabsFiltered = this.sidebarTabs.filter(tab =>
+        hasPermission(tab.permission, tab.module)
+      );
 
       setTimeout(() => this.checkScroll(), 50);
+
     });
   }
-
-
-  /** Map numeric permissionId to 'V', 'A', 'E', 'D' */
-  private mapPermissionIdToCode(permissionId?: number): string {
-    switch (permissionId) {
-      case 1: return 'V';
-      case 2: return 'A';
-      case 3: return 'E';
-      case 4: return 'D';
-      default: return '';
-    }
-  }
-
   /* ---------- UI HELPERS ---------- */
   scrollTabs(amount: number) {
     const el = this.tabScroll?.nativeElement;

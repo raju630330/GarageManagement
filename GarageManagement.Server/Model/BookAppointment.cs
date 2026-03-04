@@ -15,11 +15,9 @@ public class BookAppointment : BaseEntity
 
     public long VehicleId { get; set; }
     public Vehicle? Vehicle { get; set; }
-
+    public RepairOrder? RepairOrder { get; set; }
     public long UserId { get; set; } 
     public User? User { get; set; }
-
-    public long WorkshopId { get; set; }
     public WorkshopProfile? Workshop { get; set; }
 
 }

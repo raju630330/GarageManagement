@@ -1,7 +1,12 @@
-﻿namespace GarageManagement.Server.Model
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace GarageManagement.Server.Model
 {
     public abstract class BaseEntity
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
         public long? WorkshopId { get; set; }
         public byte RowState { get; set; }

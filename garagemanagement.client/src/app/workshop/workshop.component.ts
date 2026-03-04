@@ -21,9 +21,9 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
 
   /* ---------- SERVICES ---------- */
   availableServices = [
-    { id: 1, name: 'Car Wash' },
-    { id: 2, name: 'Oil Change' },
-    { id: 3, name: 'Engine Repair' }
+    { id: 2, name: 'Car Wash' },
+    { id: 3, name: 'Oil Change' },
+    { id: 4, name: 'Engine Repair' }
   ];
 
   onServiceChange(id: number, event: Event): void {
@@ -69,9 +69,9 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
 
   /* ---------- PAYMENT MODES ---------- */
   availablePaymentModes = [
-    { id: 1, name: 'Cash' },
-    { id: 2, name: 'UPI' },
-    { id: 3, name: 'Card' }
+    { id: 2, name: 'Cash' },
+    { id: 3, name: 'UPI' },
+    { id: 4, name: 'Card' }
   ];
 
   onPaymentModeChange(id: number, event: Event): void {

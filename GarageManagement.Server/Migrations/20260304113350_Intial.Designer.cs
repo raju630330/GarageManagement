@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260204053721_AddedQuantityColumn")]
-    partial class AddedQuantityColumn
+    [Migration("20260304113350_Intial")]
+    partial class Intial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,6 +51,15 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("Service")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -59,13 +68,10 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("UserId")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("UserId1")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("VehicleId")
+                    b.Property<long>("VehicleId")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("WorkshopId")
@@ -76,8 +82,6 @@ namespace GarageManagement.Server.Migrations
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.HasIndex("VehicleId");
 
@@ -102,8 +106,17 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("RepairOrderId")
+                    b.Property<long>("ModifiedBy")
                         .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("RepairOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("StartTime")
                         .IsRequired()
@@ -116,6 +129,9 @@ namespace GarageManagement.Server.Migrations
                     b.Property<string>("TechnicianVoice")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -133,18 +149,30 @@ namespace GarageManagement.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Control")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Label")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Status")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("TechnicianMCId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("WorkshopId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -181,6 +209,18 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.ToTable("Customer", (string)null);
@@ -204,6 +244,18 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("InventoryFormId");
@@ -219,14 +271,25 @@ namespace GarageManagement.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("RepairOrderId")
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("RepairOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RepairOrderId")
-                        .IsUnique()
-                        .HasFilter("[RepairOrderId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("InventoryForm", (string)null);
                 });
@@ -243,8 +306,11 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("AvgKmsPerDay")
+                    b.Property<long>("AvgKmsPerDay")
                         .HasColumnType("bigint");
+
+                    b.Property<decimal>("BalanceAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Corporate")
                         .IsRequired()
@@ -254,7 +320,7 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DeliveryDate")
+                    b.Property<DateTime>("DeliveryDate")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Discount")
@@ -272,18 +338,31 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("GrossAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("InsuranceCompany")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("JobCardNo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Mobile")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("OdometerIn")
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("NetAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<long>("OdometerIn")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("Paid")
@@ -296,8 +375,14 @@ namespace GarageManagement.Server.Migrations
                     b.Property<string>("Remarks")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("RepairOrderId")
+                    b.Property<long>("RepairOrderId")
                         .HasColumnType("bigint");
+
+                    b.Property<decimal>("RoundOffAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("ServiceAdvisor")
                         .IsRequired()
@@ -311,6 +396,7 @@ namespace GarageManagement.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Technician")
@@ -329,6 +415,9 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("RepairOrderId");
@@ -344,22 +433,36 @@ namespace GarageManagement.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<decimal?>("Amount")
+                    b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("BankName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Cash")
+                    b.Property<decimal>("Cash")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ChequeNo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Date")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<long>("JobCardId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -389,6 +492,18 @@ namespace GarageManagement.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("JobCardId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -427,13 +542,25 @@ namespace GarageManagement.Server.Migrations
                     b.Property<long>("JobCardId")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Remarks")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -456,8 +583,21 @@ namespace GarageManagement.Server.Migrations
                     b.Property<long>("JobCardId")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -485,25 +625,38 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("IssuedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("IssuedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IssuedId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("IssuedQty")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<long>("JobCardId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("PartNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<long>("PartId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("Rate")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("RequestedQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
 
                     b.Property<decimal>("TaxAmount")
                         .HasColumnType("decimal(18,2)");
@@ -518,9 +671,14 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("JobCardId");
+
+                    b.HasIndex("PartId");
 
                     b.ToTable("JobCardEstimationItem", (string)null);
                 });
@@ -554,9 +712,21 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -577,15 +747,28 @@ namespace GarageManagement.Server.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("LabourCharges")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("OutsideLabour")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<long?>("RepairOrderId")
+                    b.Property<long>("RepairOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -614,6 +797,12 @@ namespace GarageManagement.Server.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PartName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -626,12 +815,18 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
                     b.Property<decimal>("TaxPercent")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TaxType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -653,9 +848,21 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -674,9 +881,21 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -692,31 +911,42 @@ namespace GarageManagement.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AllottedTechnician")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("BookingAppointmentId")
+                    b.Property<long>("BookingAppointmentId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DriverName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("DriverPermanetToThisVehicle")
+                    b.Property<bool>("DriverPermanetToThisVehicle")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("ExpectedDateTime")
+                    b.Property<DateTime>("ExpectedDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Make")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Mkls")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Model")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -726,31 +956,41 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("RepairEstimationCost")
+                    b.Property<decimal>("RepairEstimationCost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<bool?>("RoadTestAlongWithDriver")
+                    b.Property<bool>("RoadTestAlongWithDriver")
                         .HasColumnType("bit");
 
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("SiteInchargeName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TypeOfService")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("UnderWarranty")
                         .HasColumnType("bit");
 
                     b.Property<string>("VehicleSite")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VinNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("BookingAppointmentId");
+                    b.HasIndex("BookingAppointmentId")
+                        .IsUnique();
 
                     b.ToTable("RepairOrder", (string)null);
                 });
@@ -763,9 +1003,21 @@ namespace GarageManagement.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -780,10 +1032,10 @@ namespace GarageManagement.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("PermissionId")
+                    b.Property<long>("PermissionId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("PermissionModuleId")
+                    b.Property<long>("PermissionModuleId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("RoleId")
@@ -810,27 +1062,36 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Make")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PartNumber")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<long?>("RepairOrderId")
+                    b.Property<long>("RepairOrderId")
                         .HasColumnType("bigint");
 
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
                     b.Property<decimal>("UnitCost")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -851,6 +1112,15 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("EstimationItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<long>("PartId")
                         .HasColumnType("bigint");
 
@@ -859,6 +1129,9 @@ namespace GarageManagement.Server.Migrations
 
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
 
                     b.Property<decimal>("SellingPrice")
                         .HasColumnType("decimal(18,2)");
@@ -870,9 +1143,19 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("EstimationItemId");
+
                     b.HasIndex("PartId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("StockMovement", (string)null);
                 });
@@ -886,33 +1169,44 @@ namespace GarageManagement.Server.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AuthSign")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DriverSign")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FloorSign")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Remarks")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<long?>("RepairOrderId")
+                    b.Property<long>("ModifiedBy")
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Remarks")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("RepairOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("TechnicianSign")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RepairOrderId")
-                        .IsUnique()
-                        .HasFilter("[RepairOrderId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("TechnicianMC", (string)null);
                 });
@@ -937,8 +1231,17 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("RepairOrderId")
+                    b.Property<long>("ModifiedBy")
                         .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("RepairOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("StartTime")
                         .IsRequired()
@@ -947,6 +1250,9 @@ namespace GarageManagement.Server.Migrations
                     b.Property<string>("SupervisorInstructions")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -967,6 +1273,15 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -980,9 +1295,15 @@ namespace GarageManagement.Server.Migrations
                     b.Property<long>("RoleId")
                         .HasColumnType("bigint");
 
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -1002,6 +1323,12 @@ namespace GarageManagement.Server.Migrations
                     b.Property<long>("CustomerId")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("RegNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1010,9 +1337,15 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
                     b.Property<string>("VehicleType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -1032,29 +1365,288 @@ namespace GarageManagement.Server.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("UserId1")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("WorkshopId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("WorkshopProfileId")
+                    b.Property<long?>("WorkshopId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("WorkshopId");
+
+                    b.ToTable("WorkshopUser", (string)null);
+                });
+
+            modelBuilder.Entity("PaymentMode", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaymentMode", (string)null);
+                });
+
+            modelBuilder.Entity("Service", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Service", (string)null);
+                });
+
+            modelBuilder.Entity("WorkshopAddress", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("BranchAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FlatNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Landmark")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Pincode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StateCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkshopId")
+                        .IsUnique()
+                        .HasFilter("[WorkshopId] IS NOT NULL");
+
+                    b.ToTable("WorkshopAddress", (string)null);
+                });
+
+            modelBuilder.Entity("WorkshopBusinessConfig", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("DefaultServiceType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExternalIntegrationUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GSTIN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GoogleReviewLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InvoiceCaption")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InvoiceHeader")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MSME")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("SAC")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("SACPercentage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("WebsiteLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkshopId")
+                        .IsUnique()
+                        .HasFilter("[WorkshopId] IS NOT NULL");
+
+                    b.ToTable("WorkshopBusinessConfig", (string)null);
+                });
+
+            modelBuilder.Entity("WorkshopMedia", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MediaType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("WorkshopId");
 
-                    b.HasIndex("WorkshopProfileId");
+                    b.ToTable("WorkshopMedia", (string)null);
+                });
 
-                    b.ToTable("WorkshopUser", (string)null);
+            modelBuilder.Entity("WorkshopPaymentMode", b =>
+                {
+                    b.Property<long>("WorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("PaymentModeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.HasKey("WorkshopId", "PaymentModeId");
+
+                    b.HasIndex("PaymentModeId");
+
+                    b.ToTable("WorkshopPaymentMode", (string)null);
                 });
 
             modelBuilder.Entity("WorkshopProfile", b =>
@@ -1065,7 +1657,10 @@ namespace GarageManagement.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("CalendarDate")
+                    b.Property<int>("AvgVehicleInflowPerMonth")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CalendarDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ContactNo")
@@ -1076,13 +1671,35 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DealerCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("EmailID")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("InBusinessSince")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsGdprAccepted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Landline")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NoOfEmployees")
+                        .HasColumnType("int");
 
                     b.Property<string>("OwnerMobileNo")
                         .IsRequired()
@@ -1092,13 +1709,119 @@ namespace GarageManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("ParentWorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("WorkshopName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ParentWorkshopId");
+
                     b.ToTable("WorkshopProfile", (string)null);
+                });
+
+            modelBuilder.Entity("WorkshopService", b =>
+                {
+                    b.Property<long>("WorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ServiceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.HasKey("WorkshopId", "ServiceId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("WorkshopService", (string)null);
+                });
+
+            modelBuilder.Entity("WorkshopTiming", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkshopId")
+                        .IsUnique()
+                        .HasFilter("[WorkshopId] IS NOT NULL");
+
+                    b.ToTable("WorkshopTiming", (string)null);
+                });
+
+            modelBuilder.Entity("WorkshopWorkingDay", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("Day")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte>("RowState")
+                        .HasColumnType("tinyint");
+
+                    b.Property<long?>("WorkshopId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkshopId");
+
+                    b.ToTable("WorkshopWorkingDay", (string)null);
                 });
 
             modelBuilder.Entity("BookAppointment", b =>
@@ -1106,25 +1829,25 @@ namespace GarageManagement.Server.Migrations
                     b.HasOne("GarageManagement.Server.Model.Customer", "Customer")
                         .WithMany("Appointments")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("GarageManagement.Server.Model.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("GarageManagement.Server.Model.User", null)
                         .WithMany("BookAppointments")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("GarageManagement.Server.Model.Vehicle", "Vehicle")
                         .WithMany("Appointments")
-                        .HasForeignKey("VehicleId");
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("WorkshopProfile", "Workshop")
                         .WithMany("Appointments")
                         .HasForeignKey("WorkshopId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Customer");
 
@@ -1139,7 +1862,9 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.HasOne("GarageManagement.Server.Model.RepairOrder", "RepairOrder")
                         .WithMany("AdditionalJobObserveDetails")
-                        .HasForeignKey("RepairOrderId");
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("RepairOrder");
                 });
@@ -1170,7 +1895,9 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.HasOne("GarageManagement.Server.Model.RepairOrder", "RepairOrder")
                         .WithOne("InventoryForm")
-                        .HasForeignKey("GarageManagement.Server.Model.InventoryForm", "RepairOrderId");
+                        .HasForeignKey("GarageManagement.Server.Model.InventoryForm", "RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("RepairOrder");
                 });
@@ -1179,7 +1906,9 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.HasOne("GarageManagement.Server.Model.RepairOrder", "RepairOrder")
                         .WithMany()
-                        .HasForeignKey("RepairOrderId");
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("RepairOrder");
                 });
@@ -1236,7 +1965,15 @@ namespace GarageManagement.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GarageManagement.Server.Model.Part", "Part")
+                        .WithMany()
+                        .HasForeignKey("PartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("JobCard");
+
+                    b.Navigation("Part");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.JobCardTyreBattery", b =>
@@ -1254,7 +1991,9 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.HasOne("GarageManagement.Server.Model.RepairOrder", "RepairOrder")
                         .WithMany("LabourDetails")
-                        .HasForeignKey("RepairOrderId");
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("RepairOrder");
                 });
@@ -1262,9 +2001,10 @@ namespace GarageManagement.Server.Migrations
             modelBuilder.Entity("GarageManagement.Server.Model.RepairOrder", b =>
                 {
                     b.HasOne("BookAppointment", "BookAppointment")
-                        .WithMany()
-                        .HasForeignKey("BookingAppointmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .WithOne("RepairOrder")
+                        .HasForeignKey("GarageManagement.Server.Model.RepairOrder", "BookingAppointmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("BookAppointment");
                 });
@@ -1274,12 +2014,14 @@ namespace GarageManagement.Server.Migrations
                     b.HasOne("GarageManagement.Server.Model.Permission", "Permission")
                         .WithMany("RolePermissions")
                         .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("GarageManagement.Server.Model.PermissionModule", "PermissionModule")
                         .WithMany("RolePermissions")
                         .HasForeignKey("PermissionModuleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("GarageManagement.Server.Model.Role", "Role")
                         .WithMany("RolePermissions")
@@ -1298,27 +2040,45 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.HasOne("GarageManagement.Server.Model.RepairOrder", "RepairOrder")
                         .WithMany("SparePartsIssueDetails")
-                        .HasForeignKey("RepairOrderId");
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("RepairOrder");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.StockMovement", b =>
                 {
+                    b.HasOne("GarageManagement.Server.Model.JobCardEstimationItem", "EstimationItem")
+                        .WithMany("StockMovements")
+                        .HasForeignKey("EstimationItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("GarageManagement.Server.Model.Part", "Part")
                         .WithMany("StockMovements")
                         .HasForeignKey("PartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GarageManagement.Server.Model.User", "User")
+                        .WithMany("StockMovements")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("EstimationItem");
+
                     b.Navigation("Part");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.TechnicianMC", b =>
                 {
                     b.HasOne("GarageManagement.Server.Model.RepairOrder", "RepairOrder")
                         .WithOne("TechnicianMC")
-                        .HasForeignKey("GarageManagement.Server.Model.TechnicianMC", "RepairOrderId");
+                        .HasForeignKey("GarageManagement.Server.Model.TechnicianMC", "RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("RepairOrder");
                 });
@@ -1327,7 +2087,9 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.HasOne("GarageManagement.Server.Model.RepairOrder", "RepairOrder")
                         .WithMany("ToBeFilledBySupervisors")
-                        .HasForeignKey("RepairOrderId");
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("RepairOrder");
                 });
@@ -1357,28 +2119,117 @@ namespace GarageManagement.Server.Migrations
             modelBuilder.Entity("GarageManagement.Server.Model.WorkshopUser", b =>
                 {
                     b.HasOne("GarageManagement.Server.Model.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GarageManagement.Server.Model.User", null)
                         .WithMany("WorkshopUsers")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("WorkshopProfile", "Workshop")
-                        .WithMany()
-                        .HasForeignKey("WorkshopId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WorkshopProfile", null)
                         .WithMany("WorkshopUsers")
-                        .HasForeignKey("WorkshopProfileId");
+                        .HasForeignKey("WorkshopId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("User");
 
                     b.Navigation("Workshop");
+                });
+
+            modelBuilder.Entity("WorkshopAddress", b =>
+                {
+                    b.HasOne("WorkshopProfile", "Workshop")
+                        .WithOne("Address")
+                        .HasForeignKey("WorkshopAddress", "WorkshopId");
+
+                    b.Navigation("Workshop");
+                });
+
+            modelBuilder.Entity("WorkshopBusinessConfig", b =>
+                {
+                    b.HasOne("WorkshopProfile", "Workshop")
+                        .WithOne("WorkshopBusinessConfigs")
+                        .HasForeignKey("WorkshopBusinessConfig", "WorkshopId");
+
+                    b.Navigation("Workshop");
+                });
+
+            modelBuilder.Entity("WorkshopMedia", b =>
+                {
+                    b.HasOne("WorkshopProfile", "Workshop")
+                        .WithMany("WorkshopMedias")
+                        .HasForeignKey("WorkshopId");
+
+                    b.Navigation("Workshop");
+                });
+
+            modelBuilder.Entity("WorkshopPaymentMode", b =>
+                {
+                    b.HasOne("PaymentMode", "PaymentMode")
+                        .WithMany()
+                        .HasForeignKey("PaymentModeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WorkshopProfile", "Workshop")
+                        .WithMany("WorkshopPaymentModes")
+                        .HasForeignKey("WorkshopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentMode");
+
+                    b.Navigation("Workshop");
+                });
+
+            modelBuilder.Entity("WorkshopProfile", b =>
+                {
+                    b.HasOne("WorkshopProfile", "ParentWorkshop")
+                        .WithMany("Branches")
+                        .HasForeignKey("ParentWorkshopId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ParentWorkshop");
+                });
+
+            modelBuilder.Entity("WorkshopService", b =>
+                {
+                    b.HasOne("Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WorkshopProfile", "Workshop")
+                        .WithMany("Services")
+                        .HasForeignKey("WorkshopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+
+                    b.Navigation("Workshop");
+                });
+
+            modelBuilder.Entity("WorkshopTiming", b =>
+                {
+                    b.HasOne("WorkshopProfile", "Workshop")
+                        .WithOne("Timing")
+                        .HasForeignKey("WorkshopTiming", "WorkshopId");
+
+                    b.Navigation("Workshop");
+                });
+
+            modelBuilder.Entity("WorkshopWorkingDay", b =>
+                {
+                    b.HasOne("WorkshopProfile", "Workshop")
+                        .WithMany("WorkingDays")
+                        .HasForeignKey("WorkshopId");
+
+                    b.Navigation("Workshop");
+                });
+
+            modelBuilder.Entity("BookAppointment", b =>
+                {
+                    b.Navigation("RepairOrder");
                 });
 
             modelBuilder.Entity("GarageManagement.Server.Model.Customer", b =>
@@ -1408,6 +2259,11 @@ namespace GarageManagement.Server.Migrations
                     b.Navigation("TyreBatteries");
                 });
 
+            modelBuilder.Entity("GarageManagement.Server.Model.JobCardEstimationItem", b =>
+                {
+                    b.Navigation("StockMovements");
+                });
+
             modelBuilder.Entity("GarageManagement.Server.Model.Part", b =>
                 {
                     b.Navigation("StockMovements");
@@ -1427,15 +2283,13 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.Navigation("AdditionalJobObserveDetails");
 
-                    b.Navigation("InventoryForm")
-                        .IsRequired();
+                    b.Navigation("InventoryForm");
 
                     b.Navigation("LabourDetails");
 
                     b.Navigation("SparePartsIssueDetails");
 
-                    b.Navigation("TechnicianMC")
-                        .IsRequired();
+                    b.Navigation("TechnicianMC");
 
                     b.Navigation("ToBeFilledBySupervisors");
                 });
@@ -1456,6 +2310,8 @@ namespace GarageManagement.Server.Migrations
                 {
                     b.Navigation("BookAppointments");
 
+                    b.Navigation("StockMovements");
+
                     b.Navigation("WorkshopUsers");
                 });
 
@@ -1466,7 +2322,23 @@ namespace GarageManagement.Server.Migrations
 
             modelBuilder.Entity("WorkshopProfile", b =>
                 {
+                    b.Navigation("Address");
+
                     b.Navigation("Appointments");
+
+                    b.Navigation("Branches");
+
+                    b.Navigation("Services");
+
+                    b.Navigation("Timing");
+
+                    b.Navigation("WorkingDays");
+
+                    b.Navigation("WorkshopBusinessConfigs");
+
+                    b.Navigation("WorkshopMedias");
+
+                    b.Navigation("WorkshopPaymentModes");
 
                     b.Navigation("WorkshopUsers");
                 });

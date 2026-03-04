@@ -5,7 +5,8 @@ import {
   Role,
   PermissionModule,
   RolePermissionDto,
-  BaseResultDto
+  BaseResultDto,
+  Permission
 } from '../services/role-permission.service';
 import { AlertService } from '../services/alert.service';
 
@@ -19,7 +20,7 @@ export class RolepermissionComponent implements OnInit {
 
   roles: Role[] = [];
   modules: PermissionModule[] = [];
-  permissionCodes = ['V', 'A', 'E', 'D'];
+  permissions: Permission[] = [];
 
   rolePermissions: RolePermissionDto[] = [];
 
@@ -36,71 +37,83 @@ export class RolepermissionComponent implements OnInit {
   }
 
   loadAll(): void {
-    // Load roles and modules first
+
     forkJoin([
       this.rbac.getRoles(),
-      this.rbac.getModules()
-    ]).subscribe(([roles, modules]) => {
+      this.rbac.getModules(),
+      this.rbac.getPermissions()
+    ]).subscribe(([roles, modules, permissions]) => {
+
       this.roles = roles;
+
       this.modules = modules.sort((a, b) =>
         a.name.toLowerCase().localeCompare(b.name.toLowerCase())
       );
 
-      // Load permissions for all roles
+      this.permissions = permissions;
+
       const calls = roles.map(r => this.rbac.getRolePermissions(r.id));
+
       forkJoin(calls).subscribe(results => {
+
         this.rolePermissions = [];
+
         results.forEach(list => {
-          // Add moduleName if missing
+
           list.forEach(p => {
             if (!p.moduleName) {
               const module = this.modules.find(m => m.id === p.permissionModuleId);
               if (module) p.moduleName = module.name;
             }
           });
-          this.rolePermissions.push(...list);
-        });
-      });
-    });
-  }
 
+          this.rolePermissions.push(...list);
+
+        });
+
+      });
+
+    });
+
+  }
   /** Check if a permission is selected */
-  isChecked(roleId: number, moduleId: number, code: string): boolean {
-    const pid = this.mapCodeToPermissionId(code);
+  isChecked(roleId: number, moduleId: number, permissionId: number): boolean {
+
     return this.rolePermissions.some(rp =>
       rp.roleId === roleId &&
       rp.permissionModuleId === moduleId &&
-      rp.permissionId === pid
+      rp.permissionId === permissionId
     );
+
   }
-
   /** Toggle a permission */
-  toggle(roleId: number, moduleId: number, code: string): void {
-    const pid = this.mapCodeToPermissionId(code);
-    const module = this.modules.find(m => m.id === moduleId);
+  toggle(roleId: number, moduleId: number, permissionId: number): void {
 
+    const module = this.modules.find(m => m.id === moduleId);
     if (!module) return;
 
     const index = this.rolePermissions.findIndex(rp =>
       rp.roleId === roleId &&
       rp.permissionModuleId === moduleId &&
-      rp.permissionId === pid
+      rp.permissionId === permissionId
     );
 
     if (index >= 0) {
-      // Remove existing
+
       this.rolePermissions.splice(index, 1);
+
     } else {
-      // Add new with moduleName
+
       this.rolePermissions.push({
         roleId,
         permissionModuleId: moduleId,
-        permissionId: pid,
+        permissionId,
         moduleName: module.name
       });
-    }
-  }
 
+    }
+
+  }
   /** Save all permissions */
   save(): void {
     this.isSaving = true;
@@ -142,16 +155,7 @@ export class RolepermissionComponent implements OnInit {
     });
   }
 
-  /** Map permission code to backend ID */
-  mapCodeToPermissionId(code: string): number {
-    switch (code) {
-      case 'V': return 1;
-      case 'A': return 2;
-      case 'E': return 3;
-      case 'D': return 4;
-      default: return 0;
-    }
-  }
+
   getRoleColor(index: number): string {
     const colors = [
       '#0d6efd', // blue

@@ -248,7 +248,7 @@ export class EstimationComponent implements OnInit {
     // Use selected part values
     const part = this.selectedPart;
 
-    const taxPercent = 18;
+    const taxPercent = 10;
     const baseAmount = quantity * part.sellingPrice;  // Use part selling price
     const taxAmount = (baseAmount * taxPercent) / 100;
     const total = baseAmount + taxAmount;

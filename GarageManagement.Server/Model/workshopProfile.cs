@@ -35,7 +35,6 @@ public class WorkshopProfile : BaseEntity
 }
 public class WorkshopAddress : BaseEntity
 {
-    public long WorkshopId { get; set; }
     public string FlatNo { get; set; } = string.Empty;
     public string Street { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
@@ -50,7 +49,6 @@ public class WorkshopAddress : BaseEntity
 }
 public class WorkshopTiming : BaseEntity
 {
-    public long WorkshopId { get; set; }
     public TimeSpan StartTime { get; set; }
     public TimeSpan EndTime { get; set; }
     public WorkshopProfile? Workshop { get; set; }
@@ -61,21 +59,18 @@ public class Service : BaseEntity
 }
 public class WorkshopService : BaseEntity
 {
-    public long WorkshopId { get; set; }
     public long ServiceId { get; set; }
     public WorkshopProfile? Workshop { get; set; }
     public Service? Service { get; set; }
 }
 public class WorkshopWorkingDay : BaseEntity
 {
-    public long WorkshopId { get; set; }
     public DayOfWeek Day { get; set; }
     public WorkshopProfile? Workshop { get; set; }
 }
 
 public class WorkshopBusinessConfig : BaseEntity
 {
-    public long WorkshopId { get; set; }
     public string WebsiteLink { get; set; } = string.Empty;
     public string GoogleReviewLink { get; set; } = string.Empty;
     public string ExternalIntegrationUrl { get; set; } = string.Empty;
@@ -95,14 +90,12 @@ public class PaymentMode : BaseEntity
 
 public class WorkshopPaymentMode : BaseEntity
 {
-    public long WorkshopId { get; set; }
     public long PaymentModeId { get; set; }
     public WorkshopProfile? Workshop { get; set; }
     public PaymentMode? PaymentMode { get; set; }
 }
 public class WorkshopMedia : BaseEntity
 {
-    public long WorkshopId { get; set; }
     public string FilePath { get; set; } = string.Empty;
     public string MediaType { get; set; } = string.Empty;
     public WorkshopProfile? Workshop { get; set; }

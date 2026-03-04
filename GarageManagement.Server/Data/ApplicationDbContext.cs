@@ -88,7 +88,6 @@ namespace GarageManagement.Server.Data
             modelBuilder.Entity<PermissionModule>().ToTable("PermissionModule");
             modelBuilder.Entity<Part>().ToTable("Part");
             modelBuilder.Entity<StockMovement>().ToTable("StockMovement");
-            modelBuilder.Entity<WorkshopProfile>().ToTable("WorkshopProfile");
             modelBuilder.Entity<WorkshopAddress>().ToTable("WorkshopAddress");
             modelBuilder.Entity<WorkshopTiming>().ToTable("WorkshopTiming");
 
@@ -104,70 +103,8 @@ namespace GarageManagement.Server.Data
 
             modelBuilder.Entity<WorkshopMedia>().ToTable("WorkshopMedia");
 
-            modelBuilder.Entity<WorkshopUser>().ToTable("WorkshopUser");
 
-            // ------------------- Primary keys and Identity -------------------
-            void SetIdentity<TEntity>() where TEntity : class
-            {
-                modelBuilder.Entity<TEntity>().Property("Id").ValueGeneratedOnAdd();
-            }
-
-            modelBuilder.Entity<User>().HasKey(u => u.Id);
-            SetIdentity<User>();
-            modelBuilder.Entity<Role>().HasKey(r => r.Id);
-            SetIdentity<Role>();
-            modelBuilder.Entity<Permission>().HasKey(p => p.Id);
-            SetIdentity<Permission>();
-            modelBuilder.Entity<RolePermission>().HasKey(rp => rp.Id);
-            SetIdentity<RolePermission>();
-            modelBuilder.Entity<WorkshopProfile>().HasKey(w => w.Id);
-            SetIdentity<WorkshopProfile>();
-            modelBuilder.Entity<WorkshopUser>().HasKey(wu => wu.Id);
-            SetIdentity<WorkshopUser>();
-            modelBuilder.Entity<Customer>().HasKey(c => c.Id);
-            SetIdentity<Customer>();
-            modelBuilder.Entity<Vehicle>().HasKey(v => v.Id);
-            SetIdentity<Vehicle>();
-            modelBuilder.Entity<BookAppointment>().HasKey(b => b.Id);
-            SetIdentity<BookAppointment>();
-            modelBuilder.Entity<RepairOrder>().HasKey(r => r.Id);
-            SetIdentity<RepairOrder>();
-            modelBuilder.Entity<LabourDetail>().HasKey(l => l.Id);
-            SetIdentity<LabourDetail>();
-            modelBuilder.Entity<TechnicianMC>().HasKey(t => t.Id);
-            SetIdentity<TechnicianMC>();
-            modelBuilder.Entity<CheckItemEntity>().HasKey(c => c.Id);
-            SetIdentity<CheckItemEntity>();
-            modelBuilder.Entity<InventoryForm>().HasKey(i => i.Id);
-            SetIdentity<InventoryForm>();
-            modelBuilder.Entity<InventoryAccessory>().HasKey(i => i.Id);
-            SetIdentity<InventoryAccessory>();
-            modelBuilder.Entity<SparePartsIssueDetail>().HasKey(s => s.Id);
-            SetIdentity<SparePartsIssueDetail>();
-            modelBuilder.Entity<JobCard>().HasKey(j => j.Id);
-            SetIdentity<JobCard>();
-            modelBuilder.Entity<JobCardConcern>().HasKey(j => j.Id);
-            SetIdentity<JobCardConcern>();
-            modelBuilder.Entity<JobCardAdvancePayment>().HasKey(j => j.Id);
-            SetIdentity<JobCardAdvancePayment>();
-            modelBuilder.Entity<AdditionalJobObserveDetail>().HasKey(a => a.Id);
-            SetIdentity<AdditionalJobObserveDetail>();
-            modelBuilder.Entity<ToBeFilledBySupervisor>().HasKey(t => t.Id);
-            SetIdentity<ToBeFilledBySupervisor>();
-            modelBuilder.Entity<JobCardEstimationItem>().HasKey(j => j.Id);
-            SetIdentity<JobCardEstimationItem>();
-            modelBuilder.Entity<JobCardTyreBattery>().HasKey(j => j.Id);
-            SetIdentity<JobCardTyreBattery>();
-            modelBuilder.Entity<JobCardCancelledInvoice>().HasKey(j => j.Id);
-            SetIdentity<JobCardCancelledInvoice>();
-            modelBuilder.Entity<JobCardCollection>().HasKey(j => j.Id);
-            SetIdentity<JobCardCollection>();
-            modelBuilder.Entity<PermissionModule>().HasKey(j => j.Id);
-            SetIdentity<PermissionModule>();
-            modelBuilder.Entity<Part>().HasKey(j => j.Id);
-            SetIdentity<Part>();
-            modelBuilder.Entity<StockMovement>().HasKey(j => j.Id);
-            SetIdentity<StockMovement>();
+        
             // ------------------- Relationships -------------------
 
             // User -> Role
@@ -230,13 +167,13 @@ namespace GarageManagement.Server.Data
 
             modelBuilder.Entity<BookAppointment>()
                 .HasOne(b => b.User)
-                .WithMany()
+                .WithMany(a=> a.BookAppointments)
                 .HasForeignKey(b => b.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<BookAppointment>()
                 .HasOne(b => b.Vehicle)
-                .WithMany()
+                .WithMany(a=> a.Appointments)
                 .HasForeignKey(b => b.VehicleId)
                 .OnDelete(DeleteBehavior.NoAction);
 
@@ -313,14 +250,21 @@ namespace GarageManagement.Server.Data
 
             modelBuilder.Entity<RepairOrder>()
                .HasOne(r => r.BookAppointment)
-               .WithMany()
-               .HasForeignKey(r => r.BookingAppointmentId)
+               .WithOne(a=> a.RepairOrder)
+               .HasForeignKey<RepairOrder>(r => r.BookingAppointmentId)
                .OnDelete(DeleteBehavior.Restrict);
+
             // ------------------- Decimal columns -------------------
             modelBuilder.Entity<JobCard>(entity =>
             {
                 entity.Property(e => e.Discount).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.Paid).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.BalanceAmount).HasColumnType("decimal(18,2)");
+
+                entity.Property(e => e.GrossAmount).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.NetAmount).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.RoundOffAmount).HasColumnType("decimal(18,2)");
+
             });
 
             modelBuilder.Entity<JobCardAdvancePayment>(entity =>
@@ -426,10 +370,6 @@ namespace GarageManagement.Server.Data
                 .WithMany(w => w.Services)
                 .HasForeignKey(ws => ws.WorkshopId);
 
-            modelBuilder.Entity<WorkshopService>()
-                .HasOne(ws => ws.Service)
-                .WithMany() // OK if Service has no collection
-                .HasForeignKey(ws => ws.ServiceId);
 
             // ===============================
             // WorkshopWorkingDay (1 : M)
@@ -464,10 +404,6 @@ namespace GarageManagement.Server.Data
                 .WithMany(w => w.WorkshopPaymentModes) // ✅ FIX
                 .HasForeignKey(wp => wp.WorkshopId);
 
-            modelBuilder.Entity<WorkshopPaymentMode>()
-                .HasOne(wp => wp.PaymentMode)
-                .WithMany() // OK if PaymentMode has no collection
-                .HasForeignKey(wp => wp.PaymentModeId);
 
             // ===============================
             // WorkshopMedia (1 : M)
