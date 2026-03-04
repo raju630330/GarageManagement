@@ -194,7 +194,7 @@ namespace GarageManagement.Server.Controllers
                 ========================= */
                 if (dto.MediaFiles != null && dto.MediaFiles.Any())
                 {
-                    string basePath = @"D:\GarageUploads\Workshops";
+                    string basePath = @"C:\GarageUploads\Workshops";
                     string folder = Path.Combine(basePath, workshop.Id.ToString());
                     Directory.CreateDirectory(folder);
 

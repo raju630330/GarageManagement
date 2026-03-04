@@ -89,11 +89,19 @@ namespace BrilliantMinds.Server
             app.UseHttpsRedirection();
             app.UseStaticFiles(); // wwwroot
 
+            var uploadPath = @"C:\GarageUploads";
+
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(@"D:\GarageUploads"),
+                FileProvider = new PhysicalFileProvider(uploadPath),
                 RequestPath = "/uploads"
             });
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapStaticAssets();
