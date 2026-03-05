@@ -30,14 +30,14 @@ namespace GarageManagement.Server.Controllers
                 var currentWorkshopId = _helperRepository.GetWorkshopId();
 
                 var workshop = await _context.WorkshopProfiles
-                    .Include(x => x.Services)
-                    .Include(x => x.WorkingDays)
-                    .Include(x => x.WorkshopPaymentModes)
+                    .Include(x => x.Services.Where(s => s.RowState != 3))
+                    .Include(x => x.WorkingDays.Where(d => d.RowState != 3))
+                    .Include(x => x.WorkshopPaymentModes.Where(p => p.RowState != 3))
                     .Include(x => x.Address)
                     .Include(x => x.Timing)
                     .Include(x => x.WorkshopBusinessConfigs)
-                    .Include(x => x.WorkshopMedias)
-                    .FirstOrDefaultAsync(x => x.Id == dto.Id);
+                    .Include(x => x.WorkshopMedias.Where(m => m.RowState != 3))
+                    .FirstOrDefaultAsync(x => x.Id == dto.Id && x.RowState != 3);
 
                 bool isNew = workshop == null;
 
@@ -87,16 +87,17 @@ namespace GarageManagement.Server.Controllers
                 // =====================
                 // ADDRESS
                 // =====================
-                workshop.Address.FlatNo = dto.Address.FlatNo?.Trim() ?? "";
-                workshop.Address.Street = dto.Address.Street?.Trim() ?? "";
-                workshop.Address.Location = dto.Address.Location?.Trim() ?? "";
-                workshop.Address.City = dto.Address.City?.Trim() ?? "";
-                workshop.Address.State = dto.Address.State?.Trim() ?? "";
-                workshop.Address.StateCode = dto.Address.StateCode?.Trim() ?? "";
-                workshop.Address.Country = dto.Address.Country?.Trim() ?? "India";
-                workshop.Address.Pincode = dto.Address.Pincode?.Trim() ?? "";
-                workshop.Address.Landmark = dto.Address.Landmark?.Trim() ?? "";
-                workshop.Address.BranchAddress = dto.Address.BranchAddress?.Trim() ?? "";
+                var addr = workshop.Address;
+                addr.FlatNo = dto.Address.FlatNo?.Trim() ?? "";
+                addr.Street = dto.Address.Street?.Trim() ?? "";
+                addr.Location = dto.Address.Location?.Trim() ?? "";
+                addr.City = dto.Address.City?.Trim() ?? "";
+                addr.State = dto.Address.State?.Trim() ?? "";
+                addr.StateCode = dto.Address.StateCode?.Trim() ?? "";
+                addr.Country = dto.Address.Country?.Trim() ?? "India";
+                addr.Pincode = dto.Address.Pincode?.Trim() ?? "";
+                addr.Landmark = dto.Address.Landmark?.Trim() ?? "";
+                addr.BranchAddress = dto.Address.BranchAddress?.Trim() ?? "";
 
                 // =====================
                 // TIMING
@@ -107,16 +108,17 @@ namespace GarageManagement.Server.Controllers
                 // =====================
                 // BUSINESS CONFIG
                 // =====================
-                workshop.WorkshopBusinessConfigs.WebsiteLink = dto.BusinessConfig.WebsiteLink?.Trim() ?? "";
-                workshop.WorkshopBusinessConfigs.GoogleReviewLink = dto.BusinessConfig.GoogleReviewLink?.Trim() ?? "";
-                workshop.WorkshopBusinessConfigs.ExternalIntegrationUrl = dto.BusinessConfig.ExternalIntegrationUrl?.Trim() ?? "";
-                workshop.WorkshopBusinessConfigs.GSTIN = dto.BusinessConfig.Gstin?.Trim() ?? "";
-                workshop.WorkshopBusinessConfigs.MSME = dto.BusinessConfig.Msme?.Trim() ?? "";
-                workshop.WorkshopBusinessConfigs.SAC = dto.BusinessConfig.Sac?.Trim() ?? "";
-                workshop.WorkshopBusinessConfigs.SACPercentage = dto.BusinessConfig.SacPercentage;
-                workshop.WorkshopBusinessConfigs.InvoiceCaption = dto.BusinessConfig.InvoiceCaption?.Trim() ?? "";
-                workshop.WorkshopBusinessConfigs.InvoiceHeader = dto.BusinessConfig.InvoiceHeader?.Trim() ?? "";
-                workshop.WorkshopBusinessConfigs.DefaultServiceType = dto.BusinessConfig.DefaultServiceType?.Trim() ?? "";
+                var config = workshop.WorkshopBusinessConfigs;
+                config.WebsiteLink = dto.BusinessConfig.WebsiteLink?.Trim() ?? "";
+                config.GoogleReviewLink = dto.BusinessConfig.GoogleReviewLink?.Trim() ?? "";
+                config.ExternalIntegrationUrl = dto.BusinessConfig.ExternalIntegrationUrl?.Trim() ?? "";
+                config.GSTIN = dto.BusinessConfig.Gstin?.Trim() ?? "";
+                config.MSME = dto.BusinessConfig.Msme?.Trim() ?? "";
+                config.SAC = dto.BusinessConfig.Sac?.Trim() ?? "";
+                config.SACPercentage = dto.BusinessConfig.SacPercentage;
+                config.InvoiceCaption = dto.BusinessConfig.InvoiceCaption?.Trim() ?? "";
+                config.InvoiceHeader = dto.BusinessConfig.InvoiceHeader?.Trim() ?? "";
+                config.DefaultServiceType = dto.BusinessConfig.DefaultServiceType?.Trim() ?? "";
 
                 // =====================
                 // SERVICES SYNC
@@ -124,7 +126,9 @@ namespace GarageManagement.Server.Controllers
                 var newServiceIds = dto.ServiceIds.Select(long.Parse).ToHashSet();
                 var existingServiceIds = workshop.Services.Select(x => x.ServiceId).ToHashSet();
 
-                workshop.Services.RemoveAll(x => !newServiceIds.Contains(x.ServiceId));
+                // ✅ Use Remove() — interceptor converts Deleted → RowState = 3
+                foreach (var s in workshop.Services.Where(x => !newServiceIds.Contains(x.ServiceId)).ToList())
+                    _context.WorkshopServices.Remove(s);
 
                 foreach (var id in newServiceIds.Except(existingServiceIds))
                     workshop.Services.Add(new WorkshopService { ServiceId = id });
@@ -135,7 +139,9 @@ namespace GarageManagement.Server.Controllers
                 var newDays = dto.WorkingDays.Select(x => (DayOfWeek)int.Parse(x)).ToHashSet();
                 var existingDays = workshop.WorkingDays.Select(x => x.Day).ToHashSet();
 
-                workshop.WorkingDays.RemoveAll(x => !newDays.Contains(x.Day));
+                // ✅ Use Remove()
+                foreach (var d in workshop.WorkingDays.Where(x => !newDays.Contains(x.Day)).ToList())
+                    _context.WorkshopWorkingDays.Remove(d);
 
                 foreach (var day in newDays.Except(existingDays))
                     workshop.WorkingDays.Add(new WorkshopWorkingDay { Day = day });
@@ -146,7 +152,9 @@ namespace GarageManagement.Server.Controllers
                 var newPaymentIds = dto.PaymentModeIds.Select(long.Parse).ToHashSet();
                 var existingPaymentIds = workshop.WorkshopPaymentModes.Select(x => x.PaymentModeId).ToHashSet();
 
-                workshop.WorkshopPaymentModes.RemoveAll(x => !newPaymentIds.Contains(x.PaymentModeId));
+                // ✅ Use Remove()
+                foreach (var p in workshop.WorkshopPaymentModes.Where(x => !newPaymentIds.Contains(x.PaymentModeId)).ToList())
+                    _context.WorkshopPaymentModes.Remove(p);
 
                 foreach (var id in newPaymentIds.Except(existingPaymentIds))
                     workshop.WorkshopPaymentModes.Add(new WorkshopPaymentMode { PaymentModeId = id });
@@ -164,22 +172,25 @@ namespace GarageManagement.Server.Controllers
                     string folder = Path.Combine(@"C:\GarageUploads\Workshops", workshop.Id.ToString());
                     Directory.CreateDirectory(folder);
 
+                    var mediaList = new List<WorkshopMedia>();
+
                     foreach (var file in dto.MediaFiles)
                     {
                         var ext = Path.GetExtension(file.FileName);
-                        var fileName = $"media_{DateTime.Now:yyyyMMddHHmmssfff}{ext}";
+                        var fileName = $"media_{DateTime.UtcNow:yyyyMMddHHmmssfff}{ext}";  // ✅ UtcNow consistent
                         var filePath = Path.Combine(folder, fileName);
 
-                        using var stream = new FileStream(filePath, FileMode.Create);
+                        await using var stream = new FileStream(filePath, FileMode.Create);  // ✅ await using
                         await file.CopyToAsync(stream);
 
-                        workshop.WorkshopMedias.Add(new WorkshopMedia
+                        mediaList.Add(new WorkshopMedia
                         {
                             FilePath = $"Workshops/{workshop.Id}/{fileName}",
                             MediaType = file.ContentType
                         });
                     }
 
+                    workshop.WorkshopMedias.AddRange(mediaList);  // ✅ single AddRange instead of loop
                     await _context.SaveChangesAsync();
                 }
 
