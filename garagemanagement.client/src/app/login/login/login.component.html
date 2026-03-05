@@ -70,8 +70,7 @@
                     <input type="password" class="form-control" formControlName="password" />
                     <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
                          class="text-danger small">
-                      Password is required and must contain at least:
-                      1 uppercase, 1 lowercase, 1 number, 1 special character, Min length 8
+                      Password must be 8-15 characters, include uppercase, lowercase, number, and special character
                     </div>
                   </div>
 

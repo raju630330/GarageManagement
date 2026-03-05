@@ -20,7 +20,6 @@ namespace GarageManagement.Server.Controllers
             _helperRepository = helperRepository;
         }
 
-
         [HttpPost("createworkshop")]
         public async Task<IActionResult> CreateOrUpdateWorkshop([FromForm] WorkshopCreateDto dto)
         {
@@ -28,210 +27,176 @@ namespace GarageManagement.Server.Controllers
 
             try
             {
-                var workshop = await _context.WorkshopProfiles.Where(a => a.Id == dto.Id).FirstOrDefaultAsync();
-                if (workshop == null)
-                { workshop = new WorkshopProfile(); }
-
-                /* =========================
-                   1️⃣ CREATE OR UPDATE
-                ========================= */
                 var currentWorkshopId = _helperRepository.GetWorkshopId();
 
-                workshop.WorkshopName = dto.WorkshopName;
-                workshop.OwnerName = dto.OwnerName;
-                workshop.OwnerMobileNo = dto.OwnerMobileNo;
-                workshop.EmailID = dto.EmailID ?? "";
-                workshop.ContactPerson = dto.ContactPerson ?? "";
-                workshop.ContactNo = dto.ContactNo ?? "";
-                workshop.Landline = dto.Landline ?? "";
-                workshop.InBusinessSince = DateTime.Parse(dto.InBusinessSince);
-                workshop.AvgVehicleInflowPerMonth = dto.AvgVehicleInflowPerMonth ?? 0;
-                workshop.NoOfEmployees = dto.NoOfEmployees ?? 0;
-                workshop.DealerCode = dto.DealerCode ?? "";
-                workshop.IsGdprAccepted = dto.IsGdprAccepted;
+                var workshop = await _context.WorkshopProfiles
+                    .Include(x => x.Services)
+                    .Include(x => x.WorkingDays)
+                    .Include(x => x.WorkshopPaymentModes)
+                    .Include(x => x.Address)
+                    .Include(x => x.Timing)
+                    .Include(x => x.WorkshopBusinessConfigs)
+                    .Include(x => x.WorkshopMedias)
+                    .FirstOrDefaultAsync(x => x.Id == dto.Id);
 
-                // 🔥 This is important
-                workshop.ParentWorkshopId = currentWorkshopId == 0 ? null : currentWorkshopId;
-                if (dto.Id == 0)
+                bool isNew = workshop == null;
+
+                if (isNew)
                 {
-                    await _context.WorkshopProfiles.AddAsync(workshop);
+                    workshop = new WorkshopProfile
+                    {
+                        ParentWorkshopId = currentWorkshopId > 0 ? currentWorkshopId : null,
+                        Address = new WorkshopAddress(),
+                        Timing = new WorkshopTiming(),
+                        WorkshopBusinessConfigs = new WorkshopBusinessConfig(),
+                        Services = new List<WorkshopService>(),
+                        WorkingDays = new List<WorkshopWorkingDay>(),
+                        WorkshopPaymentModes = new List<WorkshopPaymentMode>(),
+                        WorkshopMedias = new List<WorkshopMedia>()
+                    };
+                    _context.WorkshopProfiles.Add(workshop);
                 }
                 else
                 {
-                    _context.WorkshopProfiles.Update(workshop);
+                    workshop.ParentWorkshopId = currentWorkshopId > 0 ? currentWorkshopId : null;
+                    workshop.Address ??= new WorkshopAddress();
+                    workshop.Timing ??= new WorkshopTiming();
+                    workshop.WorkshopBusinessConfigs ??= new WorkshopBusinessConfig();
+                    workshop.Services ??= new List<WorkshopService>();
+                    workshop.WorkingDays ??= new List<WorkshopWorkingDay>();
+                    workshop.WorkshopPaymentModes ??= new List<WorkshopPaymentMode>();
+                    workshop.WorkshopMedias ??= new List<WorkshopMedia>();
                 }
 
+                // =====================
+                // BASIC DETAILS
+                // =====================
+                workshop.WorkshopName = dto.WorkshopName?.Trim() ?? "";
+                workshop.OwnerName = dto.OwnerName?.Trim() ?? "";
+                workshop.OwnerMobileNo = dto.OwnerMobileNo?.Trim() ?? "";
+                workshop.EmailID = dto.EmailID?.Trim() ?? "";
+                workshop.ContactPerson = dto.ContactPerson?.Trim() ?? "";
+                workshop.ContactNo = dto.ContactNo?.Trim() ?? "";
+                workshop.Landline = dto.Landline?.Trim() ?? "";
+                workshop.DealerCode = dto.DealerCode?.Trim() ?? "";
+                workshop.InBusinessSince = DateTime.Parse(dto.InBusinessSince);
+                workshop.AvgVehicleInflowPerMonth = dto.AvgVehicleInflowPerMonth ?? 0;
+                workshop.NoOfEmployees = dto.NoOfEmployees ?? 0;
+                workshop.IsGdprAccepted = dto.IsGdprAccepted;
+
+                // =====================
+                // ADDRESS
+                // =====================
+                workshop.Address.FlatNo = dto.Address.FlatNo?.Trim() ?? "";
+                workshop.Address.Street = dto.Address.Street?.Trim() ?? "";
+                workshop.Address.Location = dto.Address.Location?.Trim() ?? "";
+                workshop.Address.City = dto.Address.City?.Trim() ?? "";
+                workshop.Address.State = dto.Address.State?.Trim() ?? "";
+                workshop.Address.StateCode = dto.Address.StateCode?.Trim() ?? "";
+                workshop.Address.Country = dto.Address.Country?.Trim() ?? "India";
+                workshop.Address.Pincode = dto.Address.Pincode?.Trim() ?? "";
+                workshop.Address.Landmark = dto.Address.Landmark?.Trim() ?? "";
+                workshop.Address.BranchAddress = dto.Address.BranchAddress?.Trim() ?? "";
+
+                // =====================
+                // TIMING
+                // =====================
+                workshop.Timing.StartTime = TimeSpan.Parse(dto.Timing.StartTime + ":00");
+                workshop.Timing.EndTime = TimeSpan.Parse(dto.Timing.EndTime + ":00");
+
+                // =====================
+                // BUSINESS CONFIG
+                // =====================
+                workshop.WorkshopBusinessConfigs.WebsiteLink = dto.BusinessConfig.WebsiteLink?.Trim() ?? "";
+                workshop.WorkshopBusinessConfigs.GoogleReviewLink = dto.BusinessConfig.GoogleReviewLink?.Trim() ?? "";
+                workshop.WorkshopBusinessConfigs.ExternalIntegrationUrl = dto.BusinessConfig.ExternalIntegrationUrl?.Trim() ?? "";
+                workshop.WorkshopBusinessConfigs.GSTIN = dto.BusinessConfig.Gstin?.Trim() ?? "";
+                workshop.WorkshopBusinessConfigs.MSME = dto.BusinessConfig.Msme?.Trim() ?? "";
+                workshop.WorkshopBusinessConfigs.SAC = dto.BusinessConfig.Sac?.Trim() ?? "";
+                workshop.WorkshopBusinessConfigs.SACPercentage = dto.BusinessConfig.SacPercentage;
+                workshop.WorkshopBusinessConfigs.InvoiceCaption = dto.BusinessConfig.InvoiceCaption?.Trim() ?? "";
+                workshop.WorkshopBusinessConfigs.InvoiceHeader = dto.BusinessConfig.InvoiceHeader?.Trim() ?? "";
+                workshop.WorkshopBusinessConfigs.DefaultServiceType = dto.BusinessConfig.DefaultServiceType?.Trim() ?? "";
+
+                // =====================
+                // SERVICES SYNC
+                // =====================
+                var newServiceIds = dto.ServiceIds.Select(long.Parse).ToHashSet();
+                var existingServiceIds = workshop.Services.Select(x => x.ServiceId).ToHashSet();
+
+                workshop.Services.RemoveAll(x => !newServiceIds.Contains(x.ServiceId));
+
+                foreach (var id in newServiceIds.Except(existingServiceIds))
+                    workshop.Services.Add(new WorkshopService { ServiceId = id });
+
+                // =====================
+                // WORKING DAYS SYNC
+                // =====================
+                var newDays = dto.WorkingDays.Select(x => (DayOfWeek)int.Parse(x)).ToHashSet();
+                var existingDays = workshop.WorkingDays.Select(x => x.Day).ToHashSet();
+
+                workshop.WorkingDays.RemoveAll(x => !newDays.Contains(x.Day));
+
+                foreach (var day in newDays.Except(existingDays))
+                    workshop.WorkingDays.Add(new WorkshopWorkingDay { Day = day });
+
+                // =====================
+                // PAYMENT MODES SYNC
+                // =====================
+                var newPaymentIds = dto.PaymentModeIds.Select(long.Parse).ToHashSet();
+                var existingPaymentIds = workshop.WorkshopPaymentModes.Select(x => x.PaymentModeId).ToHashSet();
+
+                workshop.WorkshopPaymentModes.RemoveAll(x => !newPaymentIds.Contains(x.PaymentModeId));
+
+                foreach (var id in newPaymentIds.Except(existingPaymentIds))
+                    workshop.WorkshopPaymentModes.Add(new WorkshopPaymentMode { PaymentModeId = id });
+
+                // =====================
+                // FIRST SAVE — generates workshop.Id for new records
+                // =====================
                 await _context.SaveChangesAsync();
 
-
-                /* =========================
-                   2️⃣ ADDRESS (UPSERT)
-                ========================= */
-
-                var address = await _context.WorkshopAddresses
-                    .FirstOrDefaultAsync(x => x.WorkshopId == workshop.Id);
-
-                if (address == null)
+                // =====================
+                // MEDIA FILES — after first save so workshop.Id is valid
+                // =====================
+                if (dto.MediaFiles?.Any() == true)
                 {
-                    address = new WorkshopAddress { WorkshopId = workshop.Id };
-                    _context.WorkshopAddresses.Add(address);
-                }
-
-                address.FlatNo = dto.Address.FlatNo ?? "";
-                address.Street = dto.Address.Street ?? "";
-                address.Location = dto.Address.Location ?? "";
-                address.City = dto.Address.City ?? "";
-                address.State = dto.Address.State ?? "";
-                address.StateCode = dto.Address.StateCode ?? "";
-                address.Country = dto.Address.Country ?? "India";
-                address.Pincode = dto.Address.Pincode ?? "";
-                address.Landmark = dto.Address.Landmark ?? "";
-                address.BranchAddress = dto.Address.BranchAddress ?? "";
-
-                /* =========================
-                   3️⃣ TIMING (UPSERT)
-                ========================= */
-
-
-                var timing = await _context.WorkshopTimings
-                    .FirstOrDefaultAsync(x => x.WorkshopId == workshop.Id);
-
-                if (timing == null)
-                {
-                    timing = new WorkshopTiming { WorkshopId = workshop.Id };
-                    _context.WorkshopTimings.Add(timing);
-                }
-
-                timing.StartTime = TimeSpan.Parse(dto.Timing.StartTime + ":00");
-                timing.EndTime = TimeSpan.Parse(dto.Timing.EndTime + ":00");
-
-                /* =========================
-                   4️⃣ BUSINESS CONFIG (UPSERT)
-                ========================= */
-
-                var config = await _context.WorkshopBusinessConfigs
-                    .FirstOrDefaultAsync(x => x.WorkshopId == workshop.Id);
-
-                if (config == null)
-                {
-                    config = new WorkshopBusinessConfig { WorkshopId = workshop.Id };
-                    _context.WorkshopBusinessConfigs.Add(config);
-                }
-
-                config.WebsiteLink = dto.BusinessConfig.WebsiteLink;
-                config.GoogleReviewLink = dto.BusinessConfig.GoogleReviewLink;
-                config.ExternalIntegrationUrl = dto.BusinessConfig.ExternalIntegrationUrl;
-                config.GSTIN = dto.BusinessConfig.Gstin;
-                config.MSME = dto.BusinessConfig.Msme;
-                config.SAC = dto.BusinessConfig.Sac;
-                config.SACPercentage = dto.BusinessConfig.SacPercentage;
-                config.InvoiceCaption = dto.BusinessConfig.InvoiceCaption;
-                config.InvoiceHeader = dto.BusinessConfig.InvoiceHeader;
-                config.DefaultServiceType = dto.BusinessConfig.DefaultServiceType;
-
-                /* =========================
-                   5️⃣ SERVICES (DELETE + INSERT)
-                ========================= */
-
-                _context.WorkshopServices.RemoveRange(
-                    _context.WorkshopServices.Where(x => x.WorkshopId == workshop.Id)
-                );
-
-                foreach (var s in dto.ServiceIds)
-                {
-                    if (long.TryParse(s, out var id))
-                    {
-                        _context.WorkshopServices.Add(new WorkshopService
-                        {
-                            WorkshopId = workshop.Id,
-                            ServiceId = id
-                        });
-                    }
-                }
-
-                /* =========================
-                   6️⃣ WORKING DAYS
-                ========================= */
-
-                _context.WorkshopWorkingDays.RemoveRange(
-                    _context.WorkshopWorkingDays.Where(x => x.WorkshopId == workshop.Id)
-                );
-
-                foreach (var d in dto.WorkingDays)
-                {
-                    if (int.TryParse(d, out var day))
-                    {
-                        _context.WorkshopWorkingDays.Add(new WorkshopWorkingDay
-                        {
-                            WorkshopId = workshop.Id,
-                            Day = (DayOfWeek)day
-                        });
-                    }
-                }
-
-                /* =========================
-                   7️⃣ PAYMENT MODES
-                ========================= */
-
-                _context.WorkshopPaymentModes.RemoveRange(
-                    _context.WorkshopPaymentModes.Where(x => x.WorkshopId == workshop.Id)
-                );
-
-                foreach (var p in dto.PaymentModeIds)
-                {
-                    if (long.TryParse(p, out var pid))
-                    {
-                        _context.WorkshopPaymentModes.Add(new WorkshopPaymentMode
-                        {
-                            WorkshopId = workshop.Id,
-                            PaymentModeId = pid
-                        });
-                    }
-                }
-
-                /* =========================
-                   8️⃣ MEDIA 
-                ========================= */
-                if (dto.MediaFiles != null && dto.MediaFiles.Any())
-                {
-                    string basePath = @"C:\GarageUploads\Workshops";
-                    string folder = Path.Combine(basePath, workshop.Id.ToString());
+                    string folder = Path.Combine(@"C:\GarageUploads\Workshops", workshop.Id.ToString());
                     Directory.CreateDirectory(folder);
 
                     foreach (var file in dto.MediaFiles)
                     {
-                        var fileName = $"media_{DateTime.Now:yyyyMMddHHmmssfff}{Path.GetExtension(file.FileName)}";
-                        var path = Path.Combine(folder, fileName);
+                        var ext = Path.GetExtension(file.FileName);
+                        var fileName = $"media_{DateTime.Now:yyyyMMddHHmmssfff}{ext}";
+                        var filePath = Path.Combine(folder, fileName);
 
-                        using var stream = new FileStream(path, FileMode.Create);
+                        using var stream = new FileStream(filePath, FileMode.Create);
                         await file.CopyToAsync(stream);
 
-                        _context.WorkshopMedias.Add(new WorkshopMedia
+                        workshop.WorkshopMedias.Add(new WorkshopMedia
                         {
-                            WorkshopId = workshop.Id,
                             FilePath = $"Workshops/{workshop.Id}/{fileName}",
                             MediaType = file.ContentType
                         });
                     }
+
+                    await _context.SaveChangesAsync();
                 }
 
-                await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
                 return Ok(new
                 {
-                    Id = workshop.Id,
-                    Message = dto.Id > 0 ? "Workshop updated successfully" : "Workshop created successfully"
+                    workshop.Id,
+                    Message = isNew ? "Workshop created successfully" : "Workshop updated successfully"
                 });
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return BadRequest(ex.Message);
+                return StatusCode(500, new { Message = "An error occurred", Error = ex.Message });
             }
         }
-
-
         [HttpGet("searchWorshops")]
         public async Task<IActionResult> searchWorshops([FromQuery] string query)
         {
@@ -507,6 +472,34 @@ namespace GarageManagement.Server.Controllers
             });
         }
 
+        [HttpGet("services")]
+        public async Task<IActionResult> GetServices()
+        {
+            var services = await _context.Services
+                .Where(x => x.RowState < 3)
+                .Select(x => new
+                {
+                    id = x.Id,
+                    name = x.Name
+                })
+                .ToListAsync();
 
+            return Ok(services);
+        }
+
+        [HttpGet("payment-modes")]
+        public async Task<IActionResult> GetPaymentModes()
+        {
+            var modes = await _context.PaymentModes
+                .Where(x => x.RowState < 3)
+                .Select(x => new
+                {
+                    id = x.Id,
+                    name = x.Name
+                })
+                .ToListAsync();
+
+            return Ok(modes);
+        }
     }
 }

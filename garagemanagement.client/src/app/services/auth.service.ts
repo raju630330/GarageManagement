@@ -9,7 +9,7 @@ export interface Role {
   roleName: string;
 }
 interface AuthResponse { token: string; }
-interface Decoded { role?: string; roleId?: number; exp?: number; name?: string; email?: string; sub?: string; }
+interface Decoded { role?: string; roleId?: number; workshopId?: number; exp?: number; name?: string; email?: string; sub?: string; }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -224,6 +224,18 @@ export class AuthService {
     if (this.sessionTimer) {
       clearInterval(this.sessionTimer);
       this.sessionTimer = null;
+    }
+  }
+
+  getWorkshopId(): number {
+    const token = localStorage.getItem('token');
+    if (!token) return 0;
+
+    try {
+      const decoded = jwtDecode<Decoded>(token);
+      return decoded.workshopId ? Number(decoded.workshopId) : 0;
+    } catch {
+      return 0;
     }
   }
 }

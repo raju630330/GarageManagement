@@ -13,24 +13,28 @@ public class WorkshopProfile : BaseEntity
     public int NoOfEmployees { get; set; }
 
     public string DealerCode { get; set; } = string.Empty;
-    public bool IsGdprAccepted { get; set; } 
+    public bool IsGdprAccepted { get; set; }
     public string ContactPerson { get; set; } = string.Empty;
     public string ContactNo { get; set; } = string.Empty;
     public string Landline { get; set; } = string.Empty;
-    public DateTime? CalendarDate { get; set; }
-    public WorkshopAddress? Address { get; set; }
-    public WorkshopTiming? Timing { get; set; }
-    public WorkshopBusinessConfig? WorkshopBusinessConfigs { get; set; }
 
-    public ICollection<WorkshopService>? Services { get; set; }
-    public ICollection<WorkshopWorkingDay>? WorkingDays { get; set; }
-    public ICollection<WorkshopUser>? WorkshopUsers { get; set; }
-    public ICollection<WorkshopMedia>? WorkshopMedias { get; set; }
-    public ICollection<WorkshopPaymentMode>? WorkshopPaymentModes { get; set; }
-    public ICollection<BookAppointment>? Appointments { get; set; } = new List<BookAppointment>();
+    public DateTime? CalendarDate { get; set; }
+
+    public WorkshopAddress Address { get; set; } = new WorkshopAddress();
+    public WorkshopTiming Timing { get; set; } = new WorkshopTiming(); 
+    public WorkshopBusinessConfig WorkshopBusinessConfigs { get; set; } = new WorkshopBusinessConfig(); 
+
+    public List<WorkshopService> Services { get; set; } = new List<WorkshopService>();
+    public List<WorkshopWorkingDay> WorkingDays { get; set; } = new List<WorkshopWorkingDay>();
+    public List<WorkshopUser>? WorkshopUsers { get; set; }
+    public List<WorkshopMedia> WorkshopMedias { get; set; } = new List<WorkshopMedia>();
+    public List<WorkshopPaymentMode> WorkshopPaymentModes { get; set; } = new List<WorkshopPaymentMode>();
+    public List<BookAppointment>? Appointments { get; set; }
+
     public long? ParentWorkshopId { get; set; }
     public WorkshopProfile? ParentWorkshop { get; set; }
     public ICollection<WorkshopProfile>? Branches { get; set; }
+
     public bool IsActive { get; set; } = true;
 }
 public class WorkshopAddress : BaseEntity

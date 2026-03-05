@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef }
 import { FormBuilder, FormGroup, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AlertService } from '../services/alert.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-workshop',
@@ -18,13 +18,9 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
   currentStep = 1;
   showStep6Errors: boolean = false;
 
+  availableServices: any[] = [];
+  availablePaymentModes: any[] = [];
 
-  /* ---------- SERVICES ---------- */
-  availableServices = [
-    { id: 2, name: 'Car Wash' },
-    { id: 3, name: 'Oil Change' },
-    { id: 4, name: 'Engine Repair' }
-  ];
 
   onServiceChange(id: number, event: Event): void {
     const checkbox = event.target as HTMLInputElement;
@@ -67,12 +63,6 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
     return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day];
   }
 
-  /* ---------- PAYMENT MODES ---------- */
-  availablePaymentModes = [
-    { id: 2, name: 'Cash' },
-    { id: 3, name: 'UPI' },
-    { id: 4, name: 'Card' }
-  ];
 
   onPaymentModeChange(id: number, event: Event): void {
     const checkbox = event.target as HTMLInputElement;
@@ -132,11 +122,14 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private alert: AlertService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit() {
     this.initializeForm();
+    this.loadServices();
+    this.loadPaymentModes();
 
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
@@ -482,8 +475,9 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
     this.http.post(this.apiUrl, formData).subscribe({
       next: (res: any) => {
         this.alert.showInfo(res.message || 'Workshop created successfully with media!');
-        this.resetForm();
         this.isSubmitting = false;
+        this.resetFormFull();
+        this.router.navigate(['/workshop']);
       },
       error: (error) => {
         this.alert.showError(error.error?.message || 'Creation failed!');
@@ -502,17 +496,49 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private resetForm(): void {
+  private resetFormFull(): void {
+    // Reset main form
     this.workshopForm.reset({
       address: { country: 'India' },
       avgVehicleInflowPerMonth: 0,
       noOfEmployees: 0,
       isGdprAccepted: false
     });
-    this.progressPercentage = 0;
+
+    // Clear all FormArrays completely
+    this.serviceIdsArray.clear();
+    this.workingDaysArray.clear();
+    this.paymentModeIdsArray.clear();
+    this.mediaArray.clear();
+
+    // Clear file selections
+    this.selectedFiles = [];
+    this.existingMedia = [];
+
+    // Reset step and progress
     this.currentStep = 1;
+    this.totalSteps = 7;
+    this.progressPercentage = 0;
+
+    // Show the first step
     this.showCurrentStep();
+
+    // Reset form states
+    this.markFormGroupUntouched(this.workshopForm);
+
+    // Stop submission flag
     this.isSubmitting = false;
+  }
+
+  // Helper to mark form untouched
+  private markFormGroupUntouched(formGroup: FormGroup | FormArray): void {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsPristine();
+      control.markAsUntouched();
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.markFormGroupUntouched(control);
+      }
+    });
   }
 
   // Nested form getters
@@ -628,6 +654,23 @@ export class WorkshopComponent implements OnInit, AfterViewInit {
       control.markAsTouched();
       control.markAsDirty();
     });
+  }
+  loadServices() {
+    this.http.get<any[]>('https://localhost:7086/api/WorkshopProfile/services')
+      .subscribe({
+        next: res => {
+          this.availableServices = res;
+        }
+      });
+  }
+
+  loadPaymentModes() {
+    this.http.get<any[]>('https://localhost:7086/api/WorkshopProfile/payment-modes')
+      .subscribe({
+        next: res => {
+          this.availablePaymentModes = res;
+        }
+      });
   }
 
 }

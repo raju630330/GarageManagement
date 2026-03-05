@@ -47,11 +47,11 @@
             <label class="form-label fw-semibold">Password</label>
             <input type="password"
                    class="form-control form-control-lg"
-                   placeholder="Minimum 8 characters"
+                   placeholder="Enter your password (8–15 characters)"
                    formControlName="password" />
             <small class="text-danger"
-                   *ngIf="f['password'].touched && f['password'].invalid">
-              Minimum 8 characters required
+                   *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+              Password must be 8-15 characters, include uppercase, lowercase, number, and special character
             </small>
           </div>
 

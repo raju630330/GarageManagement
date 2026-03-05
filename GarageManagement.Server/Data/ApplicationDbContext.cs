@@ -314,8 +314,6 @@ namespace GarageManagement.Server.Data
             // ===============================
             // WorkshopProfile
             // ===============================
-            modelBuilder.Entity<WorkshopProfile>()
-                .HasKey(w => w.Id);
 
             modelBuilder.Entity<WorkshopProfile>()
                 .HasMany(w => w.WorkshopUsers)
@@ -340,8 +338,6 @@ namespace GarageManagement.Server.Data
             // ===============================
             // WorkshopAddress (1 : 1)
             // ===============================
-            modelBuilder.Entity<WorkshopAddress>()
-                .HasKey(a => a.Id);
 
             modelBuilder.Entity<WorkshopProfile>()
                 .HasOne(w => w.Address)
@@ -351,8 +347,6 @@ namespace GarageManagement.Server.Data
             // ===============================
             // WorkshopTiming (1 : 1)
             // ===============================
-            modelBuilder.Entity<WorkshopTiming>()
-                .HasKey(t => t.Id);
 
             modelBuilder.Entity<WorkshopProfile>()
                 .HasOne(w => w.Timing)
@@ -362,8 +356,6 @@ namespace GarageManagement.Server.Data
             // ===============================
             // WorkshopService (M : M)
             // ===============================
-            modelBuilder.Entity<WorkshopService>()
-                .HasKey(ws => new { ws.WorkshopId, ws.ServiceId });
 
             modelBuilder.Entity<WorkshopService>()
                 .HasOne(ws => ws.Workshop)
@@ -374,8 +366,6 @@ namespace GarageManagement.Server.Data
             // ===============================
             // WorkshopWorkingDay (1 : M)
             // ===============================
-            modelBuilder.Entity<WorkshopWorkingDay>()
-                .HasKey(wd => wd.Id);
 
             modelBuilder.Entity<WorkshopWorkingDay>()
                 .HasOne(wd => wd.Workshop)
@@ -385,8 +375,6 @@ namespace GarageManagement.Server.Data
             // ===============================
             // WorkshopBusinessConfig (1 : 1)
             // ===============================
-            modelBuilder.Entity<WorkshopBusinessConfig>()
-                .HasKey(b => b.Id);
 
             modelBuilder.Entity<WorkshopProfile>()
                 .HasOne(w => w.WorkshopBusinessConfigs)
@@ -396,8 +384,6 @@ namespace GarageManagement.Server.Data
             // ===============================
             // WorkshopPaymentMode (M : M)
             // ===============================
-            modelBuilder.Entity<WorkshopPaymentMode>()
-                .HasKey(wp => new { wp.WorkshopId, wp.PaymentModeId });
 
             modelBuilder.Entity<WorkshopPaymentMode>()
                 .HasOne(wp => wp.Workshop)
@@ -408,8 +394,6 @@ namespace GarageManagement.Server.Data
             // ===============================
             // WorkshopMedia (1 : M)
             // ===============================
-            modelBuilder.Entity<WorkshopMedia>()
-                .HasKey(m => m.Id);
 
             modelBuilder.Entity<WorkshopMedia>()
                 .HasOne(m => m.Workshop)
@@ -443,49 +427,55 @@ namespace GarageManagement.Server.Data
             return await base.SaveChangesAsync(cancellationToken);
         }
 
+        // Entities where WorkshopId is a FK (relationship), NOT an audit tenant field
+        private static readonly HashSet<Type> RelationshipEntities = new()
+        {
+            typeof(WorkshopProfile),
+            typeof(WorkshopAddress),
+            typeof(WorkshopTiming),
+            typeof(WorkshopBusinessConfig),
+            typeof(WorkshopService),
+            typeof(WorkshopWorkingDay),
+            typeof(WorkshopPaymentMode),
+            typeof(WorkshopMedia)
+        };
+
         private void UpdateAuditFields()
         {
-            var entries = ChangeTracker.Entries<BaseEntity>();
-
             var currentUserId = _helperRepository.GetUserId();
-            var currentWorkshopId = _helperRepository.GetWorkshopId(); // 🔥 new
+            var currentWorkshopId = _helperRepository.GetWorkshopId();
             var currentTime = DateTime.UtcNow;
 
-            foreach (var entry in entries)
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
             {
                 switch (entry.State)
                 {
                     case EntityState.Added:
-
-                        entry.Entity.RowState = 1;   // Added
+                        entry.Entity.RowState = 1;
                         entry.Entity.ModifiedBy = currentUserId;
                         entry.Entity.ModifiedOn = currentTime;
 
-                        // 🔥 Set WorkshopId only if not already set
-                        if (!entry.Entity.WorkshopId.HasValue && currentWorkshopId > 0)
+                        // ✅ Only set WorkshopId for tenant-scoped entities
+                        // ❌ Never set it for relationship entities (their WorkshopId is a FK set by EF)
+                        if (!RelationshipEntities.Contains(entry.Entity.GetType())
+                            && !entry.Entity.WorkshopId.HasValue
+                            && currentWorkshopId > 0)
                         {
                             entry.Entity.WorkshopId = currentWorkshopId;
                         }
-
                         break;
 
                     case EntityState.Modified:
-
-                        entry.Entity.RowState = 2;   // Updated
+                        entry.Entity.RowState = 2;
                         entry.Entity.ModifiedBy = currentUserId;
                         entry.Entity.ModifiedOn = currentTime;
-
                         break;
 
                     case EntityState.Deleted:
-
-                        // 🔥 Soft delete
                         entry.State = EntityState.Modified;
-
-                        entry.Entity.RowState = 3;   // Deleted
+                        entry.Entity.RowState = 3;
                         entry.Entity.ModifiedBy = currentUserId;
                         entry.Entity.ModifiedOn = currentTime;
-
                         break;
                 }
             }
