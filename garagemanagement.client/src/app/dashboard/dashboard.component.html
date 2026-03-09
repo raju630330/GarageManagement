@@ -1,113 +1,671 @@
-<div class="calendar-container container-fluid p-3">
 
 
-  <div class="calendar-header d-flex justify-content-between align-items-center bg-primary text-white p-3 rounded mb-3">
-    <div class="left">
-      <button class="btn btn-light btn-sm me-2">📅 Calendar</button>
-      <button class="btn btn-warning btn-sm me-2">Today</button>
-      <button class="btn btn-light btn-sm me-1">&lt;</button>
-      <button class="btn btn-light btn-sm me-2">&gt;</button>
-      <span class="fw-bold fs-5">November 2024</span>
+  <!-- ═══════ TOP BAR ═══════ -->
+<div class="ws-topbar d-flex align-items-center justify-content-between flex-wrap gap-3 shadow-sm px-3 py-2">
+
+  <!-- LEFT : Logo + Title -->
+  <div class="d-flex align-items-center gap-3">
+
+    <div class="d-flex align-items-center justify-content-center rounded-3 text-white"
+         style="width:44px;height:44px;
+         background:linear-gradient(135deg,#f59e0b,#d97706);
+         font-size:20px;
+         box-shadow:0 4px 14px rgba(217,119,6,.35)">
+      🔧
     </div>
-    <div class="right d-flex align-items-center">
-      <input type="text" class="form-control form-control-sm me-2" placeholder="Search..." style="width: 200px;" />
-      <select class="form-select form-select-sm me-2" style="width: 120px;">
-        <option>Week</option>
-        <option>Month</option>
-      </select>
-      <button class="btn btn-primary" [routerLink]="['bookappointment']">New Appointment</button>
 
+    <div>
+      <div style="font-size:18px;font-weight:600">Workshop Dashboard</div>
+      <div class="text-muted" style="font-size:12px">Service Management</div>
     </div>
+
   </div>
 
 
-  <div class="calendar-toolbar d-flex justify-content-start align-items-center bg-light p-2 rounded mb-3">
-    <button class="btn btn-primary btn-sm me-2">Appointment</button>
-    <select class="form-select form-select-sm" style="width: 200px;">
-      <option>Working Staff</option>
-    </select>
-  </div>
+  <!-- RIGHT : Status + Clock + Actions -->
+  <div class="d-flex align-items-center gap-2 flex-wrap">
 
+    <!-- LIVE -->
+    <span class="badge rounded-pill d-flex align-items-center gap-2 px-3 py-2"
+          style="background:#dcfce7;color:#15803d;font-size:11px;border:1px solid #86efac">
+      <span class="live-dot"></span>LIVE
+    </span>
 
-  <div class="bg-white rounded shadow-sm p-3">
-    <table class="calendar-table table table-bordered text-center align-middle mb-0">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Sun<br>17</th>
-          <th>Mon<br>18</th>
-          <th>Tue<br>19</th>
-          <th>Wed<br>20</th>
-          <th>Thu<br>21</th>
-          <th>Fri<br>22</th>
-          <th>Sat<br>23</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="fw-bold">10 AM</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr>
-          <td class="fw-bold">11 AM</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr>
-          <td class="fw-bold">12 PM</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr>
-          <td class="fw-bold">1 PM</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr>
-          <td class="fw-bold">2 PM</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr>
-          <td class="fw-bold">3 PM</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Clock -->
+    <span class="badge rounded-pill px-3 py-2"
+          style="background:#f3f4f6;color:#4b5563;font-size:11px;border:1px solid #e5e7eb;font-family:monospace">
+      <i class="bi bi-clock me-1"></i>
+      {{ currentDate }} · {{ currentTime }} IST
+    </span>
+
+    <!-- Primary Action -->
+    <button class="btn btn-warning btn-sm rounded-pill px-3 fw-bold" (click)="createNewJobCard()">
+      <i class="bi bi-plus-lg me-1"></i> New Job
+    </button>
+
+    <!-- Dropdown Actions -->
+    <div class="dropdown">
+      <button class="btn btn-outline-secondary btn-sm rounded-pill px-3 dropdown-toggle"
+              data-bs-toggle="dropdown">
+        Quick Actions
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li *ngFor="let action of quickActions">
+          <a class="dropdown-item" [routerLink]="action.route">
+            <i [class]="action.icon + ' me-2'"></i>
+            {{ action.label }}
+          </a>
+        </li>
+      </ul>
+    </div>
+
   </div>
-  <router-outlet></router-outlet>
 
 </div>
+
+  <div class="container-fluid px-4 py-4">
+
+    <!-- ═══════ KPI STRIP ═══════ -->
+    <div class="row g-3 mb-4">
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card kpi-card shadow-sm h-100 p-3" style="border-left-color:#f59e0b">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="kpi-ico" style="background:#fef3c7;color:#d97706"><i class="bi bi-tools"></i></div>
+            <span class="badge rounded-pill" style="background:#dcfce7;color:#16a34a;font-size:10px"><i class="bi bi-arrow-up-short"></i>+3</span>
+          </div>
+          <div class="kpi-num text-dark">24</div>
+          <div class="kpi-lbl text-muted mt-1">Active Jobs</div>
+          <div class="text-muted mt-1" style="font-size:11px">3 more than yesterday</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card kpi-card shadow-sm h-100 p-3" style="border-left-color:#22c55e">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="kpi-ico" style="background:#dcfce7;color:#16a34a"><i class="bi bi-check2-all"></i></div>
+            <span class="badge rounded-pill" style="background:#dcfce7;color:#16a34a;font-size:10px"><i class="bi bi-arrow-up-short"></i>+18%</span>
+          </div>
+          <div class="kpi-num text-dark">11</div>
+          <div class="kpi-lbl text-muted mt-1">Completed Today</div>
+          <div class="text-muted mt-1" style="font-size:11px">Above weekly average</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card kpi-card shadow-sm h-100 p-3" style="border-left-color:#3b82f6">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="kpi-ico" style="background:#dbeafe;color:#2563eb"><i class="bi bi-calendar-event"></i></div>
+            <span class="badge rounded-pill" style="background:#f3f4f6;color:#6b7280;font-size:10px">4 + 3</span>
+          </div>
+          <div class="kpi-num text-dark">07</div>
+          <div class="kpi-lbl text-muted mt-1">Appointments</div>
+          <div class="text-muted mt-1" style="font-size:11px">Today &amp; tomorrow</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card kpi-card shadow-sm h-100 p-3" style="border-left-color:#ef4444">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="kpi-ico" style="background:#fee2e2;color:#dc2626"><i class="bi bi-box-seam"></i></div>
+            <span class="badge rounded-pill" style="background:#fee2e2;color:#dc2626;font-size:10px"><i class="bi bi-exclamation"></i>2 urgent</span>
+          </div>
+          <div class="kpi-num text-dark">05</div>
+          <div class="kpi-lbl text-muted mt-1">Awaiting Parts</div>
+          <div class="text-muted mt-1" style="font-size:11px">2 need immediate action</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card kpi-card shadow-sm h-100 p-3" style="border-left-color:#0d9488">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="kpi-ico" style="background:#ccfbf1;color:#0d9488"><i class="bi bi-currency-rupee"></i></div>
+            <span class="badge rounded-pill" style="background:#dcfce7;color:#16a34a;font-size:10px"><i class="bi bi-arrow-up-short"></i>+12%</span>
+          </div>
+          <div class="kpi-num text-dark">₹48k</div>
+          <div class="kpi-lbl text-muted mt-1">Revenue Today</div>
+          <div class="text-muted mt-1" style="font-size:11px">vs ₹43k last Monday</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card kpi-card shadow-sm h-100 p-3" style="border-left-color:#8b5cf6">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="kpi-ico" style="background:#ede9fe;color:#7c3aed"><i class="bi bi-layout-wtf"></i></div>
+            <span class="badge rounded-pill" style="background:#f3f4f6;color:#6b7280;font-size:10px">6 / 8</span>
+          </div>
+          <div class="kpi-num text-dark">75<small class="text-muted fw-normal fs-5">%</small></div>
+          <div class="kpi-lbl text-muted mt-1">Bay Utilisation</div>
+          <div class="progress mt-2" style="height:4px"><div class="progress-bar" style="width:75%;background:#8b5cf6"></div></div>
+        </div>
+      </div>
+
+    </div><!-- /kpi row -->
+    <!-- ═══════ MAIN GRID ═══════ -->
+    <div class="row g-3">
+
+      <!-- LEFT COLUMN -->
+      <div class="col-12 col-xl-8 d-flex flex-column gap-3">
+
+        <!-- REPAIR ORDERS -->
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+          <div class="ws-card-header d-flex align-items-center justify-content-between">
+            <div class="ws-card-title">
+              <span class="ws-pip" style="background:#f59e0b"></span>
+              <i class="bi bi-clipboard2-pulse text-secondary"></i>
+              Active Repair Orders
+              <span class="badge rounded-pill ms-1" style="background:#fef3c7;color:#d97706;font-size:11px">6 open</span>
+            </div>
+            <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill px-3">View All <i class="bi bi-arrow-right ms-1"></i></a>
+          </div>
+          <div class="table-responsive">
+            <table class="table ws-table mb-0">
+              <thead>
+                <tr>
+                  <th>Reg No</th>
+                  <th>Customer</th>
+                  <th class="d-none d-md-table-cell">Service</th>
+                  <th class="d-none d-lg-table-cell">Technician</th>
+                  <th>Status</th>
+                  <th class="d-none d-xl-table-cell text-end">ETA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="reg-tag">MH12AB1234</span></td>
+                  <td><strong>Rajesh Kumar</strong></td>
+                  <td class="d-none d-md-table-cell text-muted small">General Service</td>
+                  <td class="d-none d-lg-table-cell">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="tech-avatar" style="width:28px;height:28px;font-size:10px;border-radius:7px">SV</div>
+                      <span class="small">Suresh V.</span>
+                    </div>
+                  </td>
+                  <td><span class="status-badge status-progress"><span class="status-dot dot-progress"></span>In Progress</span></td>
+                  <td class="d-none d-xl-table-cell text-end text-muted small" style="font-family:monospace">14:30</td>
+                </tr>
+                <tr class="urgent">
+                  <td><span class="reg-tag">KA05CD5678</span></td>
+                  <td><strong>Priya Sharma</strong></td>
+                  <td class="d-none d-md-table-cell text-muted small">Engine Repair</td>
+                  <td class="d-none d-lg-table-cell">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="tech-avatar" style="width:28px;height:28px;font-size:10px;border-radius:7px">MD</div>
+                      <span class="small">Mohan D.</span>
+                    </div>
+                  </td>
+                  <td><span class="status-badge status-waiting"><span class="status-dot dot-waiting"></span>Awaiting Parts</span></td>
+                  <td class="d-none d-xl-table-cell text-end text-muted small" style="font-family:monospace">17:00</td>
+                </tr>
+                <tr>
+                  <td><span class="reg-tag">TN09EF9012</span></td>
+                  <td><strong>Arun Patel</strong></td>
+                  <td class="d-none d-md-table-cell text-muted small">Accident Repair</td>
+                  <td class="d-none d-lg-table-cell">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="tech-avatar" style="width:28px;height:28px;font-size:10px;border-radius:7px">RK</div>
+                      <span class="small">Ravi K.</span>
+                    </div>
+                  </td>
+                  <td><span class="status-badge status-progress"><span class="status-dot dot-progress"></span>In Progress</span></td>
+                  <td class="d-none d-xl-table-cell text-end text-muted small" style="font-family:monospace">16:00</td>
+                </tr>
+                <tr>
+                  <td><span class="reg-tag">DL01GH3456</span></td>
+                  <td><strong>Meena Singh</strong></td>
+                  <td class="d-none d-md-table-cell text-muted small">Oil Change</td>
+                  <td class="d-none d-lg-table-cell">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="tech-avatar" style="width:28px;height:28px;font-size:10px;border-radius:7px">KS</div>
+                      <span class="small">Kumar S.</span>
+                    </div>
+                  </td>
+                  <td><span class="status-badge status-done"><span class="status-dot dot-done"></span>Completed</span></td>
+                  <td class="d-none d-xl-table-cell text-end text-muted small" style="font-family:monospace">12:15</td>
+                </tr>
+                <tr>
+                  <td><span class="reg-tag">MH04IJ7890</span></td>
+                  <td><strong>Deepak Nair</strong></td>
+                  <td class="d-none d-md-table-cell text-muted small">A/C Service</td>
+                  <td class="d-none d-lg-table-cell">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="tech-avatar" style="width:28px;height:28px;font-size:10px;border-radius:7px">SV</div>
+                      <span class="small">Suresh V.</span>
+                    </div>
+                  </td>
+                  <td><span class="status-badge status-open"><span class="status-dot dot-open"></span>Open</span></td>
+                  <td class="d-none d-xl-table-cell text-end text-muted small" style="font-family:monospace">15:45</td>
+                </tr>
+                <tr>
+                  <td><span class="reg-tag">AP16KL2345</span></td>
+                  <td><strong>Lakshmi T.</strong></td>
+                  <td class="d-none d-md-table-cell text-muted small">Brake Service</td>
+                  <td class="d-none d-lg-table-cell">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="tech-avatar" style="width:28px;height:28px;font-size:10px;border-radius:7px">MD</div>
+                      <span class="small">Mohan D.</span>
+                    </div>
+                  </td>
+                  <td><span class="status-badge status-progress"><span class="status-dot dot-progress"></span>In Progress</span></td>
+                  <td class="d-none d-xl-table-cell text-end text-muted small" style="font-family:monospace">13:00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- REVENUE + APPOINTMENTS -->
+        <div class="row g-3">
+
+          <!-- REVENUE -->
+          <div class="col-12 col-md-6">
+            <div class="card shadow-sm border-0 rounded-3 overflow-hidden h-100">
+              <div class="ws-card-header d-flex align-items-center justify-content-between">
+                <div class="ws-card-title">
+                  <span class="ws-pip" style="background:#0d9488"></span>
+                  <i class="bi bi-bar-chart-line text-secondary"></i>
+                  Weekly Revenue
+                </div>
+                <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill px-3">Report <i class="bi bi-arrow-right"></i></a>
+              </div>
+              <div class="card-body">
+                <div class="row g-2 mb-3">
+                  <div class="col-4">
+                    <div class="rounded-3 p-2 text-center" style="background:#fffbeb">
+                      <div class="fw-700 text-warning" style="font-family:monospace;font-size:14px;font-weight:700">₹2.84L</div>
+                      <div class="text-muted" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px">Week Total</div>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="rounded-3 p-2 text-center" style="background:#f0fdf4">
+                      <div class="fw-700 text-success" style="font-family:monospace;font-size:14px;font-weight:700">₹2.21L</div>
+                      <div class="text-muted" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px">Collected</div>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="rounded-3 p-2 text-center" style="background:#fff5f5">
+                      <div class="fw-700 text-danger" style="font-family:monospace;font-size:14px;font-weight:700">₹63k</div>
+                      <div class="text-muted" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px">Balance</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bar-chart">
+                  <div class="bar-col"><div class="bar-track"><div class="bar-fill" style="height:52%"></div></div><span class="bar-day">MON</span></div>
+                  <div class="bar-col"><div class="bar-track"><div class="bar-fill" style="height:65%"></div></div><span class="bar-day">TUE</span></div>
+                  <div class="bar-col"><div class="bar-track"><div class="bar-fill on" style="height:90%"></div></div><span class="bar-day">WED</span></div>
+                  <div class="bar-col"><div class="bar-track"><div class="bar-fill" style="height:58%"></div></div><span class="bar-day">THU</span></div>
+                  <div class="bar-col"><div class="bar-track"><div class="bar-fill on" style="height:95%"></div></div><span class="bar-day">FRI</span></div>
+                  <div class="bar-col"><div class="bar-track"><div class="bar-fill" style="height:42%"></div></div><span class="bar-day">SAT</span></div>
+                  <div class="bar-col"><div class="bar-track"><div class="bar-fill on" style="height:56%"></div></div><span class="bar-day">TODAY</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- APPOINTMENTS -->
+          <div class="col-12 col-md-6">
+            <div class="card shadow-sm border-0 rounded-3 overflow-hidden h-100">
+              <div class="ws-card-header d-flex align-items-center justify-content-between">
+                <div class="ws-card-title">
+                  <span class="ws-pip" style="background:#3b82f6"></span>
+                  <i class="bi bi-calendar-check text-secondary"></i>
+                  Today's Appointments
+                </div>
+                <a href="#" class="btn btn-sm btn-outline-primary rounded-pill px-3">+ Book</a>
+              </div>
+              <div class="list-group list-group-flush">
+                <div class="list-group-item border-0 px-3 py-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="text-warning fw-bold" style="font-family:monospace;font-size:13px;min-width:48px">09:00</span>
+                    <div class="vr mx-1" style="height:34px"></div>
+                    <div class="flex-grow-1 overflow-hidden">
+                      <div class="fw-600 text-truncate" style="font-size:13px;font-weight:600">Rajesh Kumar</div>
+                      <div class="text-muted" style="font-size:11px;font-family:monospace">MH12AB1234 · Swift Dzire</div>
+                    </div>
+                    <div class="text-end flex-shrink-0">
+                      <span class="status-badge status-done"><span class="status-dot dot-done"></span>Arrived</span>
+                      <div class="text-muted mt-1" style="font-size:10px">Gen. Service</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item border-0 px-3 py-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="text-warning fw-bold" style="font-family:monospace;font-size:13px;min-width:48px">10:30</span>
+                    <div class="vr mx-1" style="height:34px"></div>
+                    <div class="flex-grow-1 overflow-hidden">
+                      <div class="fw-600 text-truncate" style="font-size:13px;font-weight:600">Priya Sharma</div>
+                      <div class="text-muted" style="font-size:11px;font-family:monospace">KA05CD5678 · Honda City</div>
+                    </div>
+                    <div class="text-end flex-shrink-0">
+                      <span class="status-badge status-progress"><span class="status-dot dot-progress"></span>In Bay</span>
+                      <div class="text-muted mt-1" style="font-size:10px">Engine Check</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item border-0 px-3 py-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="text-warning fw-bold" style="font-family:monospace;font-size:13px;min-width:48px">11:00</span>
+                    <div class="vr mx-1" style="height:34px"></div>
+                    <div class="flex-grow-1 overflow-hidden">
+                      <div class="fw-600 text-truncate" style="font-size:13px;font-weight:600">Meena Singh</div>
+                      <div class="text-muted" style="font-size:11px;font-family:monospace">MH04IJ7890 · Creta</div>
+                    </div>
+                    <div class="text-end flex-shrink-0">
+                      <span class="status-badge status-open"><span class="status-dot dot-open"></span>Expected</span>
+                      <div class="text-muted mt-1" style="font-size:10px">A/C Service</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item border-0 px-3 py-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="text-warning fw-bold" style="font-family:monospace;font-size:13px;min-width:48px">14:00</span>
+                    <div class="vr mx-1" style="height:34px"></div>
+                    <div class="flex-grow-1 overflow-hidden">
+                      <div class="fw-600 text-truncate" style="font-size:13px;font-weight:600">Arun Patel</div>
+                      <div class="text-muted" style="font-size:11px;font-family:monospace">TN09EF9012 · Innova</div>
+                    </div>
+                    <div class="text-end flex-shrink-0">
+                      <span class="status-badge status-progress"><span class="status-dot dot-progress"></span>In Bay</span>
+                      <div class="text-muted mt-1" style="font-size:10px">Accident Repair</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /revenue+appt row -->
+      </div><!-- /col-left -->
+      <!-- RIGHT COLUMN -->
+      <div class="col-12 col-xl-4 d-flex flex-column gap-3">
+
+        <!-- ALERTS -->
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+          <div class="ws-card-header d-flex align-items-center justify-content-between">
+            <div class="ws-card-title">
+              <span class="ws-pip" style="background:#ef4444"></span>
+              <i class="bi bi-bell-fill text-danger"></i>
+              Alerts
+              <span class="badge rounded-pill ms-1" style="background:#fee2e2;color:#dc2626">5</span>
+            </div>
+            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="this.closest('.card').querySelectorAll('.alert-row').forEach(r=>r.remove())">
+              <i class="bi bi-x-lg me-1"></i>Clear All
+            </button>
+          </div>
+          <div class="alert-row al-red d-flex align-items-start gap-2 px-3 py-2 border-bottom">
+            <span style="font-size:15px">🔴</span>
+            <div class="flex-grow-1 overflow-hidden">
+              <div class="fw-600" style="font-size:12.5px;font-weight:600">Stock Critical — Oil Filter HF-204</div>
+              <div class="text-muted" style="font-size:11px;font-family:monospace">Only 2 units remaining</div>
+            </div>
+            <div class="text-end flex-shrink-0">
+              <div class="text-muted" style="font-size:10px;font-family:monospace">09:12</div>
+              <button class="btn btn-sm p-0 text-muted" onclick="this.closest('.alert-row').remove()"><i class="bi bi-x-lg"></i></button>
+            </div>
+          </div>
+          <div class="alert-row al-yellow d-flex align-items-start gap-2 px-3 py-2 border-bottom">
+            <span style="font-size:15px">⚠️</span>
+            <div class="flex-grow-1 overflow-hidden">
+              <div class="fw-600" style="font-size:12.5px;font-weight:600">Approval Needed — Estimate #1042</div>
+              <div class="text-muted" style="font-size:11px;font-family:monospace">KA05CD5678 · ₹8,400 pending</div>
+            </div>
+            <div class="text-end flex-shrink-0">
+              <div class="text-muted" style="font-size:10px;font-family:monospace">08:55</div>
+              <button class="btn btn-sm p-0 text-muted" onclick="this.closest('.alert-row').remove()"><i class="bi bi-x-lg"></i></button>
+            </div>
+          </div>
+          <div class="alert-row al-blue d-flex align-items-start gap-2 px-3 py-2 border-bottom">
+            <span style="font-size:15px">📅</span>
+            <div class="flex-grow-1 overflow-hidden">
+              <div class="fw-600" style="font-size:12.5px;font-weight:600">New Appointment — Meena Singh</div>
+              <div class="text-muted" style="font-size:11px;font-family:monospace">A/C Service · 11:00 AM today</div>
+            </div>
+            <div class="text-end flex-shrink-0">
+              <div class="text-muted" style="font-size:10px;font-family:monospace">08:30</div>
+              <button class="btn btn-sm p-0 text-muted" onclick="this.closest('.alert-row').remove()"><i class="bi bi-x-lg"></i></button>
+            </div>
+          </div>
+          <div class="alert-row al-yellow d-flex align-items-start gap-2 px-3 py-2 border-bottom">
+            <span style="font-size:15px">⏱️</span>
+            <div class="flex-grow-1 overflow-hidden">
+              <div class="fw-600" style="font-size:12.5px;font-weight:600">Vehicle Overdue — TN09EF9012</div>
+              <div class="text-muted" style="font-size:11px;font-family:monospace">Expected 09:00 · 3.5 hrs late</div>
+            </div>
+            <div class="text-end flex-shrink-0">
+              <div class="text-muted" style="font-size:10px;font-family:monospace">08:10</div>
+              <button class="btn btn-sm p-0 text-muted" onclick="this.closest('.alert-row').remove()"><i class="bi bi-x-lg"></i></button>
+            </div>
+          </div>
+          <div class="alert-row al-green d-flex align-items-start gap-2 px-3 py-2">
+            <span style="font-size:15px">✅</span>
+            <div class="flex-grow-1 overflow-hidden">
+              <div class="fw-600" style="font-size:12.5px;font-weight:600">Payment Cleared — Deepak Nair</div>
+              <div class="text-muted" style="font-size:11px;font-family:monospace">₹12,500 · Cash · JC-0934</div>
+            </div>
+            <div class="text-end flex-shrink-0">
+              <div class="text-muted" style="font-size:10px;font-family:monospace">07:58</div>
+              <button class="btn btn-sm p-0 text-muted" onclick="this.closest('.alert-row').remove()"><i class="bi bi-x-lg"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- BAY STATUS -->
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+          <div class="ws-card-header d-flex align-items-center justify-content-between">
+            <div class="ws-card-title">
+              <span class="ws-pip" style="background:#8b5cf6"></span>
+              <i class="bi bi-layout-wtf text-secondary"></i>
+              Bay Status
+            </div>
+            <span class="badge rounded-pill" style="background:#ccfbf1;color:#0d9488">6 / 8 Active</span>
+          </div>
+          <div class="card-body">
+            <div class="row g-2">
+              <div class="col-3">
+                <div class="bay-card bay-on">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold" style="font-family:monospace;font-size:10px;color:#6b7280">B01</span>
+                    <span class="bay-led bay-led-on"></span>
+                  </div>
+                  <div class="bay-reg">MH12AB1234</div>
+                  <div class="text-muted" style="font-size:10px">Suresh V.</div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="bay-card bay-on">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold" style="font-family:monospace;font-size:10px;color:#6b7280">B02</span>
+                    <span class="bay-led bay-led-on"></span>
+                  </div>
+                  <div class="bay-reg">KA05CD5678</div>
+                  <div class="text-muted" style="font-size:10px">Mohan D.</div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="bay-card bay-on">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold" style="font-family:monospace;font-size:10px;color:#6b7280">B03</span>
+                    <span class="bay-led bay-led-on"></span>
+                  </div>
+                  <div class="bay-reg">TN09EF9012</div>
+                  <div class="text-muted" style="font-size:10px">Ravi K.</div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="bay-card bay-off">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold" style="font-family:monospace;font-size:10px;color:#6b7280">B04</span>
+                    <span class="bay-led bay-led-off"></span>
+                  </div>
+                  <div class="fw-600 text-success" style="font-size:11px;font-weight:600">Free</div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="bay-card bay-on">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold" style="font-family:monospace;font-size:10px;color:#6b7280">B05</span>
+                    <span class="bay-led bay-led-on"></span>
+                  </div>
+                  <div class="bay-reg">MH04IJ7890</div>
+                  <div class="text-muted" style="font-size:10px">Kumar S.</div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="bay-card bay-on">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold" style="font-family:monospace;font-size:10px;color:#6b7280">B06</span>
+                    <span class="bay-led bay-led-on"></span>
+                  </div>
+                  <div class="bay-reg">AP16KL2345</div>
+                  <div class="text-muted" style="font-size:10px">Mohan D.</div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="bay-card bay-off">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold" style="font-family:monospace;font-size:10px;color:#6b7280">B07</span>
+                    <span class="bay-led bay-led-off"></span>
+                  </div>
+                  <div class="fw-600 text-success" style="font-size:11px;font-weight:600">Free</div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="bay-card bay-on">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold" style="font-family:monospace;font-size:10px;color:#6b7280">B08</span>
+                    <span class="bay-led bay-led-on"></span>
+                  </div>
+                  <div class="bay-reg">DL01GH3456</div>
+                  <div class="text-muted" style="font-size:10px">Suresh V.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TECHNICIANS -->
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+          <div class="ws-card-header">
+            <div class="ws-card-title">
+              <span class="ws-pip" style="background:#8b5cf6"></span>
+              <i class="bi bi-people-fill text-secondary"></i>
+              Technician Load
+            </div>
+          </div>
+          <div class="card-body d-flex flex-column gap-3">
+            <div class="d-flex align-items-start gap-3">
+              <div class="tech-avatar">SV</div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="fw-600" style="font-size:13px;font-weight:600">Suresh V.</span>
+                  <span class="badge rounded-pill" style="background:#fee2e2;color:#dc2626;font-family:monospace;font-size:11px">85%</span>
+                </div>
+                <div class="text-muted mb-2" style="font-size:11px">3 jobs · Bay 01, 08</div>
+                <div class="progress" style="height:5px"><div class="progress-bar bg-danger" style="width:85%"></div></div>
+              </div>
+            </div>
+            <div class="d-flex align-items-start gap-3">
+              <div class="tech-avatar">MD</div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="fw-600" style="font-size:13px;font-weight:600">Mohan D.</span>
+                  <span class="badge rounded-pill" style="background:#fee2e2;color:#dc2626;font-family:monospace;font-size:11px">90%</span>
+                </div>
+                <div class="text-muted mb-2" style="font-size:11px">3 jobs · Bay 02, 06</div>
+                <div class="progress" style="height:5px"><div class="progress-bar bg-danger" style="width:90%"></div></div>
+              </div>
+            </div>
+            <div class="d-flex align-items-start gap-3">
+              <div class="tech-avatar">RK</div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="fw-600" style="font-size:13px;font-weight:600">Ravi K.</span>
+                  <span class="badge rounded-pill" style="background:#fef3c7;color:#d97706;font-family:monospace;font-size:11px">60%</span>
+                </div>
+                <div class="text-muted mb-2" style="font-size:11px">2 jobs · Bay 03</div>
+                <div class="progress" style="height:5px"><div class="progress-bar bg-warning" style="width:60%"></div></div>
+              </div>
+            </div>
+            <div class="d-flex align-items-start gap-3">
+              <div class="tech-avatar">KS</div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="fw-600" style="font-size:13px;font-weight:600">Kumar S.</span>
+                  <span class="badge rounded-pill" style="background:#dcfce7;color:#16a34a;font-family:monospace;font-size:11px">40%</span>
+                </div>
+                <div class="text-muted mb-2" style="font-size:11px">1 job · Bay 05</div>
+                <div class="progress" style="height:5px"><div class="progress-bar bg-success" style="width:40%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STOCK WATCH -->
+        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+          <div class="ws-card-header d-flex align-items-center justify-content-between">
+            <div class="ws-card-title">
+              <span class="ws-pip" style="background:#ef4444"></span>
+              <i class="bi bi-boxes text-secondary"></i>
+              Parts &amp; Stock Watch
+            </div>
+            <a href="#" class="btn btn-sm btn-outline-danger rounded-pill px-3">Inventory <i class="bi bi-arrow-right"></i></a>
+          </div>
+          <div>
+            <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom" style="background:#fff8f8;border-left:3px solid #ef4444">
+              <div>
+                <div class="fw-600" style="font-size:13px;font-weight:600">Oil Filter</div>
+                <div class="text-muted" style="font-size:10px;font-family:monospace">HF-204</div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="stock-qty text-danger">2</span>
+                <span class="badge rounded-pill" style="background:#fee2e2;color:#dc2626"><i class="bi bi-x-circle me-1"></i>Critical</span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom" style="background:#fffbf0;border-left:3px solid #f59e0b">
+              <div>
+                <div class="fw-600" style="font-size:13px;font-weight:600">Brake Pads (Front)</div>
+                <div class="text-muted" style="font-size:10px;font-family:monospace">BP-F112</div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="stock-qty text-warning">5</span>
+                <span class="badge rounded-pill" style="background:#fef3c7;color:#d97706"><i class="bi bi-exclamation-circle me-1"></i>Low</span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+              <div>
+                <div class="fw-600" style="font-size:13px;font-weight:600">Air Filter</div>
+                <div class="text-muted" style="font-size:10px;font-family:monospace">AF-3910</div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="stock-qty text-success">24</span>
+                <span class="badge rounded-pill" style="background:#dcfce7;color:#16a34a"><i class="bi bi-check-circle me-1"></i>In Stock</span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+              <div>
+                <div class="fw-600" style="font-size:13px;font-weight:600">Engine Oil 5W-30</div>
+                <div class="text-muted" style="font-size:10px;font-family:monospace">EO-5W30</div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="stock-qty text-success">18</span>
+                <span class="badge rounded-pill" style="background:#dcfce7;color:#16a34a"><i class="bi bi-check-circle me-1"></i>In Stock</span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between px-3 py-2" style="background:#fffbf0;border-left:3px solid #f59e0b">
+              <div>
+                <div class="fw-600" style="font-size:13px;font-weight:600">Spark Plug NGK</div>
+                <div class="text-muted" style="font-size:10px;font-family:monospace">SP-NGK4</div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="stock-qty text-warning">6</span>
+                <span class="badge rounded-pill" style="background:#fef3c7;color:#d97706"><i class="bi bi-exclamation-circle me-1"></i>Low</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /col-right -->
+    </div><!-- /main row -->
+  </div><!-- /container -->
 

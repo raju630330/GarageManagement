@@ -33,55 +33,75 @@ import { AssignUserToWorkshopComponent } from './assign-user-to-workshop/assign-
 import { AssociatedworkshopsComponent } from './associatedworkshops/associatedworkshops.component';
 import { WorkshopListComponent } from './workshop-list/workshop-list.component';
 import { UserComponent } from './user/user.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
   {
     path: '',
     component: UserprofileComponent,
     children: [
+
+      // ── DEFAULT redirect → dashboard ──────────────────────────────────────
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
+      // ── DASHBOARD (new) ───────────────────────────────────────────────────
+      { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+
+      // ── APPOINTMENTS ──────────────────────────────────────────────────────
       {
         path: 'Calendar',
-        component: CalendarComponent,canActivate: [authGuard],
+        component: CalendarComponent,
+        canActivate: [authGuard],
         children: [
           { path: 'bookappointment', component: BookingAppointmentComponent }
         ]
       },
 
+      // ── AUTH (public) ─────────────────────────────────────────────────────
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'forgot', component: ForgetpasswordComponent },
       { path: 'reset-password', component: ResetpasswordComponent },
 
+      // ── REPAIR / JOB CARDS ────────────────────────────────────────────────
       { path: 'repair-order', component: RepairOrderComponent, canActivate: [authGuard], data: { roles: ['Admin', 'Manager'] } },
       { path: 'spare-part', component: SparePartIssueDetailsComponent, canActivate: [authGuard] },
       { path: 'tobefilledbysupervisor', component: ToBeFilledBySupervisorComponent, canActivate: [authGuard] },
       { path: 'jobobservedetails', component: AdditionalJobObserveDetailsComponent, canActivate: [authGuard] },
       { path: 'labour-details', component: LabourDetailsComponent, canActivate: [authGuard] },
       { path: 'inventory', component: InventoryComponent, canActivate: [authGuard] },
-
-      { path: 'profile', component: ProfileComponent, canActivate: [authGuard], data: { roles: ['Admin', 'Manager'] } },
-      { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
       { path: 'jobcardlist', component: JobCardsComponent, canActivate: [authGuard] },
       { path: 'newjobcard', component: NewJobCardComponent, canActivate: [authGuard] },
       { path: 'estimate/:id', component: EstimationComponent, canActivate: [authGuard] },
-      { path: 'roles', component: RolesComponent, canActivate: [authGuard] },
-      { path: 'permission', component: PermissionsComponent, canActivate: [authGuard] },
-      { path: 'rolepermission', component: RolepermissionComponent, canActivate: [authGuard] },
+
+      // ── STOCK ─────────────────────────────────────────────────────────────
       { path: 'stock', component: StockComponent, canActivate: [authGuard] },
       { path: 'issue', component: IssueComponent, canActivate: [authGuard] },
       { path: 'inward', component: InwardComponent, canActivate: [authGuard] },
       { path: 'order', component: OrderComponent, canActivate: [authGuard] },
+
+      // ── ADMIN ─────────────────────────────────────────────────────────────
+      { path: 'roles', component: RolesComponent, canActivate: [authGuard] },
+      { path: 'permission', component: PermissionsComponent, canActivate: [authGuard] },
+      { path: 'rolepermission', component: RolepermissionComponent, canActivate: [authGuard] },
+      { path: 'assignuser', component: AssignUserToWorkshopComponent, canActivate: [authGuard] },
+      { path: 'userlist', component: UserComponent, canActivate: [authGuard] },
+
+      // ── WORKSHOP ──────────────────────────────────────────────────────────
       { path: 'workshop/:id', component: WorkshopComponent, canActivate: [authGuard] },
       { path: 'workshop', component: WorkshopComponent, canActivate: [authGuard] },
-      { path: 'assignuser', component: AssignUserToWorkshopComponent, canActivate: [authGuard] },
-      { path: 'associatedworkshops', component: AssociatedworkshopsComponent, canActivate: [authGuard] },
       { path: 'workshoplist', component: WorkshopListComponent, canActivate: [authGuard] },
-      { path: 'userlist', component: UserComponent, canActivate: [authGuard] },
-      { path: 'unauthorized', component: UnauthorizedComponent, data: { public: true } }
+      { path: 'associatedworkshops', component: AssociatedworkshopsComponent, canActivate: [authGuard] },
+
+      // ── PROFILE / SETTINGS ────────────────────────────────────────────────
+      { path: 'profile', component: ProfileComponent, canActivate: [authGuard], data: { roles: ['Admin', 'Manager'] } },
+      { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
+
+      // ── MISC ──────────────────────────────────────────────────────────────
+      { path: 'unauthorized', component: UnauthorizedComponent, data: { public: true } },
     ]
   },
 ];
-
 
 
 
