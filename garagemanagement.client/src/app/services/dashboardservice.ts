@@ -66,7 +66,6 @@ export class DashboardService {
       { id: 'RO-1006', regNo: 'AP16KL2345', customerName: 'Lakshmi T.', serviceType: 'Brake Service', technician: 'Mohan D.', status: 'in-progress', eta: '13:00', bay: 6 },
     ];
   }
-
   private getBays(): Bay[] {
     return [
       { number: 1, status: 'occupied', regNo: 'MH12AB1234', technician: 'Suresh V.', service: 'Gen. Service' },
@@ -77,6 +76,15 @@ export class DashboardService {
       { number: 6, status: 'occupied', regNo: 'AP16KL2345', technician: 'Mohan D.', service: 'Brakes' },
       { number: 7, status: 'free' },
       { number: 8, status: 'occupied', regNo: 'DL01GH3456', technician: 'Suresh V.', service: 'Oil Chg' },
+
+      { number: 9, status: 'occupied', regNo: 'TS08MN1122', technician: 'Ramesh P.', service: 'Clutch' },
+      { number: 10, status: 'free' },
+      { number: 11, status: 'occupied', regNo: 'KA09PQ7788', technician: 'Arjun K.', service: 'Wheel Align' },
+      { number: 12, status: 'occupied', regNo: 'MH20ZX4567', technician: 'Naresh T.', service: 'Battery' },
+      { number: 13, status: 'free' },
+      { number: 14, status: 'occupied', regNo: 'AP05BC9988', technician: 'Kiran M.', service: 'Suspension' },
+      { number: 15, status: 'occupied', regNo: 'TN22GH3344', technician: 'Ravi K.', service: 'Full Service' },
+      { number: 16, status: 'free' }
     ];
   }
 
@@ -116,6 +124,18 @@ export class DashboardService {
       { level: 'blue', icon: '🔵', title: 'New Appointment: Meena Singh', sub: 'MH04IJ7890 · A/C Service · 11:00 AM', time: '08:30' },
       { level: 'yellow', icon: '🟡', title: 'Vehicle Overdue: TN09EF9012', sub: 'Expected delivery was 09:00 · +3.5 hrs', time: '08:10' },
       { level: 'green', icon: '🟢', title: 'Invoice Cleared: Deepak Nair', sub: '₹12,500 · Cash · Job #JC-0934', time: '07:58' },
+
+      { level: 'red', icon: '🔴', title: 'Low Stock: Brake Pads (BP-332)', sub: 'Only 3 units left · Reorder required', time: '07:45' },
+      { level: 'blue', icon: '🔵', title: 'Walk-in Customer: Ravi Kumar', sub: 'AP16KL2345 · Engine Check', time: '07:40' },
+      { level: 'yellow', icon: '🟡', title: 'Pending Payment: Invoice #INV-221', sub: '₹6,200 · Awaiting customer payment', time: '07:30' },
+      { level: 'green', icon: '🟢', title: 'Service Completed: KA01MN4455', sub: 'General Service finished · Ready for delivery', time: '07:20' },
+      { level: 'blue', icon: '🔵', title: 'Technician Assigned: Bay B03', sub: 'Ravi K. assigned to Engine Repair', time: '07:10' },
+
+      { level: 'yellow', icon: '🟡', title: 'Customer Waiting: Rahul Sharma', sub: 'MH12AB1234 · Waiting at reception', time: '07:05' },
+      { level: 'red', icon: '🔴', title: 'Delayed Part Delivery', sub: 'Clutch Plate shipment delayed by supplier', time: '06:55' },
+      { level: 'green', icon: '🟢', title: 'Payment Received: Online', sub: '₹9,800 · UPI · Job #JC-0938', time: '06:45' },
+      { level: 'blue', icon: '🔵', title: 'New Booking: Oil Change', sub: 'DL01GH3456 · Slot booked at 02:00 PM', time: '06:30' },
+      { level: 'yellow', icon: '🟡', title: 'Service Reminder Sent', sub: 'Customer notified for periodic service', time: '06:20' }
     ];
   }
 

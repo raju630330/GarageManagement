@@ -324,3 +324,49 @@ a.active {
     margin-top: 150px;
   }
 }
+
+.idle-overlay {
+  display: none; /* Hidden by default, always in DOM */
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.idle-overlay.active {
+  display: flex; /* Shown when Angular adds .active class */
+}
+
+.idle-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.idle-icon {
+  font-size: 2.5rem;
+  margin-bottom: .5rem;
+}
+
+.idle-title {
+  font-weight: 700;
+  margin-bottom: .75rem;
+}
+
+.idle-message {
+  color: #555;
+  margin-bottom: 1.25rem;
+}
+
+.idle-countdown {
+  font-size: 1.4rem;
+  color: #dc2626;
+  display: inline-block;
+  min-width: 2ch;
+}
