@@ -260,12 +260,12 @@ export class OrderComponent implements OnInit, OnDestroy {
   }
 
   submitOrder(): void {
-    this.orderForm.markAllAsTouched();
+  //  this.orderForm.markAllAsTouched();
 
-    if (this.orderForm.invalid) {
-      alert('Fill required fields');
-      return;
-    }
+    //if (this.orderForm.invalid) {
+    //  alert('Fill required fields');
+    //  return;
+    //}
 
     if (this.items.length === 0) {
       alert('Add parts first');

@@ -223,16 +223,18 @@ namespace GarageManagement.Server.Controllers
         private string GenerateJwt(User user, long? workshopId)
         {
             var claims = new List<Claim>
-    {
-        new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new(ClaimTypes.Name, user.Username),
-        new(ClaimTypes.Email, user.Email),
-        new(ClaimTypes.Role, user.Role!.RoleName),
-        new("roleId", user.Role.Id.ToString()),
-        new("workshopId", workshopId?.ToString() ?? "0"),
-        new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-    };
+            {
+                new(JwtRegisteredClaimNames.Sub,    user.Id.ToString()),
+                new(ClaimTypes.NameIdentifier,      user.Id.ToString()),
+                new(ClaimTypes.Name,                user.Username),
+                new(ClaimTypes.Email,               user.Email),
+                new(ClaimTypes.Role,                user.Role!.RoleName),
+                new("roleId",                       user.Role.Id.ToString()),
+                new("WorkshopId",                   workshopId?.ToString() ?? "0"),  // ← capital W
+                new("UserId",                       user.Id.ToString()),              // ← add this
+                new(JwtRegisteredClaimNames.Jti,    Guid.NewGuid().ToString())
+            };
+
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
