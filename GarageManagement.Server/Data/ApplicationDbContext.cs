@@ -55,6 +55,9 @@ namespace GarageManagement.Server.Data
         public DbSet<WorkshopPaymentMode> WorkshopPaymentModes { get; set; }
 
         public DbSet<WorkshopMedia> WorkshopMedias { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+        public DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -457,6 +460,75 @@ namespace GarageManagement.Server.Data
 
             modelBuilder.Entity<JobCardCollection>()
                 .Property(e => e.Amount).HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Supplier>(e =>
+            {
+                e.ToTable("Supplier");
+                e.HasKey(x => x.Id);
+                e.Property(x => x.Name).IsRequired().IsUnicode();
+                e.Property(x => x.ContactPerson).IsRequired().IsUnicode();
+                e.Property(x => x.Phone).IsRequired().IsUnicode();
+                e.Property(x => x.Email).IsRequired().IsUnicode();
+                e.Property(x => x.GSTIN).IsRequired().IsUnicode();
+                e.Property(x => x.Address).IsRequired().IsUnicode();
+                e.Property(x => x.IsActive).IsRequired();
+                e.Property(x => x.RowState).IsRequired();
+                e.Property(x => x.ModifiedBy).IsRequired();
+                e.Property(x => x.ModifiedOn).IsRequired();
+            });
+
+            modelBuilder.Entity<PurchaseOrder>(e =>
+            {
+                e.ToTable("PurchaseOrder");
+                e.HasKey(x => x.Id);
+                e.Property(x => x.OrderNo).IsRequired().IsUnicode();
+                e.Property(x => x.SupplierId).IsRequired();
+                e.Property(x => x.PaymentType).IsRequired().IsUnicode();
+                e.Property(x => x.StockType).IsRequired().IsUnicode();
+                e.Property(x => x.Remarks).IsUnicode();
+                e.Property(x => x.RegNo).IsRequired().IsUnicode();
+                e.Property(x => x.JobCardNo).IsUnicode();
+                e.Property(x => x.Source).IsUnicode();
+                e.Property(x => x.Status).IsRequired().IsUnicode();
+                e.Property(x => x.OrderDate).IsRequired();
+                e.Property(x => x.RowState).IsRequired();
+                e.Property(x => x.ModifiedBy).IsRequired();
+                e.Property(x => x.ModifiedOn).IsRequired();
+
+                e.HasOne(x => x.Supplier)
+                 .WithMany(s => s.PurchaseOrders)
+                 .HasForeignKey(x => x.SupplierId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasIndex(x => new { x.WorkshopId, x.OrderNo }).IsUnique();
+            });
+
+            modelBuilder.Entity<PurchaseOrderItem>(e =>
+            {
+                e.ToTable("PurchaseOrderItem");
+                e.HasKey(x => x.Id);
+                e.Property(x => x.PurchaseOrderId).IsRequired();
+                e.Property(x => x.PartId).IsRequired();
+                e.Property(x => x.Qty).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.UnitPrice).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.Discount).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.TaxPercent).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.TaxAmount).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.TotalPurchasePrice).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.InwardedQty).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.ServiceType).IsRequired().IsUnicode();
+                e.Property(x => x.Remarks).IsUnicode();
+                e.Property(x => x.SellerInfo).IsUnicode();
+                e.Property(x => x.RowState).IsRequired();
+                e.Property(x => x.ModifiedBy).IsRequired();
+                e.Property(x => x.ModifiedOn).IsRequired();
+
+                e.HasOne(x => x.PurchaseOrder)
+                 .WithMany(o => o.Items)
+                 .HasForeignKey(x => x.PurchaseOrderId)
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
         }
         public override int SaveChanges()
         {

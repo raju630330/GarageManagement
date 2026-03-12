@@ -1,1 +1,346 @@
-<p>order works!</p>
+<!-- ══════════════════════════════════════════════
+     HEADER STRIP  (same style as estimation page)
+══════════════════════════════════════════════ -->
+<div class="jobcard-wrapper position-relative mb-4">
+  <div class="jobcard-header border p-3 d-flex justify-content-between align-items-center">
+
+    <div class="d-flex gap-3 align-items-center">
+      <span class="text-primary fw-bold">
+        <i class="bi bi-cart3 me-1"></i> NEW ORDER
+      </span>
+      <!-- show reg/jobcard if came from estimation or issue -->
+      <span class="text-muted" style="font-size:.85rem;"
+            *ngIf="regNo || jobCardNo">
+        {{ regNo }}<span *ngIf="jobCardNo"> / {{ jobCardNo }}</span>
+      </span>
+      <!-- show STOCK badge if no job card context -->
+      <span class="badge bg-secondary" *ngIf="!regNo && !jobCardNo">
+        STOCK ORDER
+      </span>
+    </div>
+
+    <!-- Source label so user knows where they came from -->
+    <div class="d-flex gap-2 align-items-center">
+      <span class="badge bg-light text-dark border" *ngIf="source">
+        <i class="bi bi-arrow-left-circle me-1"></i>
+        From: {{ source | titlecase }}
+      </span>
+      <span class="text-muted" style="font-size:.82rem;">
+        <i class="bi bi-calendar2 me-1"></i>{{ todayDate | date:'dd MMM yyyy' }}
+      </span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SUCCESS MESSAGE
+══════════════════════════════════════════════ -->
+<div class="alert alert-success d-flex align-items-center gap-2 mb-3" *ngIf="successMessage">
+  <i class="bi bi-check-circle-fill fs-5"></i>
+  <strong>{{ successMessage }}</strong>
+  <span class="ms-1 text-muted" style="font-size:.82rem;">Redirecting...</span>
+</div>
+
+<form [formGroup]="orderForm">
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 1 — ORDER DETAILS HEADER
+  ══════════════════════════════════════════════ -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row g-3">
+
+        <!-- Vendor (mandatory) -->
+        <div class="col-md-4">
+          <label class="form-label fw-semibold" style="font-size:.85rem;">
+            Vendor <span class="text-danger">*</span>
+          </label>
+          <select class="form-select form-select-sm" formControlName="supplierId"
+                  [class.is-invalid]="orderForm.get('supplierId')?.invalid &&
+                                      orderForm.get('supplierId')?.touched">
+            <option [ngValue]="null">-- Select Vendor --</option>
+            <option *ngFor="let s of suppliers" [ngValue]="s.supplierId">
+              {{ s.name }}
+            </option>
+          </select>
+          <div class="invalid-feedback">Vendor is required.</div>
+        </div>
+
+        <!-- Payment Type (mandatory) -->
+        <div class="col-md-2">
+          <label class="form-label fw-semibold" style="font-size:.85rem;">
+            Type <span class="text-danger">*</span>
+          </label>
+          <select class="form-select form-select-sm" formControlName="paymentType"
+                  [class.is-invalid]="orderForm.get('paymentType')?.invalid &&
+                                      orderForm.get('paymentType')?.touched">
+            <option value="">-- Select --</option>
+            <option value="Cash">Cash</option>
+            <option value="Credit">Credit</option>
+          </select>
+          <div class="invalid-feedback">Type is required.</div>
+        </div>
+
+        <!-- Stock Type -->
+        <div class="col-md-3">
+          <label class="form-label fw-semibold" style="font-size:.85rem;">Stock</label>
+          <select class="form-select form-select-sm" formControlName="stockType">
+            <option value="">-- All Stock --</option>
+            <option value="JobCard">Job Card Stock</option>
+            <option value="General">General Stock</option>
+          </select>
+        </div>
+
+        <!-- Remarks -->
+        <div class="col-md-3">
+          <label class="form-label fw-semibold" style="font-size:.85rem;">Remarks</label>
+          <input type="text" class="form-control form-control-sm"
+                 placeholder="Optional notes..."
+                 formControlName="remarks">
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 2 — SEARCH & ADD PART ROW
+       (same structure as estimation addItemForm)
+  ══════════════════════════════════════════════ -->
+  <div class="card mb-3">
+    <div class="row m-2 px-2" formGroupName="addItemForm">
+
+      <!-- Part Autocomplete -->
+      <div class="col-md-3">
+        <app-autocomplete placeholder="Search by Part Name / Part No"
+                          formControlName="search"
+                          [searchFn]="stockService.searchstock.bind(stockService)"
+                          (selected)="onSelectedPart($event)"
+                          (clearForm)="resetAddItemForm()">
+        </app-autocomplete>
+        <div class="text-danger small"
+             *ngIf="orderForm.get('addItemForm.search')?.touched &&
+                    orderForm.get('addItemForm.search')?.invalid">
+          Part is required
+        </div>
+      </div>
+
+      <!-- Qty -->
+      <div class="col-md-1">
+        <input appNumbersOnly class="form-control form-control-sm"
+               placeholder="Qty"
+               formControlName="qty"
+               [class.is-invalid]="orderForm.get('addItemForm.qty')?.invalid &&
+                                   orderForm.get('addItemForm.qty')?.touched">
+        <div class="invalid-feedback" style="font-size:.7rem;">
+          <span *ngIf="orderForm.get('addItemForm.qty')?.hasError('required')">Required</span>
+          <span *ngIf="orderForm.get('addItemForm.qty')?.hasError('min')">Min 1</span>
+        </div>
+      </div>
+
+      <!-- Unit Price -->
+      <div class="col-md-2">
+        <input appTwoDecimalNumbers class="form-control form-control-sm"
+               placeholder="Unit Price ₹"
+               formControlName="unitPrice">
+      </div>
+
+      <!-- Discount -->
+      <div class="col-md-2">
+        <input appTwoDecimalNumbers class="form-control form-control-sm"
+               placeholder="Discount ₹"
+               formControlName="discount">
+      </div>
+
+      <!-- Service Type -->
+      <div class="col-md-2">
+        <select class="form-select form-select-sm" formControlName="serviceType">
+          <option value="Part">Part</option>
+          <option value="Labour">Labour</option>
+        </select>
+      </div>
+
+      <!-- Add Button -->
+      <div class="col-md-2 d-flex align-items-start">
+        <button type="button"
+                class="btn btn-primary btn-sm mt-1"
+                (click)="addItem()">
+          <i class="bi bi-plus-lg me-1"></i> Add Item
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 3 — ORDER ITEMS TABLE
+  ══════════════════════════════════════════════ -->
+  <div class="table-responsive mt-3">
+    <table class="table table-bordered table-sm text-center align-middle">
+
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th class="text-start">Part Name</th>
+          <th>Part No.</th>
+          <th>Brand</th>
+          <th>Type</th>
+          <th>Qty</th>
+          <th>Unit Price ₹</th>
+          <th>Discount ₹</th>
+          <th>HSN</th>
+          <th>Tax %</th>
+          <th>Tax Amt ₹</th>
+          <th>Total ₹</th>
+          <th>Remarks</th>
+          <th>Seller Info</th>
+          <th>Del</th>
+        </tr>
+      </thead>
+
+      <tbody formArrayName="items">
+        <tr *ngFor="let item of items.controls; let i = index"
+            [formGroupName]="i">
+          <td>{{ i + 1 }}</td>
+          <td class="text-start">{{ item.value.partName }}</td>
+          <td>{{ item.value.partNo }}</td>
+          <td>{{ item.value.brand }}</td>
+          <td>{{ item.value.serviceType }}</td>
+
+          <!-- Editable Qty -->
+          <td>
+            <input appNumbersOnly
+                   class="form-control form-control-sm text-center"
+                   style="width:65px;margin:auto;"
+                   formControlName="qty"
+                   (input)="recalcRow(i)">
+          </td>
+
+          <!-- Editable Unit Price -->
+          <td>
+            <input appTwoDecimalNumbers
+                   class="form-control form-control-sm text-center"
+                   style="width:90px;margin:auto;"
+                   formControlName="unitPrice"
+                   (input)="recalcRow(i)">
+          </td>
+
+          <!-- Editable Discount -->
+          <td>
+            <input appTwoDecimalNumbers
+                   class="form-control form-control-sm text-center"
+                   style="width:80px;margin:auto;"
+                   formControlName="discount"
+                   (input)="recalcRow(i)">
+          </td>
+
+          <td>{{ item.value.hsnCode  || '—' }}</td>
+          <td>{{ item.value.taxPercent | number:'1.0-2' }}%</td>
+          <td>{{ item.value.taxAmount  | number:'1.2-2' }}</td>
+          <td class="fw-semibold text-end">{{ item.value.totalPurchasePrice | number:'1.2-2' }}</td>
+
+          <!-- Editable Remarks -->
+          <td>
+            <input type="text"
+                   class="form-control form-control-sm"
+                   style="min-width:100px;"
+                   placeholder="Remarks"
+                   formControlName="remarks">
+          </td>
+
+          <!-- Editable Seller Info -->
+          <td>
+            <input type="text"
+                   class="form-control form-control-sm"
+                   style="min-width:100px;"
+                   placeholder="Seller info"
+                   formControlName="sellerInfo">
+          </td>
+
+          <!-- Delete -->
+          <td>
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    (click)="removeRow(i)"
+                    title="Remove">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Empty state -->
+        <tr *ngIf="items.length === 0">
+          <td colspan="15" class="text-center text-muted py-4">
+            <i class="bi bi-inbox fs-4 d-block mb-1"></i>
+            No parts added yet. Search and add parts above.
+          </td>
+        </tr>
+      </tbody>
+
+      <!-- ── TOTALS FOOTER ── -->
+      <tfoot *ngIf="items.length > 0">
+        <tr>
+          <td colspan="7" class="text-end fw-bold">Total Discount:</td>
+          <td class="fw-bold text-end">{{ totalDiscountAmount | number:'1.2-2' }}</td>
+          <td colspan="7"></td>
+        </tr>
+        <tr>
+          <td colspan="9" class="text-end fw-bold">Total Tax:</td>
+          <td class="fw-bold text-end">{{ totalTaxAmount | number:'1.2-2' }}</td>
+          <td colspan="5"></td>
+        </tr>
+        <tr class="table-light">
+          <td colspan="11" class="text-end fw-bold fs-6">Grand Total ₹:</td>
+          <td class="fw-bold text-end fs-6 text-primary">{{ grandTotal | number:'1.2-2' }}</td>
+          <td colspan="3"></td>
+        </tr>
+      </tfoot>
+
+    </table>
+  </div>
+
+</form>
+
+<!-- ══════════════════════════════════════════════
+     FIXED BOTTOM TOOLBAR
+     (same fixed-bottom style as estimation page)
+══════════════════════════════════════════════ -->
+<div class="fixed-bottom bg-white border-top shadow-sm px-3 py-2
+            d-flex justify-content-between align-items-center"
+     style="z-index:99999999;">
+
+  <!-- LEFT: Back -->
+  <div>
+    <button class="btn btn-light btn-sm" (click)="goBack()">
+      <i class="bi bi-arrow-left me-1"></i> Back
+    </button>
+  </div>
+
+  <!-- RIGHT: Submit -->
+  <div class="d-flex align-items-center gap-3">
+    <!-- Item count badge -->
+    <span class="badge bg-secondary" *ngIf="items.length > 0">
+      {{ items.length }} part{{ items.length !== 1 ? 's' : '' }}
+      &nbsp;|&nbsp; ₹{{ grandTotal | number:'1.2-2' }}
+    </span>
+    <!-- Submit button — disabled until vendor + type + items are set -->
+    <button class="btn btn-success btn-sm"
+            [disabled]="submitting ||
+                        items.length === 0 ||
+                        orderForm.get('supplierId')?.invalid ||
+                        orderForm.get('paymentType')?.invalid"
+            (click)="submitOrder()">
+      <span *ngIf="!submitting">
+        <i class="bi bi-check-circle me-1"></i> Submit Order
+      </span>
+      <span *ngIf="submitting">
+        <span class="spinner-border spinner-border-sm me-1"></span> Saving...
+      </span>
+    </button>
+  </div>
+
+</div>
+
+<!-- spacer so content doesn't hide behind fixed toolbar -->
+<div style="height:70px;"></div>

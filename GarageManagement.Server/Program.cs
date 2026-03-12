@@ -44,6 +44,10 @@ namespace BrilliantMinds.Server
             builder.Services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
             builder.Services.AddScoped<IIssueRepository, IssueRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+            builder.Services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
+            builder.Services.AddScoped<IPurchaseOrderItemRepository, PurchaseOrderItemRepository>();
+            builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
 
             builder.Services.AddSwaggerGen();
 

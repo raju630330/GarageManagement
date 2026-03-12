@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../services/alert.service';
-import { ROLES } from '../constants/roles.constants';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JobCardService } from '../services/job-card.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,14 +10,8 @@ import { JobCardDto, PopupOption, PopupTabConfig, VehicleDetailsUI } from '../mo
 import { getToday } from '../shared/form-utils';
 import { HttpClient } from '@angular/common/http';
 import { LoaderService } from '../services/loader.service';
-import { StockComponent } from '../stock/stock.component';
-import { IssueComponent } from '../issue/issue.component';
-import { InwardComponent } from '../inward/inward.component';
-import { OrderComponent } from '../order/order.component';
 import { StockService } from '../services/stock.service';
 import { IssueService } from '../services/issue.service';
-
-
 
 @Component({
   selector: 'app-estimation',
@@ -50,32 +43,33 @@ export class EstimationComponent implements OnInit {
   showMenu = false;
   popupData: any = {};
 
-
-  /* -----------------------------------------
-     Reactive Form Setup
-  ----------------------------------------- */
   estimationForm!: FormGroup;
   previousJobCards: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private alert: AlertService, private jobcardService: JobCardService, private dialog: MatDialog, private router: Router, private http: HttpClient, private loader: LoaderService, public stockservice: StockService, public issueservice: IssueService
+    private alert: AlertService,
+    private jobcardService: JobCardService,
+    private dialog: MatDialog,
+    private router: Router,
+    private http: HttpClient,
+    private loader: LoaderService,
+    public stockservice: StockService,
+    public issueservice: IssueService
   ) { }
 
   ngOnInit(): void {
-
     this.estimationForm = this.fb.group({
       addItemForm: this.fb.group({
         search: ['', Validators.required],
         workshopState: ['', Validators.required],
-        quantity: [null, Validators.required],
-        unitPrice: [null, Validators.required],
+        quantity: [null, [Validators.required, Validators.min(1)]],  // FIX: added min(1)
+        unitPrice: [null, [Validators.required, Validators.min(0.01)]], // FIX: min(0.01)
         serviceType: ['', Validators.required]
       }),
-
       discountInput: [0],
       paidAmount: [0],
-
       items: this.fb.array([])
     });
 
@@ -87,26 +81,22 @@ export class EstimationComponent implements OnInit {
         this.loadPreviousJobCards(this.id);
       }
     });
-
   }
 
+  // ── Autocomplete ──────────────────────────────────────────────────────────
 
+  selectedPart: any = null;
 
-  //autocomplete
-
-  selectedPart: any; // Part selected from autocomplete
-
-  onSelectedPart(part: any) {
-    // part.id comes from autocomplete
+  onSelectedPart(part: any): void {
+    // part.id comes from autocomplete result
     this.stockservice.getPartById(part.id).subscribe({
-      next: (data : any) => {
+      next: (data: any) => {
         this.selectedPart = data;
-        // Fill form fields
+        // FIX: use data.sellingPrice for estimation (customer charge)
         this.addItemForm.patchValue({
           search: part.name,
-          workshopState: '',
-          unitPrice: data.sellingPrice,
-          quantity: 1                  
+          unitPrice: data.sellingPrice || 0,
+          quantity: 1
         });
       },
       error: (err) => {
@@ -115,21 +105,18 @@ export class EstimationComponent implements OnInit {
     });
   }
 
-  resetEntireForm() {
-    // Clear selected part
+  resetEntireForm(): void {
     this.selectedPart = null;
-
-    // Reset the add item form
     this.addItemForm.reset({
       search: '',
       workshopState: '',
       unitPrice: 0,
-      quantity: 0,      
-      serviceType: '', 
+      quantity: 0,
+      serviceType: '',
     });
   }
 
-  get addItemForm() {
+  get addItemForm(): FormGroup {
     return this.estimationForm.get('addItemForm') as FormGroup;
   }
 
@@ -137,10 +124,11 @@ export class EstimationComponent implements OnInit {
     return this.estimationForm.get('items') as FormArray;
   }
 
+  // ── Load Data ─────────────────────────────────────────────────────────────
+
   loadEstimationData(id: number): void {
     this.jobcardService.getEstimationDetails(id).subscribe({
       next: (res) => {
-
         this.vehicleDetails = {
           jobCardNumberForEstimation: res.vehicleData.jobCardNo,
           regNo: res.vehicleData.registrationNo,
@@ -156,11 +144,12 @@ export class EstimationComponent implements OnInit {
         };
 
         const itemsArray = this.items;
-        itemsArray.clear(); // remove old items
+        itemsArray.clear();
         if (res.estimation?.items?.length) {
           res.estimation.items.forEach((i: any) => {
             itemsArray.push(this.fb.group({
               id: [i.id],
+              partId: [i.partId],
               name: [i.name, Validators.required],
               type: [i.type, Validators.required],
               partNo: [i.partNo, Validators.required],
@@ -190,17 +179,161 @@ export class EstimationComponent implements OnInit {
         };
 
         this.calculateTotals();
-
       },
       error: (err) => console.error(err)
     });
   }
 
+  // ── Add Item ──────────────────────────────────────────────────────────────
 
+  addItem(): void {
+    if (this.addItemForm.invalid) {
+      this.addItemForm.markAllAsTouched();
+      this.alert.showError('Please fill all required fields before adding the item.');
+      return;
+    }
 
-  /* -----------------------------------------
-   Service Categories
------------------------------------------ */
+    if (!this.selectedPart) {
+      this.alert.showError('Please select a Part before adding.');
+      return;
+    }
+
+    const { quantity, serviceType } = this.addItemForm.value;
+    const part = this.selectedPart;
+
+    // FIX: all validations added
+    if (quantity <= 0) {
+      this.alert.showError('Quantity must be greater than 0');
+      return;
+    }
+
+    if ((part.sellingPrice || 0) <= 0) {
+      this.alert.showError('Part has no selling price. Please update the part first.');
+      return;
+    }
+
+    // FIX: taxPercent from part, not hardcoded 10
+    const taxPercent = part.taxPercent || 0;
+    const baseAmount = quantity * part.sellingPrice;
+    const taxAmount = +(baseAmount * taxPercent / 100).toFixed(2);
+    const total = +(baseAmount + taxAmount).toFixed(2);
+
+    const item = this.fb.group({
+      jobCardId: [this.id],
+      id: [0],
+      partId: [part.partId],           // FIX: part.partId not part.id
+      name: [part.partName],
+      type: [serviceType],
+      partNo: [part.partNo],
+      brand: [part.brand],
+      quantity: [quantity],
+      rate: [part.sellingPrice],
+      discount: [0],
+      hSN: [part.hsnCode ?? ''],    // FIX: part.hsnCode not part.hsn
+      taxPercent: [taxPercent],            // FIX: from part not hardcoded
+      taxAmount: [taxAmount],
+      total: [total],
+      approval: ['Pending'],
+      reason: ['']
+    });
+
+    this.jobcardService.saveJobCardEstimation(item.value).subscribe({
+      next: (res) => {
+        if (res.isSuccess) {
+          this.items.push(item);
+          this.calculateTotals();
+          this.resetEntireForm();
+        } else {
+          this.alert.showError(res.message);
+        }
+      },
+      error: () => {
+        this.alert.showError('Internal server error');
+      }
+    });
+  }
+
+  // ── Remove Row ────────────────────────────────────────────────────────────
+
+  removeRow(index: number): void {
+    this.alert.confirm('Are you sure you want to remove this row?', () => {
+      this.items.removeAt(index);
+      this.calculateTotals();
+    });
+  }
+
+  // ── Totals ────────────────────────────────────────────────────────────────
+
+  totalDiscountAmount = 0;
+  totalTaxAmount = 0;
+  grossAmount = 0;
+  netPayableAmount = 0;
+  roundOffAmount = 0;
+  balanceAmount = 0;
+
+  calculateTotals(): void {
+    const items = this.items.controls as FormGroup[];
+
+    this.totalDiscountAmount = items.reduce(
+      (sum, item) => sum + (+item.get('discount')?.value || 0), 0
+    );
+
+    this.totalTaxAmount = items.reduce(
+      (sum, item) => sum + (+item.get('taxAmount')?.value || 0), 0
+    );
+
+    this.grossAmount = items.reduce(
+      (sum, item) => sum + (+item.get('total')?.value || 0), 0
+    );
+
+    this.estimationForm.get('discountInput')?.setValue(
+      this.totalDiscountAmount, { emitEvent: false }
+    );
+
+    const discountInput = this.totalDiscountAmount || 0;
+    const paidAmount = this.estimationForm.value.paidAmount || 0;
+    const afterDiscount = this.grossAmount - discountInput;
+
+    this.roundOffAmount = +(Math.round(afterDiscount) - afterDiscount).toFixed(2);
+    this.netPayableAmount = afterDiscount + this.roundOffAmount;
+    this.balanceAmount = this.netPayableAmount - paidAmount;
+  }
+
+  // ── UI Toggles ────────────────────────────────────────────────────────────
+
+  toggleMenu(): void { this.showMenu = !this.showMenu; }
+  toggleContent(): void { this.showCanvas = !this.showCanvas; }
+
+  selectCategory(cat: any): void {
+    this.addItemForm.get('search')?.setValue(cat.label);
+  }
+
+  loadPreviousJobCards(id: number): void {
+    this.previousJobCards = this.jobcardService.getPreviousJobCards(id);
+  }
+
+  openPreviousJobCardsPopup(): void {
+    if (!this.previousJobCards || this.previousJobCards.length === 0) {
+      this.openPopup('Previous Job Cards (R)', { Message: 'No previous job cards found.' });
+      return;
+    }
+    const formatted = this.previousJobCards.map(jc => ({
+      jobCardNo: jc.jobCardNo,
+      date: jc.date?.split('T')[0],
+      status: jc.status
+    }));
+    this.openPopup('Previous Job Cards (R)', { fieldsArray: formatted });
+  }
+
+  openPopup(title: string, data: any): void {
+    this.dialog.open(GlobalPopupComponent, {
+      width: '600px',
+      data: { title, ...data }
+    });
+  }
+
+  // ── Service Categories ────────────────────────────────────────────────────
+
   serviceCategories = [
     { key: 'packages', label: 'Packages', icon: 'bi-box-seam' },
     { key: 'parts', label: 'Relevant Parts', icon: 'bi-gear' },
@@ -226,171 +359,6 @@ export class EstimationComponent implements OnInit {
     { key: 'accessories', label: 'Accessories', icon: 'bi-bag-plus' }
   ];
 
-
-
-  /* -----------------------------------------
-     Add Item (Reactive)
-  ----------------------------------------- */
-  addItem(): void {
-
-    if (this.addItemForm.invalid) {
-      this.addItemForm.markAllAsTouched();
-      this.alert.showError('Please fill all required fields before adding the item.');
-      return;
-    }
-    if (!this.selectedPart) {
-      this.alert.showError('Please select a Part before adding.');
-      return;
-    }
-
-    const { quantity, serviceType } = this.addItemForm.value;
-
-    // Use selected part values
-    const part = this.selectedPart;
-
-    const taxPercent = 10;
-    const baseAmount = quantity * part.sellingPrice;  // Use part selling price
-    const taxAmount = (baseAmount * taxPercent) / 100;
-    const total = baseAmount + taxAmount;
-
-    const item = this.fb.group({
-      jobCardId: this.id,
-      id : [0],
-      partId: [part.id],         // save partId instead of name/free text
-      name: [part.partName],
-      type: [serviceType],
-      partNo: [part.partNo],
-      brand: [part.brand],
-      quantity: [quantity],
-      rate: [part.sellingPrice],
-      discount: [0],
-      hSN: [part.hsn ?? '9987'], // use part HSN if exists
-      taxPercent: [taxPercent],
-      taxAmount: [taxAmount],
-      total: [total],
-      approval: ['Pending'],
-      reason: ['']
-    });
-
-    this.jobcardService.saveJobCardEstimation(item.value).subscribe({
-      next: (res) => {
-        if (res.isSuccess) {
-          this.items.push(item);
-          this.calculateTotals();
-          this.resetEntireForm();
-        }
-        else {
-          this.alert.showError(res.message);
-          return;
-        }
-        
-      },
-      error: (error) => {
-        this.alert.showError("Internal server error");
-        return;
-      }
-    });
-  }
-
-  /* -----------------------------------------
-     Remove Row
-  ----------------------------------------- */
-  removeRow(index: number): void {
-    this.alert.confirm('Are you sure you want to remove this row?', () => {
-      this.items.removeAt(index);
-      this.calculateTotals();
-    });
-  }
-
-  totalDiscountAmount = 0;
-  totalTaxAmount = 0;
-  grossAmount = 0;
-  netPayableAmount = 0;
-  roundOffAmount = 0;
-  balanceAmount = 0;
-
-  /* -----------------------------------------
-     Totals Calculation
-  ----------------------------------------- */
-
-  calculateTotals(): void {
-    const items = this.items.controls as FormGroup[];
-
-    this.totalDiscountAmount = items.reduce(
-      (sum, item) => sum + (+item.get('discount')?.value || 0),
-      0
-    );
-
-    this.totalTaxAmount = items.reduce(
-      (sum, item) => sum + (+item.get('taxAmount')?.value || 0),
-      0
-    );
-
-    this.grossAmount = items.reduce(
-      (sum, item) => sum + (+item.get('total')?.value || 0),
-      0
-    );
-
-    this.estimationForm.get('discountInput')?.setValue(
-      this.totalDiscountAmount,
-      { emitEvent: false }
-    );
-
-    const discountInput = this.totalDiscountAmount || 0;
-    const paidAmount = this.estimationForm.value.paidAmount || 0;
-
-    const afterDiscount = this.grossAmount - discountInput;
-
-    this.roundOffAmount = +(
-      Math.round(afterDiscount) - afterDiscount
-    ).toFixed(2);
-
-    this.netPayableAmount = afterDiscount + this.roundOffAmount;
-
-    this.balanceAmount = this.netPayableAmount - paidAmount;
-  }
-
-
-  /* -----------------------------------------
-     UI Toggles
-  ----------------------------------------- */
-  toggleMenu(): void {
-    this.showMenu = !this.showMenu;
-  }
-
-  toggleContent(): void {
-    this.showCanvas = !this.showCanvas;
-  }
-
-  selectCategory(cat: any): void {
-    this.addItemForm.get('search')?.setValue(cat.label);
-  }
-
-  loadPreviousJobCards(id: number) {
-    this.previousJobCards = this.jobcardService.getPreviousJobCards(id);
-  }
-  openPreviousJobCardsPopup() {
-    if (!this.previousJobCards || this.previousJobCards.length === 0) {
-      this.openPopup("Previous Job Cards (R)", { Message: "No previous job cards found." });
-      return;
-    }
-
-    const formatted = this.previousJobCards.map(jc => ({
-      jobCardNo: jc.jobCardNo,
-      date: jc.date?.split('T')[0],
-      status: jc.status
-    }));
-
-    this.openPopup("Previous Job Cards (R)", { fieldsArray: formatted });
-  }
-
-  openPopup(title: string, data: any) {
-    this.dialog.open(GlobalPopupComponent, {
-      width: '600px',
-      data: { title, ...data }
-    });
-  }
-
   tyreBrands: PopupOption[] = [
     { label: 'MRF', value: 'MRF' },
     { label: 'Apollo', value: 'Apollo' },
@@ -411,9 +379,7 @@ export class EstimationComponent implements OnInit {
       allowDelete: true,
       columns: [
         {
-          field: 'type',
-          header: 'Type',
-          type: 'select',
+          field: 'type', header: 'Type', type: 'select',
           options: [
             { label: 'Select Type', value: null },
             { label: 'Tyre', value: 'Tyre' },
@@ -422,35 +388,21 @@ export class EstimationComponent implements OnInit {
           validators: [Validators.required]
         },
         {
-          field: 'brand',
-          header: 'Brand',
-          type: 'select',
+          field: 'brand', header: 'Brand', type: 'select',
           options: [{ label: 'Select Brand', value: null }],
           validators: [Validators.required],
           getOptions: (row: any): PopupOption[] => {
-            const base: PopupOption[] = [
-              { label: 'Select Brand', value: null }
-            ];
-
-            if (row.type === 'Tyre') {
-              return base.concat(this.tyreBrands);
-            }
-
-            if (row.type === 'Battery') {
-              return base.concat(this.batteryBrands);
-            }
-
+            const base: PopupOption[] = [{ label: 'Select Brand', value: null }];
+            if (row.type === 'Tyre') return base.concat(this.tyreBrands);
+            if (row.type === 'Battery') return base.concat(this.batteryBrands);
             return base;
           }
-
         },
         { field: 'model', header: 'Model', type: 'text', validators: [Validators.required] },
         { field: 'manufactureDate', header: 'Mfg Date', type: 'date', validators: [Validators.required], maxDate: getToday() },
         { field: 'expiryDate', header: 'Expiry Date', type: 'date', validators: [Validators.required], minDate: getToday() },
         {
-          field: 'condition',
-          header: 'Condition',
-          type: 'select',
+          field: 'condition', header: 'Condition', type: 'select',
           options: [
             { label: 'Select', value: null },
             { label: 'Good', value: 'Good' },
@@ -472,11 +424,7 @@ export class EstimationComponent implements OnInit {
         { field: 'amount', header: 'Amount', type: 'number', validators: [Validators.required, Validators.min(0)] }
       ]
     },
-    {
-      tabKey: 'serviceSuggestions',
-      label: 'SERVICE SUGGESTIONS',
-      isTextarea: true
-    },
+    { tabKey: 'serviceSuggestions', label: 'SERVICE SUGGESTIONS', isTextarea: true },
     {
       tabKey: 'collections',
       label: 'COLLECTIONS',
@@ -484,9 +432,7 @@ export class EstimationComponent implements OnInit {
       allowDelete: true,
       columns: [
         {
-          field: 'type',
-          header: 'Payment Type',
-          type: 'select',
+          field: 'type', header: 'Payment Type', type: 'select',
           options: [
             { label: 'Select', value: null },
             { label: 'Cash', value: 'Cash' },
@@ -496,9 +442,7 @@ export class EstimationComponent implements OnInit {
           validators: [Validators.required]
         },
         {
-          field: 'bank',
-          header: 'Bank',
-          type: 'select',
+          field: 'bank', header: 'Bank', type: 'select',
           options: [
             { label: 'Select', value: null },
             { label: 'HDFC', value: 'HDFC' },
@@ -514,15 +458,10 @@ export class EstimationComponent implements OnInit {
         { field: 'remarks', header: 'Remarks', type: 'text', validators: [Validators.required] }
       ]
     },
-    {
-      tabKey: 'remarks',
-      label: 'REMARKS',
-      isTextarea: true
-    }
+    { tabKey: 'remarks', label: 'REMARKS', isTextarea: true }
   ];
 
-
-  openPopupForBottomMenu(label: string) {
+  openPopupForBottomMenu(label: string): void {
     const tab = this.popupTabs.find(t => t.label === label);
     if (!tab) return;
 
@@ -534,7 +473,7 @@ export class EstimationComponent implements OnInit {
         tabs: this.popupTabs,
         popupData: this.popupData || {},
         activeTabKey: tab.tabKey,
-        jobCardId: this.id  
+        jobCardId: this.id
       }
     });
 
@@ -545,19 +484,18 @@ export class EstimationComponent implements OnInit {
     });
   }
 
+  // ── Mark Job as Done ──────────────────────────────────────────────────────
 
-
-  markJobAsDone() {
+  markJobAsDone(): void {
     if (!this.id) {
-      this.alert.showError("Job Card ID is missing. Please reload and try again.");
+      this.alert.showError('Job Card ID is missing. Please reload and try again.');
       return;
     }
 
     this.issueservice.getPendingIssues(this.id).subscribe({
       next: (res) => {
-
         if (!res.isSuccess) {
-          this.alert.showError("Unable to verify pending items.");
+          this.alert.showError('Unable to verify pending items.');
           return;
         }
 
@@ -568,7 +506,6 @@ export class EstimationComponent implements OnInit {
           return;
         }
 
-        // ✅ Prepare DTO
         const dto = {
           jobCardId: this.id,
           discountInput: this.totalDiscountAmount,
@@ -578,7 +515,7 @@ export class EstimationComponent implements OnInit {
           balanceAmount: this.balanceAmount,
           roundOffAmount: this.roundOffAmount,
           items: this.items.controls.map((item: any) => ({
-            itemId: item.value.id,  
+            itemId: item.value.id,
             discount: item.value.discount
           }))
         };
@@ -586,23 +523,25 @@ export class EstimationComponent implements OnInit {
         this.jobcardService.completeJobCard(dto).subscribe({
           next: (response: any) => {
             if (response.isSuccess) {
-              this.alert.showSuccess("Job marked as completed successfully.");
+              this.alert.showSuccess('Job marked as completed successfully.');
               this.router.navigate(['/jobcardlist']);
             } else {
               this.alert.showError(response.message);
             }
           },
           error: () => {
-            this.alert.showError("Internal server error.");
+            this.alert.showError('Internal server error.');
           }
         });
       }
     });
-  }  cancelJobCard() {
-    this.alert.showInfo("Job Card Cancelled");
-    this.router.navigate(['/jobcardlist']);
-    return;
   }
+
+  cancelJobCard(): void {
+    this.alert.showInfo('Job Card Cancelled');
+    this.router.navigate(['/jobcardlist']);
+  }
+
   getTabLabel(tabKey: string): string {
     return this.popupTabs.find(t => t.tabKey === tabKey)?.label || tabKey;
   }
@@ -613,94 +552,52 @@ export class EstimationComponent implements OnInit {
     return col?.header || field;
   }
 
-  openWorkOrderPdf() {
-    // Force loader to render immediately
-    setTimeout(() => this.loader.show(), 0);
+  // ── PDF Printing ──────────────────────────────────────────────────────────
 
-    this.http.get(
-      `https://localhost:7086/api/reports/work-order/${this.id}`,
-      { responseType: 'blob' }
-    ).subscribe(
-      pdfBlob => {
-        const fileURL = URL.createObjectURL(pdfBlob);
-        this.printPdfInIframe(fileURL);
-      },
-      error => {
-        this.loader.hide();
-        this.alert.showError('Error loading PDF');
-      }
-    );
+  openWorkOrderPdf(): void {
+    setTimeout(() => this.loader.show(), 0);
+    this.http.get(`https://localhost:7086/api/reports/work-order/${this.id}`, { responseType: 'blob' })
+      .subscribe(
+        pdfBlob => this.printPdfInIframe(URL.createObjectURL(pdfBlob)),
+        () => { this.loader.hide(); this.alert.showError('Error loading PDF'); }
+      );
   }
-  openEstimationPdf() {
 
-    // Force loader to render immediately
+  openEstimationPdf(): void {
     setTimeout(() => this.loader.show(), 0);
-
-    this.http.get(
-      `https://localhost:7086/api/reports/estimate/${this.id}`,
-      { responseType: 'blob' }
-    ).subscribe(
-      pdfBlob => {
-        const fileURL = URL.createObjectURL(pdfBlob);
-        this.printPdfInIframe(fileURL);
-      },
-      error => {
-        this.loader.hide();
-        this.alert.showError('Error loading PDF');
-      }
-    );
+    this.http.get(`https://localhost:7086/api/reports/estimate/${this.id}`, { responseType: 'blob' })
+      .subscribe(
+        pdfBlob => this.printPdfInIframe(URL.createObjectURL(pdfBlob)),
+        () => { this.loader.hide(); this.alert.showError('Error loading PDF'); }
+      );
   }
-  openGatePassPdf() {
 
-    // Force loader to render immediately
+  openGatePassPdf(): void {
     setTimeout(() => this.loader.show(), 0);
-
-    this.http.get(
-      `https://localhost:7086/api/reports/gatepass/${this.id}`,
-      { responseType: 'blob' }
-    ).subscribe(
-      pdfBlob => {
-        const fileURL = URL.createObjectURL(pdfBlob);
-        this.printPdfInIframe(fileURL);
-      },
-      error => {
-        this.loader.hide();
-        this.alert.showError('Error loading PDF');
-      }
-    );
+    this.http.get(`https://localhost:7086/api/reports/gatepass/${this.id}`, { responseType: 'blob' })
+      .subscribe(
+        pdfBlob => this.printPdfInIframe(URL.createObjectURL(pdfBlob)),
+        () => { this.loader.hide(); this.alert.showError('Error loading PDF'); }
+      );
   }
 
   private printPdfInIframe(fileURL: string): void {
-    // Remove old iframe if exists
     const oldIframe = document.getElementById('pdf-print-iframe') as HTMLIFrameElement;
-    if (oldIframe) {
-      oldIframe.remove();
-    }
+    if (oldIframe) oldIframe.remove();
 
-    // Create hidden iframe
     const iframe = document.createElement('iframe');
     iframe.id = 'pdf-print-iframe';
-    iframe.style.position = 'fixed';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = '0';
+    iframe.style.cssText = 'position:fixed;width:0;height:0;border:0;';
     iframe.src = fileURL;
-
     document.body.appendChild(iframe);
 
-    const minLoaderTime = 800; // ms
     const startTime = Date.now();
-
     iframe.onload = () => {
-      const elapsed = Date.now() - startTime;
-      const remaining = minLoaderTime - elapsed;
-
+      const remaining = 800 - (Date.now() - startTime);
       setTimeout(() => {
         this.loader.hide();
         iframe.contentWindow?.focus();
         iframe.contentWindow?.print();
-
-        // Cleanup after print
         iframe.contentWindow!.onafterprint = () => {
           iframe.remove();
           URL.revokeObjectURL(fileURL);
@@ -709,4 +606,31 @@ export class EstimationComponent implements OnInit {
     };
   }
 
+  // ── Order Parts ───────────────────────────────────────────────────────────
+
+  orderParts(): void {
+    if (this.items.length === 0) {
+      alert('No parts available to order.');
+      return;
+    }
+
+    const partIds = this.items.controls
+      .map(c => c.value.partId)
+      .filter(Boolean);
+
+    if (partIds.length === 0) {
+      alert('No parts found to order.');
+      return;
+    }
+
+    this.router.navigate(['/order'], {
+      queryParams: {
+        source: 'estimation',
+        jobCardId: this.id,
+        regNo: this.vehicleDetails.regNo,
+        jobCardNo: this.vehicleDetails.jobCardNumberForEstimation,
+        partIds: partIds.join(',')
+      }
+    });
+  }
 }

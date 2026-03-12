@@ -4,6 +4,7 @@ using GarageManagement.Server.RepoInterfaces;
 using GarageManagement.Server.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace GarageManagement.Server.Controllers
 {
@@ -142,7 +143,23 @@ namespace GarageManagement.Server.Controllers
                     PartNo = p.PartNo,
                     PartName = p.PartName,
                     Brand = p.Brand,
-                    SellingPrice = p.StockMovements.Sum(sm => sm.Quantity > 0 ? sm.SellingPrice : 0), // or latest price
+                    TaxPercent = p.TaxPercent,
+                    HsnCode = "",
+
+                    // Estimation uses this → latest selling price
+                    SellingPrice = p.StockMovements
+                                    .Where(sm => sm.Quantity > 0)
+                                    .OrderByDescending(sm => sm.TransactionDate)
+                                    .Select(sm => sm.SellingPrice)
+                                    .FirstOrDefault(),
+
+                    // Order module uses this → latest purchase price
+                    PurchasePrice = p.StockMovements
+                                     .Where(sm => sm.TransactionType == "INWARD" && sm.Quantity > 0)
+                                     .OrderByDescending(sm => sm.TransactionDate)
+                                     .Select(sm => sm.PurchasePrice)
+                                     .FirstOrDefault(),
+
                     QtyOnHand = p.StockMovements.Sum(sm => sm.Quantity)
                 })
                 .FirstOrDefaultAsync();
@@ -153,11 +170,33 @@ namespace GarageManagement.Server.Controllers
 
         public class PartDto
         {
+            [JsonPropertyName("partId")]
             public long Id { get; set; }
+
+            [JsonPropertyName("partNo")]
             public string PartNo { get; set; } = string.Empty;
+
+            [JsonPropertyName("partName")]
             public string PartName { get; set; } = string.Empty;
+
+            [JsonPropertyName("brand")]
             public string Brand { get; set; } = string.Empty;
+
+            [JsonPropertyName("taxPercent")]
+            public decimal TaxPercent { get; set; }
+
+            [JsonPropertyName("hsnCode")]
+            public string HsnCode { get; set; } = string.Empty;
+
+            // Used by Estimation module (charge to customer)
+            [JsonPropertyName("sellingPrice")]
             public decimal SellingPrice { get; set; }
+
+            // Used by Order module (pay to supplier)
+            [JsonPropertyName("purchasePrice")]
+            public decimal PurchasePrice { get; set; }
+
+            [JsonPropertyName("qtyOnHand")]
             public decimal QtyOnHand { get; set; }
         }
 

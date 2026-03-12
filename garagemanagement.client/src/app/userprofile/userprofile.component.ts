@@ -58,8 +58,8 @@ export class UserprofileComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('tabScroll') tabScroll!: ElementRef;
 
   // ── Idle config ───────────────────────────────────────────────────────
-  readonly idleTimeout = 10_000;  // ms of inactivity before popup (1 min)
-  readonly countdownFrom = 5;      // seconds before auto-logout
+  readonly idleTimeout = 120_000;  // ms of inactivity before popup (1 min)
+  readonly countdownFrom = 30;      // seconds before auto-logout
 
   // ── Idle state ────────────────────────────────────────────────────────
   showIdlePopup = false;

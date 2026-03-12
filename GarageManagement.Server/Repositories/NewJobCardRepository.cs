@@ -247,6 +247,7 @@ namespace GarageManagement.Server.Repositories
                     Items = estimationItems.Select(i => new EstimationItemDto
                     {
                         Id = i.Id,
+                        PartId = i.PartId,
                         Name = i.Part?.PartName,
                         Type = i.Type,
                         PartNo = i.Part?.PartNo,
