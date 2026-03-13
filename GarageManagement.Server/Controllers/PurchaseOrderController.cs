@@ -19,8 +19,6 @@ namespace GarageManagement.Server.Controllers
         private readonly IPurchaseOrderItemRepository _itemRepo;
         private readonly IStockMovementRepository _stockRepo;
         private readonly ISupplierRepository _supplierRepo;
-
-        // Only for Part + JobCard validation (no separate Part repo yet)
         private readonly ApplicationDbContext _db;
 
         public PurchaseOrderController(
@@ -38,7 +36,6 @@ namespace GarageManagement.Server.Controllers
         }
 
         // ── POST /api/purchaseorder ──────────────────────────────────────────
-        // Called by Angular order.component.ts → submitOrder()
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto dto)
         {
@@ -48,15 +45,12 @@ namespace GarageManagement.Server.Controllers
             var workshopId = GetWorkshopId();
             var userId = GetUserId();
 
-            // 1. Validate Supplier
             if (!await _supplierRepo.ExistsAsync(dto.SupplierId, workshopId))
                 return BadRequest(new CreateOrderResponse { IsSuccess = false, Message = "Supplier not found or inactive" });
 
-            // 2. Validate PaymentType
             if (dto.PaymentType != "Cash" && dto.PaymentType != "Credit")
                 return BadRequest(new CreateOrderResponse { IsSuccess = false, Message = "PaymentType must be Cash or Credit" });
 
-            // 3. Validate all Part IDs in one DB call
             var partIds = dto.Items.Select(i => i.PartId).Distinct().ToList();
             var validParts = await _db.Parts
                 .Where(p => partIds.Contains(p.Id) && p.WorkshopId == workshopId && p.IsActive)
@@ -65,7 +59,6 @@ namespace GarageManagement.Server.Controllers
             if (validParts.Count != partIds.Count)
                 return BadRequest(new CreateOrderResponse { IsSuccess = false, Message = "One or more parts are invalid or inactive" });
 
-            // 4. Item-level discount rule
             foreach (var item in dto.Items)
             {
                 if (item.Discount > item.Qty * item.UnitPrice)
@@ -76,22 +69,18 @@ namespace GarageManagement.Server.Controllers
                     });
             }
 
-            // 5. Validate JobCard if provided
             if (dto.JobCardId.HasValue)
             {
                 var jcExists = await _db.JobCards
                     .AnyAsync(j => j.Id == dto.JobCardId.Value && j.WorkshopId == workshopId);
-
                 if (!jcExists)
                     return BadRequest(new CreateOrderResponse { IsSuccess = false, Message = "Job card not found" });
             }
 
-            // 6. Generate Order Number
             var latestNo = await _orderRepo.GetLatestOrderNoAsync(workshopId);
             var orderNo = GenerateOrderNo(latestNo, workshopId);
             var now = DateTime.UtcNow;
 
-            // 7. Create PurchaseOrder
             var orderId = await _orderRepo.CreateAsync(new PurchaseOrder
             {
                 OrderNo = orderNo,
@@ -111,7 +100,6 @@ namespace GarageManagement.Server.Controllers
                 ModifiedOn = now
             });
 
-            // 8. Build Items + StockMovements
             var items = new List<PurchaseOrderItem>();
             var movements = new List<StockMovement>();
 
@@ -159,34 +147,151 @@ namespace GarageManagement.Server.Controllers
                 });
             }
 
-            // 9. Bulk insert items and stock movements
             await _itemRepo.AddRangeAsync(items);
             await _stockRepo.AddRangeAsync(movements);
 
-            return Ok(new CreateOrderResponse
-            {
-                IsSuccess = true,
-                OrderNo = orderNo,
-                Message = "Order created successfully"
-            });
+            return Ok(new CreateOrderResponse { IsSuccess = true, OrderNo = orderNo, Message = "Order created successfully" });
         }
 
         // ── GET /api/purchaseorder ───────────────────────────────────────────
+        // Angular sends: search, status, fromDate, toDate, page, pageSize
+        // These are bound individually because OrderFilterDto only has
+        // Status, RegNo, From (DateTime?), To (DateTime?) — no Search/Page/PageSize.
         [HttpGet]
-        public async Task<IActionResult> GetOrders([FromQuery] OrderFilterDto filter)
+        public async Task<IActionResult> GetOrders(
+            [FromQuery] string search = "",
+            [FromQuery] string status = "All",
+            [FromQuery] string fromDate = "",
+            [FromQuery] string toDate = "",
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var orders = await _orderRepo.GetAllAsync(GetWorkshopId(), filter);
-            return Ok(orders);
+            var workshopId = GetWorkshopId();
+
+            // Build the repo's OrderFilterDto using the fields it actually has.
+            // For status: repo filters exact match — pass empty string for "All"
+            //             so the repo WHERE clause is skipped (repo checks IsNullOrWhiteSpace).
+            // For search: repo only supports RegNo filter, so pass search there;
+            //             we do a broader in-memory filter on OrderNo + SupplierName below.
+            var repoFilter = new OrderFilterDto
+            {
+                Status = status == "All" ? null : status,
+                RegNo = string.IsNullOrWhiteSpace(search) ? null : search,
+                From = DateTime.TryParse(fromDate, out var f) ? f : (DateTime?)null,
+                To = DateTime.TryParse(toDate, out var t) ? t : (DateTime?)null,
+            };
+
+            // Repo call — returns IEnumerable<OrderListDto>
+            var all = (await _orderRepo.GetAllAsync(workshopId, repoFilter)).ToList();
+
+            // Broaden the search in-memory to also cover OrderNo and SupplierName
+            // (repo only filtered on RegNo above)
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim().ToLower();
+                all = all.Where(o =>
+                    (o.OrderNo ?? "").ToLower().Contains(term) ||
+                    (o.SupplierName ?? "").ToLower().Contains(term) ||
+                    (o.RegNo ?? "").ToLower().Contains(term)
+                ).ToList();
+            }
+
+            // Pagination
+            var totalRecords = all.Count;
+            var safePage = page > 0 ? page : 1;
+            var safePageSize = pageSize > 0 ? pageSize : 10;
+            var paged = all.Skip((safePage - 1) * safePageSize).Take(safePageSize).ToList();
+
+            // Map OrderListDto → camelCase shape Angular expects.
+            // OrderListDto has: Id, OrderNo, OrderDate (string "dd-MM-yyyy"),
+            //   SupplierName, RegNo, JobCardNo, OrderValue, OrderedParts,
+            //   InwardedParts, PendingParts, Status
+            var items = paged.Select(o => new
+            {
+                orderId = o.Id,
+                orderNo = o.OrderNo,
+                // Re-parse "dd-MM-yyyy" → ISO so Angular's date pipe works
+                orderDate = DateTime.TryParseExact(
+                                   o.OrderDate, "dd-MM-yyyy",
+                                   System.Globalization.CultureInfo.InvariantCulture,
+                                   System.Globalization.DateTimeStyles.None, out var d)
+                               ? d.ToString("yyyy-MM-ddTHH:mm:ss")
+                               : o.OrderDate,
+                supplierName = o.SupplierName,
+                regNo = o.RegNo,
+                jobCardNo = o.JobCardNo,
+                paymentType = o.PaymentType,          
+                stockType = o.StockType,           
+                status = o.Status,
+                totalAmount = o.OrderValue,
+                itemCount = o.OrderedParts,
+                orderedParts = o.OrderedParts,
+                inwardedParts = o.InwardedParts,
+                pendingParts = o.PendingParts
+            }).ToList();
+
+            return Ok(new { totalRecords, page = safePage, pageSize = safePageSize, items });
         }
 
         // ── GET /api/purchaseorder/{id} ──────────────────────────────────────
         [HttpGet("{id:long}")]
         public async Task<IActionResult> GetOrder(long id)
         {
-            var order = await _orderRepo.GetByIdAsync(id, GetWorkshopId());
-            return order == null
-                ? NotFound(new { message = "Order not found" })
-                : Ok(order);
+            var workshopId = GetWorkshopId();
+            var order = await _orderRepo.GetByIdAsync(id, workshopId);
+
+            if (order == null)
+                return NotFound(new { message = "Order not found" });
+
+            // GetByIdAsync already .Include(o => o.Items) so Items is populated.
+            // Parts are not included via navigation — load them separately.
+            var orderItems = order.Items ?? new List<PurchaseOrderItem>();
+            var partIds = orderItems.Select(i => i.PartId).Distinct().ToList();
+
+            var parts = partIds.Count > 0
+                ? await _db.Parts
+                    .Where(p => partIds.Contains(p.Id))
+                    .ToDictionaryAsync(p => p.Id)
+                : new Dictionary<long, Part>();
+
+            var dto = new
+            {
+                orderId = order.Id,
+                orderNo = order.OrderNo,
+                orderDate = order.OrderDate.ToString("yyyy-MM-ddTHH:mm:ss"),
+                supplierName = order.Supplier?.Name ?? "",
+                supplierPhone = order.Supplier?.Phone ?? "",
+                regNo = order.RegNo,
+                jobCardNo = order.JobCardNo,
+                paymentType = order.PaymentType,
+                stockType = order.StockType,
+                remarks = order.Remarks,
+                status = order.Status,
+                items = orderItems.Select(i =>
+                {
+                    parts.TryGetValue(i.PartId, out var part);
+                    return new
+                    {
+                        partId = i.PartId,
+                        partName = part?.PartName ?? "",
+                        partNo = part?.PartNo ?? "",
+                        brand = part?.Brand ?? "",
+                        hsnCode = "",
+                        taxPercent = i.TaxPercent,
+                        qty = i.Qty,
+                        unitPrice = i.UnitPrice,
+                        discount = i.Discount,
+                        taxAmount = i.TaxAmount,
+                        totalPurchasePrice = i.TotalPurchasePrice,
+                        serviceType = i.ServiceType,
+                        remarks = i.Remarks ?? "",
+                        sellerInfo = i.SellerInfo ?? "",
+                        inwardedQty = i.InwardedQty
+                    };
+                }).ToList()
+            };
+
+            return Ok(dto);
         }
 
         // ── PUT /api/purchaseorder/{id}/status ───────────────────────────────
@@ -200,6 +305,9 @@ namespace GarageManagement.Server.Controllers
             var order = await _orderRepo.GetByIdAsync(id, GetWorkshopId());
             if (order == null)
                 return NotFound(new { message = "Order not found" });
+
+            if (order.Status == "CLOSED")
+                return BadRequest(new { message = "Cannot change status of a closed order" });
 
             await _orderRepo.UpdateStatusAsync(id, dto.Status, GetUserId());
             return Ok(new { isSuccess = true, message = $"Status updated to {dto.Status}" });
@@ -231,11 +339,9 @@ namespace GarageManagement.Server.Controllers
                 if (idx >= 0 && int.TryParse(latest.Substring(idx + 4), out int parsed))
                     next = parsed + 1;
             }
-            // Prefix: first 3 letters of workshopId or hardcoded — adjust to match your pattern
             return $"SRT-STOR{next:D6}";
         }
 
-        // Replace with your actual JWT claim helpers
         private long GetWorkshopId() =>
             long.Parse(User.FindFirst("WorkshopId")?.Value ?? "0");
 

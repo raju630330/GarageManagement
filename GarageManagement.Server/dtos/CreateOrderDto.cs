@@ -94,6 +94,8 @@ namespace GarageManagement.Server.dtos
         public string SupplierName { get; set; } = string.Empty;
         public string RegNo { get; set; } = string.Empty;
         public string JobCardNo { get; set; } = string.Empty;
+        public string PaymentType { get; set; } = string.Empty;
+        public string StockType { get; set; } = string.Empty;
         public decimal OrderValue { get; set; }
         public int OrderedParts { get; set; }
         public int InwardedParts { get; set; }

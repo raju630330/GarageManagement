@@ -35,7 +35,10 @@ export class OrderComponent implements OnInit, OnDestroy {
   jobCardNo = '';
   source = '';
 
+  // Holds the full part detail fetched from the API after autocomplete selection.
+  // null while a fetch is in progress or nothing is selected.
   private _selectedPart: any = null;
+  loadingPart = false;   // used in template to disable Add Item while fetching
 
   constructor(
     private fb: FormBuilder,
@@ -64,10 +67,10 @@ export class OrderComponent implements OnInit, OnDestroy {
       remarks: ['', Validators.maxLength(200)],
 
       addItemForm: this.fb.group({
-        search: ['', Validators.required],
-        qty: [1, [Validators.required, Validators.min(1), Validators.max(99999)]],
-        unitPrice: [0, [Validators.required, Validators.min(0.01)]],  // FIX: min(0.01) not min(0)
-        discount: [0, [Validators.min(0)]],
+        search: [null, Validators.required],
+        qty: [null, [Validators.required, Validators.min(1), Validators.max(99999)]],
+        unitPrice: [null, [Validators.required, Validators.min(0.01)]],
+        discount: [null, [Validators.min(0)]],
         serviceType: ['Part', Validators.required]
       }),
 
@@ -94,15 +97,80 @@ export class OrderComponent implements OnInit, OnDestroy {
       });
   }
 
+  // ─── Autocomplete selected ────────────────────────────────────────────────
+  // The autocomplete emits a flat object:  { id: 11, name: "Engine Mount | ENG-011 | Qty: 6.00" }
+  // We fetch the full stock record by id to get purchasePrice, taxPercent, brand, hsnCode, etc.
+  onSelectedPart(autoItem: any): void {
+    if (!autoItem) return;
+
+    const partId: number = autoItem.id;
+
+    // Duplicate check using the id that is already available
+    if (this.items.controls.some(c => c.value.partId === partId)) {
+      alert('This part is already added.');
+      return;
+    }
+
+    this._selectedPart = null;
+    this.loadingPart = true;
+
+    this.http.get<any>(`${this.baseUrl}/stock/get/${partId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: fullPart => {
+          this.loadingPart = false;
+
+          if (!fullPart) {
+            alert('Part details could not be loaded.');
+            return;
+          }
+
+          // Normalise: the API might return partId or id
+          fullPart.partId = fullPart.partId ?? fullPart.id ?? partId;
+
+          // If the API doesn't return partName / partNo, fall back to parsing the
+          // autocomplete label:  "Engine Mount | ENG-011 | Qty: 6.00"
+          if (!fullPart.partName || !fullPart.partNo) {
+            const parsed = this.parseAutoLabel(autoItem.name);
+            fullPart.partName = fullPart.partName || parsed.partName;
+            fullPart.partNo = fullPart.partNo || parsed.partNo;
+          }
+
+          this._selectedPart = fullPart;
+
+          // Pre-fill purchase price so the user can see / override it
+          this.orderForm.get('addItemForm')!.patchValue({
+            unitPrice: fullPart.purchasePrice ?? null
+          });
+        },
+        error: () => {
+          this.loadingPart = false;
+          alert('Could not load part details. Please try again.');
+        }
+      });
+  }
+
+  // Parse "Engine Mount | ENG-011 | Qty: 6.00" → { partName, partNo }
+  private parseAutoLabel(label: string): { partName: string; partNo: string } {
+    const segments = (label || '').split('|').map(s => s.trim());
+    const partName = segments[0] || '';
+    // Second segment is the part number; strip any leading/trailing whitespace
+    const partNo = segments[1] || '';
+    return { partName, partNo };
+  }
+
+  // ─── Preload from query params ────────────────────────────────────────────
   private preloadPartById(partId: number): void {
-    // FIX: correct URL /api/stock/get/{id}
     this.http.get<any>(`${this.baseUrl}/stock/get/${partId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: part => {
           if (!part) return;
-          // FIX: use part.partId (not part.id), part.purchasePrice (not part.unitPrice)
+          part.partId = part.partId ?? part.id ?? partId;
           this.pushItemRow(part, 1, part.purchasePrice || 0, 0, 'Part');
+        },
+        error: () => {
+          alert(`Could not load part #${partId}. It may have been removed.`);
         }
       });
   }
@@ -116,77 +184,48 @@ export class OrderComponent implements OnInit, OnDestroy {
       });
   }
 
-  onSelectedPart(part: any): void {
-    if (!part) return;
-
-    const exists = this.items.controls
-      .some(c => c.value.partId === part.partId);
-
-    if (exists) {
-      alert('This part is already added.');
-      return;
-    }
-
-    this._selectedPart = part;
-
-    // FIX: pre-fill with purchasePrice, not sellingPrice
-    this.orderForm.get('addItemForm')!.patchValue({
-      unitPrice: part.purchasePrice || 0
-    });
-  }
-
   resetAddItemForm(): void {
     this.orderForm.get('addItemForm')!.reset({
-      search: '',
-      qty: 1,
-      unitPrice: 0,
-      discount: 0,
+      search: null,
+      qty: null,
+      unitPrice: null,
+      discount: null,
       serviceType: 'Part'
     });
     this._selectedPart = null;
+    this.loadingPart = false;
   }
 
+  // ─── Add item to table ────────────────────────────────────────────────────
   addItem(): void {
     const f = this.orderForm.get('addItemForm') as FormGroup;
     f.markAllAsTouched();
 
-    if (f.invalid) {
-      alert('Fill required fields');
-      return;
-    }
-
     if (!this._selectedPart) {
-      alert('Select part first');
+      alert(this.loadingPart
+        ? 'Part details are still loading. Please wait a moment.'
+        : 'Please search and select a part first.');
       return;
     }
 
-    const { qty, unitPrice, discount, serviceType } = f.value;
-
-    // FIX: added all missing validations
-    if (qty <= 0) {
-      alert('Quantity must be greater than 0');
-      return;
+    if (f.invalid) {
+      return;   // inline validation messages in the template handle feedback
     }
 
-    if (unitPrice <= 0) {
-      alert('Unit price must be greater than 0');
-      return;
-    }
-
-    if (discount < 0) {
-      alert('Discount cannot be negative');
-      return;
-    }
+    const qty = +f.value.qty;
+    const unitPrice = +f.value.unitPrice;
+    const discount = f.value.discount != null ? +f.value.discount : 0;
 
     if (discount >= qty * unitPrice) {
-      alert('Discount must be less than item total amount');
+      alert('Discount must be less than the item total (Qty × Unit Price).');
       return;
     }
 
-    this.pushItemRow(this._selectedPart, qty, unitPrice, discount, serviceType);
+    this.pushItemRow(this._selectedPart, qty, unitPrice, discount, f.value.serviceType);
     this.resetAddItemForm();
   }
 
+  // ─── Build a FormGroup row from a full part record ────────────────────────
   private pushItemRow(
     part: any,
     qty: number,
@@ -195,28 +234,27 @@ export class OrderComponent implements OnInit, OnDestroy {
     serviceType: string
   ): void {
     const taxPercent = part.taxPercent || 0;
-    const baseAmount = qty * unitPrice - discount;
+    const safeDiscount = isNaN(discount) ? 0 : discount;
+    const baseAmount = Math.max(0, qty * unitPrice - safeDiscount);
     const taxAmount = +(baseAmount * taxPercent / 100).toFixed(2);
     const total = +(baseAmount + taxAmount).toFixed(2);
 
-    const row = this.fb.group({
-      partId: [part.partId, Validators.required],  // FIX: part.partId not part.id
-      partName: [part.partName],
-      partNo: [part.partNo],
-      brand: [part.brand],
-      hsnCode: [part.hsnCode || ''],                // FIX: hsnCode not part.hsn
+    this.items.push(this.fb.group({
+      partId: [part.partId, Validators.required],
+      partName: [part.partName ?? ''],
+      partNo: [part.partNo ?? ''],
+      brand: [part.brand ?? ''],
+      hsnCode: [part.hsnCode ?? ''],
       taxPercent: [taxPercent],
       qty: [qty, [Validators.required, Validators.min(1)]],
-      unitPrice: [unitPrice, [Validators.required, Validators.min(0)]],
-      discount: [discount],
+      unitPrice: [unitPrice, [Validators.required, Validators.min(0.01)]],
+      discount: [safeDiscount],
       taxAmount: [taxAmount],
       totalPurchasePrice: [total],
       serviceType: [serviceType],
       remarks: [''],
       sellerInfo: ['']
-    });
-
-    this.items.push(row);
+    }));
   }
 
   recalcRow(i: number): void {
@@ -226,7 +264,7 @@ export class OrderComponent implements OnInit, OnDestroy {
     const disc = +row.value.discount || 0;
     const taxPct = +row.value.taxPercent || 0;
 
-    const base = qty * price - disc;
+    const base = Math.max(0, qty * price - disc);
     const taxAmt = +(base * taxPct / 100).toFixed(2);
     const total = +(base + taxAmt).toFixed(2);
 
@@ -243,39 +281,50 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   get grandTotal(): number {
     return +this.items.controls
-      .reduce((s, c) => s + (+c.value.totalPurchasePrice || 0), 0)
+      .reduce((s, c) => s + (isNaN(+c.value.totalPurchasePrice) ? 0 : +c.value.totalPurchasePrice), 0)
       .toFixed(2);
   }
 
   get totalTaxAmount(): number {
     return +this.items.controls
-      .reduce((s, c) => s + (+c.value.taxAmount || 0), 0)
+      .reduce((s, c) => s + (isNaN(+c.value.taxAmount) ? 0 : +c.value.taxAmount), 0)
       .toFixed(2);
   }
 
   get totalDiscountAmount(): number {
     return +this.items.controls
-      .reduce((s, c) => s + (+c.value.discount || 0), 0)
+      .reduce((s, c) => s + (isNaN(+c.value.discount) ? 0 : +c.value.discount), 0)
       .toFixed(2);
   }
 
   submitOrder(): void {
-  //  this.orderForm.markAllAsTouched();
+    // Touch only the order-level controls — NOT addItemForm.
+    // addItemForm is a transient input widget; after the user clicks "Add Item"
+    // the row appears in the table and addItemForm is reset to null/empty.
+    // markAllAsTouched() on the whole form would touch addItemForm.search
+    // (null after reset) and make orderForm.invalid = true, falsely
+    // blocking submit even when items are present.
+    this.orderForm.get('supplierId')?.markAsTouched();
+    this.orderForm.get('paymentType')?.markAsTouched();
 
-    //if (this.orderForm.invalid) {
-    //  alert('Fill required fields');
-    //  return;
-    //}
+    const orderInvalid =
+      this.orderForm.get('supplierId')?.invalid ||
+      this.orderForm.get('paymentType')?.invalid;
+
+    if (orderInvalid) {
+      alert('Please select a Vendor and Payment Type before submitting.');
+      return;
+    }
 
     if (this.items.length === 0) {
-      alert('Add parts first');
+      alert('Add at least one part before submitting.');
       return;
     }
 
     this.submitting = true;
 
     const payload = {
-      supplierId: +this.orderForm.value.supplierId,  // FIX: cast to number with +
+      supplierId: +this.orderForm.value.supplierId,
       paymentType: this.orderForm.value.paymentType,
       stockType: this.orderForm.value.stockType || '',
       remarks: this.orderForm.value.remarks || '',
@@ -299,12 +348,10 @@ export class OrderComponent implements OnInit, OnDestroy {
       .subscribe({
         next: res => {
           this.submitting = false;
-
           if (!res?.isSuccess) {
-            alert(res?.message || 'Order failed');
+            alert(res?.message || 'Order failed.');
             return;
           }
-
           this.successMessage = `Order ${res.orderNo} created successfully!`;
           this.items.clear();
           this.orderForm.patchValue({
@@ -313,7 +360,6 @@ export class OrderComponent implements OnInit, OnDestroy {
             stockType: '',
             remarks: ''
           });
-
           setTimeout(() => this.goBack(), 1500);
         },
         error: err => {
@@ -325,24 +371,12 @@ export class OrderComponent implements OnInit, OnDestroy {
 
   goBack(): void {
     switch (this.source) {
-      case 'estimation':
-        this.router.navigate(['/estimate', this.jobCardId]);
-        break;
-      case 'issue':
-        this.router.navigate(['/issue'], { queryParams: { jobCardId: this.jobCardId } });
-        break;
-      case 'inward':
-        this.router.navigate(['/inward']);
-        break;
-      case 'psf':
-        this.router.navigate(['/psf']);
-        break;
-      case 'upload':
-        this.router.navigate(['/upload-stock']);
-        break;
-      default:
-        this.router.navigate(['/stock']);
-        break;
+      case 'estimation': this.router.navigate(['/estimate', this.jobCardId]); break;
+      case 'issue': this.router.navigate(['/issue'], { queryParams: { jobCardId: this.jobCardId } }); break;
+      case 'inward': this.router.navigate(['/inward']); break;
+      case 'psf': this.router.navigate(['/psf']); break;
+      case 'upload': this.router.navigate(['/upload-stock']); break;
+      default: this.router.navigate(['/stock']); break;
     }
   }
 }

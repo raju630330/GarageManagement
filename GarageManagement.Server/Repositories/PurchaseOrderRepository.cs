@@ -25,7 +25,7 @@ namespace GarageManagement.Server.Repositories
             var query = _db.PurchaseOrders
                 .Include(o => o.Supplier)
                 .Include(o => o.Items)
-                .Where(o => o.WorkshopId == workshopId && o.RowState == 1)
+                .Where(o => o.WorkshopId == workshopId && o.RowState < 3)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filter.Status))
@@ -50,10 +50,12 @@ namespace GarageManagement.Server.Repositories
                     SupplierName = o.Supplier != null ? o.Supplier.Name : "",
                     RegNo = o.RegNo,
                     JobCardNo = o.JobCardNo,
+                    PaymentType = o.PaymentType,
+                    StockType = o.StockType,
                     OrderValue = o.Items.Sum(i => i.TotalPurchasePrice),
-                    OrderedParts = o.Items.Count(i => i.RowState == 1),
+                    OrderedParts = o.Items.Count(i => i.RowState < 3),
                     InwardedParts = o.Items.Count(i => i.InwardedQty > 0),
-                    PendingParts = o.Items.Count(i => i.InwardedQty < i.Qty && i.RowState == 1),
+                    PendingParts = o.Items.Count(i => i.InwardedQty < i.Qty && i.RowState < 3),
                     Status = o.Status
                 })
                 .ToListAsync();
@@ -66,13 +68,13 @@ namespace GarageManagement.Server.Repositories
                 .Include(o => o.Items)
                 .FirstOrDefaultAsync(o => o.Id == id
                                        && o.WorkshopId == workshopId
-                                       && o.RowState == 1);
+                                       && o.RowState < 3);
         }
 
         public async Task<string?> GetLatestOrderNoAsync(long workshopId)
         {
             return await _db.PurchaseOrders
-                .Where(o => o.WorkshopId == workshopId && o.RowState == 1)
+                .Where(o => o.WorkshopId == workshopId && o.RowState < 3)
                 .OrderByDescending(o => o.Id)
                 .Select(o => o.OrderNo)
                 .FirstOrDefaultAsync();
@@ -104,7 +106,7 @@ namespace GarageManagement.Server.Repositories
             if (order == null) return false;
 
             order.Status = "CANCELLED";
-            order.RowState = 0;
+            order.RowState = 3;
             order.ModifiedBy = userId;
             order.ModifiedOn = DateTime.UtcNow;
 
