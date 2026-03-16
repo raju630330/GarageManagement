@@ -58,6 +58,8 @@ namespace GarageManagement.Server.Data
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
         public DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
+        public DbSet<InwardNote> InwardNotes { get; set; }
+        public DbSet<InwardNoteItem> InwardNoteItems { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -526,6 +528,66 @@ namespace GarageManagement.Server.Data
                 e.HasOne(x => x.PurchaseOrder)
                  .WithMany(o => o.Items)
                  .HasForeignKey(x => x.PurchaseOrderId)
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<InwardNote>(e =>
+            {
+                e.ToTable("InwardNote");
+                e.HasKey(x => x.Id);
+
+                e.Property(x => x.InwardNo).IsRequired().IsUnicode();
+                e.Property(x => x.RegNo).IsRequired().IsUnicode();
+                e.Property(x => x.JobCardNo).IsUnicode();
+                e.Property(x => x.DeliveryReceipt).IsUnicode();
+                e.Property(x => x.BillNo).IsRequired().IsUnicode();
+                e.Property(x => x.BillDate).IsRequired();
+                e.Property(x => x.TaxType).IsRequired().IsUnicode();
+                e.Property(x => x.SupplierId).IsRequired();
+                e.Property(x => x.FreightAmount).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.TcsAmount).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.PaidAmount).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.RowState).IsRequired();
+                e.Property(x => x.ModifiedBy).IsRequired();
+                e.Property(x => x.ModifiedOn).IsRequired();
+
+                // FK → Supplier
+                e.HasOne(x => x.Supplier)
+                 .WithMany()
+                 .HasForeignKey(x => x.SupplierId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                // Unique: one InwardNo per workshop
+                e.HasIndex(x => new { x.WorkshopId, x.InwardNo }).IsUnique();
+            });
+
+            // ── InwardNoteItem ──────────────────────────────────────────────────────────
+            modelBuilder.Entity<InwardNoteItem>(e =>
+            {
+                e.ToTable("InwardNoteItem");
+                e.HasKey(x => x.Id);
+
+                e.Property(x => x.InwardNoteId).IsRequired();
+                e.Property(x => x.PartId).IsRequired();
+                e.Property(x => x.InwardQty).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.UnitPrice).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.Discount).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.TaxPercent).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.TaxAmount).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.TotalPurchasePrice).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.SellingPrice).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.Margin).IsRequired().HasColumnType("decimal(18,4)");
+                e.Property(x => x.RackNo).IsUnicode();
+                e.Property(x => x.Barcode).IsUnicode();
+                e.Property(x => x.Remarks).IsUnicode();
+                e.Property(x => x.RowState).IsRequired();
+                e.Property(x => x.ModifiedBy).IsRequired();
+                e.Property(x => x.ModifiedOn).IsRequired();
+
+                // FK → InwardNote (cascade delete items when header deleted)
+                e.HasOne(x => x.InwardNote)
+                 .WithMany(n => n.Items)
+                 .HasForeignKey(x => x.InwardNoteId)
                  .OnDelete(DeleteBehavior.Cascade);
             });
 

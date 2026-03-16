@@ -130,7 +130,8 @@ export class UserprofileComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       name: 'Parts', icon: 'bi bi-box-seam', module: 'Parts', permission: 'V',
       children: [
-        { name: 'Stock', icon: 'bi bi-boxes', route: '/stock', module: 'Stock', permission: 'V' }
+        { name: 'Stock', icon: 'bi bi-boxes', route: '/stock', module: 'Stock', permission: 'V' },
+        { name: 'Inward', icon: 'bi bi-box-arrow-in-down', route: '/inward', module: 'Inward', permission: 'V' }
       ]
     }
   ];

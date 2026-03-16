@@ -10,7 +10,7 @@ namespace GarageManagement.Server.RepoInterfaces
         Task<IList<IdNameDto>> SearchBookingCustomer(string query);
         Task<IList<IdNameDto>> SearchBookingAppointment(string query);
         Task<IList<IdNameDto>> SearchRepairOrder(string query);
-        Task<IList<IdNameDto>> SearchParts(string query);
+        Task<IEnumerable<IdNameDto>> SearchParts(string query, long workshopId);
         Task<IList<IdNameDto>> SearchWorkshops(string query);
         Task<IList<IdNameDto>> SearchUsers(string query);
     }

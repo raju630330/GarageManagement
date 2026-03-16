@@ -1,151 +1,395 @@
-<div class="container-fluid mt-3">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+<!-- ══════════════════════════════════════════════════════════════════
+     HEADER — document page 65
+     Shows Reg No + JC No if came from Job Card context
+     Shows search field + Stock checkbox if opened directly
+══════════════════════════════════════════════════════════════════ -->
+<div class="card mb-3">
+  <div class="card-body py-2">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-    <!-- Left Side: Inward Heading -->
-    <h3 class="mb-0">Inward</h3>
+      <!-- LEFT: Context info / search -->
+      <div class="d-flex align-items-center gap-3 flex-wrap">
 
-    <!-- Right Side: Vendor + + Button + Date -->
-    <div class="d-flex align-items-center gap-3">
-      <span class="fw-bold">Vendor:______________________</span>
-      <button class="btn btn-sm btn-primary">
-        <i class="bi bi-plus"></i>
-      </button>
-      <span class="fw-bold">Date : {{ today | date:'dd MMM yyyy' }}</span>
+        <!-- Breadcrumb -->
+        <span class="text-muted" style="font-size:.80rem;">
+          <i class="bi bi-house me-1"></i>Home &rsaquo; Inward
+        </span>
+
+        <!-- ── CASE A: Came from Job Card — show fixed context ── -->
+        <ng-container *ngIf="jobCardLinked && !isStockMode">
+          <span class="fw-semibold text-primary" style="font-size:.9rem;">
+            {{ regNo }}
+          </span>
+          <span class="text-muted" style="font-size:.85rem;">
+            JC: {{ jobCardNo }}
+          </span>
+          <span class="badge bg-success-subtle text-success border border-success-subtle">
+            <i class="bi bi-link-45deg me-1"></i>Job Card linked
+          </span>
+        </ng-container>
+
+        <!-- ── CASE B: Direct open — app-autocomplete for Job Card (document page 65) ── -->
+        <ng-container *ngIf="!jobCardLinked && !isStockMode">
+          <app-autocomplete placeholder="Search by JobCard No / Reg No / Customer / Mobile"
+                            [searchFn]="jobCardService.searchJobCardDetailsForEstimation.bind(jobCardService)"
+                            (selected)="onSelectedJobCard($event)"
+                            (clearForm)="resetJobCardForm()"
+                            style="min-width:320px;">
+          </app-autocomplete>
+        </ng-container>
+
+        <!-- ── STOCK CHECKBOX (document page 66) ── -->
+        <!-- Visible in direct mode; hidden (or disabled) when came from Job Card -->
+        <div class="form-check form-check-inline mb-0"
+             [class.opacity-50]="jobCardLinked && !isStockMode">
+          <input class="form-check-input" type="checkbox"
+                 id="stockCheck"
+                 [checked]="isStockMode"
+                 [disabled]="jobCardLinked && source !== ''"
+                 (change)="onStockCheckboxChange($any($event.target).checked)">
+          <label class="form-check-label fw-semibold" for="stockCheck"
+                 style="font-size:.85rem;">
+            Stock
+          </label>
+        </div>
+
+        <!-- Stock mode badge -->
+        <span *ngIf="isStockMode" class="badge bg-secondary">
+          <i class="bi bi-box me-1"></i>Direct Stock Inward
+        </span>
+
+      </div>
+
+      <!-- RIGHT: Date -->
+      <span class="text-muted" style="font-size:.82rem;">
+        <i class="bi bi-calendar2 me-1"></i>{{ todayDate | date:'dd MMM yyyy' }}
+      </span>
+
     </div>
+  </div>
+</div>
 
+<!-- Success message -->
+<div class="alert alert-success d-flex align-items-center gap-2 mb-3" *ngIf="successMessage">
+  <i class="bi bi-check-circle-fill fs-5"></i>
+  <strong>{{ successMessage }}</strong>
+  <span class="ms-1 text-muted" style="font-size:.82rem;">Redirecting…</span>
+</div>
+
+<form [formGroup]="inwardForm">
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 1 — INWARD HEADER FIELDS  (document page 66)
+       Delivery Receipt | Bill No* | Bill Date* | Tax Type* | Vendor*
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row g-3">
+
+        <div class="col-md-2">
+          <label class="form-label fw-semibold" style="font-size:.85rem;">Delivery Receipt</label>
+          <input type="text" class="form-control form-control-sm"
+                 placeholder="DR No. (optional)" formControlName="deliveryReceipt">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label fw-semibold" style="font-size:.85rem;">
+            Bill No <span class="text-danger">*</span>
+          </label>
+          <input type="text" class="form-control form-control-sm"
+                 placeholder="e.g. INV-1234" formControlName="billNo"
+                 [class.is-invalid]="inwardForm.get('billNo')?.invalid && inwardForm.get('billNo')?.touched">
+          <div class="invalid-feedback">Bill No is required.</div>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label fw-semibold" style="font-size:.85rem;">
+            Bill Date <span class="text-danger">*</span>
+          </label>
+          <input type="date" class="form-control form-control-sm"
+                 formControlName="billDate"
+                 [class.is-invalid]="inwardForm.get('billDate')?.invalid && inwardForm.get('billDate')?.touched">
+          <div class="invalid-feedback">Bill Date is required.</div>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label fw-semibold" style="font-size:.85rem;">
+            Tax Type <span class="text-danger">*</span>
+          </label>
+          <select class="form-select form-select-sm" formControlName="taxType"
+                  [class.is-invalid]="inwardForm.get('taxType')?.invalid && inwardForm.get('taxType')?.touched">
+            <option value="">-- Select --</option>
+            <option value="GST">GST</option>
+            <option value="VAT">VAT</option>
+          </select>
+          <div class="invalid-feedback">Tax Type is required.</div>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-semibold" style="font-size:.85rem;">
+            Vendor <span class="text-danger">*</span>
+          </label>
+          <select class="form-select form-select-sm" formControlName="supplierId"
+                  [class.is-invalid]="inwardForm.get('supplierId')?.invalid && inwardForm.get('supplierId')?.touched">
+            <option [ngValue]="null">-- Select Vendor --</option>
+            <option *ngFor="let s of suppliers" [ngValue]="s.supplierId">{{ s.name }}</option>
+          </select>
+          <div class="invalid-feedback">Vendor is required.</div>
+        </div>
+
+      </div>
+    </div>
   </div>
 
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 2 — ADD PART ROW
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="card mb-3" formGroupName="addItemForm">
+    <div class="card-header py-2" style="font-size:.83rem;font-weight:600;">
+      <i class="bi bi-plus-circle me-1 text-success"></i> Add Part
+    </div>
+    <div class="card-body pb-2">
+      <div class="row g-2 align-items-start">
 
-  <!-- Data Section -->
-  <!--<div class="row mb-3 g-2">
-    <div class="col-md-3">
-      <input type="text" class="form-control" placeholder="Delivery Receipt #" />
-    </div>
-    <div class="col-md-3">
-      <input type="text" class="form-control" placeholder="Bill No." />
-    </div>
-    <div class="col-md-2">
-      <input type="date" class="form-control" placeholder="Bill Date" />
-    </div>
-    <div class="col-md-2">
-      <select class="form-select">
-        <option>GST</option>
-        <option>Other</option>
-      </select>
-    </div>
-    <div class="col-md-2">
-      <input type="text" class="form-control" placeholder="Vendor" />
-    </div>
-    <div class="col-md-2">
-      <input type="text" class="form-control" [value]="today | date:'shortDate'" readonly />
-    </div>
-  </div>-->
-  <!-- Search & Add Parts -->
-  <div class="row mb-3 g-2 align-items-center">
-    <div class="col-md-6">
-      <input type="text" class="form-control" placeholder="Search Part Name / Part No / Barcode" />
-    </div>
-    <div class="col-md-2">
-      <select class="form-select">
-        <option>IN WORKS</option>
-        <option>AVAILABLE</option>
-      </select>
-    </div>
-    <div class="col-md-2">
-      <input type="text" class="form-control" placeholder="Qty / Part Price" />
-    </div>
-    <div class="col-md-2">
-      <input type="text" class="form-control" placeholder="Service / Labour" />
-    </div>
-    <div class="col-md-1">
-      <button class="btn btn-success btn-sm">+</button>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold mb-1" style="font-size:.82rem;">
+            Part <span class="text-danger">*</span>
+          </label>
+          <app-autocomplete placeholder="Search part name / part no"
+                            formControlName="search"
+                            [searchFn]="stockService.searchstock.bind(stockService)"
+                            (selected)="onSelectedPart($event)"
+                            (clearForm)="resetAddItemForm()">
+          </app-autocomplete>
+          <div class="text-muted mt-1" style="font-size:.75rem;" *ngIf="loadingPart">
+            <span class="spinner-border spinner-border-sm me-1"></span> Loading part…
+          </div>
+        </div>
+
+        <div class="col-md-1">
+          <label class="form-label fw-semibold mb-1" style="font-size:.82rem;">
+            Inward Qty <span class="text-danger">*</span>
+          </label>
+          <input appNumbersOnly class="form-control form-control-sm"
+                 placeholder="Qty" formControlName="inwardQty"
+                 [class.is-invalid]="inwardForm.get('addItemForm.inwardQty')?.invalid &&
+                                     inwardForm.get('addItemForm.inwardQty')?.touched">
+          <div class="invalid-feedback" style="font-size:.72rem;">Required, min 0.01</div>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label fw-semibold mb-1" style="font-size:.82rem;">
+            Unit Price ₹ <span class="text-danger">*</span>
+          </label>
+          <input appTwoDecimalNumbers class="form-control form-control-sm"
+                 placeholder="e.g. 150.00" formControlName="unitPrice"
+                 [class.is-invalid]="inwardForm.get('addItemForm.unitPrice')?.invalid &&
+                                     inwardForm.get('addItemForm.unitPrice')?.touched">
+          <div class="invalid-feedback" style="font-size:.72rem;">Required, must be > 0</div>
+        </div>
+
+        <div class="col-md-1">
+          <label class="form-label fw-semibold mb-1" style="font-size:.82rem;">Discount ₹</label>
+          <input appTwoDecimalNumbers class="form-control form-control-sm"
+                 placeholder="0.00" formControlName="discount">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label fw-semibold mb-1" style="font-size:.82rem;">
+            Selling Price ₹ <span class="text-danger">*</span>
+          </label>
+          <input appTwoDecimalNumbers class="form-control form-control-sm"
+                 placeholder="e.g. 200.00" formControlName="sellingPrice"
+                 [class.is-invalid]="inwardForm.get('addItemForm.sellingPrice')?.invalid &&
+                                     inwardForm.get('addItemForm.sellingPrice')?.touched">
+          <div class="invalid-feedback" style="font-size:.72rem;">Required, must be > 0</div>
+        </div>
+
+        <div class="col-md-1">
+          <label class="form-label fw-semibold mb-1" style="font-size:.82rem;">Rack No</label>
+          <input type="text" class="form-control form-control-sm"
+                 placeholder="e.g. A3" formControlName="rackNo">
+        </div>
+
+        <div class="col-md-2 d-flex align-items-end pb-1">
+          <button type="button" class="btn btn-success btn-sm w-100"
+                  [disabled]="loadingPart" (click)="addItem()">
+            <span *ngIf="!loadingPart"><i class="bi bi-plus-lg me-1"></i> Add Item</span>
+            <span *ngIf="loadingPart">
+              <span class="spinner-border spinner-border-sm me-1"></span> Loading…
+            </span>
+          </button>
+        </div>
+
+      </div>
     </div>
   </div>
 
-  <!-- Parts Table -->
-  <div class="table-responsive">
-    <table class="table table-bordered table-hover">
-      <thead class="table-light text-center">
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 3 — PARTS TABLE  (document page 67)
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="table-responsive mt-3">
+    <table class="table table-bordered table-sm text-center align-middle">
+      <thead class="table-light">
         <tr>
-          <th><input type="checkbox" /></th>
           <th>#</th>
-          <th>Part Name</th>
+          <th class="text-start">Part Name</th>
           <th>Part No.</th>
           <th>Brand</th>
-          <th>Requested Qty</th>
-          <th>Rack No.</th>
-          <th>Inward Qty / Unit Price ₹</th>
-          <th>Discount</th>
+          <th>Rack No</th>
+          <th>Inward Qty</th>
+          <th>Unit Price ₹</th>
+          <th>Discount ₹</th>
           <th>HSN / Tax %</th>
-          <th>Total Purchase Price ₹</th>
+          <th>Total Purchase ₹</th>
           <th>Selling Price ₹</th>
-          <th>Margin</th>
-          <th>Remarks</th>
+          <th>Margin ₹</th>
           <th>Barcode</th>
+          <th>Remarks</th>
+          <th></th>
         </tr>
       </thead>
-      <tbody>
-        <tr *ngFor="let item of inwardItems; let i = index" class="text-center">
-          <td><input type="checkbox" /></td>
+      <tbody formArrayName="items">
+
+        <tr *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
           <td>{{ i + 1 }}</td>
-          <td>{{ item.partName }}</td>
-          <td>{{ item.partNo }}</td>
-          <td>{{ item.brand }}</td>
-          <td>{{ item.requestedQty }}</td>
-          <td>{{ item.rackNo }}</td>
-          <td>{{ item.inwardQty }} / {{ item.unitPrice | number:'1.2-2' }}</td>
-          <td>{{ item.discount | number:'1.2-2' }}</td>
-          <td>{{ item.hsn }} / {{ item.taxPercent }}%</td>
-          <td>{{ item.totalPurchase | number:'1.2-2' }}</td>
-          <td>{{ item.sellingPrice | number:'1.2-2' }}</td>
-          <td>{{ item.margin | number:'1.2-2' }}</td>
-          <td>{{ item.remarks }}</td>
-          <td>{{ item.barcode }}</td>
+          <td class="text-start" style="min-width:130px;">{{ item.value.partName || '—' }}</td>
+          <td>{{ item.value.partNo   || '—' }}</td>
+          <td>{{ item.value.brand    || '—' }}</td>
+
+          <td>
+            <input type="text" class="form-control form-control-sm text-center"
+                   style="width:70px;margin:auto;" formControlName="rackNo">
+          </td>
+          <td>
+            <input appNumbersOnly class="form-control form-control-sm text-center"
+                   style="width:70px;margin:auto;" formControlName="inwardQty"
+                   (input)="recalcRow(i)">
+          </td>
+          <td>
+            <input appTwoDecimalNumbers class="form-control form-control-sm text-center"
+                   style="width:90px;margin:auto;" formControlName="unitPrice"
+                   (input)="recalcRow(i)">
+          </td>
+          <td>
+            <input appTwoDecimalNumbers class="form-control form-control-sm text-center"
+                   style="width:80px;margin:auto;" formControlName="discount"
+                   (input)="recalcRow(i)">
+          </td>
+
+          <td style="font-size:.8rem;">
+            {{ item.value.hsnCode || '—' }} / {{ item.value.taxPercent | number:'1.0-1' }}%
+          </td>
+
+          <td class="fw-semibold text-end">{{ item.value.totalPurchasePrice | number:'1.2-2' }}</td>
+
+          <td>
+            <input appTwoDecimalNumbers class="form-control form-control-sm text-center"
+                   style="width:90px;margin:auto;" formControlName="sellingPrice"
+                   (input)="recalcRow(i)">
+          </td>
+
+          <td [class.text-success]="item.value.margin >= 0"
+              [class.text-danger]="item.value.margin < 0" class="fw-semibold">
+            {{ item.value.margin | number:'1.2-2' }}
+          </td>
+
+          <td>
+            <input type="text" class="form-control form-control-sm"
+                   style="min-width:90px;" formControlName="barcode">
+          </td>
+          <td>
+            <input type="text" class="form-control form-control-sm"
+                   style="min-width:90px;" formControlName="remarks">
+          </td>
+
+          <td>
+            <button type="button" class="btn btn-outline-danger btn-sm"
+                    (click)="removeRow(i)" title="Remove">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
         </tr>
-        <tr *ngIf="inwardItems.length === 0">
-          <td colspan="15" class="text-center text-muted">No parts added yet.</td>
+
+        <tr *ngIf="items.length === 0">
+          <td colspan="15" class="text-center text-muted py-4">
+            <i class="bi bi-inbox fs-4 d-block mb-1"></i>
+            No parts added yet. Search and add parts above.
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Summary Section -->
-  <div class="row mt-3 g-2 justify-content-end">
-    <div class="col-md-3">
-      <div class="d-flex justify-content-between">
-        <span>Total:</span>
-        <span>{{ summary.total | number:'1.2-2' }}</span>
-      </div>
-      <div class="d-flex justify-content-between">
-        <span>Freight / Delivery / Other:</span>
-        <span>{{ summary.freight | number:'1.2-2' }}</span>
-      </div>
-      <div class="d-flex justify-content-between">
-        <span>TCS:</span>
-        <span>{{ summary.tcs | number:'1.2-2' }}</span>
-      </div>
-      <div class="d-flex justify-content-between fw-bold border-top pt-1">
-        <span>Grand Total:</span>
-        <span>{{ summary.grandTotal | number:'1.2-2' }}</span>
-      </div>
-      <div class="d-flex justify-content-between">
-        <span>Paid (-):</span>
-        <span>{{ summary.paid | number:'1.2-2' }}</span>
-      </div>
-      <div class="d-flex justify-content-between fw-bold border-top pt-1">
-        <span>Balance:</span>
-        <span>{{ summary.balance | number:'1.2-2' }}</span>
-      </div>
+  <!-- ══════════════════════════════════════════════════════════════════
+       SECTION 4 — SUMMARY  (document page 67)
+       Total | Freight | TCS | Grand Total | Paid | Balance
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="row justify-content-end mb-5" *ngIf="items.length > 0">
+    <div class="col-md-5">
+      <table class="table table-sm table-bordered">
+        <tbody>
+          <tr class="table-light">
+            <td class="text-end fw-semibold">Total ₹</td>
+            <td class="text-end fw-bold" style="width:140px;">{{ subTotal | number:'1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td class="text-end fw-semibold">Freight / Delivery / Other ₹</td>
+            <td><input appTwoDecimalNumbers class="form-control form-control-sm text-end" formControlName="freight"></td>
+          </tr>
+          <tr>
+            <td class="text-end fw-semibold">TCS ₹</td>
+            <td><input appTwoDecimalNumbers class="form-control form-control-sm text-end" formControlName="tcs"></td>
+          </tr>
+          <tr class="table-primary">
+            <td class="text-end fw-bold fs-6">Grand Total ₹</td>
+            <td class="text-end fw-bold fs-6 text-primary">{{ grandTotal | number:'1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td class="text-end fw-semibold">Paid (-) ₹</td>
+            <td><input appTwoDecimalNumbers class="form-control form-control-sm text-end" formControlName="paid"></td>
+          </tr>
+          <tr [class.table-danger]="balance > 0" [class.table-success]="balance <= 0">
+            <td class="text-end fw-bold">Balance ₹</td>
+            <td class="text-end fw-bold">{{ balance | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- Footer Actions -->
-  <div class="d-flex justify-content-between mt-3">
-    <button class="btn btn-secondary btn-sm">Back</button>
-    <div class="ms-auto">
-      <button class="btn btn-success btn-sm me-2">Inward</button>
-      <button class="btn btn-primary btn-sm">Order Parts</button>
-    </div>
-  </div>
+</form>
 
+<!-- ══════════════════════════════════════════════════════════════════
+     FOOTER TOOLBAR — Back | Order Parts | Inward
+     document page 67
+══════════════════════════════════════════════════════════════════ -->
+<div class="fixed-bottom bg-white border-top shadow-sm px-3 py-2
+            d-flex justify-content-between align-items-center"
+     style="z-index:9999;">
+
+  <button class="btn btn-light btn-sm" (click)="goBack()">
+    <i class="bi bi-arrow-left me-1"></i> Back
+  </button>
+
+  <span class="badge bg-secondary" *ngIf="items.length > 0">
+    {{ items.length }} part{{ items.length !== 1 ? 's' : '' }}
+    &nbsp;|&nbsp; Grand Total ₹{{ grandTotal | number:'1.2-2' }}
+  </span>
+
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-primary btn-sm" (click)="goToOrderParts()">
+      <i class="bi bi-cart3 me-1"></i> Order Parts
+    </button>
+    <button class="btn btn-success btn-sm"
+            [disabled]="submitting || items.length === 0"
+            (click)="submitInward()">
+      <span *ngIf="!submitting"><i class="bi bi-box-arrow-in-down me-1"></i> Inward</span>
+      <span *ngIf="submitting">
+        <span class="spinner-border spinner-border-sm me-1"></span> Saving…
+      </span>
+    </button>
+  </div>
 </div>
+
+<div style="height:70px;"></div>

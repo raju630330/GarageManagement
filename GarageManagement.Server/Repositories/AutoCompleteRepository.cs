@@ -134,26 +134,29 @@ namespace GarageManagement.Server.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IList<IdNameDto>> SearchParts(string query)
+        public async Task<IEnumerable<IdNameDto>> SearchParts(string query, long workshopId)
         {
-            query = query?.Trim() ?? "";
-
             if (string.IsNullOrWhiteSpace(query))
-                return new List<IdNameDto>();
+                return Enumerable.Empty<IdNameDto>();
+
+            var term = query.Trim().ToLower();
 
             return await _context.Parts
                 .Where(p =>
-                    EF.Functions.Like(p.PartName, $"%{query}%") ||
-                    EF.Functions.Like(p.PartNo, $"%{query}%") 
-                )
+                    p.IsActive &&
+                    p.WorkshopId == workshopId &&          // FIX 3
+                    (p.PartName.ToLower().Contains(term) ||
+                     p.PartNo.ToLower().Contains(term) ||
+                     p.Brand.ToLower().Contains(term)))
+                .OrderBy(p => p.PartName)
+                .Take(20)
                 .Select(p => new IdNameDto
                 {
                     Id = p.Id,
-                    Name = p.PartName + " | " + p.PartNo +
-                           " | Qty: " + p.StockMovements.Sum(sm => sm.Quantity)
+                    // Format: "Part Name | PartNo | Qty: X.XX"
+                    // Angular's parseAutoLabel() splits on '|'
+                    Name = $"{p.PartName} | {p.PartNo} | Qty: {p.StockMovements.Sum(m => m.Quantity):F2}"
                 })
-                .OrderBy(p => p.Name)
-                .Take(20)
                 .ToListAsync();
         }
 

@@ -13,6 +13,7 @@ namespace GarageManagement.Server.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IAutoCompleteRepository _autoCompleteRepository;
+
         public StockController(ApplicationDbContext context, IAutoCompleteRepository autoCompleteRepository)
         {
             _context = context;
@@ -20,35 +21,48 @@ namespace GarageManagement.Server.Controllers
         }
 
         // =========================================================
-        // 🔹 STOCK LIST
+        // FIX 3: Added workshopId filter to every endpoint
+        // FIX 4: Search filter pushed into EF query (SQL-level)
+        //        instead of loading all parts into memory first
+        // =========================================================
+        private long GetWorkshopId() =>
+            long.Parse(User.FindFirst("WorkshopId")?.Value ?? "0");
+
+        // =========================================================
+        // STOCK LIST
         // =========================================================
         [HttpGet("list")]
         public async Task<IActionResult> GetStockList(
-    string stockType = "IN",
-    string search = "",
-    int page = 1,
-    int pageSize = 10)
+            string stockType = "IN",
+            string search = "",
+            int page = 1,
+            int pageSize = 10)
         {
-            // Load parts with their stock movements into memory
-            var parts = await _context.Parts
-                .Include(p => p.StockMovements)
-                .Where(p => p.IsActive)
-                .ToListAsync();
+            var workshopId = GetWorkshopId();   // FIX 3
 
-            // Filter by search term if provided
+            // FIX 4: filter at SQL level — do NOT ToListAsync() before search
+            var query = _context.Parts
+                .Include(p => p.StockMovements)
+                .Where(p => p.IsActive && p.WorkshopId == workshopId);   // FIX 3
+
             if (!string.IsNullOrWhiteSpace(search))
             {
-                parts = parts.Where(p =>
-                    p.PartNo.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    p.PartName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    p.Brand.Contains(search, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                query = query.Where(p =>
+                    p.PartNo.Contains(search) ||
+                    p.PartName.Contains(search) ||
+                    p.Brand.Contains(search));
             }
+
+            var parts = await query.ToListAsync();
 
             // Map to DTO and calculate quantities and averages
             var stockList = parts.Select(p =>
             {
-                var inwards = p.StockMovements.Where(m => m.Quantity > 0).ToList();
+                // FIX 2 (applied here too): only INWARD movements for purchase price avg
+                var inwardMovements = p.StockMovements
+                    .Where(m => m.TransactionType == "INWARD" && m.Quantity > 0)
+                    .ToList();
+
                 var qtyOnHand = p.StockMovements.Sum(m => m.Quantity);
 
                 return new StockListDto
@@ -58,17 +72,25 @@ namespace GarageManagement.Server.Controllers
                     Brand = p.Brand,
                     Category = p.Category,
                     QtyOnHand = qtyOnHand,
-                    AvgPurchasePrice = inwards.Any() ? inwards.Average(m => m.PurchasePrice) : 0,
-                    AvgSellingPrice = inwards.Any() ? inwards.Average(m => m.SellingPrice) : 0,
+                    AvgPurchasePrice = inwardMovements.Any()
+                                        ? inwardMovements.Average(m => m.PurchasePrice)
+                                        : 0,
+                    AvgSellingPrice = inwardMovements.Any()
+                                        ? inwardMovements.Average(m => m.SellingPrice)
+                                        : 0,
                     TaxType = p.TaxType,
                     TaxPercent = p.TaxPercent,
-                    TaxAmount = (inwards.Any() ? inwards.Average(m => m.SellingPrice) : 0) * p.TaxPercent / 100,
+                    TaxAmount = (inwardMovements.Any()
+                                        ? inwardMovements.Average(m => m.SellingPrice)
+                                        : 0) * p.TaxPercent / 100,
                     RackNo = p.RackNo,
-                    Ageing = inwards.Any() ? inwards.Min(m => (int)(DateTime.Now - m.TransactionDate).TotalDays) : 0,
+                    Ageing = inwardMovements.Any()
+                                        ? inwardMovements.Min(m => (int)(DateTime.Now - m.TransactionDate).TotalDays)
+                                        : 0,
                     Barcode = p.StockMovements
-                        .OrderByDescending(m => m.TransactionDate)
-                        .Select(m => m.Barcode)
-                        .FirstOrDefault() ?? ""
+                                        .OrderByDescending(m => m.TransactionDate)
+                                        .Select(m => m.Barcode)
+                                        .FirstOrDefault() ?? ""
                 };
             })
             .Where(x =>
@@ -78,7 +100,6 @@ namespace GarageManagement.Server.Controllers
             .OrderBy(x => x.PartName)
             .ToList();
 
-            // 🔹 PAGINATION (NEW)
             var totalRecords = stockList.Count;
 
             var pagedData = stockList
@@ -86,28 +107,23 @@ namespace GarageManagement.Server.Controllers
                 .Take(pageSize)
                 .ToList();
 
-            return Ok(new
-            {
-                totalRecords,
-                page,
-                pageSize,
-                items = pagedData
-            });
+            return Ok(new { totalRecords, page, pageSize, items = pagedData });
         }
 
-
         // =========================================================
-        // 🔹 STOCK SUMMARY (STATS)
+        // STOCK SUMMARY (STATS)
         // =========================================================
         [HttpGet("stats")]
         public async Task<IActionResult> GetStockStats(string status = "In Stock")
         {
+            var workshopId = GetWorkshopId();   // FIX 3
+
+            // FIX 4: filter at SQL level
             var parts = await _context.Parts
                 .Include(p => p.StockMovements)
-                .Where(p => p.IsActive)
+                .Where(p => p.IsActive && p.WorkshopId == workshopId)   // FIX 3
                 .ToListAsync();
 
-            // Filter by stock status
             if (status == "In Stock")
                 parts = parts.Where(p => p.StockMovements.Sum(m => m.Quantity) > 0).ToList();
             else if (status == "Out of Stock")
@@ -117,26 +133,40 @@ namespace GarageManagement.Server.Controllers
             {
                 UniquePartNos = parts.Count,
                 TotalStockItems = parts.Sum(p => p.StockMovements.Sum(m => m.Quantity)),
-                StockValue = parts.Sum(p => p.StockMovements.Where(m => m.Quantity > 0).Sum(m => m.Quantity * m.PurchasePrice))
+                StockValue = parts.Sum(p =>
+                    p.StockMovements
+                        .Where(m => m.TransactionType == "INWARD" && m.Quantity > 0)
+                        .Sum(m => m.Quantity * m.PurchasePrice))
             };
 
             return Ok(stats);
         }
 
+        // =========================================================
+        // AUTOCOMPLETE SEARCH
+        // =========================================================
         [HttpGet("search")]
         public async Task<IActionResult> SearchParts([FromQuery] string query)
         {
             if (string.IsNullOrWhiteSpace(query))
                 return Ok(new List<IdNameDto>());
 
-            var parts = await _autoCompleteRepository.SearchParts(query);
+            // FIX 3: pass workshopId so autocomplete only returns this workshop's parts
+            var workshopId = GetWorkshopId();
+            var parts = await _autoCompleteRepository.SearchParts(query, workshopId);
             return Ok(parts);
         }
+
+        // =========================================================
+        // GET SINGLE PART BY ID
+        // =========================================================
         [HttpGet("get/{id}")]
         public async Task<ActionResult<PartDto>> GetPartById(long id)
         {
+            var workshopId = GetWorkshopId();   // FIX 3
+
             var part = await _context.Parts
-                .Where(p => p.Id == id)
+                .Where(p => p.Id == id && p.WorkshopId == workshopId)   // FIX 3
                 .Select(p => new PartDto
                 {
                     Id = p.Id,
@@ -146,19 +176,22 @@ namespace GarageManagement.Server.Controllers
                     TaxPercent = p.TaxPercent,
                     HsnCode = "",
 
-                    // Estimation uses this → latest selling price
+                    // FIX 2: Only INWARD movements have a real SellingPrice.
+                    // ORDER movements save SellingPrice = 0 (unknown at order time).
+                    // Without this filter, a recently-ordered part returns 0
+                    // to the Estimation module.
                     SellingPrice = p.StockMovements
-                                    .Where(sm => sm.Quantity > 0)
-                                    .OrderByDescending(sm => sm.TransactionDate)
-                                    .Select(sm => sm.SellingPrice)
-                                    .FirstOrDefault(),
+                        .Where(sm => sm.TransactionType == "INWARD" && sm.Quantity > 0)
+                        .OrderByDescending(sm => sm.TransactionDate)
+                        .Select(sm => sm.SellingPrice)
+                        .FirstOrDefault(),
 
-                    // Order module uses this → latest purchase price
+                    // Order module pre-fills purchase price from latest inward
                     PurchasePrice = p.StockMovements
-                                     .Where(sm => sm.TransactionType == "INWARD" && sm.Quantity > 0)
-                                     .OrderByDescending(sm => sm.TransactionDate)
-                                     .Select(sm => sm.PurchasePrice)
-                                     .FirstOrDefault(),
+                        .Where(sm => sm.TransactionType == "INWARD" && sm.Quantity > 0)
+                        .OrderByDescending(sm => sm.TransactionDate)
+                        .Select(sm => sm.PurchasePrice)
+                        .FirstOrDefault(),
 
                     QtyOnHand = p.StockMovements.Sum(sm => sm.Quantity)
                 })
@@ -168,6 +201,9 @@ namespace GarageManagement.Server.Controllers
             return Ok(part);
         }
 
+        // =========================================================
+        // PartDto — JSON property names match Angular expectations
+        // =========================================================
         public class PartDto
         {
             [JsonPropertyName("partId")]
@@ -188,17 +224,16 @@ namespace GarageManagement.Server.Controllers
             [JsonPropertyName("hsnCode")]
             public string HsnCode { get; set; } = string.Empty;
 
-            // Used by Estimation module (charge to customer)
+            // Estimation module reads this → charge to customer
             [JsonPropertyName("sellingPrice")]
             public decimal SellingPrice { get; set; }
 
-            // Used by Order module (pay to supplier)
+            // Order + Inward modules read this → pay to supplier
             [JsonPropertyName("purchasePrice")]
             public decimal PurchasePrice { get; set; }
 
             [JsonPropertyName("qtyOnHand")]
             public decimal QtyOnHand { get; set; }
         }
-
     }
 }
