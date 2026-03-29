@@ -9,7 +9,7 @@ export interface Role {
   roleName: string;
 }
 interface AuthResponse { token: string; }
-interface Decoded { role?: string; roleId?: number; workshopId?: number; exp?: number; name?: string; email?: string; sub?: string; }
+interface Decoded { role?: string; roleId?: number; WorkshopId?: number; exp?: number; name?: string; email?: string; sub?: string; }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -233,7 +233,7 @@ export class AuthService {
 
     try {
       const decoded = jwtDecode<Decoded>(token);
-      return decoded.workshopId ? Number(decoded.workshopId) : 0;
+      return decoded.WorkshopId ? Number(decoded.WorkshopId) : 0;
     } catch {
       return 0;
     }
